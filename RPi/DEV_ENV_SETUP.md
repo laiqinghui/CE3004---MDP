@@ -7,19 +7,22 @@ Python
 
 	Python 2.7.13
 
+
 ### Set up guide for windows
 
-#### 1. Install virtualenv using `pip` command
-
-Installation of Python comes together with `pip`. `Pip` is a dependency package manager in which you can install 3rd party packages.
-
-Execute the command `pip install virtualenv` in your command line to install `virtualenv` for python.
-
-
-#### 2. Ensure workstation has python 2.7.13
+#### 1. Ensure workstation has python 2.7.13
 
 Ensure that your workstation has python version 2.7.13. If not, please install it [here](https://www.python.org/downloads/release/python-2713/)
 
+
+#### 2. Install virtualenv using `pip` command
+
+Installation of Python comes together with `pip`. `Pip` is a dependency package manager in which you can install 3rd party packages.
+
+Execute the following command in your command line to install `virtualenv` for python.
+```
+pip install virtualenv
+```
 
 #### 3. Creating virtual environment
 
@@ -36,8 +39,12 @@ venv\scripts\activate     # activate the virtual environment
 
 Some 3rd party python packages are necessary for our MDP purposes. For example, `PyBluez` is a python package for `bluetooth` communication. Over time, the number of python packages we use will be expected to increase and these packages are listed in the (../requirements.txt) file.
 
-Install all the listed packages using the command
-```pip install -r requirements.txt```
+Install all the listed packages using the following command
+```
+pip install -r requirements.txt
+```
 
-To update the requirements.txt file with new packages that you think are necessary, execute the command
-```pip freeze > requirements.txt```
+To update the requirements.txt file with new packages that you have already installed and are necessary, execute the command
+```
+pip freeze > requirements.txt
+```
