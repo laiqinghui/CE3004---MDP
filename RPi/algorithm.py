@@ -17,12 +17,12 @@ class Algorithm(threading.Thread):
         self.robot_x = 0
         self.robot_y = 0
 
-        dispatcher.connect(self.determine_robot_path, signal=gs.RPI_SIGNAL, sender=gs.RPI_SENDER)
+        dispatcher.connect(self.determine_robot_path, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
         self.idle()
 
     def determine_robot_path(self, message):
         # message e.g. front and side have obstacle or not
-        print "receive obstacle info: " + str(message) + ", now calculating robot path..."
+        print "Algorithm receive obstacle info: " + str(message) + ", now calculating robot path..."
         time.sleep(1)
         dispatcher.send(message='move robot', signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
 
