@@ -37,7 +37,7 @@ venv\scripts\activate     # activate the virtual environment
 
 #### 4. Install required python packages
 
-Some 3rd party python packages are necessary for our MDP purposes. For example, `PyBluez` is a python package for `bluetooth` communication. Over time, the number of python packages we use will be expected to increase and these packages are listed in the (../requirements.txt) file.
+Some 3rd party python packages are necessary for our MDP purposes. For example, `PyBluez` is a python package for `bluetooth` communication. Over time, the number of python packages we use will be expected to increase and these packages are listed in the [requirements.txt](../requirements.txt) file.
 
 Install all the listed packages using the following command
 ```
