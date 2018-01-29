@@ -6,8 +6,13 @@ import global_settings as gs
 from pydispatch import dispatcher
 
 
+EXPLORATION = 0
+FASTEST_PATH = 1
+
+
 class Algorithm(threading.Thread):
-    def __init__(self, robot_x, robot_y):
+
+    def __init__(self, robot_x, robot_y, waypoint_x, waypoint_y, goal_x, goal_y, mode):
 
         print "algorithm initialized"
 
@@ -16,13 +21,29 @@ class Algorithm(threading.Thread):
         self.map = [[0 for i in range(_x)] for j in range(_y)]
         self.robot_x = robot_x
         self.robot_y = robot_y
+        self.waypoint_x = 0
+        self.waypoint_y = 0
+        self.goal_x = 0
+        self.goal_y = 0
+        self.mode = mode
 
-        dispatcher.connect(self.determine_robot_path, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
+        if self.mode == EXPLORATION:
+            dispatcher.connect(self.determine_exploration_path, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
+        else:
+            dispatcher.connect(self.determine_fastest_path, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
+
         self.idle()
 
-    def determine_robot_path(self, message):
+    def determine_exploration_path(self, message):
         # message e.g. front and side have obstacle or not
-        print "Robot now at position " + str(self.robot_x) + ", " + str(self.robot_y)
+        print "Exploration robot now at position " + str(self.robot_x) + ", " + str(self.robot_y)
+        print "Algorithm receive obstacle info: " + str(message) + ", now calculating robot path..."
+        time.sleep(1)
+        dispatcher.send(message='move robot', signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
+
+    def determine_fastest_path(self, message):
+        # message e.g. front and side have obstacle or not
+        print "Fastest path robot now at position " + str(self.robot_x) + ", " + str(self.robot_y)
         print "Algorithm receive obstacle info: " + str(message) + ", now calculating robot path..."
         time.sleep(1)
         dispatcher.send(message='move robot', signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)

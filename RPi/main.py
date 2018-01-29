@@ -6,58 +6,57 @@ import sys
 from pydispatch import dispatcher
 
 from algorithm import Algorithm
+from rpi import RPI
 
 import global_settings as gs
-
-
-class RPI(threading.Thread):
-    def __init__(self):
-
-        print "rpi initialized"
-
-        # algorithm pass command to arduino
-        dispatcher.connect(self.command_arduino, signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
-
-        self.idle()
-
-    def command_arduino(self, message):
-        print "rpi received message from algorithm and write message to arduino: " + str(message)
-
-    def idle(self):
-        while(1):
-            time.sleep(1)
 
 
 def main(argv):
 
     robot_x = 0
     robot_y = 0
+    waypoint_x = 0
+    waypoint_y = 0
+    goal_x = 0
+    goal_y = 0
+    mode = 0
 
     try:
-        opts, remainders = getopt.getopt(argv, "x:y:", ["robot_x=", "robot_y="])
+        opts, remainders = getopt.getopt(argv, "m:", ["rx=", "ry=", "wx=", "wy=", "gx=", "gy=", "mode="])
     except getopt.GetoptError:
         pass
 
     for opt, arg in opts:
 
-        if opt in ("-x", "--robot_x"):
+        if opt in ("-x", "--rx"):
             robot_x = int(arg)
-        elif opt in ("-y", "--robot_y"):
+        elif opt in ("-y", "--ry"):
             robot_y = int(arg)
+        elif opt in ("--wx"):
+            waypoint_x = int(arg)
+        elif opt in ("--wy"):
+            waypoint_y = int(arg)
+        elif opt in ("--gx"):
+            goal_x = int(arg)
+        elif opt in ("--gy"):
+            goal_y = int(arg)
+        elif opt in ("-m", "--mode"):
+            mode = int(arg)
         else:
             assert False, "unhandled option"
 
-    return robot_x, robot_y
+    return robot_x, robot_y, waypoint_x, waypoint_y, goal_x, goal_y, mode
 
 
 if __name__ == "__main__":
 
-    robot_x, robot_y = main(sys.argv[1:])
+    # python main.py --rx=1 --ry=1 --wx=5 --wy=9 --gx=19 --gy=14 -m 0
+    rx, ry, wx, wy, gx, gy, m = main(sys.argv[1:])
 
     gs.init()
 
     rpi_thread = threading.Thread(target=RPI)
-    algo_thread = threading.Thread(target=Algorithm, args=(robot_x, robot_y))
+    algo_thread = threading.Thread(target=Algorithm, args=(rx, ry, wx, wy, gx, gy, m))
 
     rpi_thread.daemon = True
     algo_thread.daemon = True
