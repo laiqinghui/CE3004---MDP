@@ -49,8 +49,14 @@ def initialise_robot_options(argv):
     return robot_x, robot_y, waypoint_x, waypoint_y, goal_x, goal_y, mode
 
 
+# TODO: Convert to method in android.py bluetooth connection file
 def start_robot_exploration(rx, ry, wx, wy, gx, gy, m, keep_alive=False):
+    """
+    Function to start the robot exploration. This should be executed as a non-daemon
+    thread so that it can be stopped when required.
 
+    This function will need to move to the android.py file as a method.
+    """
     rpi_thread = threading.Thread(target=RPI)
     algo_thread = threading.Thread(target=Algorithm, args=(rx, ry, wx, wy, gx, gy, m))
 
@@ -66,6 +72,19 @@ def start_robot_exploration(rx, ry, wx, wy, gx, gy, m, keep_alive=False):
 
 
 if __name__ == "__main__":
+    """
+    For final implementation, only android thread will be initialized first.
+    RPI, Algorithm and Arduino thread will only be initialized when command
+    received from Android thread.
+    """
+    # TODO: android.py file that connects with Android device using bluetooth
+    # android_thread = threading.Thread(target=Android)
+    # android_thread.daemon = True
+    # android_thread.start()
+    #
+    # while 1:
+    #     time.sleep(1)
+
     """RUN MAIN.PY TO TEST ALGORITHM & RPI INTERFACE"""
     # python main.py --rx=1 --ry=1 --wx=5 --wy=9 --gx=19 --gy=14 -m 0
     # sys.argv[1:] = ['--rx=1', '--ry=1', '--wx=5', '--wy=9', '--gx=19', '--gy=14', '-m', '0']
@@ -73,9 +92,7 @@ if __name__ == "__main__":
 
     start_robot_exploration(rx, ry, wx, wy, gx, gy, m)
 
-    data = ""
-    while data == "":
+    while 1:
         time.sleep(1)
         data = raw_input("Enter the data to be sent to algorithm: ")
         dispatcher.send(message=data, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
-        data = ""
