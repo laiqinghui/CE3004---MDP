@@ -1,3 +1,6 @@
+import logging
+
+
 def init():
 
     global RPI_SENDER
@@ -27,3 +30,7 @@ def init():
 
     ARDUINO_SENDER = 'arduino_sender'
     ARDUINO_SIGNAL = 'arduino_signal'
+
+    logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
+                        datefmt='%d-%m-%Y:%H:%M:%S',
+                        level=logging.INFO)
