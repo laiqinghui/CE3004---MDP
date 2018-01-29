@@ -7,11 +7,12 @@ from pydispatch import dispatcher
 
 from algorithm import Algorithm
 from rpi import RPI
-
 import global_settings as gs
 
 
-def main(argv):
+def initialise_robot_options(argv):
+
+    gs.init()
 
     robot_x = 0
     robot_y = 0
@@ -48,12 +49,7 @@ def main(argv):
     return robot_x, robot_y, waypoint_x, waypoint_y, goal_x, goal_y, mode
 
 
-if __name__ == "__main__":
-
-    # python main.py --rx=1 --ry=1 --wx=5 --wy=9 --gx=19 --gy=14 -m 0
-    rx, ry, wx, wy, gx, gy, m = main(sys.argv[1:])
-
-    gs.init()
+def start_robot_exploration(rx, ry, wx, wy, gx, gy, m, keep_alive=False):
 
     rpi_thread = threading.Thread(target=RPI)
     algo_thread = threading.Thread(target=Algorithm, args=(rx, ry, wx, wy, gx, gy, m))
@@ -64,7 +60,19 @@ if __name__ == "__main__":
     rpi_thread.start()
     algo_thread.start()
 
-    # keep program alive
+    if keep_alive:
+        while 1:
+            time.sleep(1)
+
+
+if __name__ == "__main__":
+    """RUN MAIN.PY TO TEST ALGORITHM & RPI INTERFACE"""
+    # python main.py --rx=1 --ry=1 --wx=5 --wy=9 --gx=19 --gy=14 -m 0
+    # sys.argv[1:] = ['--rx=1', '--ry=1', '--wx=5', '--wy=9', '--gx=19', '--gy=14', '-m', '0']
+    rx, ry, wx, wy, gx, gy, m = initialise_robot_options(sys.argv[1:])
+
+    start_robot_exploration(rx, ry, wx, wy, gx, gy, m)
+
     data = ""
     while data == "":
         time.sleep(1)
