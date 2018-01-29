@@ -1,7 +1,8 @@
 import getopt
+import logging
+import sys
 import time
 import threading
-import sys
 
 from pydispatch import dispatcher
 
@@ -49,6 +50,10 @@ def main(argv):
 
 
 if __name__ == "__main__":
+
+    logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
+                        datefmt='%d-%m-%Y:%H:%M:%S',
+                        level=logging.INFO)
 
     # python main.py --rx=1 --ry=1 --wx=5 --wy=9 --gx=19 --gy=14 -m 0
     rx, ry, wx, wy, gx, gy, m = main(sys.argv[1:])

@@ -1,3 +1,4 @@
+import logging
 import time
 import threading
 
@@ -9,7 +10,7 @@ import global_settings as gs
 class RPI(threading.Thread):
     def __init__(self):
 
-        print "rpi initialized"
+        logging.info("rpi initialized")
 
         # algorithm pass command to arduino
         dispatcher.connect(self.command_arduino, signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
@@ -17,7 +18,7 @@ class RPI(threading.Thread):
         self.idle()
 
     def command_arduino(self, message):
-        print "rpi received message from algorithm and write message to arduino: " + str(message)
+        logging.info("rpi received message from algorithm and write message to arduino: " + str(message))
 
     def idle(self):
         while(1):
