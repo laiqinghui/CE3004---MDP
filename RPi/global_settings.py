@@ -31,6 +31,11 @@ def init():
     ARDUINO_SENDER = 'arduino_sender'
     ARDUINO_SIGNAL = 'arduino_signal'
 
+    global MAZEMAP
+    _x = 15
+    _y = 20
+    MAZEMAP = [[0] * _y] * _x
+
     logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
                         datefmt='%d-%m-%Y:%H:%M:%S',
                         level=logging.INFO)

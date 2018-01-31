@@ -18,9 +18,6 @@ class Algorithm(threading.Thread):
 
         logging.info("algorithm initialized")
 
-        _x = 20
-        _y = 15
-        self.map = [[0] * _y] * _x
         self.robot_x = robot_x
         self.robot_y = robot_y
         self.waypoint_x = 0
