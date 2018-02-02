@@ -9,6 +9,7 @@ from pydispatch import dispatcher
 
 EXPLORATION = 0
 FASTEST_PATH = 1
+MANUAL = 2
 
 
 class Algorithm(threading.Thread):
@@ -17,9 +18,6 @@ class Algorithm(threading.Thread):
 
         logging.info("algorithm initialized")
 
-        _x = 20
-        _y = 15
-        self.map = [[0] * _y] * _x
         self.robot_x = robot_x
         self.robot_y = robot_y
         self.waypoint_x = 0
@@ -30,8 +28,10 @@ class Algorithm(threading.Thread):
 
         if self.mode == EXPLORATION:
             dispatcher.connect(self.determine_exploration_path, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
-        else:
+        elif self.mode == FASTEST_PATH:
             dispatcher.connect(self.determine_fastest_path, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
+        else:
+            pass
 
         self.idle()
 
