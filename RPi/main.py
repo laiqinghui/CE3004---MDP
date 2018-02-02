@@ -6,6 +6,7 @@ import threading
 from pydispatch import dispatcher
 
 from algorithm import Algorithm
+from android import Android
 from rpi import RPI
 import global_settings as gs
 
@@ -78,9 +79,9 @@ if __name__ == "__main__":
     received from Android thread.
     """
     # TODO: android.py file that connects with Android device using bluetooth
-    # android_thread = threading.Thread(target=Android)
-    # android_thread.daemon = True
-    # android_thread.start()
+    android_thread = threading.Thread(target=Android)
+    android_thread.daemon = True
+    android_thread.start()
     #
     # while 1:
     #     time.sleep(1)
