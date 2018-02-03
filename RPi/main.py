@@ -13,7 +13,7 @@ import global_settings as gs
 
 def initialise_robot_options(argv):
 
-    gs.init()
+    #gs.init()
 
     robot_x = 0
     robot_y = 0
