@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">CZ3004</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="button_connect">Connect</string>
+    <string name="button_disconnect">Disconnect</string>
+    <string name="title_devices">Bluetooth Devices</string>
+    <string name="scan">Scan</string>
+    <string name="enable_discovery">Enable Discovery</string>
+    <string name="stopScan">Stop Scanning</string>
+
+    <string name="bluetooth_connected">"Connected."</string>
+    <string name="bluetooth_disconnected">"Disconnected."</string>
+    <string name="bluetooth_failed">"Disconnected."</string>
+    <string name="start_scan">Start Scan</string>
+    <string name="stop_scan">Stop Scan</string>
+    <string name="enter_write_text">Enter write text here...</string>
+
+</resources>
