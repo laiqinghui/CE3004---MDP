@@ -7,6 +7,7 @@ from pydispatch import dispatcher
 
 from algorithm import Algorithm
 from android import Android
+from arduino import Arduino
 from rpi import RPI
 import global_settings as gs
 
@@ -60,12 +61,15 @@ def start_robot_exploration(rx, ry, wx, wy, gx, gy, m, keep_alive=False):
     """
     rpi_thread = threading.Thread(target=RPI)
     algo_thread = threading.Thread(target=Algorithm, args=(rx, ry, wx, wy, gx, gy, m))
+    arduino_thread = threading.Thread(target=Arduino)
 
     rpi_thread.daemon = True
     algo_thread.daemon = True
+    arduino_thread.daemon = True
 
     rpi_thread.start()
     algo_thread.start()
+    arduino_thread.start()
 
     if keep_alive:
         while 1:
@@ -79,9 +83,9 @@ if __name__ == "__main__":
     received from Android thread.
     """
     # TODO: android.py file that connects with Android device using bluetooth
-    android_thread = threading.Thread(target=Android)
-    android_thread.daemon = True
-    android_thread.start()
+    # android_thread = threading.Thread(target=Android)
+    # android_thread.daemon = True
+    # android_thread.start()
     #
     # while 1:
     #     time.sleep(1)

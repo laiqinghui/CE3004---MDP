@@ -18,6 +18,7 @@ class RPI(threading.Thread):
         self.idle()
 
     def command_arduino(self, message):
+        dispatcher.send(message=message, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
         logging.info("rpi received message from algorithm and write message to arduino: " + str(message))
 
     def idle(self):
