@@ -7,6 +7,7 @@ from pydispatch import dispatcher
 
 import global_settings as gs
 
+
 class Android(threading.Thread):
     def __init__(self):
         gs.init()
