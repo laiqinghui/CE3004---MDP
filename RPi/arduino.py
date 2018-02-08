@@ -26,28 +26,19 @@ class Arduino(threading.Thread):
         self.idle()
 
     def interruptHandler(self, channel):
-        logging.info("\n\n=====From Interrupt Handler=====")
-        logging.info("Rising edge detected on port 17 and data from arduino is: ")
         time.sleep(0.6)     # delay is essential here
         bytes = self.readData()
-        logging.info(self.printBytesArray(bytes))
-        logging.info("================================\n")
+        message = getBytesArray(bytes)
+        dispatcher.send(message=message, signal=gs.ARDUINO_SIGNAL, sender=gs.ARDUINO_SENDER)
 
-    def printBytesArray(self, arr):
-        output = ''
-        for b in arr:
-            if b != 255:
-                output += chr(b)
+    def getBytesArray(self, arr):
+        output = ''.join([chr(x) for x in arr if x != 255])
         return output
 
     def ConvertStringToBytes(self, src):
-        converted = []
-        for b in src:
-            converted.append(ord(b))
-        return converted
+        return [ord(x) for x in src]
 
     def writeData(self, message):
-        # bus.write_byte(address, value)
         data = self.ConvertStringToBytes(message)
         try:
             self.bus.write_i2c_block_data(self.address, 0, data)
@@ -56,16 +47,9 @@ class Arduino(threading.Thread):
         return -1
 
     def readData(self):
-        # number = bus.read_byte(address)
         number = self.bus.read_i2c_block_data(self.address, 0, 32)
         return number
 
     def idle(self):
         while 1:
             time.sleep(1)
-
-# while True:
-#     # Receives the data from the User
-#     data = raw_input("Enter the data to be sent : ")
-#     bytesToSend = ConvertStringToBytes(data)
-#     writeData(bytesToSend)
