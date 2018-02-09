@@ -29,8 +29,8 @@ void setup() {
 }
 
 void loop() {
-  //Serial.println(digitalRead(A0));
-  //delay(2000);
+  //Wire.write("Data From Arduino!");
+  //delay(500);
 } // end loop
 
 void printArray(char arr[], int len){
@@ -65,6 +65,7 @@ void receiveData(int byteCount) {
     Serial.print("buffer: ");
     printArray(buffer, len);
     interruptPi();
+    //sendData();
   } else {
     
       //Single ack byte return from the Pi after Arduino sent a string over
@@ -84,6 +85,7 @@ void interruptPi(){
 
 // callback for sending data
 void sendData() {
+  Serial.println("Request incoming from PI!");
   Wire.write("Data From Arduino!");
 }
 
