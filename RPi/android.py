@@ -7,20 +7,23 @@ from pydispatch import dispatcher
 
 import global_settings as gs
 
+
 class Android(threading.Thread):
     def __init__(self):
         gs.init()
         logging.info("android thread initialized")
 
         # port doesnt have to be hardcoded when app is done
-        # self.port = self.server_socket.getsockname()[1]
-        self.port = 10
+        self.port = 4
         self.server_socket = BluetoothSocket(RFCOMM)
+        #self.port = self.server_socket.getsockname()[1]
         self.server_socket.bind(("", self.port))
         self.server_socket.listen(1)
 
         # needs to be the same as android device when the app is done
-        uuid = "94f39d29-7d6d-437d-973b-fba39e49d4ee"
+        #uuid = "94f39d29-7d6d-437d-973b-fba39e49d4ee"
+        uuid = "00001101-0000-1000-8000-00805F9B34FB"
+
 
         advertise_service(self.server_socket, "MDPGroup5", service_id=uuid, service_classes=[uuid, SERIAL_PORT_CLASS], profiles=[SERIAL_PORT_PROFILE])
         logging.info("Waiting for Bluetooth connection on port " + str(self.port))
