@@ -45,10 +45,10 @@ def print_mazemap(mmap):
     for mazerow in mmap:
         for grid in mazerow:
             if grid is None:
-                print "?"
+                print "?",
             else:
                 print grid,
-        print " "
+        print ""
 
 
 def get_mdf_bitstring(mmap, format=0):
