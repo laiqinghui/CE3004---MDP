@@ -51,11 +51,11 @@
         </android.support.design.widget.TextInputLayout>
 
         <Button
+            android:id="@+id/writeButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Write"
-            android:id="@+id/writeButton"
-            android:clickable="true" />
+            android:clickable="true"
+            android:text="Write" />
 
     </LinearLayout>
 </FrameLayout>

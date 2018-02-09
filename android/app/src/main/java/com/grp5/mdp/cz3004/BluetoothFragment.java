@@ -1,6 +1,7 @@
 package com.grp5.mdp.cz3004;
 
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -13,15 +14,19 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,51 +63,17 @@ public class BluetoothFragment extends Fragment implements AdapterView.OnItemCli
 
     private OnFragmentInteractionListener mListener;
 
-    // Handlers used to pass data between threads
-    private Handler readHandler;
-    private Handler writeHandler;
+    /**
+     * Member object for the chat services
+     */
+    private static BluetoothChatService mChatService = null;
 
     ToggleButton scan;
-
-    // The thread that does all the work
-    static BluetoothThread btt;
 
     public BluetoothFragment() {
         // Required empty public constructor
     }
 
-    private final BroadcastReceiver bReciever = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                Log.d("DEVICELIST", "Bluetooth device found\n");
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                // Create a new device item
-                DeviceDetails newDevice = new DeviceDetails(device.getName(), device.getAddress(), "false");
-                // Add it to our adapter
-                mAdapter.add(newDevice);
-                mAdapter.notifyDataSetChanged();
-            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                Toast.makeText(context, "Scan finished!", Toast.LENGTH_SHORT).show();
-                scan.setChecked(false);
-            }
-        }
-    };
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     */
-    // TODO: Rename and change types and number of parameters
-    public static BluetoothFragment newInstance(BluetoothAdapter adapter, BluetoothThread thread) {
-        BluetoothFragment fragment = new BluetoothFragment();
-        mBluetoothAdapter = adapter;
-        btt = thread;
-        return fragment;
-    }
-
-    @SuppressLint("HandlerLeak")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,6 +100,34 @@ public class BluetoothFragment extends Fragment implements AdapterView.OnItemCli
 
         Log.d("DEVICELIST", "Adapter created\n");
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // If BT is not on, request that it be enabled.
+        // setupChat() will then be called during onActivityResult
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+            // Otherwise, setup the chat session
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Performing this check in onResume() covers the case in which BT was
+        // not enabled during onStart(), so we were paused to enable it...
+        // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
+        if (mChatService != null) {
+            // Only if the state is STATE_NONE, do we know that we haven't started already
+            if (mChatService.getState() == BluetoothChatService.STATE_NONE) {
+                // Start the Bluetooth chat services
+                mChatService.start();
+            }
+        }
     }
 
     @Override
@@ -162,10 +161,7 @@ public class BluetoothFragment extends Fragment implements AdapterView.OnItemCli
 
                 TextView tv = (TextView)getActivity().findViewById(R.id.writeField);
                 String data = tv.getText().toString();
-
-                Message msg = Message.obtain();
-                msg.obj = data;
-                writeHandler.sendMessage(msg);
+                ((MainActivity)getActivity()).sendMessage(data);
             }
         });
 
@@ -195,6 +191,37 @@ public class BluetoothFragment extends Fragment implements AdapterView.OnItemCli
         return view;
     }
 
+    private final BroadcastReceiver bReciever = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                Log.d("DEVICELIST", "Bluetooth device found\n");
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                // Create a new device item
+                DeviceDetails newDevice = new DeviceDetails(device.getName(), device.getAddress(), "false");
+                // Add it to our adapter
+                mAdapter.add(newDevice);
+                mAdapter.notifyDataSetChanged();
+            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                Toast.makeText(context, "Scan finished!", Toast.LENGTH_SHORT).show();
+                scan.setChecked(false);
+            }
+        }
+    };
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     */
+    // TODO: Rename and change types and number of parameters
+    public static BluetoothFragment newInstance(BluetoothAdapter adapter, BluetoothChatService bcs) {
+        BluetoothFragment fragment = new BluetoothFragment();
+        mBluetoothAdapter = adapter;
+        mChatService = bcs;
+        return fragment;
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -218,68 +245,25 @@ public class BluetoothFragment extends Fragment implements AdapterView.OnItemCli
         Log.d("DEVICELIST", "onItemClick position: " + position +
                 " id: " + id + " name: " + deviceItemList.get(position).getDeviceName() + "\n");
 
-        connectDeviceSelected(deviceItemList.get(position).getAddress());
+        connectDevice(deviceItemList.get(position).getAddress(), true);
 
         if (mListener != null) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(deviceItemList.get(position).getAddress(), readHandler);
+            mListener.onFragmentInteraction(deviceItemList.get(position).getAddress());
         }
 
     }
 
-    @SuppressLint("HandlerLeak")
-    private void connectDeviceSelected(String address) {
-        Log.v("BLUETOOTH", "Connect button pressed.");
-
-        // Only one thread at a time
-        if (btt != null) {
-            Log.w("BLUETOOTH", "Already connected!");
-            return;
-        }
-
-        // Initialize the Bluetooth thread, passing in a MAC address
-        // and a Handler that will receive incoming messages
-        btt = new BluetoothThread(address, new Handler() {
-
-            public void handleMessage(Message message) {
-
-                String s = (String) message.obj;
-
-                // Do something with the message
-                switch (s) {
-                    case "CONNECTED": {
-                        TextView tv = (TextView) getActivity().findViewById(R.id.statusText);
-                        tv.setText(R.string.bluetooth_connected);
-                        break;
-                    }
-                    case "DISCONNECTED": {
-                        TextView tv = (TextView) getActivity().findViewById(R.id.statusText);
-                        tv.setText(R.string.bluetooth_disconnected);
-                        break;
-                    }
-                    case "CONNECTION FAILED": {
-                        TextView tv = (TextView) getActivity().findViewById(R.id.statusText);
-                        tv.setText(R.string.bluetooth_failed);
-                        btt = null;
-                        break;
-                    }
-                    default: {
-                        TextView tv = (TextView) getActivity().findViewById(R.id.readField);
-                        tv.setText(s);
-                    }
-                }
-            }
-        });
-
-        // Run the thread
-        btt.start();
-
-        // Get the handler that is used to send messages
-        writeHandler = btt.getWriteHandler();
-
-        TextView tv = (TextView) getActivity().findViewById(R.id.statusText);
-        tv.setText("Connecting...");
+    /**
+     * Establish connection with other device
+     *
+     * @param secure Socket Security type - Secure (true) , Insecure (false)
+     */
+    private void connectDevice(String address, boolean secure) {
+        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
+        // Attempt to connect to the device
+        mChatService.connect(device, secure);
     }
 
     /**
@@ -306,6 +290,6 @@ public class BluetoothFragment extends Fragment implements AdapterView.OnItemCli
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(String deviceAddress, Handler handler);
+        void onFragmentInteraction(String deviceAddress);
     }
 }

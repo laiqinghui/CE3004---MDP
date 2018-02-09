@@ -23,18 +23,11 @@ import android.widget.TextView;
  * Use the {@link SendTextFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SendTextFragment extends Fragment {
-
-    // The thread that does all the work
-    static BluetoothThread btt;
+public class SendTextFragment extends Fragment implements View.OnClickListener{
 
     private static BluetoothAdapter mBluetoothAdapter = null;
 
-    // Handler for writing messages to the Bluetooth connection
-    Handler writeHandler;
-    static Handler readHandler;
-
-    Button b;
+    static BluetoothChatService mChatService;
 
     // Tag for logging
     private static final String TAG = "BluetoothActivity";
@@ -52,40 +45,30 @@ public class SendTextFragment extends Fragment {
      * @return A new instance of fragment SendTextFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SendTextFragment newInstance(BluetoothAdapter adapter, BluetoothThread thread, Handler handler) {
+    public static SendTextFragment newInstance(BluetoothAdapter adapter, BluetoothChatService bcs) {
         SendTextFragment fragment = new SendTextFragment();
         mBluetoothAdapter = adapter;
-        btt = thread;
-        readHandler = handler;
+        mChatService = bcs;
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        b = (Button) getActivity().findViewById(R.id.writeButton);
-    }
-
-    /**
-     * Send a message using the Bluetooth thread's write handler.
-     */
-    public void writeButtonPressed(View v) {
-        Log.v(TAG, "Write button pressed.");
-
-        TextView tv = (TextView)getActivity().findViewById(R.id.writeField);
-        String data = tv.getText().toString();
-
-        Message msg = Message.obtain();
-        msg.obj = data;
-        writeHandler.sendMessage(msg);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        View view = inflater.inflate(R.layout.fragment_send_text, container, false);
+
+        Button b = (Button) view.findViewById(R.id.writeButton);
+
+        b.setOnClickListener(this);
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_send_text, container, false);
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -110,6 +93,16 @@ public class SendTextFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onClick(View view) {
+        Log.v(TAG, "Write button pressed.");
+
+        TextView tv = (TextView)getActivity().findViewById(R.id.writeField);
+        String data = tv.getText().toString();
+
+        ((MainActivity)getActivity()).sendMessage(data);
     }
 
     /**

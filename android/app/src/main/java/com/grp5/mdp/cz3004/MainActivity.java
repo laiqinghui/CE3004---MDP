@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -23,8 +24,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,12 +41,20 @@ public class MainActivity extends AppCompatActivity
     private BluetoothAdapter BTAdapter;
     private Fragment fragment;
 
-    // The thread that does all the work
-    BluetoothThread btt;
+    BluetoothChatService mChatService;
     String arduinoAddr;
 
+    /**
+     * String buffer for outgoing messages
+     */
+    private StringBuffer mOutStringBuffer;
+
     public static int REQUEST_BLUETOOTH = 1;
-    private Handler readHandler;
+
+    /**
+     * Name of the connected device
+     */
+    private String mConnectedDeviceName = null;
 
     @SuppressLint("HandlerLeak")
     @Override
@@ -72,6 +85,12 @@ public class MainActivity extends AppCompatActivity
             startActivityForResult(enableBT, REQUEST_BLUETOOTH);
         }
 
+        // Initialize the BluetoothChatService to perform bluetooth connections
+        mChatService = new BluetoothChatService(MainActivity.this, readHandler);
+
+        // Initialize the buffer for outgoing messages
+        mOutStringBuffer = new StringBuffer("");
+
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
         if (findViewById(R.id.fragment_container) != null) {
@@ -84,7 +103,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             // Create a new Fragment to be placed in the activity layout
-            BluetoothFragment btFragment = BluetoothFragment.newInstance(BTAdapter, btt);
+            BluetoothFragment btFragment = BluetoothFragment.newInstance(BTAdapter, mChatService);
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
@@ -104,37 +123,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        readHandler = new Handler() {
-
-            public void handleMessage(Message message) {
-
-                String s = (String) message.obj;
-
-                // Do something with the message
-                switch (s) {
-                    case "CONNECTED": {
-                        TextView tv = (TextView) findViewById(R.id.statusText);
-                        tv.setText(R.string.bluetooth_connected);
-                        break;
-                    }
-                    case "DISCONNECTED": {
-                        TextView tv = (TextView) findViewById(R.id.statusText);
-                        tv.setText(R.string.bluetooth_disconnected);
-                        break;
-                    }
-                    case "CONNECTION FAILED": {
-                        TextView tv = (TextView) findViewById(R.id.statusText);
-                        tv.setText(R.string.bluetooth_failed);
-                        btt = null;
-                        break;
-                    }
-                    default: {
-                        TextView tv = (TextView) findViewById(R.id.readField);
-                        tv.setText(s);
-                    }
-                }
-            }
-        };
     }
 
     @Override
@@ -183,13 +171,13 @@ public class MainActivity extends AppCompatActivity
             tagText = "BluetoothFragment";
             fragment = fm.findFragmentByTag(tagText);
             if (fragment == null) {
-                fragment = BluetoothFragment.newInstance(BTAdapter, btt);
+                fragment = BluetoothFragment.newInstance(BTAdapter, mChatService);
             }
         } else if (id == R.id.nav_sendText) {
             tagText = "SendTextFragment";
             fragment = fm.findFragmentByTag(tagText);
             if (fragment == null) {
-                fragment = SendTextFragment.newInstance(BTAdapter, btt, readHandler);
+                fragment = SendTextFragment.newInstance(BTAdapter, mChatService);
             }
         } else {
             fragment=null;
@@ -206,10 +194,99 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentInteraction(String deviceAddress, Handler handler) {
-        readHandler = handler;
+    public void onFragmentInteraction(String deviceAddress) {
         arduinoAddr = deviceAddress;
     }
+
+    /**
+     * The Handler that gets information back from the BluetoothChatService
+     */
+    @SuppressLint("HandlerLeak")
+    private final Handler readHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            TextView tv = (TextView) findViewById(R.id.statusText);
+            switch (msg.what) {
+                case Constants.MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case BluetoothChatService.STATE_CONNECTED:
+                            tv.setText(getString(R.string.title_connected_to, mConnectedDeviceName));
+                            break;
+                        case BluetoothChatService.STATE_CONNECTING:
+                            tv.setText(R.string.title_connecting);
+                            break;
+                        case BluetoothChatService.STATE_NONE:
+                            tv.setText(R.string.bluetooth_disconnected);
+                            break;
+                        case BluetoothChatService.STATE_LOST:
+                            tv.setText(R.string.bluetooth_disconnected);
+                            break;
+                    }
+                    break;
+                case Constants.MESSAGE_READ:
+                    byte[] readBuf = (byte[]) msg.obj;
+                    // construct a string from the valid bytes in the buffer
+                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    TextView rf = (TextView) findViewById(R.id.readField);
+                    rf.setText(readMessage);
+                    break;
+                case Constants.MESSAGE_DEVICE_NAME:
+                    // save the connected device's name
+                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
+                    Toast.makeText(MainActivity.this, "Connected to "
+                            + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                    break;
+                case Constants.MESSAGE_TOAST:
+                    Toast.makeText(MainActivity.this, msg.getData().getString(Constants.TOAST),
+                            Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
+
+    /**
+     * Sends a message.
+     *
+     * @param message A string of text to send.
+     */
+    protected void sendMessage(String message) {
+        EditText mOutEditText = (EditText) findViewById(R.id.writeField);
+
+        // Check that we're actually connected before trying anything
+        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+            Toast.makeText(MainActivity.this, R.string.not_connected, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Check that there's actually something to send
+        if (message.length() > 0) {
+            // Get the message bytes and tell the BluetoothChatService to write
+            byte[] send = message.getBytes();
+            mChatService.write(send);
+
+            // Reset out string buffer to zero and clear the edit text field
+            mOutStringBuffer.setLength(0);
+            mOutEditText.setText(mOutStringBuffer);
+
+            // Initialize the compose field with a listener for the return key
+            mOutEditText.setOnEditorActionListener(mWriteListener);
+        }
+    }
+
+    /**
+     * The action listener for the EditText widget, to listen for the return key
+     */
+    private TextView.OnEditorActionListener mWriteListener
+            = new TextView.OnEditorActionListener() {
+        public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+            // If the action is a key-up event on the return key, send the message
+            if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
+                String message = view.getText().toString();
+                sendMessage(message);
+            }
+            return true;
+        }
+    };
 
     @Override
     public void onFragmentInteraction(Uri uri) {

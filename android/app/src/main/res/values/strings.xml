@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">CZ3004</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -15,9 +15,13 @@
 
     <string name="bluetooth_connected">"Connected."</string>
     <string name="bluetooth_disconnected">"Disconnected."</string>
-    <string name="bluetooth_failed">"Disconnected."</string>
+    <string name="bluetooth_failed">" Connect failed."</string>
+    <string name="not_connected">You are not connected to a device</string>
     <string name="start_scan">Start Scan</string>
     <string name="stop_scan">Stop Scan</string>
-    <string name="enter_write_text">Enter write text here...</string>
+    <string name="enter_write_text">Enter write text here…</string>
+
+    <string name="title_connected_to">connected to <xliff:g id="device_name">%1$s</xliff:g></string>
+    <string name="title_connecting">Connecting…</string>
 
 </resources>
