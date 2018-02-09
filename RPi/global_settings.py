@@ -45,7 +45,19 @@ def print_mazemap(mmap):
     for mazerow in mmap:
         for grid in mazerow:
             if grid is None:
-                print " "
+                print "?"
             else:
                 print grid,
         print " "
+
+
+def get_mdf_bitstring(mmap, format=0):
+
+    bitstring = '11' + ''.join(str(grid) for mazerow in mmap for grid in mazerow) + '11'
+
+    if format == 0:     # binary
+        return bin(int(bitstring, 2))
+    if format == 1:     # hexadecimal
+        return hex(int(bitstring, 2))
+
+    assert False, "unhandled format"
