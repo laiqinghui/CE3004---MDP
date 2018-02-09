@@ -28,7 +28,7 @@ class Arduino(threading.Thread):
     def interruptHandler(self, channel):
         time.sleep(0.6)     # delay is essential here
         bytes = self.readData()
-        message = getBytesArray(bytes)
+        message = self.getBytesArray(bytes)
         dispatcher.send(message=message, signal=gs.ARDUINO_SIGNAL, sender=gs.ARDUINO_SENDER)
 
     def getBytesArray(self, arr):
@@ -43,7 +43,7 @@ class Arduino(threading.Thread):
         try:
             self.bus.write_i2c_block_data(self.address, 0, data)
         except IOError:
-            logging.info("Not on RPi")
+            logging.info("Please check if arduino connected.")
         return -1
 
     def readData(self):
