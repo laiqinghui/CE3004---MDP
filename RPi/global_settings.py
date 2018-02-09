@@ -34,8 +34,18 @@ def init():
     global MAZEMAP
     _x = 15
     _y = 20
-    MAZEMAP = [[0] * _y] * _x
+    MAZEMAP = [[None for i in range(_x)] for j in range(_y)]
 
     logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
                         datefmt='%d-%m-%Y:%H:%M:%S',
                         level=logging.INFO)
+
+
+def print_mazemap(mmap):
+    for mazerow in mmap:
+        for grid in mazerow:
+            if grid is None:
+                print " "
+            else:
+                print grid,
+        print " "
