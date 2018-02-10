@@ -1,8 +1,12 @@
 #include <PinChangeInt.h>
 #include "DualVNH5019MotorShield.h"
 #include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
-
+//OLED def
+#define OLED_RESET 4
+Adafruit_SSD1306 display(OLED_RESET);
 
 //Wheel Encoders def
 #define e1a 3
@@ -16,7 +20,7 @@ DualVNH5019MotorShield md;
 #define singlerevticks 2248
 #define sampleInterval 0.005
 //Motor 1(Right) constant
-#define td1 0.00496 
+#define td1 0.00496
 #define ts1 0.06667 //Orig: 0.09667, tune: 0.08667 //Higher denotes more gain on correction
 #define k1 0.35093
 
@@ -56,29 +60,30 @@ signed long currentErr_M2 = 0;
 signed long prevErr1_M2 = 0;
 signed long prevErr2_M2 = 0;
 
-//------------Other constants and declrations----------
-#define Pi 3.1416
-#define singlerevticks 2248.86
 
-signed long wheelDiameter = 6*Pi;
-signed long ticksPerCM = singlerevticks/wheelDiameter;
 
 //------------Interrupt declarations------------
 signed long startCaptureTime = 0.55 * 1000000;       // 0.1 seconds for free standing
 
 volatile int squareWidth_M1 = 0;
+int squareWidth_M1_Arr[3] = {0};
+volatile int sampleM1 = 0;
 volatile signed long prev_time_M1 = 0;
 volatile signed long entry_time_M1 = 0;
 volatile signed long ticks = 0;
 
 volatile int squareWidth_M2 = 0;
+int squareWidth_M2_Arr[3] = {0};
+volatile int sampleM2 = 0;
 volatile signed long prev_time_M2 = 0;
 volatile signed long entry_time_M2 = 0;
 
 void risingM1()
 {
   entry_time_M1 = micros();
-  squareWidth_M1 = entry_time_M1 - prev_time_M1;
+  //squareWidth_M1 = entry_time_M1 - prev_time_M1;
+  squareWidth_M1_Arr[sampleM1%3] = entry_time_M1 - prev_time_M1;
+  sampleM1++;
   prev_time_M1 = micros();
   ticks +=4;
 }
@@ -86,7 +91,9 @@ void risingM1()
 void risingM2()
 {
   entry_time_M2 = micros();
-  squareWidth_M2 = entry_time_M2 - prev_time_M2;
+  //squareWidth_M2 = entry_time_M2 - prev_time_M2;
+  squareWidth_M2_Arr[sampleM2%3] = entry_time_M2 - prev_time_M2;
+  sampleM2++;
   prev_time_M2 = micros();
 }
 
@@ -94,8 +101,9 @@ void risingM2()
 
 void setup() {
   Serial.begin(115200);
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3D (for the 128x64)
   md.init();
-  moveForward(80, 80);
+  moveForward(80, 5);
   
 }
 
@@ -109,8 +117,8 @@ void moveForward(int rpm, int distance){
    signed long tuneEntryTime = 0;
    signed long tuneExitTime = 0;
    signed long interval = 0;
-   signed long distanceTicks = distance * ticksPerCM;
-   int pidStartRPM = rpm;  //rpm/2
+   signed long distanceTicks = singlerevticks * 8;
+   int pidStartRPM = rpm/4;  //rpm/2
    boolean startPID = false;
    
    PCintPort::attachInterrupt(e1a, &risingM1, RISING);
@@ -132,7 +140,7 @@ void moveForward(int rpm, int distance){
     }
     */
     md.setM1Speed(241.298);
-    delay(1.8);
+    delay(1.5);
     md.setM2Speed(284.546);
     
    
@@ -140,7 +148,7 @@ void moveForward(int rpm, int distance){
       
       if(!startPID ){
         
-        if( sqWidthToRPM(squareWidth_M1) >= pidStartRPM ||  sqWidthToRPM(squareWidth_M2) >= pidStartRPM ){ //(micros() - tStart) > startCaptureTime
+        if( sqWidthToRPM(getAvgSqWidth(squareWidth_M1_Arr)) >= pidStartRPM ||  sqWidthToRPM(getAvgSqWidth(squareWidth_M2_Arr)) >= pidStartRPM ){ //(micros() - tStart) > startCaptureTime
           
           Serial.print("PID Starts");
           Serial.print("M1 RPM: ");
@@ -178,8 +186,8 @@ void moveForward(int rpm, int distance){
     md.setM2Brake(300);
     delay(500);
     ticks = 0;
-    md.setM2Speed(-180);//342.698
-    md.setM1Speed(-160);//296.216
+    md.setM2Speed(-342.698);//342.698
+    md.setM1Speed(-280);//296.216
 
     while(ticks < distanceTicks);
     md.setM1Brake(250);
@@ -192,11 +200,12 @@ void tuneM1(int desiredRPM){
 
   
   double tuneSpeed;
-  double currentRPM = sqWidthToRPM(squareWidth_M1);
+  //double currentRPM = sqWidthToRPM(squareWidth_M1);
+  int squareW = getAvgSqWidth(squareWidth_M1_Arr);
+  double currentRPM = sqWidthToRPM(squareW);
   Serial.print("M1 Current RPM: ");
   Serial.println(currentRPM);
   Serial.println();
-  
   currentErr_M1 =  desiredRPM - currentRPM;
   tuneSpeed = currentRPM + k1_1*currentErr_M1 + k2_1*prevErr1_M1 + k3_1*prevErr2_M1;
   //Serial.print("M1 tuneSpeed ");
@@ -213,7 +222,9 @@ void tuneM1(int desiredRPM){
 
   
   double tuneSpeed;
-  double currentRPM = sqWidthToRPM(squareWidth_M2);
+  //double currentRPM = sqWidthToRPM(squareWidth_M2);
+  int squareW = getAvgSqWidth(squareWidth_M2_Arr);
+  double currentRPM = sqWidthToRPM(squareW);
   Serial.print("M2 Current RPM: ");
   Serial.println(currentRPM);
   
@@ -247,11 +258,11 @@ int getAvgSqWidth(int arr[]){
   signed long sum = 0;
   int avg = 0;
    
-  for(int i = 0; i < 10; i++){  
+  for(int i = 0; i < 3; i++){  
    sum += arr[i];
   }
 
-  avg = (sum / 10);
+  avg = (sum / 3);
   Serial.print("Avg: ");
   Serial.println(avg);
   return avg;
