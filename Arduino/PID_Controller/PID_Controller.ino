@@ -114,7 +114,7 @@ void moveForward(int rpm, int distance){
    boolean startPID = false;
    
    PCintPort::attachInterrupt(e1a, &risingM1, RISING);
-   PCintPort::attachInterrupt(e2a, &risingM2, RISING);
+   PCintPort::attachInterrupt(e2b, &risingM2, RISING);
 
    //Must start with a offset to reduce acceleration difference
    

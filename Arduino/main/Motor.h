@@ -1,7 +1,7 @@
 #include <PinChangeInt.h>
 #include "DualVNH5019MotorShield.h"
 
-DualVNH5019MotorShield md;
+DualVNH5019MotorShield md(2,4,6,A0,7,8,12,A1);
 
 //------------Wheel Encoders constants------------
 #define e1a 3
@@ -253,7 +253,7 @@ void moveForward(int rpm, int distance){
    
    setM1Ticks(0);// Reset M1Ticks
    PCintPort::attachInterrupt(e1a, &risingM1, RISING);
-   PCintPort::attachInterrupt(e2a, &risingM2, RISING);
+   PCintPort::attachInterrupt(e2b, &risingM2, RISING);
    Serial.println("Moving forward...\nInterrupt attached\nSetting speed now...");
 
 	md.setSpeeds(241.298, 284.546);
@@ -317,7 +317,7 @@ void moveForward(int rpm, int distance){
 	setSqWidth(0,0);//Reset sqWidth
 	setM1Ticks(0);// Reset M1Ticks
 	PCintPort::detachInterrupt(e1a);
-	PCintPort::detachInterrupt(e2a);
+	PCintPort::detachInterrupt(e2b);
    
   }
 
