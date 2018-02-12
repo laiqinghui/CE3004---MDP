@@ -35,8 +35,7 @@ def init():
     global MAZEMAP
     _row = 20
     _col = 15
-    MAZEMAP = np.zeros([_row, _col], dtype=int)         # record maze obstacles, 1 for grid is obstacle
-    MAZESTATUS = np.zeros([_row, _col], dtype=int)      # record exploration status, 1 for grid is explored
+    MAZEMAP = np.zeros([_row, _col], dtype=int)
 
     logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
                         datefmt='%d-%m-%Y:%H:%M:%S',
