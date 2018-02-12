@@ -1,0 +1,88 @@
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.grp5.mdp.cz3004.ArenaFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <TextView
+        android:id="@+id/robotStatus"
+        android:layout_marginTop="650dp"
+        android:layout_marginLeft="40dp"
+        android:layout_width="230dp"
+        android:layout_height="30dp"
+        android:text="Robot Status" />
+
+    <TextView
+        android:id="@+id/bluetoothStatus"
+        android:layout_marginTop="650dp"
+        android:layout_marginLeft="300dp"
+        android:layout_width="230dp"
+        android:layout_height="30dp"
+        android:text="Bluetooth Status" />
+
+    <Button
+        android:id="@+id/startButton"
+        android:layout_marginTop="680dp"
+        android:layout_marginBottom="50dp"
+        android:layout_marginLeft="40dp"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:text="START" />
+
+    <Button
+        android:id="@+id/startPointButton"
+        android:layout_marginTop="680dp"
+        android:layout_marginLeft="180dp"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:text="Set Start Point"
+        android:textSize="12sp"/>
+
+    <Button
+        android:id="@+id/wayPointButton"
+        android:layout_marginTop="750dp"
+        android:layout_marginLeft="180dp"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:text="Set Way Point"
+        android:textSize="12sp"/>
+
+    <ToggleButton
+        android:id="@+id/updateToggleButton"
+        android:layout_marginTop="680dp"
+        android:layout_marginLeft="300dp"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:textOn="Manual"
+        android:textOff="Auto" />
+
+    <Button
+        android:id="@+id/returnButton"
+        android:layout_marginTop="750dp"
+        android:layout_marginLeft="300dp"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:text="return" />
+
+    <Button
+        android:id="@+id/refreshButton"
+        android:layout_marginTop="680dp"
+        android:layout_marginLeft="420dp"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:text="refresh" />
+
+    <ToggleButton
+        android:id="@+id/exploreToggleButton"
+        android:layout_marginTop="750dp"
+        android:layout_marginLeft="420dp"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:textOn="Fastest Path"
+        android:textOff="Exploration" />
+
+
+
+</android.support.design.widget.CoordinatorLayout>
