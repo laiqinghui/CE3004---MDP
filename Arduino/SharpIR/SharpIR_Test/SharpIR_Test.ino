@@ -1,52 +1,74 @@
-/*
-  Analog Input
- Demonstrates analog input by reading an analog sensor on analog pin 0 and
- turning on and off a light emitting diode(LED)  connected to digital pin 13.
- The amount of time the LED will be on and off depends on
- the value obtained by analogRead().
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
- The circuit:
- * Potentiometer attached to analog input 0
- * center pin of the potentiometer to the analog pin
- * one side pin (either one) to ground
- * the other side pin to +5V
- * LED anode (long leg) attached to digital output 13
- * LED cathode (short leg) attached to ground
-
- * Note: because most Arduinos have a built-in LED attached
- to pin 13 on the board, the LED is optional.
-
-
- Created by David Cuartielles
- modified 30 Aug 2011
- By Tom Igoe
-
- This example code is in the public domain.
-
- http://www.arduino.cc/en/Tutorial/AnalogInput
-
- */
-
-int sensorPin = A0;    // select the input pin for the potentiometer
-int ledPin = 13;      // select the pin for the LED
+#define frontRightIR  A1    //Front right PS2
+#define frontLeftIR  A3    //Front left PS4
+#define left A2  // Left PS3
+#define right A0 // Right PS1
 int sensorValue = 0;  // variable to store the value coming from the sensor
+int distanceFR = 0;
+int distanceFL = 0;
+int distanceR = 0;
+int distanceL = 0;
+
+double LRaw = 0;
+double LVoltage = 0;
+double RRaw = 0;
+double RVoltage = 0;
+
+//OLED def
+#define OLED_RESET 4
+Adafruit_SSD1306 display(OLED_RESET);
 
 void setup() {
-  // declare the ledPin as an OUTPUT:
-  //pinMode(ledPin, OUTPUT);
-  Serial.begin(9600);
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3D (for the 128x64)
+  Serial.begin(115200);
+  Serial.print("HI: ");
 }
 
 void loop() {
-  // read the value from the sensor:
-  sensorValue = analogRead(sensorPin);
-  // turn the ledPin on
-  //digitalWrite(ledPin, HIGH);
-  // stop the program for <sensorValue> milliseconds:
-  delay(sensorValue);
-  // turn the ledPin off:
-  //digitalWrite(ledPin, LOW);
-  Serial.println(sensorValue);
+  LRaw = analogRead(left);
+  LVoltage = LRaw*(5.0 / 1023.0) ;
+  /* 
+  Serial.print("LRaw: ");
+  Serial.print(LRaw);
+  Serial.print("  LVoltage: ");
+  Serial.println(LVoltage);
+  */
+  distanceFR = (6787/analogRead(frontRightIR) - 3) - 4;
+  distanceFL = (6787/analogRead(frontLeftIR) - 3) - 4;
+  distanceR = 60.374 * pow( ( analogRead(right)*(5.0 / 1023.0) ) , -1.16);
+  distanceL = 60.374 * pow( LVoltage , -1.16);
+
+  
+  Serial.print("Front Left: ");
+  Serial.println(distanceFL);
+  Serial.print("Front Right: ");
+  Serial.println(distanceFR);
+  
+  Serial.print("Left: ");
+  Serial.println(distanceL);
+  Serial.print("Right: ");
+  Serial.println(distanceR);
+ 
+  Serial.println();
+
+  // Setup OLED display
+  display.clearDisplay();
+  display.setTextSize(0.08);
+  display.setTextColor(WHITE);
+  display.setCursor(0,0);
+  display.println("FL, FR, L, R: ");
+  display.print(distanceFL);
+  display.print(", ");
+  display.print(distanceFR);
+  display.print(", ");
+  display.print(distanceL);
+  display.print(", ");
+  display.println(distanceR);
+  display.display();
+  delay(1000);
   // stop the program for for <sensorValue> milliseconds:
-  delay(sensorValue);
+
 }

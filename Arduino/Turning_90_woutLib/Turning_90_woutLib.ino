@@ -55,7 +55,7 @@ void turn(int dir, int turnDegree)
      */
     
     double cir = Pi * 17.6; //circumfrence of circle drawn when turning in cm, current diameter used is 17.6
-    double cmToCounts = 2248/(6*Pi); //cm to counts for wheel
+    double cmToCounts = 2248.86/(6*Pi); //cm to counts for wheel
     int amount = abs(cir * (turnDegree/360.0) * cmToCounts) * getTurnTicksOffsetAmt(turnDegree);//int to ignored decimal value
     unsigned long ticks = 0;
     boolean brakeSet = false;
@@ -69,7 +69,7 @@ void turn(int dir, int turnDegree)
     Serial.println(getTurnTicksOffsetAmt(turnDegree));
     md.setSpeeds(-158.921 * dir, 197.318 * dir);//80 RPM
     
-    while(ticks < amount*0.85)
+    while(ticks < amount)
     {
       ticks = abs(M1Ticks);
       Serial.print("M1 current En count: ");
