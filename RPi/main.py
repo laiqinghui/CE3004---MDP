@@ -16,43 +16,43 @@ def initialise_robot_options(argv):
 
     gs.init()
 
-    robot_x = 0
-    robot_y = 0
-    waypoint_x = 0
-    waypoint_y = 0
-    goal_x = 0
-    goal_y = 0
+    robot_row = 0
+    robot_col = 0
+    waypoint_row = 0
+    waypoint_col = 0
+    goal_row = 0
+    goal_col = 0
     mode = 0
 
     try:
-        opts, remainders = getopt.getopt(argv, "m:", ["rx=", "ry=", "wx=", "wy=", "gx=", "gy=", "mode="])
+        opts, remainders = getopt.getopt(argv, "m:", ["rr=", "rc=", "wr=", "wc=", "gr=", "gc=", "mode="])
     except getopt.GetoptError:
         pass
 
     for opt, arg in opts:
 
-        if opt in ("-x", "--rx"):
-            robot_x = int(arg)
-        elif opt in ("-y", "--ry"):
-            robot_y = int(arg)
-        elif opt in ("--wx"):
-            waypoint_x = int(arg)
-        elif opt in ("--wy"):
-            waypoint_y = int(arg)
-        elif opt in ("--gx"):
-            goal_x = int(arg)
-        elif opt in ("--gy"):
-            goal_y = int(arg)
+        if opt in ("-r", "--rr"):
+            robot_row = int(arg)
+        elif opt in ("-c", "--rc"):
+            robot_col = int(arg)
+        elif opt in ("--wr"):
+            waypoint_row = int(arg)
+        elif opt in ("--wc"):
+            waypoint_col = int(arg)
+        elif opt in ("--gr"):
+            goal_row = int(arg)
+        elif opt in ("--gc"):
+            goal_col = int(arg)
         elif opt in ("-m", "--mode"):
             mode = int(arg)
         else:
             assert False, "unhandled option"
 
-    return robot_x, robot_y, waypoint_x, waypoint_y, goal_x, goal_y, mode
+    return robot_row, robot_col, waypoint_row, waypoint_col, goal_row, goal_col, mode
 
 
 # TODO: Convert to method in android.py bluetooth connection file
-def start_robot_exploration(rx, ry, wx, wy, gx, gy, m, keep_alive=False):
+def start_robot_exploration(rr, rc, wr, wc, gr, gc, m, keep_alive=False):
     """
     Function to start the robot exploration. This should be executed as a non-daemon
     thread so that it can be stopped when required.
@@ -60,7 +60,7 @@ def start_robot_exploration(rx, ry, wx, wy, gx, gy, m, keep_alive=False):
     This function will need to move to the android.py file as a method.
     """
     rpi_thread = threading.Thread(target=RPI)
-    algo_thread = threading.Thread(target=Algorithm, args=(rx, ry, wx, wy, gx, gy, m))
+    algo_thread = threading.Thread(target=Algorithm, args=(rr, rc, wr, wc, gr, gc, m))
     arduino_thread = threading.Thread(target=Arduino)
 
     rpi_thread.daemon = True
@@ -91,11 +91,11 @@ if __name__ == "__main__":
     #     time.sleep(1)
 
     """RUN MAIN.PY TO TEST ALGORITHM & RPI INTERFACE"""
-    # python main.py --rx=1 --ry=1 --wx=5 --wy=9 --gx=19 --gy=14 -m 0
-    # sys.argv[1:] = ['--rx=1', '--ry=1', '--wx=5', '--wy=9', '--gx=19', '--gy=14', '-m', '0']
-    rx, ry, wx, wy, gx, gy, m = initialise_robot_options(sys.argv[1:])
+    # python main.py --rr=18 --rc=1 --wr=5 --wc=9 --gr=1 --gc=13 -m 0
+    # sys.argv[1:] = ['--rr=1', '--rc=1', '--wr=5', '--wc=9', '--gr=19', '--gc=14', '-m', '0']
+    rr, rc, wr, wc, gr, gc, m = initialise_robot_options(sys.argv[1:])
 
-    start_robot_exploration(rx, ry, wx, wy, gx, gy, m)
+    start_robot_exploration(rr, rc, wr, wc, gr, gc, m)
 
     while 1:
         time.sleep(1)

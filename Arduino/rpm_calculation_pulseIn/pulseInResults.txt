@@ -1,0 +1,72 @@
+===========START=================
+===========End=================
+Duration: 2028
+
+
+
+sizeOfArray = 65
+SquareWidth = 22052
+SquareWidth = 15164
+SquareWidth = 13343
+SquareWidth = 12677
+SquareWidth = 12205
+SquareWidth = 11636
+SquareWidth = 11193
+SquareWidth = 10993
+SquareWidth = 10912
+SquareWidth = 10600
+SquareWidth = 10397
+SquareWidth = 10432
+SquareWidth = 10480
+SquareWidth = 10235
+SquareWidth = 10073
+SquareWidth = 10152
+SquareWidth = 10203
+SquareWidth = 10069
+SquareWidth = 10006
+SquareWidth = 10117
+SquareWidth = 10130
+SquareWidth = 9937
+SquareWidth = 9789
+SquareWidth = 9846
+SquareWidth = 9861
+SquareWidth = 9726
+SquareWidth = 9626
+SquareWidth = 9754
+SquareWidth = 9828
+SquareWidth = 9691
+SquareWidth = 9630
+SquareWidth = 9770
+SquareWidth = 9826
+SquareWidth = 9698
+SquareWidth = 9638
+SquareWidth = 9786
+SquareWidth = 9769
+SquareWidth = 9626
+SquareWidth = 9581
+SquareWidth = 9698
+SquareWidth = 9725
+SquareWidth = 9599
+SquareWidth = 9532
+SquareWidth = 9685
+SquareWidth = 9715
+SquareWidth = 9578
+SquareWidth = 9483
+SquareWidth = 9616
+SquareWidth = 9617
+SquareWidth = 9485
+SquareWidth = 9415
+SquareWidth = 9573
+SquareWidth = 9590
+SquareWidth = 9483
+SquareWidth = 9436
+SquareWidth = 9595
+SquareWidth = 9595
+SquareWidth = 9406
+SquareWidth = 9317
+SquareWidth = 9431
+SquareWidth = 9403
+SquareWidth = 9283
+SquareWidth = 9246
+SquareWidth = 9388
+SquareWidth = 0
