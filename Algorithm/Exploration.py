@@ -32,32 +32,48 @@ class Exploration:
         self.timeLimit = timeLimit
         self.exploredArea = 0
         self.currentMap = np.zeros([20, 15])
-        # if sim:
-        # from Simulator import Robot
-        # self.robot = Robot(self.currentMap, EAST, START, realMap)
-        # self.sensors = self.robot.getSensors()
-        # else:
-        from Real import Robot
-        self.robot = Robot(self.currentMap, EAST, START)
+        if sim:
+            from Simulator import Robot
+            self.robot = Robot(self.currentMap, EAST, START, realMap)
+            self.sensors = self.robot.getSensors()
+        else:
+            from Real import Robot
+            self.robot = Robot(self.currentMap, EAST, START)
 
         self.exploredNeighbours = dict()
         self.sim = sim
         self.calibrateLim = calibrateLim
         self.virtualWall = [0, 0, MAX_ROWS, MAX_COLS]
 
-    def explore(self):
-        """Run the exploration until fully explored or until time runs out."""
-        print "Starting exploration..."
-        startTime = time.time()
-        endTime = startTime + self.timeLimit
+    def __validInds(self, inds):
+        """To check if the input indices are valid or not.
 
-        while(time.time() <= endTime):
-            if (self.moveStep()):
-                print "Exploration completed!"
-                return
+        To be valid the following conditions must be met:
+            * A 3x3 neighbourhood around the center should lie within the arena
+            * A 3x3 neighbourhood around the center should have no obstacle
 
-        print "Time limit reached!"
-        return
+        Args:
+            inds (list of list): List of coordinates to be checked
+
+        Returns:
+            list of list: All indices that were valid
+
+        """
+        valid = []
+
+        for i in inds:
+            r, c = i
+            x, y = np.meshgrid([-1, 0, 1], [-1, 0, 1])
+            x, y = x+r, y+c
+            if (np.any(x < 0) or np.any(y < 0) or np.any(x >= MAX_ROWS)
+               or np.any(y >= MAX_COLS)):
+                valid.append(False)
+            elif (np.any(self.currentMap[x[0, 0]:x[0, 2]+1, y[0, 0]:y[2, 0]+1] != 1)):
+                valid.append(False)
+            else:
+                valid.append(True)
+
+        return [tuple(inds[i]) for i in range(len(inds)) if valid[i]]
 
     def moveStep(self, sensor_vals=None):
         """Move the robot one step for exploration.
@@ -243,36 +259,6 @@ class Exploration:
                     break
 
         return counter
-
-    def __validInds(self, inds):
-        """To check if the input indices are valid or not.
-
-        To be valid the following conditions must be met:
-            * A 3x3 neighbourhood around the center should lie within the arena
-            * A 3x3 neighbourhood around the center should have no obstacle
-
-        Args:
-            inds (list of list): List of coordinates to be checked
-
-        Returns:
-            list of list: All indices that were valid
-
-        """
-        valid = []
-
-        for i in inds:
-            r, c = i
-            x, y = np.meshgrid([-1, 0, 1], [-1, 0, 1])
-            x, y = x+r, y+c
-            if (np.any(x < 0) or np.any(y < 0) or np.any(x >= MAX_ROWS)
-               or np.any(y >= MAX_COLS)):
-                valid.append(False)
-            elif (np.any(self.currentMap[x[0, 0]:x[0, 2]+1, y[0, 0]:y[2, 0]+1] != 1)):
-                valid.append(False)
-            else:
-                valid.append(True)
-
-        return [tuple(inds[i]) for i in range(len(inds)) if valid[i]]
 
     def validMove(self, inds):
         """Check if all the three cells on one side of the robot are free.
