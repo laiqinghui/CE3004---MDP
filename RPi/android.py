@@ -1,29 +1,24 @@
 import logging
 import time
 import threading
+import sys
+import global_settings as gs
 
 from bluetooth import *
 from pydispatch import dispatcher
-
-import global_settings as gs
-
 
 class Android(threading.Thread):
     def __init__(self):
         gs.init()
         logging.info("android thread initialized")
+        dispatcher.connect(self.sendAndroid, signal=gs.RPI_ANDROID_SIGNAL, sender=gs.RPI_SENDER)
 
-        # port doesnt have to be hardcoded when app is done
         self.port = 4
         self.server_socket = BluetoothSocket(RFCOMM)
         #self.port = self.server_socket.getsockname()[1]
         self.server_socket.bind(("", self.port))
         self.server_socket.listen(1)
-
-        # needs to be the same as android device when the app is done
-        #uuid = "94f39d29-7d6d-437d-973b-fba39e49d4ee"
         uuid = "00001101-0000-1000-8000-00805F9B34FB"
-
 
         advertise_service(self.server_socket, "MDPGroup5", service_id=uuid, service_classes=[uuid, SERIAL_PORT_CLASS], profiles=[SERIAL_PORT_PROFILE])
         logging.info("Waiting for Bluetooth connection on port " + str(self.port))
@@ -31,13 +26,9 @@ class Android(threading.Thread):
         logging.info("Accepted connection from" + str(self.client_info))
 
         try:
-            self.sendAndroid("A test message")
+            self.sendAndroid("Connection Secured")
             while True:
                 self.receiveAndroid()
-                # data = self.client_sock.recv(1024)
-                # if len(data) == 0: break
-                # logging.info("Received " + data)
-                # self.client_sock.send("Pi received data: " + data)
         except IOError:
             pass
 
@@ -57,7 +48,9 @@ class Android(threading.Thread):
         """
         try:
             msg = self.client_sock.recv(1024)
-            logging.info("Received " + msg)
+            dispatcher.send(message=msg, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)
+            self.sendAndroid("This message has been received: " + msg)
+            # logging.info("Received " + msg)
             return msg
         except BluetoothError:
             logging.info("Bluetooth Error")
