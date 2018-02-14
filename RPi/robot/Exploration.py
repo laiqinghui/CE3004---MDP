@@ -3,7 +3,10 @@
 import numpy as np
 import time
 
+import global_settings as gs
+
 from Constants import NORTH, SOUTH, EAST, WEST, FORWARD, LEFT, RIGHT, START, MAX_ROWS, MAX_COLS
+
 
 class Exploration:
     """Implementation of the Right-Wall hugging algorithm for a maze solving robot.
@@ -31,7 +34,7 @@ class Exploration:
         """
         self.timeLimit = timeLimit
         self.exploredArea = 0
-        self.currentMap = np.zeros([20, 15])
+        self.currentMap = gs.MAZEMAP
         if sim:
             from Simulator import Robot
             self.robot = Robot(self.currentMap, EAST, START, realMap)
