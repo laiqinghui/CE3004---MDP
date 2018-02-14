@@ -16,7 +16,9 @@ char buffer[50] = {0};
 void setup() {
   
   // initialize i2c as slave
-  Serial.begin(9600);
+  
+  Serial.begin(115200);
+  Serial.println("Starting device...");
   Wire.begin(SLAVE_ADDRESS);
   pinMode(PI_PIN, OUTPUT);
   digitalWrite(PI_PIN, LOW);
@@ -29,8 +31,16 @@ void setup() {
 }
 
 void loop() {
-  //Wire.write("Data From Arduino!");
-  //delay(500);
+  while(Serial.available()){
+    
+     if(Serial.read() == 49){//1 in ascii
+        Serial.println("Interrupting Pi now...");
+        interruptPi();
+        Serial.println("Interrupt sent!");
+      }
+      
+      
+    }
 } // end loop
 
 void printArray(char arr[], int len){
@@ -44,6 +54,7 @@ void printArray(char arr[], int len){
   
 // callback for received data
 void receiveData(int byteCount) {
+  Serial.println("Recieving data...");
   int i = 0;
   int len = Wire.available();
   Serial.print("Incoming: ");
@@ -64,8 +75,7 @@ void receiveData(int byteCount) {
     
     Serial.print("buffer: ");
     printArray(buffer, len);
-    interruptPi();
-    //sendData();
+    //interruptPi();
   } else {
     
       //Single ack byte return from the Pi after Arduino sent a string over
@@ -85,8 +95,7 @@ void interruptPi(){
 
 // callback for sending data
 void sendData() {
-  Serial.println("Request incoming from PI!");
-  Wire.write("Data From Arduino!");
+  Wire.write("HELLO THIS IS ARDUINO");
 }
 
 
