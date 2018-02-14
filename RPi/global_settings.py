@@ -1,4 +1,5 @@
 import logging
+import numpy as np
 
 
 def init():
@@ -32,9 +33,9 @@ def init():
     ARDUINO_SIGNAL = 'arduino_signal'
 
     global MAZEMAP
-    _x = 15
-    _y = 20
-    MAZEMAP = [[None for i in range(_x)] for j in range(_y)]
+    _row = 20
+    _col = 15
+    MAZEMAP = np.zeros([_row, _col], dtype=int)
 
     logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
                         datefmt='%d-%m-%Y:%H:%M:%S',
@@ -52,12 +53,9 @@ def print_mazemap(mmap):
 
 
 def get_mdf_bitstring(mmap, format=0):
-
     bitstring = '11' + ''.join(str(grid) for mazerow in mmap for grid in mazerow) + '11'
-
     if format == 0:     # binary
         return bin(int(bitstring, 2))
     if format == 1:     # hexadecimal
         return hex(int(bitstring, 2))
-
     assert False, "unhandled format"

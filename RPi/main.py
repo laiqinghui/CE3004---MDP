@@ -5,9 +5,10 @@ import threading
 
 from pydispatch import dispatcher
 
-from algorithm import Algorithm
+# from algorithm import Algorithm
+from robot.explore_algorithm import ExplorationAlgorithm
 from android import Android
-from arduino import Arduino
+# from arduino import Arduino
 from rpi import RPI
 import global_settings as gs
 
@@ -60,16 +61,17 @@ def start_robot_exploration(rr, rc, wr, wc, gr, gc, m, keep_alive=False):
     This function will need to move to the android.py file as a method.
     """
     rpi_thread = threading.Thread(target=RPI)
-    algo_thread = threading.Thread(target=Algorithm, args=(rr, rc, wr, wc, gr, gc, m))
-    arduino_thread = threading.Thread(target=Arduino)
+    # algo_thread = threading.Thread(target=Algorithm, args=(rr, rc, wr, wc, gr, gc, m))
+    algo_thread = threading.Thread(target=ExplorationAlgorithm, args=(rr, rc, wr, wc, gr, gc, m))
+    # arduino_thread = threading.Thread(target=Arduino)
 
     rpi_thread.daemon = True
     algo_thread.daemon = True
-    arduino_thread.daemon = True
+    # arduino_thread.daemon = True
 
     rpi_thread.start()
     algo_thread.start()
-    arduino_thread.start()
+    # arduino_thread.start()
 
     if keep_alive:
         while 1:
