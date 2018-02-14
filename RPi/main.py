@@ -5,10 +5,10 @@ import threading
 
 from pydispatch import dispatcher
 
-# from algorithm import Algorithm
-from robot.algorithm import Algorithm
+from algorithm import Algorithm
+# from robot.algorithm import Algorithm
 from android import Android
-# from arduino import Arduino
+from arduino import Arduino
 from rpi import RPI
 import global_settings as gs
 
@@ -65,15 +65,15 @@ def start_robot_exploration(rr, rc, wr, wc, gr, gc, m, d, keep_alive=False):
     rpi_thread = threading.Thread(target=RPI)
     # algo_thread = threading.Thread(target=Algorithm, args=(rr, rc, wr, wc, gr, gc, m))
     algo_thread = threading.Thread(target=Algorithm, args=(rr, rc, wr, wc, gr, gc, m, d))
-    # arduino_thread = threading.Thread(target=Arduino)
+    arduino_thread = threading.Thread(target=Arduino)
 
     rpi_thread.daemon = True
     algo_thread.daemon = True
-    # arduino_thread.daemon = True
+    arduino_thread.daemon = True
 
     rpi_thread.start()
     algo_thread.start()
-    # arduino_thread.start()
+    arduino_thread.start()
 
     if keep_alive:
         while 1:

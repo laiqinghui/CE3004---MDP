@@ -32,7 +32,7 @@ class Arduino(threading.Thread):
 
     def interruptHandler(self, channel):
         time.sleep(0.6)
-        bytes = self.readData()
+        byte = self.readData()
         message = self.readBytesArray(bytes)
 
         # if acknowledgement byte
