@@ -36,7 +36,8 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         BluetoothFragment.OnFragmentInteractionListener,
-        SendTextFragment.OnFragmentInteractionListener{
+        SendTextFragment.OnFragmentInteractionListener,
+        ArenaFragment.OnFragmentInteractionListener{
 
     private BluetoothAdapter BTAdapter;
     private Fragment fragment;
@@ -178,6 +179,12 @@ public class MainActivity extends AppCompatActivity
             fragment = fm.findFragmentByTag(tagText);
             if (fragment == null) {
                 fragment = SendTextFragment.newInstance(BTAdapter, mChatService);
+            }
+        } else if (id == R.id.nav_arena) {
+            tagText = "ArenaFragment";
+            fragment = fm.findFragmentByTag(tagText);
+            if (fragment == null) {
+                fragment = ArenaFragment.newInstance(BTAdapter, mChatService);
             }
         } else {
             fragment=null;
