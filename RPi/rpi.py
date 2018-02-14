@@ -20,40 +20,40 @@ class RPI(threading.Thread):
 
     def command_rpi(self, message):
         logging.info("rpi received message from android and write message: " + str(message))
-        command = message.split()[0]
-        # exploration with starting point example: 
-        # "ex robot_row=1 robot_col=1"
-        if(command == "ex"):
-            for arg in message.split():
-                if("robot_row" in arg):
-                    robot_row = arg.split("=",1)[1]
-                elif ("robot_col" in arg):
-                    robot_col = arg.split("=",1)[1]
-        # fastest path example: 
-        # "ex robot_row=1 robot_col=1 waypoint_row=10 waypoint_col=10 goal_row=12 goal_col=12"
-        elif(command == "fp"):
-            for arg in message.split():
-                if("robot_row" in arg):
-                    robot_row = arg.split("=",1)[1]
-                elif ("robot_col" in arg):
-                    robot_col = arg.split("=",1)[1]
-                elif ("waypoint_row" in arg):
-                    waypoint_row = arg.split("=",1)[1]
-                elif ("waypoint_col" in arg):
-                    waypoint_col = arg.split("=",1)[1]
-                elif ("goal_row" in arg):
-                    goal_row = arg.split("=",1)[1]
-                elif ("goal_col" in arg):
-                    goal_col = arg.split("=",1)[1]
-        # manual move 3 steps example:
-        # move 3
-        elif(command == "move"):
-            steps = int(message.split()[1])
-            #dispatcher send 3 steps to ardunino
-            # dispatcher.send(message=, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
-        elif(command == "rotate"):
-            degree = int(message.split()[1])
-        # #elif(command == "reset"):
+        # command = message.split()[0]
+        # # exploration with starting point example:
+        # # "ex robot_row=1 robot_col=1"
+        # if(command == "ex"):
+        #     for arg in message.split():
+        #         if("robot_row" in arg):
+        #             robot_row = arg.split("=",1)[1]
+        #         elif ("robot_col" in arg):
+        #             robot_col = arg.split("=",1)[1]
+        # # fastest path example:
+        # # "ex robot_row=1 robot_col=1 waypoint_row=10 waypoint_col=10 goal_row=12 goal_col=12"
+        # elif(command == "fp"):
+        #     for arg in message.split():
+        #         if("robot_row" in arg):
+        #             robot_row = arg.split("=",1)[1]
+        #         elif ("robot_col" in arg):
+        #             robot_col = arg.split("=",1)[1]
+        #         elif ("waypoint_row" in arg):
+        #             waypoint_row = arg.split("=",1)[1]
+        #         elif ("waypoint_col" in arg):
+        #             waypoint_col = arg.split("=",1)[1]
+        #         elif ("goal_row" in arg):
+        #             goal_row = arg.split("=",1)[1]
+        #         elif ("goal_col" in arg):
+        #             goal_col = arg.split("=",1)[1]
+        # # manual move 3 steps example:
+        # # move 3
+        # elif(command == "move"):
+        #     steps = int(message.split()[1])
+        #     #dispatcher send 3 steps to ardunino
+        #     # dispatcher.send(message=, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
+        # elif(command == "rotate"):
+        #     degree = int(message.split()[1])
+        # # #elif(command == "reset"):
 
     def command_arduino(self, message):
         """

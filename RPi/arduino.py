@@ -33,10 +33,11 @@ class Arduino(threading.Thread):
     def interruptHandler(self, channel):
         time.sleep(0.6)
         byte = self.readData()
-        message = self.readBytesArray(byte)
-
+        logging.info(self.readBytesArray(byte))
+        message = "TEST"
         # if acknowledgement byte
         if chr(byte[0]) == "A":
+            logging.info("arduino acknowledged")
             self.mutex_w.acquire()
             if self.acknowledged:
                 logging.info("Error: acknowledgement byte from arduino not resolved yet")
@@ -44,13 +45,17 @@ class Arduino(threading.Thread):
             self.mutex_w.release()
         # if sensor data
         elif chr(byte[0]) == "S":
+            logging.info("byte[0]) == S")
             message = self.readBytesArray(byte[1:])
-
-        message = self.readBytesArray(byte)
-        dispatcher.send(message=message, signal=gs.ARDUINO_SIGNAL, sender=gs.ARDUINO_SENDER)
+            # message = self.readBytesArray(byte)
+            dispatcher.send(message=message, signal=gs.ARDUINO_SIGNAL, sender=gs.ARDUINO_SENDER)
 
     def readBytesArray(self, arr):
         output = ''.join([chr(x) for x in arr if x != 255])
+        # output = ''
+        # for b in arr:
+        #     if b != 255:
+        #         output += chr(b)
         return output
 
     def ConvertStringToBytes(self, src):
@@ -64,7 +69,8 @@ class Arduino(threading.Thread):
             dt_started = datetime.datetime.now()
             base_time = 1
             while 1:
-                time.sleep(0.6)
+                logging.info("waiting for acknowledgement")
+                time.sleep(1)
                 if self.acknowledged:
                     break
                 # send again if acknowledgement not receive after every 5 second

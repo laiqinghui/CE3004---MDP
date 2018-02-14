@@ -12,6 +12,7 @@
 #define SLAVE_ADDRESS 0x04
 
 char buffer[50] = {0};
+//char test[3] = {'S', 'b', 'c'};
 
 
 void setup() {
@@ -28,37 +29,27 @@ void setup() {
   // define callbacks for i2c communication
   Wire.onReceive(receiveData);
   Wire.onRequest(sendData);
+
+  
   
 }
 
 void loop() {
 
-  int len = Serial.available();
 
-  for(int i = 0; i< len; i++){
-    buffer[i] = Serial.read();
-  }
-  interruptPi();
 
-  delay(3000);
-
+   
   
-  /*
-  while(Serial.available()){
     
-     if(Serial.read() == 49){//1 in ascii
-        Serial.println("Interrupting Pi now...");
-        interruptPi();
-        Serial.println("Interrupt sent!");
-      }
-      
-      
-    }
-    */
-} // end loop
+  
+
+  }
+  
+
 
 void printArray(char arr[], int len){
     //Start from one as first char is empty
+    Serial.println("Printing arr...");
     for(int i = 1; i < len ; i++){
         Serial.print(arr[i]);
       }
@@ -89,7 +80,8 @@ void receiveData(int byteCount) {
     
     Serial.print("buffer: ");
     printArray(buffer, len);
-    //interruptPi();
+    buffer[0] = 'A';
+    interruptPi();
   } else {
     
       //Single ack byte return from the Pi after Arduino sent a string over
@@ -109,7 +101,8 @@ void interruptPi(){
 
 // callback for sending data
 void sendData() {
-  Wire.write(buffer, 50);
+  
+  Wire.write(buffer);
   
 }
 

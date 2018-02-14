@@ -14,10 +14,11 @@ MANUAL = 2
 
 class Algorithm(threading.Thread):
 
-    def __init__(self, robot_row, robot_col, waypoint_row, waypoint_col, goal_row, goal_col, mode):
+    def __init__(self, robot_row, robot_col, waypoint_row, waypoint_col, goal_row, goal_col, mode, direction):
 
         logging.info("algorithm initialized")
 
+        self.direction = direction
         self.r_row = robot_row
         self.r_col = robot_col
         self.w_row = waypoint_row
