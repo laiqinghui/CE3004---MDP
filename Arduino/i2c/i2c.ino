@@ -13,6 +13,7 @@
 
 char buffer[50] = {0};
 
+
 void setup() {
   
   // initialize i2c as slave
@@ -31,6 +32,18 @@ void setup() {
 }
 
 void loop() {
+
+  int len = Serial.available();
+
+  for(int i = 0; i< len; i++){
+    buffer[i] = Serial.read();
+  }
+  interruptPi();
+
+  delay(3000);
+
+  
+  /*
   while(Serial.available()){
     
      if(Serial.read() == 49){//1 in ascii
@@ -41,6 +54,7 @@ void loop() {
       
       
     }
+    */
 } // end loop
 
 void printArray(char arr[], int len){
@@ -95,7 +109,8 @@ void interruptPi(){
 
 // callback for sending data
 void sendData() {
-  Wire.write("HELLO THIS IS ARDUINO");
+  Wire.write(buffer, 50);
+  
 }
 
 
