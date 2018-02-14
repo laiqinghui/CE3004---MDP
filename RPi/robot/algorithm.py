@@ -1,15 +1,18 @@
 import logging
+import numpy as np
 import time
 import threading
 
 import global_settings as gs
+from Real import Robot
+from Constants import EAST
 
 from pydispatch import dispatcher
 
 
 EXPLORATION = 0
 FASTEST_PATH = 1
-MANUAL = 2
+# MANUAL = 2
 
 
 class Algorithm(threading.Thread):
@@ -26,6 +29,7 @@ class Algorithm(threading.Thread):
         self.g_col = goal_col
         self.mode = mode
         self.currentMap = gs.MAZEMAP
+        self.algorithmClass = None
 
         if self.mode == EXPLORATION:
             dispatcher.connect(self.determine_exploration_path, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
@@ -37,16 +41,20 @@ class Algorithm(threading.Thread):
         self.idle()
 
     def determine_exploration_path(self, message):
+
+        sensor_vals = message
         # message e.g. front and side have obstacle or not
         logging.info("Exploration robot now at position " + str(self.r_row) + ", " + str(self.r_col))
-        logging.info("Algorithm receive obstacle info: " + str(message) + ", now calculating robot path...")
+        logging.info("Algorithm receive obstacle info: " + str(sensor_vals) + ", now calculating robot path...")
         time.sleep(1)
         dispatcher.send(message='move robot', signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
 
     def determine_fastest_path(self, message):
+
+        sensor_vals = message
         # message e.g. front and side have obstacle or not
         logging.info("Fastest path robot now at position " + str(self.r_row) + ", " + str(self.r_col))
-        logging.info("Algorithm receive obstacle info: " + str(message) + ", now calculating robot path...")
+        logging.info("Algorithm receive obstacle info: " + str(sensor_vals) + ", now calculating robot path...")
         time.sleep(1)
         dispatcher.send(message='move robot', signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
 
