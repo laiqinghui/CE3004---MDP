@@ -5,8 +5,7 @@ import threading
 
 from pydispatch import dispatcher
 
-from algorithm import Algorithm
-# from robot.algorithm import Algorithm
+from robot.algorithm import Algorithm
 from android import Android
 from arduino import Arduino
 from rpi import RPI
@@ -62,16 +61,16 @@ def start_robot_exploration(rr, rc, wr, wc, gr, gc, m, d, keep_alive=False):
 
     This function will need to move to the android.py file as a method.
     """
-    rpi_thread = threading.Thread(target=RPI)
-    # algo_thread = threading.Thread(target=Algorithm, args=(rr, rc, wr, wc, gr, gc, m))
-    algo_thread = threading.Thread(target=Algorithm, args=(rr, rc, wr, wc, gr, gc, m, d))
-    arduino_thread = threading.Thread(target=Arduino)
+    # rpi_thread = threading.Thread(target=RPI)
+    # algo_thread = threading.Thread(target=Algorithm, args=(rr, rc, wr, wc, gr, gc, m, d))
+    # arduino_thread = threading.Thread(target=Arduino)
+    rpi_thread = RPI()
+    algo_thread = Algorithm(rr, rc, wr, wc, gr, gc, m, d)
+    arduino_thread = Arduino()
 
     rpi_thread.daemon = True
     algo_thread.daemon = True
     arduino_thread.daemon = True
-
-    print "test"
 
     rpi_thread.start()
     algo_thread.start()
@@ -97,7 +96,7 @@ if __name__ == "__main__":
     #     time.sleep(1)
 
     """RUN MAIN.PY TO TEST ALGORITHM & RPI INTERFACE"""
-    # python main.py --rr=18 --rc=1 --wr=5 --wc=9 --gr=1 --gc=13 --mode=0 --dir=1
+    # python main.py --rr=18 --rc=1 --wr=5 --wc=9 --gr=1 --gc=13 --mode=3 --dir=3
     # sys.argv[1:] = ['--rr=1', '--rc=1', '--wr=5', '--wc=9', '--gr=19', '--gc=14', '-m', '0']
     rr, rc, wr, wc, gr, gc, m, d = initialise_robot_options(sys.argv[1:])
 

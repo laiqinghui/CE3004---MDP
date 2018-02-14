@@ -1,6 +1,7 @@
 import logging
 import time
 import threading
+import sys
 
 from pydispatch import dispatcher
 
@@ -10,13 +11,14 @@ import global_settings as gs
 class RPI(threading.Thread):
     def __init__(self):
 
-        logging.info("rpi initialized")
+        super(RPI, self).__init__()
+        self.running = False
 
         dispatcher.connect(self.command_rpi, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)
         dispatcher.connect(self.command_arduino, signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
         dispatcher.connect(self.command_algorithm, signal=gs.ARDUINO_SIGNAL, sender=gs.ARDUINO_SENDER)
 
-        self.idle()
+        logging.info("rpi initialized")
 
     def command_rpi(self, message):
         logging.info("rpi received message from android and write message: " + str(message))
@@ -70,6 +72,16 @@ class RPI(threading.Thread):
         dispatcher.send(message=message, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
         logging.info("rpi received message from arduino and send message to algorithm: " + str(message))
 
+    def start(self):
+        self.running = True
+        super(RPI, self).start()
+
+    def run(self):
+        self.idle()
+
+    def stop(self):
+        self.running = False
+
     def idle(self):
-        while(1):
+        while(self.running):
             time.sleep(1)

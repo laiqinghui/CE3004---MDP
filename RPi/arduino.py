@@ -15,7 +15,8 @@ import global_settings as gs
 class Arduino(threading.Thread):
     def __init__(self):
 
-        logging.info("arduino initialized")
+        super(Arduino, self).__init__()
+        self.running = False
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
@@ -27,8 +28,7 @@ class Arduino(threading.Thread):
         self.acknowledged = False
 
         dispatcher.connect(self.writeData, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
-
-        self.idle()
+        logging.info("arduino initialized")
 
     def interruptHandler(self, channel):
         time.sleep(0.6)
@@ -92,6 +92,16 @@ class Arduino(threading.Thread):
         number = self.bus.read_i2c_block_data(self.address, 0, 32)
         return number
 
+    def start(self):
+        self.running = True
+        super(Algorithm, self).start()
+
+    def run(self):
+        self.idle()
+
+    def stop(self):
+        self.running = False
+
     def idle(self):
-        while 1:
+        while(self.running):
             time.sleep(1)
