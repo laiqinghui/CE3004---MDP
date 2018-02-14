@@ -33,7 +33,7 @@ class Arduino(threading.Thread):
     def interruptHandler(self, channel):
         time.sleep(0.6)
         byte = self.readData()
-        message = self.readBytesArray(bytes)
+        message = self.readBytesArray(byte)
 
         # if acknowledgement byte
         if chr(byte[0]) == "A":
@@ -44,9 +44,9 @@ class Arduino(threading.Thread):
             self.mutex_w.release()
         # if sensor data
         elif chr(byte[0]) == "S":
-            message = self.readBytesArray(bytes[1:])
+            message = self.readBytesArray(byte[1:])
 
-        message = self.readBytesArray(bytes)
+        message = self.readBytesArray(byte)
         dispatcher.send(message=message, signal=gs.ARDUINO_SIGNAL, sender=gs.ARDUINO_SENDER)
 
     def readBytesArray(self, arr):

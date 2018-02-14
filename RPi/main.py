@@ -71,6 +71,8 @@ def start_robot_exploration(rr, rc, wr, wc, gr, gc, m, d, keep_alive=False):
     algo_thread.daemon = True
     arduino_thread.daemon = True
 
+    print "test"
+
     rpi_thread.start()
     algo_thread.start()
     arduino_thread.start()
