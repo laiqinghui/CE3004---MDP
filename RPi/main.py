@@ -6,7 +6,7 @@ import threading
 from pydispatch import dispatcher
 
 # from algorithm import Algorithm
-from robot.explore_algorithm import ExplorationAlgorithm
+from robot.algorithm import Algorithm
 from android import Android
 # from arduino import Arduino
 from rpi import RPI
@@ -26,7 +26,7 @@ def initialise_robot_options(argv):
     mode = 0
 
     try:
-        opts, remainders = getopt.getopt(argv, "m:", ["rr=", "rc=", "wr=", "wc=", "gr=", "gc=", "mode="])
+        opts, remainders = getopt.getopt(argv, "m:", ["rr=", "rc=", "wr=", "wc=", "gr=", "gc=", "mode=", "dir="])
     except getopt.GetoptError:
         pass
 
@@ -46,14 +46,16 @@ def initialise_robot_options(argv):
             goal_col = int(arg)
         elif opt in ("-m", "--mode"):
             mode = int(arg)
+        elif opt in ("--dir"):
+            direction = int(arg)
         else:
             assert False, "unhandled option"
 
-    return robot_row, robot_col, waypoint_row, waypoint_col, goal_row, goal_col, mode
+    return robot_row, robot_col, waypoint_row, waypoint_col, goal_row, goal_col, mode, direction
 
 
 # TODO: Convert to method in android.py bluetooth connection file
-def start_robot_exploration(rr, rc, wr, wc, gr, gc, m, keep_alive=False):
+def start_robot_exploration(rr, rc, wr, wc, gr, gc, m, d, keep_alive=False):
     """
     Function to start the robot exploration. This should be executed as a non-daemon
     thread so that it can be stopped when required.
@@ -62,7 +64,7 @@ def start_robot_exploration(rr, rc, wr, wc, gr, gc, m, keep_alive=False):
     """
     rpi_thread = threading.Thread(target=RPI)
     # algo_thread = threading.Thread(target=Algorithm, args=(rr, rc, wr, wc, gr, gc, m))
-    algo_thread = threading.Thread(target=ExplorationAlgorithm, args=(rr, rc, wr, wc, gr, gc, m))
+    algo_thread = threading.Thread(target=Algorithm, args=(rr, rc, wr, wc, gr, gc, m, d))
     # arduino_thread = threading.Thread(target=Arduino)
 
     rpi_thread.daemon = True
@@ -93,11 +95,11 @@ if __name__ == "__main__":
     #     time.sleep(1)
 
     """RUN MAIN.PY TO TEST ALGORITHM & RPI INTERFACE"""
-    # python main.py --rr=18 --rc=1 --wr=5 --wc=9 --gr=1 --gc=13 -m 0
+    # python main.py --rr=18 --rc=1 --wr=5 --wc=9 --gr=1 --gc=13 --mode=0 --dir=1
     # sys.argv[1:] = ['--rr=1', '--rc=1', '--wr=5', '--wc=9', '--gr=19', '--gc=14', '-m', '0']
-    rr, rc, wr, wc, gr, gc, m = initialise_robot_options(sys.argv[1:])
+    rr, rc, wr, wc, gr, gc, m, d = initialise_robot_options(sys.argv[1:])
 
-    start_robot_exploration(rr, rc, wr, wc, gr, gc, m)
+    start_robot_exploration(rr, rc, wr, wc, gr, gc, m, d)
 
     while 1:
         time.sleep(1)
