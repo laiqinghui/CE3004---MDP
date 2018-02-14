@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,9 +33,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Set;
 
+import static android.provider.Telephony.Mms.Part.FILENAME;
 import static com.grp5.mdp.cz3004.MainActivity.REQUEST_BLUETOOTH;
 
 
@@ -107,11 +115,12 @@ public class BluetoothFragment extends Fragment implements AdapterView.OnItemCli
         super.onStart();
         // If BT is not on, request that it be enabled.
         // setupChat() will then be called during onActivityResult
-        if (!mBluetoothAdapter.isEnabled()) {
-            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-            // Otherwise, setup the chat session
-        }
+//        if (!mBluetoothAdapter.isEnabled()) {
+//            Log.d("DEBUGG", "test2");
+//            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+//            // Otherwise, setup the chat session
+//        }
     }
 
     @Override
@@ -137,12 +146,20 @@ public class BluetoothFragment extends Fragment implements AdapterView.OnItemCli
         scan = (ToggleButton) view.findViewById(R.id.scan);
         Button discovery = view.findViewById(R.id.discovery_button);
         Button writeButton = view.findViewById(R.id.writeButton);
+        Button saveButton = view.findViewById(R.id.saveButton);
+        EditText writeField = view.findViewById(R.id.writeField);
         // Set the adapter
         mListView = (AbsListView) view.findViewById(android.R.id.list);
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
+
+        SharedPreferences customText = getActivity().getSharedPreferences(Constants.PREF_NAME, Context.MODE_PRIVATE);
+        String custom_write_text = customText.getString(Constants.PREF_NAME, "");
+
+        writeField.setText(custom_write_text);
+
 
         discovery.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -159,9 +176,29 @@ public class BluetoothFragment extends Fragment implements AdapterView.OnItemCli
             public void onClick(View view) {
                 Log.v("WRITE", "Write button pressed.");
 
-                TextView tv = (TextView)getActivity().findViewById(R.id.writeField);
+                TextView tv = (TextView) getActivity().findViewById(R.id.writeField);
                 String data = tv.getText().toString();
-                ((MainActivity)getActivity()).sendMessage(data);
+                ((MainActivity) getActivity()).sendMessage(data);
+            }
+        });
+
+        saveButton.setOnClickListener(new Button.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Log.v("SAVE", "Save button pressed.");
+                TextView tv = (TextView) getActivity().findViewById(R.id.writeField);
+                String data = tv.getText().toString();
+
+                //TODO: Save data in persistent storage
+                // We need an Editor object to make preference changes.
+                // All objects are from android.context.Context
+                SharedPreferences customText = getActivity().getSharedPreferences(Constants.PREF_NAME, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = customText.edit();
+                editor.putString(Constants.PREF_NAME, data);
+
+                // Commit the edits!
+                editor.commit();
             }
         });
 
@@ -172,14 +209,16 @@ public class BluetoothFragment extends Fragment implements AdapterView.OnItemCli
                 filter.addAction(BluetoothDevice.ACTION_FOUND);
                 filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
                 if (isChecked) {
-                    if(!mBluetoothAdapter.isEnabled()){
+                    if (!mBluetoothAdapter.isEnabled()) {
                         Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                         startActivityForResult(enableBT, REQUEST_BLUETOOTH);
+                        scan.setChecked(false);
+                    } else {
+                        mAdapter.clear();
+                        getActivity().registerReceiver(bReciever, filter);
+                        Toast.makeText(getActivity(), "Scan started!", Toast.LENGTH_SHORT).show();
+                        mBluetoothAdapter.startDiscovery();
                     }
-                    mAdapter.clear();
-                    getActivity().registerReceiver(bReciever, filter);
-                    Toast.makeText(getActivity(), "Scan started!", Toast.LENGTH_SHORT).show();
-                    mBluetoothAdapter.startDiscovery();
                 } else {
                     getActivity().unregisterReceiver(bReciever);
                     Toast.makeText(getActivity(), "Scan stopped!", Toast.LENGTH_SHORT).show();
