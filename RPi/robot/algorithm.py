@@ -8,7 +8,6 @@ import FastestPath
 
 import global_settings as gs
 from Real import Robot
-from Constants import EAST
 
 from pydispatch import dispatcher
 
@@ -20,10 +19,11 @@ FASTEST_PATH = 1
 
 class Algorithm(threading.Thread):
 
-    def __init__(self, robot_row, robot_col, waypoint_row, waypoint_col, goal_row, goal_col, mode):
+    def __init__(self, robot_row, robot_col, waypoint_row, waypoint_col, goal_row, goal_col, mode, dir):
 
         logging.info("algorithm initialized")
 
+        self.dir = dir
         self.r_row = robot_row
         self.r_col = robot_col
         self.w_row = waypoint_row
@@ -38,7 +38,11 @@ class Algorithm(threading.Thread):
             self.algorithmClass = Exploration.Exploration(timeLimit=5)
             dispatcher.connect(self.determine_exploration_path, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
         elif self.mode == FASTEST_PATH:
-            # self.algorithmClass = FastestPath.FastestPath(gs.MAZEMAP)
+            self.algorithmClass = FastestPath.FastestPath(exploredMap=gs.MAZEMAP,
+                                                          start=[self.r_row, self.r_col],
+                                                          goal=[self.g_row, self.g_col],
+                                                          direction=self.dir,
+                                                          waypoint=[self.w_row, self.w_col])
             dispatcher.connect(self.determine_fastest_path, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
         else:
             pass
