@@ -1,4 +1,4 @@
-#include <PinChangeInt.h>
+#include <EnableInterrupt.h>
 #include "DualVNH5019MotorShield.h"
 
 DualVNH5019MotorShield md(2,4,6,A0,7,8,12,A1);
@@ -56,14 +56,16 @@ signed long prevErr2_M2 = 0;
 
 //------------Other constants and declrations----------
 #define Pi 3.1416
-#define singlerevticks 2248.86
+#define singlerevticks 1124.43
 
 signed long wheelDiameter = 6*Pi;
 signed long ticksPerCM = singlerevticks/wheelDiameter;
 
 
 //------------Interrupt declarations------------
-volatile signed long M1Ticks = 0;
+//For increase interrupt speed
+#define NEEDFORSPEED
+#define INTERRUPT_FLAG_PIN3 M1Ticks
 
 volatile int squareWidth_M1 = 0;
 volatile signed long prev_time_M1 = 0;
@@ -318,20 +320,16 @@ void moveForward(int rpm, int distance){
 void turn(int dir, int turnDegree)
 {
     //1 is right, -1 is left
-    
     double cir = Pi * 17.5; //circumfrence of circle drawn when turning in cm, current diameter used is 17.6
     int amount = abs(cir * (turnDegree/360.0) * ticksPerCM);//int to ignored decimal value //* getTurnTicksOffsetAmt(turnDegree)
-    int ticks = 0;
-    boolean brakeSet = false;
     
     Serial.print("Target count: ");
     Serial.println(amount);
     Serial.print("Offset amt: ");
     Serial.println(getTurnTicksOffsetAmt(turnDegree));
   
-  
-    PCintPort::attachInterrupt(e1a, &risingM1, RISING); 
-    setM1Ticks(0); 
+	enableInterruptFast(e1a, CHANGE);
+    M1Ticks = 0; 
     md.setSpeeds(-159 * dir, 197 * dir);//80 RPM
     
     while(abs(M1Ticks) < amount - 500)
@@ -347,8 +345,9 @@ void turn(int dir, int turnDegree)
     Serial.println(ticks);
     
 	setSqWidth(0,0);//Reset sqWidth
-	setM1Ticks(0);// Reset M1Ticks
-    PCintPort::detachInterrupt(e1a); 
+	M1Ticks = 0;
+	
+	disableInterrupt(e1a);
 }
 
   
