@@ -36,13 +36,13 @@ class Exploration:
         self.timeLimit = timeLimit
         self.exploredArea = 0
         self.currentMap = np.zeros([20, 15])
-        if sim:
-            from Simulator import Robot
-            self.robot = Robot(self.currentMap, direction, self.startPos, realMap)
-            self.sensors = self.robot.getSensors()
-        else:
-            from Real import Robot
-            self.robot = Robot(self.currentMap, self.direction, startPos)
+        # if sim:
+        #     from Simulator import Robot
+        #     self.robot = Robot(self.currentMap, direction, self.startPos, realMap)
+        #     self.sensors = self.robot.getSensors()
+        # else:
+        from Real import Robot
+        self.robot = Robot(self.currentMap, self.direction, startPos)
 
         self.exploredNeighbours = dict()
         self.sim = sim
