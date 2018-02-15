@@ -23,7 +23,7 @@ class Exploration:
 
     """
 
-    def __init__(self, realMap=None, timeLimit=None, calibrateLim=6, sim=True):
+    def __init__(self, startPos=START, direction=EAST, realMap=None, timeLimit=None, calibrateLim=6, sim=True):
         """To initialise an instance of the Exploration class.
 
         Args:
@@ -32,21 +32,24 @@ class Exploration:
             sim (bool, optional): To specify simulation mode or real mode
 
         """
+        self.startPos = startPos
         self.timeLimit = timeLimit
         self.exploredArea = 0
-        self.currentMap = gs.MAZEMAP
+        self.currentMap = np.zeros([20, 15])
         if sim:
             from Simulator import Robot
-            self.robot = Robot(self.currentMap, EAST, START, realMap)
+            self.robot = Robot(self.currentMap, direction, self.startPos, realMap)
             self.sensors = self.robot.getSensors()
         else:
             from Real import Robot
-            self.robot = Robot(self.currentMap, EAST, START)
+            self.robot = Robot(self.currentMap, self.direction, startPos)
 
         self.exploredNeighbours = dict()
         self.sim = sim
         self.calibrateLim = calibrateLim
         self.virtualWall = [0, 0, MAX_ROWS, MAX_COLS]
+        self.visited = dict()
+        self.endTime = 0
 
     def __validInds(self, inds):
         """To check if the input indices are valid or not.
@@ -77,6 +80,97 @@ class Exploration:
                 valid.append(True)
 
         return [tuple(inds[i]) for i in range(len(inds)) if valid[i]]
+
+    def explore(self):
+        """Runs the exploration till the map is fully explored or time runs out.
+
+           Handles the exploration of areas that cannot be explored using
+           Right-Wall hugging algorithm by using the Fastest Path algorithm
+
+           Returns:
+               move: Next move or moves for the robot to execute
+               bool: True is the map is fully explored
+
+        """
+        self.endTime = time.time() + self.timeLimit
+        steps = 0
+        numCycle = 1
+        step = float(0.1)
+
+        if (time.time() <= self.endTime and self.exploredArea < 100):
+            current = self.moveStep()
+            steps += 1
+            currentPos = tuple(self.robot.center)
+
+            if (currentPos in self.visited):
+                self.visited[currentPos] += 1
+                if (self.visited[currentPos] > 3):
+                    neighbour = self.getExploredNeighbour()
+                    if (neighbour):
+                        neighbour = np.asarray(neighbour)
+                        fsp = FastestPath(self.currentMap, self.robot.center,
+                                          neighbour, self.robot.direction, None)
+
+                        fsp.getFastestPath()
+                        while (fsp.robot.center.tolist() != neighbour.tolist()):
+                            fsp.moveStep()
+                            time.sleep(step)
+                        print "Fastest Path to unexplored area!"
+
+                        self.robot.center = neighbour
+                        self.robot.head = fsp.robot.head
+                        self.robot.direction = fsp.robot.direction
+
+                        print fsp.movement
+                        return fsp.movement, False
+                    else:
+                        return "", False
+            else:
+                self.visited[currentPos] = 1
+                return current
+
+            if (np.array_equal(self.robot.center, self.startPos)):
+                numCycle += 1
+                if (numCycle > 1 and steps > 4 and self.exploredArea < 100):
+                    neighbour = self.getExploredNeighbour()
+                    if (neighbour):
+                        neighbour = np.asarray(neighbour)
+                        fsp = FastestPath(self.currentMap, self.robot.center,
+                                          neighbour, self.robot.direction, None)
+
+                        fsp.getFastestPath()
+                        while (fsp.robot.center.tolist() != neighbour.tolist()):
+                            fsp.moveStep()
+                            time.sleep(step)
+                        print "Fastest Path to unexplored area!"
+
+                        self.robot.center = neighbour
+                        self.robot.head = fsp.robot.head
+                        self.robot.direction = fsp.robot.direction
+                        self.robot.getSensors()
+
+                        print fsp.movement
+                        return fsp.movement, False
+                    else:
+                        return "", False
+            time.sleep(float(step))
+        elif (time.time() > self.endTime):
+            print "Time limit reached!"
+
+        if (self.exploredArea == 100):
+            fsp = FastestPath(self.currentMap, self.robot.center, self.startPos, self.robot.direction, None)
+            print "Exploration completed. Back to starting position!"
+
+            fsp.getFastestPath()
+            while (fsp.robot.center.tolist() != self.startPos.tolist()):
+                fsp.moveStep()
+                time.sleep(step)
+            print "Starting position reached!"
+
+            print fsp.movement
+            return fsp.movement, True
+
+        return "", False
 
     def moveStep(self, sensor_vals=None):
         """Move the robot one step for exploration.
