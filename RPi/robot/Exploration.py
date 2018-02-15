@@ -81,15 +81,15 @@ class Exploration:
 
         return [tuple(inds[i]) for i in range(len(inds)) if valid[i]]
 
-    def explore(self):
-        """Runs the exploration till the map is fully explored or time runs out.
+    def explore(self, sensor_vals=None):
+        """Run the exploration till the map is fully explored or time runs out.
 
-           Handles the exploration of areas that cannot be explored using
-           Right-Wall hugging algorithm by using the Fastest Path algorithm
+        Handles the exploration of areas that cannot be explored using
+        Right-Wall hugging algorithm by using the Fastest Path algorithm
 
-           Returns:
-               move: Next move or moves for the robot to execute
-               bool: True is the map is fully explored
+        Returns:
+            move: Next move or moves for the robot to execute
+            bool: True is the map is fully explored
 
         """
         self.endTime = time.time() + self.timeLimit
@@ -98,7 +98,11 @@ class Exploration:
         step = float(0.1)
 
         if (time.time() <= self.endTime and self.exploredArea < 100):
-            current = self.moveStep()
+            if (sensor_vals):
+                current = self.moveStep(sensor_vals)
+            else:
+                current = self.moveStep()
+
             steps += 1
             currentPos = tuple(self.robot.center)
 
