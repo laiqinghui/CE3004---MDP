@@ -36,7 +36,7 @@ class RPI(threading.Thread):
         - Updates from Arduino to be processed and passed to Android
         """
         dispatcher.send(message=message, signal=ts.RPI_ALGORITHM_SIGNAL, sender=ts.RPI_SENDER)
-        logging.info("rpi received message from arduino and send message to algorithm: " + str(message))
+        logging.info("rpi received message from arduino and write message to algorithm: " + str(message))
 
     def start(self):
         self.running = True
