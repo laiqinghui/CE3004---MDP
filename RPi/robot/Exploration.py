@@ -131,6 +131,10 @@ class Exploration:
                         return "", False
             else:
                 self.visited[currentPos] = 1
+
+                if (current[1]):
+                    print "Exploration completed"
+
                 return current
 
             if (np.array_equal(self.robot.center, self.startPos)):
