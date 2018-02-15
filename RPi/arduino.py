@@ -52,10 +52,6 @@ class Arduino(threading.Thread):
 
     def readBytesArray(self, arr):
         output = ''.join([chr(x) for x in arr if x != 255])
-        # output = ''
-        # for b in arr:
-        #     if b != 255:
-        #         output += chr(b)
         return output
 
     def ConvertStringToBytes(self, src):
