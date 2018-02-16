@@ -42,7 +42,7 @@ class Exploration:
         #     self.sensors = self.robot.getSensors()
         # else:
         from Real import Robot
-        self.robot = Robot(self.currentMap, self.direction, startPos)
+        self.robot = Robot(self.currentMap, direction, startPos)
 
         self.exploredNeighbours = dict()
         self.sim = sim
