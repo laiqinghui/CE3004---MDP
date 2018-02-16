@@ -194,19 +194,19 @@ class Robot:
         if self.direction == NORTH:
             self.getValue(zip([r-1]*distanceLong,
                           range(c-distanceLong-1, c-1))[::-1],
-                          sensor_vals[5], distanceLong, False)
+                          sensor_vals[4], distanceLong, False)
         elif self.direction == EAST:
             self.getValue(zip(range(r-distanceLong-1, r-1),
-                          [c+1]*distanceLong)[::-1], sensor_vals[5],
+                          [c+1]*distanceLong)[::-1], sensor_vals[4],
                           distanceLong, False)
         elif self.direction == WEST:
             self.getValue(zip(range(r+2, r+distanceLong+2),
-                          [c-1]*distanceLong), sensor_vals[5],
+                          [c-1]*distanceLong), sensor_vals[4],
                           distanceLong, False)
         else:
             self.getValue(zip([r+1]*distanceLong,
                           range(c+2, c+distanceLong+2)),
-                          sensor_vals[5], distanceLong, False)
+                          sensor_vals[4], distanceLong, False)
 
     def getValue(self, inds, value, distance, sr, right=False):
         """To retrieve sensor values and convert them into cells.
