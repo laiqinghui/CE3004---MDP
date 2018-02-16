@@ -52,15 +52,12 @@ class Algorithm(threading.Thread):
     def determine_exploration_path(self, message):
 
         sensor_vals = message
-        instruction = ""
+        # instruction = []
+        # completed = False
 
-        instruction = self.algorithmClass.moveStep(sensor_vals)
+        instruction, completed = self.algorithmClass.moveStep(sensor_vals)
 
-        # message e.g. front and side have obstacle or not
-        # logging.info("Exploration robot now at position " + str(self.r_row) + ", " + str(self.r_col))
-        # logging.info("Algorithm receive obstacle info: " + str(sensor_vals) + ", now calculating robot path...")
-        # time.sleep(1)
-        dispatcher.send(message=instruction, signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
+        dispatcher.send(message=(instruction, completed), signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
 
     def determine_fastest_path(self, message):
 
