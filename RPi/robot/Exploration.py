@@ -128,7 +128,7 @@ class Exploration:
                         print fsp.movement
                         return fsp.movement, False
                     else:
-                        return "", False
+                        return [], False
             else:
                 self.visited[currentPos] = 1
 
@@ -160,7 +160,7 @@ class Exploration:
                         print fsp.movement
                         return fsp.movement, False
                     else:
-                        return "", False
+                        return [], False
             time.sleep(float(step))
         elif (time.time() > self.endTime):
             print "Time limit reached!"
@@ -178,7 +178,7 @@ class Exploration:
             print fsp.movement
             return fsp.movement, True
 
-        return "", False
+        return [], False
 
     def moveStep(self, sensor_vals=None):
         """Move the robot one step for exploration.
