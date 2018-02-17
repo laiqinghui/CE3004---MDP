@@ -59,8 +59,12 @@ int getUltraSoundDistance(){
 }  
 
 int* getSensorReadingInCM(){//Quick and dirty test i.e no avg/median of sensor value
-  
-    //Return pointer to sensors values array
+    /*
+    Return pointer to sensors values array. Reasons for the pointer approach is to facilitate for Exploration where
+    one call to this method will be sufficient for updating to RPI.
+    Usage example: To get front left sensor reading just call sensorsValuesArray()[1]
+    TODO: Generate mean/median of sensors value before assigning
+    */
 		sensorsValuesArray[0] = 500; //getUltraSoundDistance();
 		sensorsValuesArray[1] = (6787/analogRead(frontLeftIR) - 3) - 4;
 		sensorsValuesArray[2] = (6787/analogRead(frontRightIR) - 3) - 4;
