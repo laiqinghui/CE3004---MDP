@@ -61,7 +61,13 @@ class RPI(threading.Thread):
         """
         Message received from algorithm to be processed and passed to arduino
         """
-        dispatcher.send(message=message, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
+        instruction = message[0]
+        completed = message[1]
+
+        print instruction
+        # if completed, send to android it is completed
+
+        dispatcher.send(message=instruction, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
         logging.info("rpi received message from algorithm and write message to arduino: " + str(message))
 
     def command_algorithm(self, message):

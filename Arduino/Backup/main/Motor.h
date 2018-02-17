@@ -1,4 +1,4 @@
-#include <PinChangeInt.h>
+#include <EnableInterrupt.h>
 #include "DualVNH5019MotorShield.h"
 
 DualVNH5019MotorShield md(2,4,6,A0,7,8,12,A1);
@@ -57,14 +57,16 @@ signed long prevErr2_M2 = 0;
 
 //------------Other constants and declrations----------
 #define Pi 3.1416
-#define singlerevticks 2248.86
+#define singlerevticks 1124.43
 
 signed long wheelDiameter = 6*Pi;
 signed long ticksPerCM = singlerevticks/wheelDiameter;
 
 
 //------------Interrupt declarations------------
-volatile signed long M1Ticks = 0;
+//For increase interrupt speed
+#define NEEDFORSPEED
+#define INTERRUPT_FLAG_PIN3 M1Ticks
 
 volatile int squareWidth_M1 = 0;
 volatile signed long prev_time_M1 = 0;
@@ -139,42 +141,36 @@ double getTurnTicksOffsetAmt(int turnDegree)
 void turn(int dir, int turnDegree)
 {
     //1 is right, -1 is left
-    
-    double cir = Pi * 17.6; //circumfrence of circle drawn when turning in cm, current diameter used is 17.6
-    int amount = abs(cir * (turnDegree/360.0) * ticksPerCM) * getTurnTicksOffsetAmt(turnDegree);//int to ignored decimal value
-    signed long ticks = 0;
+    double cir = Pi * 16.4; //circumfrence of circle drawn when turning in cm, current diameter used is 17.6    
+    int amount = abs(cir * (turnDegree/360.0) * ticksPerCM);//int to ignored decimal value //* getTurnTicksOffsetAmt(turnDegree)
+    int ticks = 0;
     boolean brakeSet = false;
-    
-    
-    
     
     Serial.print("Target count: ");
     Serial.println(amount);
     Serial.print("Offset amt: ");
     Serial.println(getTurnTicksOffsetAmt(turnDegree));
-	
-	
-	PCintPort::attachInterrupt(e1a, &risingM1, RISING);  
-    md.setSpeeds(-158.921 * dir, 197.318 * dir);//80 RPM
+  
+  
+    PCintPort::attachInterrupt(e1a, &risingM1, RISING); 
+    setM1Ticks(0); 
     
-    while(ticks < amount)
+    
+	md.setSpeeds(-270 * dir, 300 * dir);
+	while(abs(M1Ticks) < amount - 500)
     {
-      ticks = abs(M1Ticks);
-      //Serial.print("M1 current En count: ");
-      //Serial.println(ticks);
-      /*
-      if(ticks > amount*0.85 && !brakeSet){ //Activate brakes at 85 percent of target ticks
-        md.setBrakes(400,400);
-        brakeSet = true;
-        Serial.println("Brakes activated ");
-        }
-        
-      */
+    }
+	md.setSpeeds(-158.921 * dir, 197.318 * dir);//80 RPM
+	while(abs(M1Ticks) < amount)
+    {
     }
 
     md.setBrakes(400,400);
-	setSqWidth(0,0);//Reset sqWidth
-	setM1Ticks(0);// Reset M1Ticks
+    Serial.print("Current amt: ");
+    Serial.println(ticks);
+    
+  setSqWidth(0,0);//Reset sqWidth
+  setM1Ticks(0);// Reset M1Ticks
     PCintPort::detachInterrupt(e1a); 
 }
 
@@ -355,4 +351,70 @@ void moveForward(int rpm, int distance){
 	PCintPort::detachInterrupt(e2b);
    
   }
+
+void turn(int dir, int turnDegree)
+{
+    //1 is right, -1 is left
+    double cir = Pi * 17.5; //circumfrence of circle drawn when turning in cm, current diameter used is 17.6
+    int amount = abs(cir * (turnDegree/360.0) * ticksPerCM);//int to ignored decimal value //* getTurnTicksOffsetAmt(turnDegree)
+    
+    Serial.print("Target count: ");
+    Serial.println(amount);
+    Serial.print("Offset amt: ");
+    Serial.println(getTurnTicksOffsetAmt(turnDegree));
+  
+	enableInterruptFast(e1a, CHANGE);
+    M1Ticks = 0; 
+    md.setSpeeds(-159 * dir, 197 * dir);//80 RPM
+    
+    while(abs(M1Ticks) < amount - 500)
+    {
+    }
+	md.setSpeeds(-270 * dir, 300 * dir)
+	while(abs(M1Ticks) < amount - 500)
+    {
+    }
+
+    md.setBrakes(400,400);
+    Serial.print("Current amt: ");
+    Serial.println(ticks);
+    
+	setSqWidth(0,0);//Reset sqWidth
+	M1Ticks = 0;
+	
+	disableInterrupt(e1a);
+}
+
+  
+void straightUsingEncoder()
+{
+	md.setSpeeds(270, 300);
+	PCintPort::attachInterrupt(e1a, &risingM1, RISING);
+	PCintPort::attachInterrupt(e2b, &risingM2, RISING);
+	
+	int m1Speed = 270;
+	
+	while(true)
+	{
+		setM1Ticks(0);
+		setM2Ticks(0);
+		delay(100);
+		
+		if(M1Ticks < M2Ticks)
+		{
+			m1Speed = m1Speed + 1;
+			md.setM1Speed(m1Speed);
+		}
+		else if(M1Ticks > M2Ticks)
+		{
+			m1Speed = m1Speed -1;
+			md.setM1Speed(m1Speed);
+		}
+		Serial.println("Next Update");
+		Serial.println(m1Speed);
+		Serial.println("300");
+		Serial.println(M1Ticks - M2Ticks);
+	}
+	
+} 
 
