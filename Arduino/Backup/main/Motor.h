@@ -14,24 +14,24 @@ DualVNH5019MotorShield md(2,4,6,A0,7,8,12,A1);
 
 //Motor 1(Right) constant
 #define td1 0.00496 
-#define ts1 0.06667 //Orig: 0.09667, tune: 0.08667 //Higher denotes more gain on correction
+#define ts1 5 //Orig: 0.09667, tune: 0.06667 //Higher denotes more gain on correction
 #define k1 0.35093
 
 //Motor 2(Left) constant
 #define td2 0.00264
-#define ts2 0.0355 //Orig: 0.05827, tune: 0.09827 
+#define ts2 0.05827 //Orig: 0.05827, tune: 0.0355 
 #define k2 0.31323
 
 //Motor 1(Right) PID parameters
-signed long kc1 = (1.2*ts1)/(k1*td1);
-signed long ti1 = 2*td1;
-signed long kp1 = kc1;
-signed long ki1 = kc1/ti1;
-signed long kd1 = kc1*td1;
+ float kc1 = (1.2*0.09667)/(k1*0.00496);//66.645
+ float ti1 = 2*td1;//0.00992
+ float kp1 = kc1;//6.666
+ float ki1 = kc1/ti1;//344.038
+ float kd1 = kc1*(0.5*td1);//0.016533
 
-signed long k1_1 = kp1+ki1+kd1;
-signed long k2_1 = (-kp1-2)*kd1;
-signed long k3_1 = kd1;
+ float k1_1 = kp1+ki1+kd1;
+ float k2_1 = (-kp1-2)*kd1;
+ float k3_1 = kd1;
 
 //Motor 2(left) PID parameters
 signed long kc2 = (1.2*ts2)/(k2*td2);
@@ -44,11 +44,12 @@ signed long k1_2 = kp2+ki2+kd2;
 signed long k2_2 = (-kp2-2)*kd2;
 signed long k3_2 = kd2;
 
-
+signed long prevTuneSpeed_M1 = 0;
 signed long currentErr_M1 = 0;
 signed long prevErr1_M1 = 0;
 signed long prevErr2_M1 = 0;
 
+signed long prevTuneSpeed_M2 = 0;
 signed long currentErr_M2 = 0;
 signed long prevErr1_M2 = 0;
 signed long prevErr2_M2 = 0;
@@ -124,9 +125,11 @@ double getTurnTicksOffsetAmt(int turnDegree)
   switch(turnDegree){
     
     case 0 ... 90:
-      return 0.90;
+      return 0.85;
+    case 91 ... 359://Not in checklist
+      return 0.9002;  
     case 360 ... 450:
-      return 0.90;
+      return 0.95;
     default:
       return 0.85;
     
@@ -198,8 +201,8 @@ void tuneM1(int desiredRPM){
   
   
   currentErr_M1 =  desiredRPM - currentRPM;
-  tuneSpeed = currentRPM + k1_1*currentErr_M1 + k2_1*prevErr1_M1 + k3_1*prevErr2_M1;
-  /*
+  tuneSpeed = prevTuneSpeed_M1 + k1_1*currentErr_M1 + k2_1*prevErr1_M1 + k3_1*prevErr2_M1;
+  
   Serial.print("currentErr_M1 ");
   Serial.println(currentErr_M1);
   Serial.print("prevErr1_M1 ");
@@ -209,11 +212,12 @@ void tuneM1(int desiredRPM){
   Serial.print("M1 tuneSpeed ");
   Serial.println(tuneSpeed);
   Serial.println();
-  */
+  
   md.setM1Speed(tuneSpeed);
   
   prevErr2_M1 = prevErr1_M1;
   prevErr1_M1 = currentErr_M1;
+  prevTuneSpeed_M1 = tuneSpeed;
 
   
   }
@@ -227,7 +231,7 @@ void tuneM1(int desiredRPM){
   Serial.println(currentRPM);
   
   currentErr_M2 =  desiredRPM - currentRPM;
-  tuneSpeed = currentRPM + k1_2*currentErr_M2 + k2_2*prevErr1_M2 + k3_2*prevErr2_M2;
+  tuneSpeed = prevTuneSpeed_M2 + k1_2*currentErr_M2 + k2_2*prevErr1_M2 + k3_2*prevErr2_M2;
   /*
   Serial.print("M2 tuneSpeed ");
   Serial.println(tuneSpeed);
@@ -236,6 +240,7 @@ void tuneM1(int desiredRPM){
 
   prevErr2_M2 = prevErr1_M2;
   prevErr1_M2 = currentErr_M2;
+  prevTuneSpeed_M2 = tuneSpeed;
 
   
   }  
@@ -243,6 +248,36 @@ void tuneM1(int desiredRPM){
   
 void moveForward(int rpm, int distance){
 
+   Serial.print("KC1_M1: ");
+   Serial.print(kc1);
+   Serial.print("   ki1_M1: ");
+   Serial.print(ki1);
+   Serial.print("   kd1_M1: ");
+   Serial.println(kd1);
+   Serial.println();
+
+
+   
+   
+   
+   Serial.print("K1_M1: ");
+   Serial.print(k1_1);
+   Serial.print("   K2_M1: ");
+   Serial.print(k2_1);
+   Serial.print("   K3_M1: ");
+   Serial.println(k3_1);
+   Serial.println();
+
+   Serial.print("K1_M2: ");
+   Serial.print(k1_2);
+   Serial.print("   K2_M2: ");
+   Serial.print(k2_2);
+   Serial.print("   K3_M2: ");
+   Serial.println(k3_2);
+   Serial.println();
+
+   
+   
    signed long tStart = micros();
    signed long tuneEntryTime = 0;
    signed long tuneExitTime = 0;
@@ -274,13 +309,13 @@ void moveForward(int rpm, int distance){
           
         }else{
           
-          Serial.print("M1 Current RPM: ");
+          Serial.print("M1 Current RPM: ");          } 
+
           Serial.println(sqWidthToRPM(squareWidth_M1));
           Serial.print("M2 Current RPM: ");
           Serial.println(sqWidthToRPM(squareWidth_M2));
           Serial.println();
           
-          } 
       }else {
         
         tuneEntryTime = micros();

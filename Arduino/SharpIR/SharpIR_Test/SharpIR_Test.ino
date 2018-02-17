@@ -22,7 +22,7 @@ double RVoltage = 0;
 Adafruit_SSD1306 display(OLED_RESET);
 
 void setup() {
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3D (for the 128x64)
+  //display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3D (for the 128x64)
   Serial.begin(115200);
   Serial.print("HI: ");
 }
@@ -53,7 +53,7 @@ void loop() {
   Serial.println(distanceR);
  
   Serial.println();
-
+/*
   // Setup OLED display
   display.clearDisplay();
   display.setTextSize(0.08);
@@ -68,7 +68,7 @@ void loop() {
   display.print(", ");
   display.println(distanceR);
   display.display();
-  delay(1000);
-  // stop the program for for <sensorValue> milliseconds:
-
+  
+  */
+  delay(200);
 }

@@ -7,7 +7,7 @@ void setup() {
   Serial.begin(115200);
   md.init();
   initI2C();
-  
+  testSequence2();
  
 }
 
@@ -23,7 +23,7 @@ void loop() {
     
 }
 
-void testSequence(){
+void testSequence1(){
   
     for(int i = 0; i < 4; i++){
     for(int j = 0; j < 3; j++ ){
@@ -35,6 +35,16 @@ void testSequence(){
     turn(-1, 90);//left
     delay(500);  
 }
+  
+  }
+
+  void testSequence2(){
+
+  moveForward(80, 100);
+  //delay(500);
+  ///turn(-1, 180);
+  //delay(500);
+  //moveForward(80, 100);
   
   }
 
