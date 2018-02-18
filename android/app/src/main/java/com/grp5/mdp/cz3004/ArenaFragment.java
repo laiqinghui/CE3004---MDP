@@ -11,10 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 
 /**
@@ -68,8 +70,17 @@ public class ArenaFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_arena, container, false);
-
         GridView gridview = (GridView) view.findViewById(R.id.gridview);
+        Button btStartEx = view.findViewById(R.id.startExButton);
+        Button btStartFp = view.findViewById(R.id.startFpButton);
+        Button btSetStartPoint = view.findViewById(R.id.startPointButton);
+        Button btSetWayPoint = view.findViewById(R.id.wayPointButton);
+        Button btSetStartDirection = view.findViewById(R.id.directionButton);
+        final ToggleButton btUpdateToggle = view.findViewById(R.id.updateToggleButton);
+        Button btReturn = view.findViewById(R.id.returnButton);
+        Button btRefresh = view.findViewById(R.id.refreshButton);
+
+
         Log.d("ARENADEBUG", gridview.toString());
         gridview.setAdapter( new ImageAdapter(getContext()));
 
@@ -80,6 +91,45 @@ public class ArenaFragment extends Fragment {
                         Toast.LENGTH_SHORT).show();
             }
         });
+
+        btStartEx.setOnClickListener(
+                new View.OnClickListener(){
+                    public void onClick(View view) {
+                        //need to implement getting value of start point and direction
+                        String startEx = "ex"+" "+"1"+" "+"18"+" "+"4";
+                        ((MainActivity)getActivity()).sendMessage(startEx);
+                    }
+                }
+        );
+
+        btStartFp.setOnClickListener(
+                new View.OnClickListener(){
+                    public void onClick(View view) {
+                        //need to implement getting value of way point and direction
+                        String startFp = "fp"+" "+"10"+" "+"10"+" "+"2";
+                        ((MainActivity)getActivity()).sendMessage(startFp);
+                    }
+                }
+        );
+
+        btReturn.setOnClickListener(
+                new View.OnClickListener(){
+                    public void onClick(View view) {
+                        String strReturn = "return";
+                        ((MainActivity)getActivity()).sendMessage(strReturn);
+                    }
+                }
+        );
+
+        btRefresh.setOnClickListener(new View.OnClickListener(){
+                    public void onClick(View view) {
+                        if(btUpdateToggle.isChecked()){
+                            //implement  method to refresh grid map
+                        }
+                    }
+                }
+        );
+
         return view;
     }
 
