@@ -34,13 +34,22 @@
         android:text="Bluetooth Status" />
 
     <Button
-        android:id="@+id/startButton"
+        android:id="@+id/startExButton"
         android:layout_marginTop="680dp"
         android:layout_marginBottom="50dp"
         android:layout_marginLeft="40dp"
         android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:text="START" />
+        android:layout_height="60dp"
+        android:text="START EXPLORATION" />
+
+    <Button
+        android:id="@+id/startFpButton"
+        android:layout_marginTop="750dp"
+        android:layout_marginBottom="50dp"
+        android:layout_marginLeft="40dp"
+        android:layout_width="130dp"
+        android:layout_height="60dp"
+        android:text="START FASTEST PATH" />
 
     <Button
         android:id="@+id/startPointButton"
@@ -60,10 +69,18 @@
         android:text="Set Way Point"
         android:textSize="12sp"/>
 
+    <Button
+        android:id="@+id/directionButton"
+        android:layout_marginTop="680dp"
+        android:layout_marginLeft="300dp"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:text="Set Start Direction" />
+
     <ToggleButton
         android:id="@+id/updateToggleButton"
         android:layout_marginTop="680dp"
-        android:layout_marginLeft="300dp"
+        android:layout_marginLeft="420dp"
         android:layout_width="100dp"
         android:layout_height="60dp"
         android:textOn="Manual"
@@ -79,20 +96,13 @@
 
     <Button
         android:id="@+id/refreshButton"
-        android:layout_marginTop="680dp"
-        android:layout_marginLeft="420dp"
-        android:layout_width="100dp"
-        android:layout_height="60dp"
-        android:text="refresh" />
-
-    <ToggleButton
-        android:id="@+id/exploreToggleButton"
         android:layout_marginTop="750dp"
         android:layout_marginLeft="420dp"
         android:layout_width="100dp"
         android:layout_height="60dp"
-        android:textOn="Fastest Path"
-        android:textOff="Exploration" />
+        android:text="refresh map" />
+
+
 
 
 
