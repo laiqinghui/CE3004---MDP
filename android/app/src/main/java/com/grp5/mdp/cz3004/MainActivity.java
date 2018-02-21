@@ -37,7 +37,8 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         BluetoothFragment.OnFragmentInteractionListener,
         SendTextFragment.OnFragmentInteractionListener,
-        ArenaFragment.OnFragmentInteractionListener{
+        ArenaFragment.OnFragmentInteractionListener,
+        MiscellaneousFragment.OnFragmentInteractionListener{
 
     private BluetoothAdapter BTAdapter;
     private Fragment fragment;
@@ -185,6 +186,12 @@ public class MainActivity extends AppCompatActivity
             fragment = fm.findFragmentByTag(tagText);
             if (fragment == null) {
                 fragment = ArenaFragment.newInstance(BTAdapter, mChatService);
+            }
+        }  else if (id == R.id.nav_misc) {
+            tagText = "MiscFragment";
+            fragment = fm.findFragmentByTag(tagText);
+            if (fragment == null) {
+                fragment = MiscellaneousFragment.newInstance(BTAdapter, mChatService);
             }
         } else {
             fragment=null;

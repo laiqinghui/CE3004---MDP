@@ -62,7 +62,7 @@ public class MiscellaneousFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_arena, container, false);
+        View view = inflater.inflate(R.layout.fragment_miscellaneous, container, false);
         Button btForward = view.findViewById(R.id.forwardButton);
         Button btBackward = view.findViewById(R.id.backwardButton);
         Button btTurnLeft = view.findViewById(R.id.turnLeftButton);
