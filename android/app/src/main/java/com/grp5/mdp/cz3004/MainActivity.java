@@ -220,6 +220,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void handleMessage(Message msg) {
             TextView tv = (TextView) findViewById(R.id.statusText);
+            //TODO: put statustext into arena fragment
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
@@ -278,12 +279,14 @@ public class MainActivity extends AppCompatActivity
             byte[] send = message.getBytes();
             mChatService.write(send);
 
-            // Reset out string buffer to zero and clear the edit text field
-            mOutStringBuffer.setLength(0);
-            mOutEditText.setText(mOutStringBuffer);
+            if(mOutEditText != null){
+                // Reset out string buffer to zero and clear the edit text field
+                mOutStringBuffer.setLength(0);
+                mOutEditText.setText(mOutStringBuffer);
 
-            // Initialize the compose field with a listener for the return key
-            mOutEditText.setOnEditorActionListener(mWriteListener);
+                // Initialize the compose field with a listener for the return key
+                mOutEditText.setOnEditorActionListener(mWriteListener);
+            }
         }
     }
 
