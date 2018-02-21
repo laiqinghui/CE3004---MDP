@@ -78,7 +78,7 @@ void loop() {
   //Serial.println(getSensorReadingInCM()[1]);
   //Serial.println(getSensorReadingInCM()[2]);
   //straightUsingEncoder();
-  turn(1, 1080);
+  turn(1, 90);
   //calibration();
   while(true)
   {

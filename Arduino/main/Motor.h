@@ -238,7 +238,7 @@ double getCir(int dir, int turnDegree)
 void turn(int dir, int turnDegree)
 {
     //1 is right, -1 is left
-    double cir = Pi * 16.15; //circumfrence of circle drawn when turning in cm, current diameter used is between 16.2
+    double cir = Pi * 15.6; //circumfrence of circle drawn when turning in cm, current diameter used is between 15.6
     int amount = abs(cir * (turnDegree/360.0) * ticksPerCM/2);//int to ignored decimal value //* getTurnTicksOffsetAmt(turnDegree)
     
     Serial.print("Target count: ");
@@ -259,13 +259,17 @@ void turn(int dir, int turnDegree)
     */
     int previousRead = 0;
     int currentValue = 0;
-    md.setSpeeds(-70 * dir, 95 * dir);
-    while(ticks < amount)
+    md.setSpeeds(-221 * dir, 250 * dir);
+    while(true)
     {
       currentValue = (PIND>>3)%2;
       if(currentValue == 1 && previousRead == 0)
       {
-        ticks++;        
+        ticks++;
+        if(ticks == amount)
+        {
+          break;        
+        }
       }
       previousRead = currentValue;
     }
