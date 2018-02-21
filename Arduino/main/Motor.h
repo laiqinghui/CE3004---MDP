@@ -1,5 +1,9 @@
+//For increase interrupt speed
+//#define NEEDFORSPEED
+//#define INTERRUPT_FLAG_PIN3 M1Ticks
 #include <EnableInterrupt.h>
 #include "DualVNH5019MotorShield.h"
+#include "Sensors.h"
 
 DualVNH5019MotorShield md(2,4,6,A0,7,8,12,A1);
 
@@ -9,53 +13,16 @@ DualVNH5019MotorShield md(2,4,6,A0,7,8,12,A1);
 #define e2a 11
 #define e2b 13
 
-//------------PID constants and declarations--------
-#define sampleInterval 0.005
-
-//Motor 1(Right) constant
-#define td1 0.00496 
-#define ts1 0.06667 //Orig: 0.09667, tune: 0.08667 //Higher denotes more gain on correction
-#define k1 0.35093
-
-//Motor 2(Left) constant
-#define td2 0.00264
-#define ts2 0.0355 //Orig: 0.05827, tune: 0.09827 
-#define k2 0.31323
-
-//Motor 1(Right) PID parameters
-signed long kc1 = (1.2*ts1)/(k1*td1);
-signed long ti1 = 2*td1;
-signed long kp1 = kc1;
-signed long ki1 = kc1/ti1;
-signed long kd1 = kc1*td1;
-
-signed long k1_1 = kp1+ki1+kd1;
-signed long k2_1 = (-kp1-2)*kd1;
-signed long k3_1 = kd1;
-
-//Motor 2(left) PID parameters
-signed long kc2 = (1.2*ts2)/(k2*td2);
-signed long ti2 = 2*td2;
-signed long kp2 = kc2;
-signed long ki2 = kc2/ti2;
-signed long kd2 = kc2*td2;
-
-signed long k1_2 = kp2+ki2+kd2;
-signed long k2_2 = (-kp2-2)*kd2;
-signed long k3_2 = kd2;
-
-
-signed long currentErr_M1 = 0;
-signed long prevErr1_M1 = 0;
-signed long prevErr2_M1 = 0;
-
-signed long currentErr_M2 = 0;
-signed long prevErr1_M2 = 0;
-signed long prevErr2_M2 = 0;
-
+//------------PID Structs------------
+struct MotorPID {
+  float prevTuneSpeed;
+  float currentErr;
+  float prevErr1;
+  float gain;
+};
 
 //------------Other constants and declrations----------
-#define Pi 3.1416
+#define Pi 3.14159265359
 #define singlerevticks 1124.43
 
 signed long wheelDiameter = 6*Pi;
@@ -63,112 +30,57 @@ signed long ticksPerCM = singlerevticks/wheelDiameter;
 
 
 //------------Interrupt declarations------------
-//For increase interrupt speed
-#define NEEDFORSPEED
-#define INTERRUPT_FLAG_PIN3 M1Ticks
-
 volatile int squareWidth_M1 = 0;
 volatile signed long prev_time_M1 = 0;
 volatile signed long entry_time_M1 = 0;
+volatile unsigned long M1ticks = 0;
+volatile unsigned long M2ticks = 0;
+
 
 volatile int squareWidth_M2 = 0;
 volatile signed long prev_time_M2 = 0;
 volatile signed long entry_time_M2 = 0; 
+
 
 //ISR for Motor1(Right) encoder 
 void risingM1()
 {
   entry_time_M1 = micros();
   squareWidth_M1 = entry_time_M1 - prev_time_M1;
-  prev_time_M1 = micros();
-  M1Ticks +=4;
+  prev_time_M1 = entry_time_M1;
+  M1ticks+=2;
+  
+  
 }
+
+void m1TickCount()
+{
+	M1ticks++;
+}
+
+void m2TickCount()
+{
+  M2ticks+=2;
+}
+
 
 //ISR for Motor2(Left) encoder
 void risingM2()
 {
   entry_time_M2 = micros();
   squareWidth_M2 = entry_time_M2 - prev_time_M2;
-  prev_time_M2 = micros();
+  prev_time_M2 = entry_time_M2;
+  
+  
 }
 
-
-
 void setM1Ticks(int ticks){
-	
-	M1Ticks = ticks;
-	
+	M1ticks = ticks;
 }
 
 void setSqWidth(int M1, int M2){
-	
 	squareWidth_M1 = M1;
 	squareWidth_M2 = M2;
-	
-	
-}
-
-double getTurnTicksOffsetAmt(int turnDegree)
-{
-	 /*
-     * Offset Amount(%) for turning angles:
-     * 0 - 90: 85%
-     * 360 - 450: 
-     * 450 - 540: 
-     * 540 - 630: 
-     * 630 - 720:
-     * 720 - 810: 
-     * 810 - 900:
-     * 900 - 990:
-     * 990 - 1080:
-     */
-	
-  switch(turnDegree){
-    
-    case 0 ... 90:
-      return 0.90;
-    case 360 ... 450:
-      return 0.90;
-    default:
-      return 0.85;
-    
-    }
-}
-
-void turn(int dir, int turnDegree)
-{
-    //1 is right, -1 is left
-    double cir = Pi * 16.4; //circumfrence of circle drawn when turning in cm, current diameter used is 17.6    
-    int amount = abs(cir * (turnDegree/360.0) * ticksPerCM);//int to ignored decimal value //* getTurnTicksOffsetAmt(turnDegree)
-    int ticks = 0;
-    boolean brakeSet = false;
-    
-    Serial.print("Target count: ");
-    Serial.println(amount);
-    Serial.print("Offset amt: ");
-    Serial.println(getTurnTicksOffsetAmt(turnDegree));
-  
-  
-    PCintPort::attachInterrupt(e1a, &risingM1, RISING); 
-    setM1Ticks(0); 
-    
-    
-	md.setSpeeds(-270 * dir, 300 * dir);
-	while(abs(M1Ticks) < amount - 500)
-    {
-    }
-	md.setSpeeds(-158.921 * dir, 197.318 * dir);//80 RPM
-	while(abs(M1Ticks) < amount)
-    {
-    }
-
-    md.setBrakes(400,400);
-    Serial.print("Current amt: ");
-    Serial.println(ticks);
-    
-  setSqWidth(0,0);//Reset sqWidth
-  setM1Ticks(0);// Reset M1Ticks
-    PCintPort::detachInterrupt(e1a); 
 }
 
 signed long sqWidthToRPM(int sqWidth){
@@ -184,201 +96,253 @@ signed long sqWidthToRPM(int sqWidth){
  
   }
 
-void tuneM1(int desiredRPM){
 
-  
-  double tuneSpeed;
+void tuneM1(int desiredRPM, MotorPID *M1){
+
+
+  double tuneSpeed = 0;
   double currentRPM = sqWidthToRPM(squareWidth_M1);
-  Serial.print("M1 Current RPM: ");
-  Serial.println(currentRPM);
+  
+  //Serial.print("M1 Current RPM: ");
+  Serial.print(currentRPM);
+  Serial.print(" ");
+
+ 
   
   
-  currentErr_M1 =  desiredRPM - currentRPM;
-  tuneSpeed = currentRPM + k1_1*currentErr_M1 + k2_1*prevErr1_M1 + k3_1*prevErr2_M1;
+  M1->currentErr =  desiredRPM - currentRPM;
+  //tuneSpeed = M1->prevTuneSpeed + 0.47*M1->currentErr;
+  tuneSpeed = M1->prevTuneSpeed + M1->gain*M1->currentErr + (M1->gain/0.05)*(M1->currentErr - M1->prevErr1);
   /*
   Serial.print("currentErr_M1 ");
   Serial.println(currentErr_M1);
-  Serial.print("prevErr1_M1 ");
-  Serial.println(prevErr1_M1);
-  Serial.print("prevErr2_M1 ");
-  Serial.println(prevErr2_M1);
   Serial.print("M1 tuneSpeed ");
   Serial.println(tuneSpeed);
   Serial.println();
   */
   md.setM1Speed(tuneSpeed);
-  
-  prevErr2_M1 = prevErr1_M1;
-  prevErr1_M1 = currentErr_M1;
+  M1->prevTuneSpeed = tuneSpeed;
+  M1->prevErr1 = M1->currentErr;
 
-  
+ 
   }
 
- void tuneM2(int desiredRPM){
+  void tuneM2(int desiredRPM, MotorPID *M2){
+  
+  
+  double tuneSpeed = 0;
+  double currentRPM = sqWidthToRPM(squareWidth_M2);
+  
+  //Serial.print("M2 Current RPM: ");
+  Serial.println(currentRPM);
 
   
-  double tuneSpeed;
-  double currentRPM = sqWidthToRPM(squareWidth_M2);
-  Serial.print("M2 Current RPM: ");
-  Serial.println(currentRPM);
   
-  currentErr_M2 =  desiredRPM - currentRPM;
-  tuneSpeed = currentRPM + k1_2*currentErr_M2 + k2_2*prevErr1_M2 + k3_2*prevErr2_M2;
+  M2->currentErr =  desiredRPM - currentRPM;
+  //tuneSpeed = M2->prevTuneSpeed + 0.5*M2->currentErr;
+  tuneSpeed = M2->prevTuneSpeed + M2->gain*M2->currentErr + (M2->gain/0.05)*(M2->currentErr - M2->prevErr1);
   /*
+  Serial.print("currentErr_M2 ");
+  Serial.println(currentErr_M2);
   Serial.print("M2 tuneSpeed ");
   Serial.println(tuneSpeed);
+  Serial.println();
   */
   md.setM2Speed(tuneSpeed);
-
-  prevErr2_M2 = prevErr1_M2;
-  prevErr1_M2 = currentErr_M2;
-
+  M2->prevErr1 = M2->currentErr;
+  M2->prevTuneSpeed = tuneSpeed;
   
-  }  
-   
-  
+ 
+  }
+
+
 void moveForward(int rpm, int distance){
 
-   signed long tStart = micros();
    signed long tuneEntryTime = 0;
    signed long tuneExitTime = 0;
    signed long interval = 0;
    signed long distanceTicks = distance * ticksPerCM;
-   int pidStartRPM = rpm;  
-   boolean startPID = false;
+   int pidStartRPM = 0*rpm;
    
-   setM1Ticks(0);// Reset M1Ticks
-   PCintPort::attachInterrupt(e1a, &risingM1, RISING);
-   PCintPort::attachInterrupt(e2b, &risingM2, RISING);
-   Serial.println("Moving forward...\nInterrupt attached\nSetting speed now...");
+   //unsigned int rpm1 = 0;
+   //unsigned int rpm2 = 0;
 
-	md.setSpeeds(241.298, 284.546);
+
     
-   
-   while(M1Ticks < distanceTicks){//18432
+    MotorPID M1pid = {184, 0, 0, 0.1};
+    MotorPID M2pid = {219, 0, 0, 0.1};
+    enableInterrupt( e1a, risingM1, RISING);
+    enableInterrupt( e2b, risingM2, RISING);
+
+    md.setM1Speed(184);
+    delay(1);
+    md.setM2Speed(219);
+
+    
+  
+
+    while(M1ticks < distanceTicks){
       
-      if(!startPID ){
-        
-        if( sqWidthToRPM(squareWidth_M1) >= pidStartRPM ||  sqWidthToRPM(squareWidth_M2) >= pidStartRPM ){ //(micros() - tStart) > startCaptureTime
-          
-          Serial.print("PID Starts");
-          Serial.print("M1 RPM: ");
-          Serial.println(sqWidthToRPM(squareWidth_M1));
-          Serial.print("M2 RPM2: ");
-          Serial.println(sqWidthToRPM(squareWidth_M2));
-          startPID = true;
-          
-        }else{
-          
-          Serial.print("M1 Current RPM: ");
-          Serial.println(sqWidthToRPM(squareWidth_M1));
-          Serial.print("M2 Current RPM: ");
-          Serial.println(sqWidthToRPM(squareWidth_M2));
-          Serial.println();
-          
-          } 
-      }else {
-        
-        tuneEntryTime = micros();
+      //rpm1 = sqWidthToRPM(squareWidth_M1);
+      //rpm2 = sqWidthToRPM(squareWidth_M2);
+      
+      //Serial.print("M1 Current RPM: ");
+      //Serial.println(rpm1);
+      //Serial.print("\nM2 Current RPM: ");
+      //Serial.println(rpm2);
+      
+      if(sqWidthToRPM(squareWidth_M2) > pidStartRPM || sqWidthToRPM(squareWidth_M1) > pidStartRPM){
+      tuneEntryTime = micros();
         interval = tuneEntryTime - tuneExitTime;
         if(interval >= 5000){ 
-          Serial.print("Tune interval: ");
-          Serial.println(interval); 
-          tuneM2(rpm);
-          tuneM1(rpm);
+          if(M1ticks < 0.7*distanceTicks){
+            tuneM1(rpm, &M1pid);
+            tuneM2(rpm, &M2pid);
+          } else if(M1ticks < 0.85*distanceTicks){
+            tuneM1(rpm*0.75, &M1pid);
+            tuneM2(rpm*0.75, &M2pid);
+          } else{
+            tuneM1(rpm*0.5, &M1pid);
+            tuneM2(rpm*0.5, &M2pid);
+            }
           tuneExitTime = micros();
         }
-        
       }
-
     }
+      md.setBrakes(400,400);
+      /*
+      delay(1000);
+      md.setSpeeds(-230.839, -265.47);
+      delay(7000);
+      md.setBrakes(400,400);
+      */
+      disableInterrupt(e1a);
+      disableInterrupt(e2b);
+      setM1Ticks(0);
+      setSqWidth(0,0);
+      }  
 
-    //md.setM1Brake(400);
-    //md.setM2Brake(400);
-	for(int i = 50; i<=400; i++){
-		md.setM1Brake(i);
-		md.setM2Brake(i);
-	}
-	/*
-	//For reverse
-    delay(500);
-    setM1Ticks(0);
-    md.setM2Speed(-180);//342.698
-    md.setM1Speed(-160);//296.216
 
-    while(M1Ticks < distanceTicks);
-    md.setM1Brake(250);
-    md.setM2Brake(300);
-    */
-	setSqWidth(0,0);//Reset sqWidth
-	setM1Ticks(0);// Reset M1Ticks
-	PCintPort::detachInterrupt(e1a);
-	PCintPort::detachInterrupt(e2b);
-   
+double getCir(int dir, int turnDegree)
+{
+  if(dir == 1 && turnDegree == 1080)
+  {
+    return 16.15;
   }
+  else if(dir == 1 && turnDegree == 90)
+  {
+    return 16.05;
+  }
+}
 
 void turn(int dir, int turnDegree)
 {
     //1 is right, -1 is left
-    double cir = Pi * 17.5; //circumfrence of circle drawn when turning in cm, current diameter used is 17.6
-    int amount = abs(cir * (turnDegree/360.0) * ticksPerCM);//int to ignored decimal value //* getTurnTicksOffsetAmt(turnDegree)
+    double cir = Pi * 16.15; //circumfrence of circle drawn when turning in cm, current diameter used is between 16.2
+    int amount = abs(cir * (turnDegree/360.0) * ticksPerCM/2);//int to ignored decimal value //* getTurnTicksOffsetAmt(turnDegree)
     
     Serial.print("Target count: ");
     Serial.println(amount);
-    Serial.print("Offset amt: ");
-    Serial.println(getTurnTicksOffsetAmt(turnDegree));
   
-	enableInterruptFast(e1a, CHANGE);
-    M1Ticks = 0; 
-    md.setSpeeds(-159 * dir, 197 * dir);//80 RPM
-    
-    while(abs(M1Ticks) < amount - 500)
-    {
-    }
-	md.setSpeeds(-270 * dir, 300 * dir)
-	while(abs(M1Ticks) < amount - 500)
-    {
-    }
+    //enableInterrupt(e1a, m1TickCount, RISING);
+    //M1ticks = 0; 
 
+    int ticks = 0;
+    delay(100);
+
+    /*
+    while(ticks < amount - 100)
+    {
+      md.setSpeeds(-221 * dir, 250 * dir);
+      md.setSpeeds(-168 * dir, 200 * dir);
+    }
+    */
+    int previousRead = 0;
+    int currentValue = 0;
+    md.setSpeeds(-70 * dir, 95 * dir);
+    while(ticks < amount)
+    {
+      currentValue = (PIND>>3)%2;
+      if(currentValue == 1 && previousRead == 0)
+      {
+        ticks++;        
+      }
+      previousRead = currentValue;
+    }
     md.setBrakes(400,400);
     Serial.print("Current amt: ");
     Serial.println(ticks);
     
-	setSqWidth(0,0);//Reset sqWidth
-	M1Ticks = 0;
-	
-	disableInterrupt(e1a);
+  setSqWidth(0,0);//Reset sqWidth
+  M1ticks = 0;
+  
+  disableInterrupt(e1a);
 }
 
+void turnCheckList(int dir, int turnDegree)
+{
+    //1 is right, -1 is left
+    double cir = Pi * 16.15; //circumfrence of circle drawn when turning in cm, current diameter used is between 16.2
+    int amount = abs(cir * (turnDegree/360.0) * ticksPerCM/2);//int to ignored decimal value //* getTurnTicksOffsetAmt(turnDegree)
+    
+    Serial.print("Target count: ");
+    Serial.println(amount);
   
+	  //enableInterrupt(e1a, m1TickCount, RISING);
+    M1ticks = 0; 
+    delay(100);
+    
+    //while(abs(M1ticks) < amount - 500)
+    //{
+      //md.setSpeeds(-221 * dir, 250 * dir);
+    //}
+    
+	  while(M1ticks < amount)
+    {
+      md.setSpeeds(-168 * dir, 200 * dir);
+    }
+    
+    md.setBrakes(400,400);
+    Serial.print("Current amt: ");
+    Serial.println(M1ticks);
+    
+	setSqWidth(0,0);//Reset sqWidth
+	M1ticks = 0;
+	
+	//disableInterrupt(e1a);
+}
+
+ 
 void straightUsingEncoder()
 {
-	md.setSpeeds(270, 300);
-	PCintPort::attachInterrupt(e1a, &risingM1, RISING);
-	PCintPort::attachInterrupt(e2b, &risingM2, RISING);
+	md.setSpeeds(-70, 85);
+	enableInterrupt(e1a, m1TickCount, RISING);
+	enableInterrupt(e2b, m2TickCount, RISING);
 	
-	int m1Speed = 270;
+	int m1Speed = -70;
 	
 	while(true)
 	{
 		setM1Ticks(0);
-		setM2Ticks(0);
-		delay(100);
+		M2ticks = 0;
+		delay(200);
 		
-		if(M1Ticks < M2Ticks)
+		if(M1ticks < M2ticks)
+		{
+			m1Speed = m1Speed - 1;
+			md.setM1Speed(m1Speed);
+		}
+		else if(M1ticks > M2ticks)
 		{
 			m1Speed = m1Speed + 1;
 			md.setM1Speed(m1Speed);
 		}
-		else if(M1Ticks > M2Ticks)
-		{
-			m1Speed = m1Speed -1;
-			md.setM1Speed(m1Speed);
-		}
 		Serial.println("Next Update");
 		Serial.println(m1Speed);
-		Serial.println("300");
-		Serial.println(M1Ticks - M2Ticks);
+		Serial.println("70");
+    Serial.println(M1ticks);
+    Serial.println(M2ticks);
+		Serial.println(M1ticks - M2ticks);
 	}
 	
 } 

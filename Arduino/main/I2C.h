@@ -38,9 +38,9 @@ void receiveData(int byteCount) {
   
     }
     
-    Serial.print("inBuffer: ");
-    printArray(inBuffer, len);
-	newData = true;
+   Serial.print("inBuffer: ");
+   printArray(inBuffer, len);
+	 newData = true;
    
   } else {
     

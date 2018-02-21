@@ -5,7 +5,7 @@
 // # Editor     : Lauren from DFRobot
 // # Date       : 08.05.2012
 
-// # Product name: URM V3.2 ultrasonic sensor TTL connection with Arduino
+// # Product name: URM V3.2 ultrasonic sensor 
 // # Product SKU : SEN0001
 // # Version     : 1.0
 // # Update the library to make it compatible with the Arduino IDE 1.0 or the latest version

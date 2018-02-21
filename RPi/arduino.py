@@ -90,7 +90,7 @@ class Arduino(threading.Thread):
 
     def start(self):
         self.running = True
-        super(Algorithm, self).start()
+        super(Arduino, self).start()
 
     def run(self):
         self.idle()

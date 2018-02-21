@@ -1,29 +1,7 @@
 #include "Motor.h"
 #include "I2C.h"
 
-
-//-----------------------------------------------
-void setup() {
-  Serial.begin(115200);
-  md.init();
-  initI2C();
-  
- 
-}
-
-void loop() {
-  
-  // put your main code here, to run repeatedly:
-  if(dataExist()){
-    Serial.println("Getting new data...");
-    processInst();
-    resetInBuffer();
-    
-    }
-    
-}
-
-void testSequence(){
+void testSequence1(){
   
     for(int i = 0; i < 4; i++){
     for(int j = 0; j < 3; j++ ){
@@ -32,9 +10,19 @@ void testSequence(){
         delay(500);
       }
       
-    turn(-1, 90);//left
+    //turn(-1, 90);//left
     delay(500);  
 }
+  
+  }
+
+  void testSequence2(){
+
+  moveForward(80, 10);
+  //delay(500);
+  ///turn(-1, 180);
+  //delay(500);
+  //moveForward(80, 100);
   
   }
 
@@ -58,7 +46,15 @@ void processInst(){
     case 'm': moveForward(80, atoi(&inst[1]));
               Serial.println("m");    
               break;
-    case 't': turn(-1, atoi(&inst[1]));
+    case 't': //turn(-1, atoi(&inst[1]));
+              break;
+    case 'w': moveForward(50, 10);
+              break;
+    case 'a': //turn(-1, 90);
+              break;
+    case 's': //turn(1, 90);
+              break;
+    case 'd': //turn(-1, 180);
               break;
     default:  Serial.println(inst[0]);            
     
@@ -67,146 +63,154 @@ void processInst(){
 
 }
 
+//-----------------------------------------------
+void setup() {
+  Serial.begin(115200);
+  md.init();
+  initI2C();
+  //testSequence2();
+ 
+}
+
+void loop() {
+  
+  // put your main code here, to run repeatedly:
+  //Serial.println(getSensorReadingInCM()[1]);
+  //Serial.println(getSensorReadingInCM()[2]);
+  //straightUsingEncoder();
+  turn(1, 1080);
+  //calibration();
+  while(true)
+  {
+    
+  }
+  
+  if(dataExist()){
+    Serial.println("Getting new data...");
+    processInst();
+    resetInBuffer();
+    
+    }
+    
+}
+
+
+
+
 void straighten()
 {
-    if (getSensorReadingInCM(frontRightIR) > getSensorReadingInCM(frontLeftIR))
+	int turningSpeed = 70; //previous value 84
+	
+    if (getCalibrationReading(frontRightIR) > getCalibrationReading(frontLeftIR))
     {
-      while (getSensorReadingInCM(frontRightIR) > getSensorReadingInCM(frontLeftIR))
+      while (getCalibrationReading(frontRightIR) > getCalibrationReading(frontLeftIR))
       {
-        md.setSpeeds(84, 0);
+        md.setSpeeds(70, -95);
       }
   
       md.setBrakes(400, 400);
-      md.setSpeeds(0, 0);
     }
     else
     {
-      while (getSensorReadingInCM(frontRightIR) < getSensorReadingInCM(frontLeftIR))
+      while (getCalibrationReading(frontRightIR) < getCalibrationReading(frontLeftIR))
       {
-        md.setSpeeds(-84, 0);
+        md.setSpeeds(-70, 95);
       }
       md.setBrakes(400, 400);
-      md.setSpeeds(0, 0);
     }
 }
 
 void distanceFromWall(int distance)
 {
-  if(getSensorReadingInCM(frontRightIR) > distance)
-  {
-    while(getSensorReadingInCM(frontRightIR) > distance)
-      {
-        md.setSpeeds(114, 140);
-      }
-      md.setBrakes(400, 400);
-      md.setSpeeds(0, 0);
-  }
-  else if(getSensorReadingInCM(frontRightIR) < distance)
-  {
-    while(getSensorReadingInCM(frontRightIR) < distance)
-      {
-        md.setSpeeds(-114, -140);
-      }
-      md.setBrakes(400, 400);
-      md.setSpeeds(0, 0);
-  }
+	//Go to roughly the distance from wall
+//  if(getCalibrationReading(frontRightIR) > distance)
+//  {
+//    while(getCalibrationReading(frontRightIR) > distance)
+//      {
+//        md.setSpeeds(114, 140);
+//      }
+//  }
+//  else if(getCalibrationReading(frontRightIR) < distance)
+//  {
+//    while(getCalibrationReading(frontRightIR) < distance)
+//      {
+//        md.setSpeeds(-114, -140);
+//      }
+//  }
+//  md.setBrakes(400, 400);
+//  delay(300);
   
-  if(getSensorReadingInCM(frontRightIR) > distance)
+  //Fine tune the distance from wall
+  if(getCalibrationReading(frontRightIR) > distance)
   {
-    while(getSensorReadingInCM(frontRightIR) > distance)
+    while(getCalibrationReading(frontRightIR) > distance)
       {
         md.setSpeeds(84, 110);
       }
-      md.setBrakes(400, 400);
-      md.setSpeeds(0, 0);
   }
-  else if(getSensorReadingInCM(frontRightIR) < distance)
+  else if(getCalibrationReading(frontRightIR) < distance)
   {
-    while(getSensorReadingInCM(frontRightIR) < distance)
+    while(getCalibrationReading(frontRightIR) < distance)
       {
         md.setSpeeds(-84, -110);
       }
-      md.setBrakes(400, 400);
-      md.setSpeeds(0, 0);
   }
+  md.setBrakes(400, 400);
+  Serial.println("Set");
+  Serial.println(getCalibrationReading(frontRightIR));
 }
 
-
+//Calibration
 void calibration()
 {
-  double threshold = 0.2;
+  double threshold = 0.3;
   int wait = 1000;
   int distance = 12;
-  for(int a = 0; a<2; a++)
+  
+  //Quick calibration against wall
+  straighten();
+  delay(wait);
+
+  //Move to the distance from wall
+  distanceFromWall(12.85);
+  delay(wait);
+  
+  //Fine tune the calibration
+  for(int a = 0; a < 3; a++)
   {
-    if(abs(getSensorReadingInCM(frontRightIR) - getSensorReadingInCM(frontLeftIR)) < 0.1)
+    if(abs(getCalibrationReading(frontRightIR) - getCalibrationReading(frontLeftIR)) < threshold)
     {
       break;
     }
     straighten();
     delay(100);
   }
-
-  Serial.println("First Calibration");
-  Serial.println(getSensorReadingInCM(frontRightIR));
-  Serial.println(getSensorReadingInCM(frontLeftIR));
   delay(wait);
 
-  //Move Backwards or Forward
-  distanceFromWall(distance);
+  //Fine tune distance from wall
+  distanceFromWall(12.85);
   delay(wait);
 
-  Serial.println("Move to wall");
-  Serial.println(getSensorReadingInCM(frontRightIR));
-  Serial.println(getSensorReadingInCM(frontLeftIR));
-    
-  while(abs(getSensorReadingInCM(frontRightIR) - getSensorReadingInCM(frontLeftIR)) > threshold)
+  //Turn to the left by 90
+  turn(-1, 90);
+  delay(wait);
+
+  //Move to the distance from wall
+  distanceFromWall(12.6);
+  delay(wait);
+
+  //Fine tune the calibration
+  for(int a = 0; a < 3; a++)
   {
+    if(abs(getCalibrationReading(frontRightIR) - getCalibrationReading(frontLeftIR)) < threshold)
+    {
+      break;
+    }
     straighten();
     delay(100);
   }
-  Serial.println("Second Calibration");
-  Serial.println(getSensorReadingInCM(frontRightIR));
-  Serial.println(getSensorReadingInCM(frontLeftIR));
-
   delay(wait);
 
-
-  //Move Backwards or Forward
-  distanceFromWall(distance);
-  delay(wait);
-
-  Serial.println("Second Movement");
-  Serial.println(getSensorReadingInCM(frontRightIR));
-  Serial.println(getSensorReadingInCM(frontLeftIR));
-  
-  turn(1, 90);
-
-  Serial.println("After Turn");
-  Serial.println(getSensorReadingInCM(frontRightIR));
-  Serial.println(getSensorReadingInCM(frontLeftIR));
-
-  //Move To Position
-  distanceFromWall(distance);
-  Serial.println("Last Movement");
-  Serial.println(getSensorReadingInCM(frontRightIR));
-  Serial.println(getSensorReadingInCM(frontLeftIR));
-
-  while(abs(getSensorReadingInCM(frontRightIR) - getSensorReadingInCM(frontLeftIR)) > threshold)
-  {
-    straighten();
-    delay(100);
-  }
-    
-  Serial.println("After turn Calibration");
-  Serial.println(getSensorReadingInCM(frontRightIR));
-  Serial.println(getSensorReadingInCM(frontLeftIR));
-
-  //Move To Position
-  distanceFromWall(distance);
-  Serial.println("Last Movement");
-  Serial.println(getSensorReadingInCM(frontRightIR));
-  Serial.println(getSensorReadingInCM(frontLeftIR));
+  //Fine tune the distance from wall
+  distanceFromWall(12.6);
 }
-
-  
