@@ -34,4 +34,12 @@ public interface Constants {
 
     public static final String PREF_NAME  = "custom_write_text";
 
+    //For status of GridImage
+    public static final int UNEXPLORED = 0;
+    public static final int EXPLORED = 1;
+    public static final int OBSTACLE = 2;
+    public static final int START = 3;
+    public static final int GOAL = 4;
+    public static final int WAYPOINT = 5;
+
 }

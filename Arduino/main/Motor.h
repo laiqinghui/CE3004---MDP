@@ -22,7 +22,7 @@ struct MotorPID {
 };
 
 //------------Other constants and declrations----------
-#define Pi 3.1416
+#define Pi 3.14159265359
 #define singlerevticks 1124.43
 
 signed long wheelDiameter = 6*Pi;
@@ -34,6 +34,7 @@ volatile int squareWidth_M1 = 0;
 volatile signed long prev_time_M1 = 0;
 volatile signed long entry_time_M1 = 0;
 volatile unsigned long M1ticks = 0;
+volatile unsigned long M2ticks = 0;
 
 
 volatile int squareWidth_M2 = 0;
@@ -51,6 +52,17 @@ void risingM1()
   
   
 }
+
+void m1TickCount()
+{
+	M1ticks++;
+}
+
+void m2TickCount()
+{
+  M2ticks+=2;
+}
+
 
 //ISR for Motor2(Left) encoder
 void risingM2()
@@ -209,70 +221,129 @@ void moveForward(int rpm, int distance){
       setM1Ticks(0);
       setSqWidth(0,0);
       }  
-/*
+
+
+double getCir(int dir, int turnDegree)
+{
+  if(dir == 1 && turnDegree == 1080)
+  {
+    return 16.15;
+  }
+  else if(dir == 1 && turnDegree == 90)
+  {
+    return 16.05;
+  }
+}
+
 void turn(int dir, int turnDegree)
 {
     //1 is right, -1 is left
-    double cir = Pi * 17.5; //circumfrence of circle drawn when turning in cm, current diameter used is 17.6
-    int amount = abs(cir * (turnDegree/360.0) * ticksPerCM);//int to ignored decimal value //* getTurnTicksOffsetAmt(turnDegree)
+    double cir = Pi * 16.15; //circumfrence of circle drawn when turning in cm, current diameter used is between 16.2
+    int amount = abs(cir * (turnDegree/360.0) * ticksPerCM/2);//int to ignored decimal value //* getTurnTicksOffsetAmt(turnDegree)
     
     Serial.print("Target count: ");
     Serial.println(amount);
   
-	  enableInterruptFast(e1a, CHANGE);
-    M1Ticks = 0; 
-    md.setSpeeds(-159 * dir, 197 * dir);//80 RPM
-    
-    while(abs(M1Ticks) < amount - 500)
-    {
-    }
-    
-	  md.setSpeeds(-270 * dir, 300 * dir)
-	  while(abs(M1Ticks) < amount - 500)
-    {
-    }
-    
+    //enableInterrupt(e1a, m1TickCount, RISING);
+    //M1ticks = 0; 
 
+    int ticks = 0;
+    delay(100);
+
+    /*
+    while(ticks < amount - 100)
+    {
+      md.setSpeeds(-221 * dir, 250 * dir);
+      md.setSpeeds(-168 * dir, 200 * dir);
+    }
+    */
+    int previousRead = 0;
+    int currentValue = 0;
+    md.setSpeeds(-70 * dir, 95 * dir);
+    while(ticks < amount)
+    {
+      currentValue = (PIND>>3)%2;
+      if(currentValue == 1 && previousRead == 0)
+      {
+        ticks++;        
+      }
+      previousRead = currentValue;
+    }
     md.setBrakes(400,400);
     Serial.print("Current amt: ");
-    Serial.println(M1Ticks);
+    Serial.println(ticks);
+    
+  setSqWidth(0,0);//Reset sqWidth
+  M1ticks = 0;
+  
+  disableInterrupt(e1a);
+}
+
+void turnCheckList(int dir, int turnDegree)
+{
+    //1 is right, -1 is left
+    double cir = Pi * 16.15; //circumfrence of circle drawn when turning in cm, current diameter used is between 16.2
+    int amount = abs(cir * (turnDegree/360.0) * ticksPerCM/2);//int to ignored decimal value //* getTurnTicksOffsetAmt(turnDegree)
+    
+    Serial.print("Target count: ");
+    Serial.println(amount);
+  
+	  //enableInterrupt(e1a, m1TickCount, RISING);
+    M1ticks = 0; 
+    delay(100);
+    
+    //while(abs(M1ticks) < amount - 500)
+    //{
+      //md.setSpeeds(-221 * dir, 250 * dir);
+    //}
+    
+	  while(M1ticks < amount)
+    {
+      md.setSpeeds(-168 * dir, 200 * dir);
+    }
+    
+    md.setBrakes(400,400);
+    Serial.print("Current amt: ");
+    Serial.println(M1ticks);
     
 	setSqWidth(0,0);//Reset sqWidth
-	M1Ticks = 0;
+	M1ticks = 0;
 	
-	disableInterrupt(e1a);
+	//disableInterrupt(e1a);
 }
-*/
-/*  
+
+ 
 void straightUsingEncoder()
 {
-	md.setSpeeds(270, 300);
-	PCintPort::attachInterrupt(e1a, &risingM1, RISING);
-	PCintPort::attachInterrupt(e2b, &risingM2, RISING);
+	md.setSpeeds(-70, 85);
+	enableInterrupt(e1a, m1TickCount, RISING);
+	enableInterrupt(e2b, m2TickCount, RISING);
 	
-	int m1Speed = 270;
+	int m1Speed = -70;
 	
 	while(true)
 	{
 		setM1Ticks(0);
-		setM2Ticks(0);
-		delay(100);
+		M2ticks = 0;
+		delay(200);
 		
-		if(M1Ticks < M2Ticks)
+		if(M1ticks < M2ticks)
+		{
+			m1Speed = m1Speed - 1;
+			md.setM1Speed(m1Speed);
+		}
+		else if(M1ticks > M2ticks)
 		{
 			m1Speed = m1Speed + 1;
 			md.setM1Speed(m1Speed);
 		}
-		else if(M1Ticks > M2Ticks)
-		{
-			m1Speed = m1Speed -1;
-			md.setM1Speed(m1Speed);
-		}
 		Serial.println("Next Update");
 		Serial.println(m1Speed);
-		Serial.println("300");
-		Serial.println(M1Ticks - M2Ticks);
+		Serial.println("70");
+    Serial.println(M1ticks);
+    Serial.println(M2ticks);
+		Serial.println(M1ticks - M2ticks);
 	}
 	
 } 
-*/
+

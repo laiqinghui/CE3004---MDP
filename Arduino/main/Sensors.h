@@ -3,6 +3,12 @@
 #define left A2  // Left PS3
 #define right A0 // Right PS1
 
+//Function Decleration
+double getIRSensorReading(int sensor);
+
+
+
+
 int sensorsValuesArray[5] = {0};
 
 
@@ -66,14 +72,75 @@ int* getSensorReadingInCM(){//Quick and dirty test i.e no avg/median of sensor v
     TODO: Generate mean/median of sensors value before assigning
     */
 		sensorsValuesArray[0] = 500; //getUltraSoundDistance();
-		sensorsValuesArray[1] = (6787/analogRead(frontLeftIR) - 3) - 4;
-		sensorsValuesArray[2] = (6787/analogRead(frontRightIR) - 3) - 4;
-		sensorsValuesArray[3] = 60.374 * pow( ( analogRead(left)*(5.0 / 1023.0) ) , -1.16);
-		sensorsValuesArray[4] = 60.374 * pow( ( analogRead(right)*(5.0 / 1023.0) ) , -1.16);
+		sensorsValuesArray[1] = (6787/getIRSensorReading(frontLeftIR) - 3) - 4;
+		sensorsValuesArray[2] = (6787/getIRSensorReading(frontRightIR) - 3) - 4;
+		sensorsValuesArray[3] = 60.374 * pow( ( getIRSensorReading(left)*(5.0 / 1023.0) ) , -1.16);
+		sensorsValuesArray[4] = 60.374 * pow( ( getIRSensorReading(right)*(5.0 / 1023.0) ) , -1.16);
 					
 	  return sensorsValuesArray;
-	}
+}
 
+double getCalibrationReading(int sensor)
+{  
+  double amount = getIRSensorReading(sensor);
+  
+  if(sensor == frontRightIR)
+  {
+    //y = 5830.7(1/x) - 1.5979
+    return 5830.7*(1/amount)-1.5979-1;
+  }
+  else if(sensor == frontLeftIR)
+  {
+    //y = 5718.4*(1/x) - 1.9681
+    return 5718.4*(1/amount)-1.9681;
+  }
+}	
+	
+//Get average reading over a number of samples
+double getIRSensorReading(int sensor)
+{
+  int size = 200;
+  
+  int listOfReadings[size];
+
+  //Get Reading from Sensor
+  for(int a = 0; a<size; a++)
+  {
+    listOfReadings[a] = analogRead(sensor);    
+  }
+
+  //Sort Reading
+  for (int i = 0; i < size; i++)      
+  {
+    //Find max
+    int max = listOfReadings[0];
+    int maxLocation = 0;
+    for(int j = 0; j < size-i; j++)
+    {
+      if(max < listOfReadings[j])
+      {
+        max = listOfReadings[j];
+        maxLocation = j;
+      }
+    }
+
+    //Swap max with last position
+    listOfReadings[maxLocation] = listOfReadings[size-1-i];
+    listOfReadings[size-1-i] = max;
+  }
+
+  //Average middle 20
+  short int total = 0;
+  for(int a = 90; a<110; a++)
+  {
+    total = total + listOfReadings[a];
+  }
+  return total/20.0;
+}
+	
+	
+	
+	
 int findMin(int arr[]) {
     int min1Index = (arr[0] > arr[1]) ? 1:0;
     int finalMinIndex = (arr[min1Index] > arr[2]) ? 2:min1Index;
