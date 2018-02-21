@@ -196,9 +196,10 @@ class Exploration:
         self.getExploredArea()
 
         if (self.exploredArea == 100):
-            return move, True
+            # return move, True, self.robot.center, self.robot.direction
+            return move, True, self.robot.center, self.robot.direction
         else:
-            return move, False
+            return move, False, self.robot.center, self.robot.direction
 
     def nextMove(self):
         """Decide which direction is free to command robot the next action."""

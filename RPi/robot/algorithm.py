@@ -35,7 +35,7 @@ class Algorithm(threading.Thread):
         self.algorithmClass = None
 
         if self.mode == EXPLORATION:
-            self.algorithmClass = Exploration.Exploration(timeLimit=5, sim=False)
+            self.algorithmClass = Exploration.Exploration(timeLimit=5, direction=self.dir, sim=False)
             dispatcher.connect(self.determine_exploration_path, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
         elif self.mode == FASTEST_PATH:
             self.algorithmClass = FastestPath.FastestPath(exploredMap=gs.MAZEMAP,
@@ -48,6 +48,8 @@ class Algorithm(threading.Thread):
             dispatcher.connect(self.test_message_received, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
 
         logging.info("algorithm initialized")
+        # empty move instruction to ask arduino to start sensing environment
+        dispatcher.send(message=([], False, self.algorithmClass.robot.center, self.algorithmClass.robot.direction), signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
 
     def determine_exploration_path(self, message):
 
@@ -55,14 +57,16 @@ class Algorithm(threading.Thread):
         # instruction = []
         # completed = False
 
-        instruction, completed = self.algorithmClass.moveStep(sensor_vals)
+        instruction, completed, robot_loc, robot_dir = self.algorithmClass.moveStep(sensor_vals)
 
-        dispatcher.send(message=(instruction, completed), signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
+        print robot_loc
+
+        dispatcher.send(message=(instruction, completed, robot_loc, robot_dir), signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
 
     def determine_fastest_path(self, message):
 
         sensor_vals = message
-        instruction = ""
+        instruction = []
         # message e.g. front and side have obstacle or not
         # logging.info("Fastest path robot now at position " + str(self.r_row) + ", " + str(self.r_col))
         # logging.info("Algorithm receive obstacle info: " + str(sensor_vals) + ", now calculating robot path...")
