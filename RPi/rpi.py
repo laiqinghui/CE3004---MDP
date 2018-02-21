@@ -18,10 +18,10 @@ class RPI(threading.Thread):
         dispatcher.connect(self.command_arduino, signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
         dispatcher.connect(self.command_algorithm, signal=gs.ARDUINO_SIGNAL, sender=gs.ARDUINO_SENDER)
 
-        logging.info("rpi initialized")
+        logging.info("rpi +initialized")
 
     def command_rpi(self, message):
-        logging.info("rpi received message from android and write message: " + str(message))
+        #logging.info("rpi received message from android and write message: " + str(message))
 
     def command_arduino(self, message):
         """
