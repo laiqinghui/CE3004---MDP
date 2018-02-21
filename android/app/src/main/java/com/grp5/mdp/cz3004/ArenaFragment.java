@@ -5,17 +5,19 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -68,10 +70,31 @@ public class ArenaFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_arena, container, false);
-
         GridView gridview = (GridView) view.findViewById(R.id.gridview);
-        Log.d("ARENADEBUG", gridview.toString());
-        gridview.setAdapter( new ImageAdapter(getContext()));
+        Button btStartEx = view.findViewById(R.id.startExButton);
+        Button btStartFp = view.findViewById(R.id.startFpButton);
+        Button btSetStartPoint = view.findViewById(R.id.startPointButton);
+        Button btSetWayPoint = view.findViewById(R.id.wayPointButton);
+        Button btSetStartDirection = view.findViewById(R.id.directionButton);
+        final ToggleButton btUpdateToggle = view.findViewById(R.id.updateToggleButton);
+        Button btReturn = view.findViewById(R.id.returnButton);
+        Button btRefresh = view.findViewById(R.id.refreshButton);
+
+        ArrayList<GridImage> gridList = new ArrayList<GridImage>();
+
+        for(int y = 0; y < 21; y++){
+            for(int x = 0; x < 16; x++){
+                if(x==0 & y==0){
+                    GridImage image = new GridImage(android.R.drawable.screen_background_light, x, y, Constants.UNEXPLORED);
+                    gridList.add(image);
+                } else {
+                    GridImage image = new GridImage(android.R.drawable.screen_background_dark, x, y, Constants.UNEXPLORED);
+                    gridList.add(image);
+                }
+            }
+        }
+
+        gridview.setAdapter( new ImageAdapter(getContext(), gridList));
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
@@ -80,6 +103,45 @@ public class ArenaFragment extends Fragment {
                         Toast.LENGTH_SHORT).show();
             }
         });
+
+        btStartEx.setOnClickListener(
+                new View.OnClickListener(){
+                    public void onClick(View view) {
+                        //need to implement getting value of start point and direction
+                        String startEx = "ex"+" "+"1"+" "+"18"+" "+"4";
+                        ((MainActivity)getActivity()).sendMessage(startEx);
+                    }
+                }
+        );
+
+        btStartFp.setOnClickListener(
+                new View.OnClickListener(){
+                    public void onClick(View view) {
+                        //need to implement getting value of way point and direction
+                        String startFp = "fp"+" "+"10"+" "+"10"+" "+"2";
+                        ((MainActivity)getActivity()).sendMessage(startFp);
+                    }
+                }
+        );
+
+        btReturn.setOnClickListener(
+                new View.OnClickListener(){
+                    public void onClick(View view) {
+                        String strReturn = "return";
+                        ((MainActivity)getActivity()).sendMessage(strReturn);
+                    }
+                }
+        );
+
+        btRefresh.setOnClickListener(new View.OnClickListener(){
+                    public void onClick(View view) {
+                        if(btUpdateToggle.isChecked()){
+                            //implement  method to refresh grid map
+                        }
+                    }
+                }
+        );
+
         return view;
     }
 
@@ -124,13 +186,15 @@ public class ArenaFragment extends Fragment {
 
     private class ImageAdapter extends BaseAdapter {
         private Context mContext;
+        private ArrayList<GridImage> gridList;
 
-        public ImageAdapter(Context c) {
+        public ImageAdapter(Context c, ArrayList<GridImage> glist) {
             mContext = c;
+            gridList = glist;
         }
 
         public int getCount() {
-            return mThumbIds.length;
+            return 336;
         }
 
         public Object getItem(int position) {
@@ -144,33 +208,66 @@ public class ArenaFragment extends Fragment {
         // create a new ImageView for each item referenced by the Adapter
         public View getView(int position, View convertView, ViewGroup parent) {
             ImageView imageView;
-            if (convertView == null) {
-                // if it's not recycled, initialize some attributes
-                imageView = new ImageView(mContext);
-                imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
-                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                imageView.setPadding(8, 8, 8, 8);
-            } else {
-                imageView = (ImageView) convertView;
+            TextView textView;
+            if(position<16){
+                if (convertView == null) {
+                    textView = new TextView(mContext);
+                    textView.setText(String.valueOf(position));
+                } else {
+                    return convertView;
+                }
+                return textView;
+            } else if(position%16 == 0){
+                if (convertView == null) {
+                    textView = new TextView(mContext);
+                    textView.setText(String.valueOf(position/16));
+                } else {
+                    return convertView;
+                }
+                return textView;
+            } else{
+                if (convertView == null) {
+                    // if it's not recycled, initialize some attributes
+                    imageView = new ImageView(mContext);
+                    imageView.setLayoutParams(new GridView.LayoutParams(30, 30));
+                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    imageView.setPadding(1,1,1,1);
+                } else {
+                    return convertView;
+                }
+                imageView.setImageResource(gridList.get(position).getImageId());
+                return imageView;
             }
+        }
+    }
 
-            imageView.setImageResource(mThumbIds[position]);
-            return imageView;
+    private class GridImage {
+        int imageId;
+        int row;
+        int col;
+        int status;
+
+        GridImage(int imageId, int row, int col, int status){
+            this.imageId = imageId;
+            this.row = row;
+            this.col = col;
+            this.status = status;
         }
 
-        // references to our images
-        private Integer[] mThumbIds = {
-                R.drawable.sample_2, R.drawable.sample_3,
-                R.drawable.sample_4, R.drawable.sample_5,
-                R.drawable.sample_6, R.drawable.sample_7,
-                R.drawable.sample_0, R.drawable.sample_1,
-                R.drawable.sample_2, R.drawable.sample_3,
-                R.drawable.sample_4, R.drawable.sample_5,
-                R.drawable.sample_6, R.drawable.sample_7,
-                R.drawable.sample_0, R.drawable.sample_1,
-                R.drawable.sample_2, R.drawable.sample_3,
-                R.drawable.sample_4, R.drawable.sample_5,
-                R.drawable.sample_6, R.drawable.sample_7
-        };
+        public int getImageId(){
+            return this.imageId;
+        }
+
+        public void setImageId(int imageId){
+            this.imageId = imageId;
+        }
+
+        public int getStatus(){
+            return this.status;
+        }
+
+        public void setStatus(int status){
+            this.status = status;
+        }
     }
 }
