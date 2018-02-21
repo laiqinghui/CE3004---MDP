@@ -27,9 +27,11 @@ class RPI(threading.Thread):
         """
         Message received from algorithm to be processed and passed to arduino
         """
+        # if fatest path
         if len(message) == 1:
             formatted_instruction = 'C' + ''.join(instruction)
 
+        # if exploration
         if len(message) > 1:
 
             instruction = message[0]
