@@ -93,7 +93,7 @@ if __name__ == "__main__":
     #     time.sleep(1)
 
     """RUN MAIN.PY TO TEST ALGORITHM & RPI INTERFACE"""
-    # python main.py --rr=18 --rc=1 --wr=5 --wc=9 --gr=1 --gc=13 --mode=3 --dir=3
+    # python main.py --rr=18 --rc=1 --wr=5 --wc=9 --gr=1 --gc=13 --mode=0 --dir=2
     # sys.argv[1:] = ['--rr=1', '--rc=1', '--wr=5', '--wc=9', '--gr=19', '--gc=14', '-m', '0']
     rr, rc, wr, wc, gr, gc, m, d = initialise_robot_options(sys.argv[1:])
 
@@ -102,4 +102,4 @@ if __name__ == "__main__":
     while 1:
         time.sleep(1)
         data = raw_input("Enter the data to be sent to algorithm: ")
-        dispatcher.send(message=[10, 10, 10, 10, 10], signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
+        dispatcher.send(message=[1, 1, 1, 1, 1], signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
