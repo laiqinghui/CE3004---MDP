@@ -130,8 +130,48 @@ void DualVNH5019MotorShield::setM2Speed(int speed)
 // Set speed for motor 1 and 2
 void DualVNH5019MotorShield::setSpeeds(int m1Speed, int m2Speed)
 {
-  setM1Speed(m1Speed);
-  setM2Speed(m2Speed);
+  //setM1Speed(m1Speed);
+  //setM2Speed(m2Speed);
+  
+  unsigned char reverse = 0;
+  if (m1Speed < 0 && m2Speed < 0)
+  {
+    m1Speed = -m1Speed;  // Make speed a positive quantity
+	m2Speed = -m2Speed;  // Make speed a positive quantity
+    reverse = 1;  // Preserve the direction
+  }
+  if (m1Speed > 400)  // Max PWM dutycycle
+    m1Speed = 400;
+  if (m2Speed > 400)  // Max PWM dutycycle
+    m2Speed = 400;
+  #if defined(__AVR_ATmega168__)|| defined(__AVR_ATmega328P__) || defined(__AVR_ATmega32U4__)
+  OCR1A = m1Speed;
+  OCR1B = m2Speed;
+  #else
+  analogWrite(_PWM1,m1Speed * 51 / 80); // default to using analogWrite, mapping 400 to 255
+  analogWrite(_PWM2,m2Speed * 51 / 80); // default to using analogWrite, mapping 400 to 255
+  #endif
+  if (m1Speed == 0 && m2Speed == 0)
+  {
+    digitalWrite(_INA1,LOW);   // Make the motor coast no
+    digitalWrite(_INB1,LOW);   // matter which direction it is spinning.
+	digitalWrite(_INA2,LOW);   // Make the motor coast no
+    digitalWrite(_INB2,LOW);   // matter which direction it is spinning.
+  }
+  else if (reverse)
+  {
+    digitalWrite(_INA1,LOW);
+    digitalWrite(_INB1,HIGH);
+	digitalWrite(_INA2,LOW);
+    digitalWrite(_INB2,HIGH);
+  }
+  else
+  {
+    digitalWrite(_INA1,HIGH);
+    digitalWrite(_INB1,LOW);
+	digitalWrite(_INA2,HIGH);
+    digitalWrite(_INB2,LOW);
+  }
 }
 
 // Brake motor 1, brake is a number between 0 and 400
@@ -175,8 +215,32 @@ void DualVNH5019MotorShield::setM2Brake(int brake)
 // Brake motor 1 and 2, brake is a number between 0 and 400
 void DualVNH5019MotorShield::setBrakes(int m1Brake, int m2Brake)
 {
-  setM1Brake(m1Brake);
-  setM2Brake(m2Brake);
+  //setM1Brake(m1Brake);
+  //setM2Brake(m2Brake);
+  
+  // normalize brake
+  if (m1Brake < 0 && m2Brake < 0)
+  {
+    m1Brake = -m1Brake;
+	m2Brake = -m2Brake;
+  }
+  if (m1Brake > 400)  // Max brake
+    m1Brake = 400;
+  if (m2Brake > 400)  // Max brake
+    m2Brake = 400;
+  digitalWrite(_INA1, LOW);
+  digitalWrite(_INB1, LOW);
+  digitalWrite(_INA2, LOW);
+  digitalWrite(_INB2, LOW);
+  #if defined(__AVR_ATmega168__)|| defined(__AVR_ATmega328P__) || defined(__AVR_ATmega32U4__)
+  OCR1A = m1Brake;
+  OCR1B = m2Brake;
+  #else
+  analogWrite(_PWM1,m1Brake * 51 / 80); // default to using analogWrite, mapping 400 to 255
+  analogWrite(_PWM2,m2Brake * 51 / 80); // default to using analogWrite, mapping 400 to 255
+  #endif
+  
+  
 }
 
 // Return motor 1 current value in milliamps.

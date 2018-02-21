@@ -40,6 +40,22 @@ class Android(threading.Thread):
         self.server_socket.bind(("", self.port))
         self.server_socket.listen(1)
         self.uuid = "00001101-0000-1000-8000-00805F9B34FB"
+        self.connect()
+
+    def connect(self):
+        advertise_service(self.server_socket, "MDPGroup5", service_id=self.uuid, service_classes=[self.uuid, SERIAL_PORT_CLASS], profiles=[SERIAL_PORT_PROFILE])
+        logging.info("Waiting for Bluetooth connection on port " + str(self.port))
+        self.client_sock, self.client_info = self.server_socket.accept()
+        logging.info("Accepted connection from" + str(self.client_info))
+        try:
+            self.sendAndroid("Connection Secured")
+            while True:
+                self.receiveAndroid()
+        except IOError:
+            logging.info("Bluetooth disconnected or encountered an error, re-establishing broadcast in 1 second")
+            time.sleep(1)
+            self.connect()
+            #pass
 
     def startAlgorithm(self, robot_row, robot_col, waypoint_row, waypoint_col, goal_row, goal_col, mode, dir):
         self.algo_thread = Algorithm(robot_row, robot_col, waypoint_row, waypoint_col, goal_row, goal_col, mode, dir)
@@ -58,7 +74,7 @@ class Android(threading.Thread):
             self.client_sock.send(str(message))
         except BluetoothError:
             logging.info("Bluetooth Error")
-            self.connect_bluetooth()
+            self.connect
 
     def receiveAndroid(self):
         """
@@ -85,6 +101,8 @@ class Android(threading.Thread):
                 steps = int(msg.split()[1])
             elif(command == "rotate"):
                 degrees = int(msg.split()[1])
+            else:
+                logging.info("Invalid message")
             #elif(command == "reset"):
             #elif(command == "return"):
             logging.info("Android thread received: " + msg)
@@ -92,32 +110,32 @@ class Android(threading.Thread):
 
         except BluetoothError:
             logging.info("Bluetooth Error")
-            self.connect_bluetooth()
+            self.connect
 
     def closeAndroidConnection(self):
         self.client_sock.close()
         self.server_sock.close()
         logging.info("Bluetooth connection ended.")
 
-    def start(self):
-        self.running = True
-        super(Android, self).start()
+    # def start(self):
+    #     self.running = True
+    #     super(Android, self).start()
 
-    def run(self):
-        advertise_service(self.server_socket, "MDPGroup5", service_id=self.uuid, service_classes=[self.uuid, SERIAL_PORT_CLASS], profiles=[SERIAL_PORT_PROFILE])
-        logging.info("Waiting for Bluetooth connection on port " + str(self.port))
-        self.client_sock, self.client_info = self.server_socket.accept()
-        logging.info("Accepted connection from" + str(self.client_info))
+    # def run(self):
+    #     advertise_service(self.server_socket, "MDPGroup5", service_id=self.uuid, service_classes=[self.uuid, SERIAL_PORT_CLASS], profiles=[SERIAL_PORT_PROFILE])
+    #     logging.info("Waiting for Bluetooth connection on port " + str(self.port))
+    #     self.client_sock, self.client_info = self.server_socket.accept()
+    #     logging.info("Accepted connection from" + str(self.client_info))
 
-        self.idle()
+    #     self.idle()
 
-    def stop(self):
-        self.running = False
+    # def stop(self):
+    #     self.running = False
 
-    def idle(self):
-        try:
-            self.sendAndroid("Connection Secured")
-            while(self.running):
-                self.receiveAndroid()
-        except IOError:
-            pass
+    # def idle(self):
+    #     try:
+    #         self.sendAndroid("Connection Secured")
+    #         while(self.running):
+    #             self.receiveAndroid()
+    #     except IOError:
+        #     pass

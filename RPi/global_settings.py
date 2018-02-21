@@ -52,10 +52,18 @@ def print_mazemap(mmap):
         print ""
 
 
+def get_obstacle_mazemap(mmap):
+    return np.where(mmap > 1, 1, 0)
+
+
+def get_explore_status_mazemap(mmap):
+    return np.where(mmap > 0, 1, 0)
+
+
 def get_mdf_bitstring(mmap, format=0):
     bitstring = '11' + ''.join(str(grid) for mazerow in mmap for grid in mazerow) + '11'
     if format == 0:     # binary
-        return bin(int(bitstring, 2))
+        return bin(int(bitstring, 2))[2:]
     if format == 1:     # hexadecimal
-        return hex(int(bitstring, 2))
+        return hex(int(bitstring, 2))[2:]
     assert False, "unhandled format"
