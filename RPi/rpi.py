@@ -21,7 +21,7 @@ class RPI(threading.Thread):
         logging.info("rpi +initialized")
 
     def command_rpi(self, message):
-        #logging.info("rpi received message from android and write message: " + str(message))
+        logging.info("rpi received message from android and write message: " + str(message))
 
     def command_arduino(self, message):
         """
