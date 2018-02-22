@@ -5,7 +5,7 @@ void testSequence1(){
   
     for(int i = 0; i < 4; i++){
     for(int j = 0; j < 3; j++ ){
-        moveForward(80, 10);
+        moveForward(80, 10, true);
         Serial.println("\n\n\n");
         delay(500);
       }
@@ -18,11 +18,11 @@ void testSequence1(){
 
   void testSequence2(){
 
-  moveForward(80, 10);
-  //delay(500);
-  ///turn(-1, 180);
-  //delay(500);
-  //moveForward(80, 100);
+    for(int i = 0; i < 10; i++){
+    moveForward(80, 9.5, true);
+    delay(1000);
+    }
+
   
   }
 
@@ -43,18 +43,18 @@ void processInst(){
   Serial.print(inst[0]);
   switch(inst[0]){
     
-    case 'm': moveForward(80, atoi(&inst[1]));
-              Serial.println("m");    
+    case 'M': moveForward(80, atoi(&inst[1]), true);
+              Serial.println("M");    
               break;
-    case 't': //turn(-1, atoi(&inst[1]));
+    case 'T': //turn(-1, atoi(&inst[1]));
               break;
-    case 'w': moveForward(50, 10);
+    case 'W': moveForward(50, 10, false);
               break;
-    case 'a': //turn(-1, 90);
+    case 'A': //turn(-1, 90);
               break;
-    case 's': //turn(1, 90);
+    case 'D': //turn(1, 90);
               break;
-    case 'd': //turn(-1, 180);
+    case 'O': //turn(-1, 180);
               break;
     default:  Serial.println(inst[0]);            
     
@@ -68,7 +68,8 @@ void setup() {
   Serial.begin(115200);
   md.init();
   initI2C();
-  //testSequence2();
+  testSequence2();
+  //moveForward(80, 95, true);
  
 }
 
@@ -78,7 +79,7 @@ void loop() {
   //Serial.println(getSensorReadingInCM()[1]);
   //Serial.println(getSensorReadingInCM()[2]);
   //straightUsingEncoder();
-  turn(1, 1080);
+  turn(1, 90);
   //calibration();
   while(true)
   {

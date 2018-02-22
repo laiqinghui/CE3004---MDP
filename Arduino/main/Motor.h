@@ -104,22 +104,13 @@ void tuneM1(int desiredRPM, MotorPID *M1){
   double currentRPM = sqWidthToRPM(squareWidth_M1);
   
   //Serial.print("M1 Current RPM: ");
-  Serial.print(currentRPM);
-  Serial.print(" ");
+  //Serial.print(currentRPM);
+  //Serial.print(" ");
 
- 
-  
-  
   M1->currentErr =  desiredRPM - currentRPM;
   //tuneSpeed = M1->prevTuneSpeed + 0.47*M1->currentErr;
   tuneSpeed = M1->prevTuneSpeed + M1->gain*M1->currentErr + (M1->gain/0.05)*(M1->currentErr - M1->prevErr1);
-  /*
-  Serial.print("currentErr_M1 ");
-  Serial.println(currentErr_M1);
-  Serial.print("M1 tuneSpeed ");
-  Serial.println(tuneSpeed);
-  Serial.println();
-  */
+
   md.setM1Speed(tuneSpeed);
   M1->prevTuneSpeed = tuneSpeed;
   M1->prevErr1 = M1->currentErr;
@@ -134,20 +125,12 @@ void tuneM1(int desiredRPM, MotorPID *M1){
   double currentRPM = sqWidthToRPM(squareWidth_M2);
   
   //Serial.print("M2 Current RPM: ");
-  Serial.println(currentRPM);
+  //Serial.println(currentRPM);
 
-  
-  
   M2->currentErr =  desiredRPM - currentRPM;
   //tuneSpeed = M2->prevTuneSpeed + 0.5*M2->currentErr;
   tuneSpeed = M2->prevTuneSpeed + M2->gain*M2->currentErr + (M2->gain/0.05)*(M2->currentErr - M2->prevErr1);
-  /*
-  Serial.print("currentErr_M2 ");
-  Serial.println(currentErr_M2);
-  Serial.print("M2 tuneSpeed ");
-  Serial.println(tuneSpeed);
-  Serial.println();
-  */
+
   md.setM2Speed(tuneSpeed);
   M2->prevErr1 = M2->currentErr;
   M2->prevTuneSpeed = tuneSpeed;
@@ -156,7 +139,7 @@ void tuneM1(int desiredRPM, MotorPID *M1){
   }
 
 
-void moveForward(int rpm, int distance){
+void moveForward(int rpm, int distance, boolean pidOn){
 
    signed long tuneEntryTime = 0;
    signed long tuneExitTime = 0;
@@ -169,32 +152,34 @@ void moveForward(int rpm, int distance){
 
 
     
-    MotorPID M1pid = {184, 0, 0, 0.1};
-    MotorPID M2pid = {219, 0, 0, 0.1};
+    MotorPID M1pid = {100, 0, 0, 0.1};//0.1=>50
+    MotorPID M2pid = {100, 0, 0, 0.132};//0.163=>50 0.132=>80
     enableInterrupt( e1a, risingM1, RISING);
     enableInterrupt( e2b, risingM2, RISING);
 
-    md.setM1Speed(184);
-    delay(1);
-    md.setM2Speed(219);
+    //md.setM1Speed(158);//184
+    //delay(3);
+    //md.setM2Speed(197);//219
+    //md.setSpeeds(155, 178);//
+    md.setSpeeds(100, 100);//
 
     
   
 
     while(M1ticks < distanceTicks){
       
-      //rpm1 = sqWidthToRPM(squareWidth_M1);
-      //rpm2 = sqWidthToRPM(squareWidth_M2);
+      Serial.print(sqWidthToRPM(squareWidth_M1));
+      Serial.print(" ");
+      Serial.println(sqWidthToRPM(squareWidth_M2));
       
-      //Serial.print("M1 Current RPM: ");
-      //Serial.println(rpm1);
-      //Serial.print("\nM2 Current RPM: ");
-      //Serial.println(rpm2);
-      
-      if(sqWidthToRPM(squareWidth_M2) > pidStartRPM || sqWidthToRPM(squareWidth_M1) > pidStartRPM){
+      if(pidOn){
       tuneEntryTime = micros();
         interval = tuneEntryTime - tuneExitTime;
         if(interval >= 5000){ 
+
+          tuneM1(rpm, &M1pid);
+          tuneM2(rpm, &M2pid);
+          /*
           if(M1ticks < 0.7*distanceTicks){
             tuneM1(rpm, &M1pid);
             tuneM2(rpm, &M2pid);
@@ -205,17 +190,16 @@ void moveForward(int rpm, int distance){
             tuneM1(rpm*0.5, &M1pid);
             tuneM2(rpm*0.5, &M2pid);
             }
+            */
           tuneExitTime = micros();
         }
       }
-    }
+    }//end of while
+      
       md.setBrakes(400,400);
-      /*
-      delay(1000);
-      md.setSpeeds(-230.839, -265.47);
-      delay(7000);
-      md.setBrakes(400,400);
-      */
+      md.setM1Brake(400);
+      //delay(15);
+      md.setM2Brake(400);
       disableInterrupt(e1a);
       disableInterrupt(e2b);
       setM1Ticks(0);
@@ -238,7 +222,7 @@ double getCir(int dir, int turnDegree)
 void turn(int dir, int turnDegree)
 {
     //1 is right, -1 is left
-    double cir = Pi * 16.15; //circumfrence of circle drawn when turning in cm, current diameter used is between 16.2
+    double cir = Pi * 15.6; //circumfrence of circle drawn when turning in cm, current diameter used is between 15.6
     int amount = abs(cir * (turnDegree/360.0) * ticksPerCM/2);//int to ignored decimal value //* getTurnTicksOffsetAmt(turnDegree)
     
     Serial.print("Target count: ");
@@ -259,13 +243,17 @@ void turn(int dir, int turnDegree)
     */
     int previousRead = 0;
     int currentValue = 0;
-    md.setSpeeds(-70 * dir, 95 * dir);
-    while(ticks < amount)
+    md.setSpeeds(-221 * dir, 250 * dir);
+    while(true)
     {
       currentValue = (PIND>>3)%2;
       if(currentValue == 1 && previousRead == 0)
       {
-        ticks++;        
+        ticks++;
+        if(ticks == amount)
+        {
+          break;        
+        }
       }
       previousRead = currentValue;
     }
