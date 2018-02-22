@@ -140,37 +140,88 @@ void DualVNH5019MotorShield::setSpeeds(int m1Speed, int m2Speed)
 	m2Speed = -m2Speed;  // Make speed a positive quantity
     reverse = 1;  // Preserve the direction
   }
+  else if(m1Speed < 0 && !(m2Speed < 0))
+  {
+	m1Speed = -m1Speed;  // Make speed a positive quantity
+    reverse = 2;  // Preserve the direction
+  }
+  else if(m2Speed < 0 && !(m1Speed < 0))
+  {
+	m2Speed = -m2Speed;  // Make speed a positive quantity
+    reverse = 3;  // Preserve the direction
+  }
+  
   if (m1Speed > 400)  // Max PWM dutycycle
     m1Speed = 400;
   if (m2Speed > 400)  // Max PWM dutycycle
     m2Speed = 400;
-  #if defined(__AVR_ATmega168__)|| defined(__AVR_ATmega328P__) || defined(__AVR_ATmega32U4__)
-  OCR1A = m1Speed;
-  OCR1B = m2Speed;
-  #else
+
   analogWrite(_PWM1,m1Speed * 51 / 80); // default to using analogWrite, mapping 400 to 255
   analogWrite(_PWM2,m2Speed * 51 / 80); // default to using analogWrite, mapping 400 to 255
-  #endif
+  
   if (m1Speed == 0 && m2Speed == 0)
   {
-    digitalWrite(_INA1,LOW);   // Make the motor coast no
-    digitalWrite(_INB1,LOW);   // matter which direction it is spinning.
-	digitalWrite(_INA2,LOW);   // Make the motor coast no
-    digitalWrite(_INB2,LOW);   // matter which direction it is spinning.
+	PORTD = PORTD & B01101011;
+	
+	PORTB = PORTB & B11111110;
+	
+	//Make the motor coast no matter which direction it is spinning.
+    //digitalWrite(_INA1,LOW);
+    //digitalWrite(_INB1,LOW);
+	//digitalWrite(_INA2,LOW);
+    //digitalWrite(_INB2,LOW);
   }
-  else if (reverse)
+  //both speed are positive
+  else if (reverse == 0)
   {
-    digitalWrite(_INA1,LOW);
-    digitalWrite(_INB1,HIGH);
-	digitalWrite(_INA2,LOW);
-    digitalWrite(_INB2,HIGH);
+	PORTD = PORTD & B11101111; //Set to low
+	PORTD = PORTD | B10000100; //Set to high
+	
+	PORTB = PORTB & B11111110; //Set to low
+	  
+	//digitalWrite(_INA1,HIGH);
+    //digitalWrite(_INB1,LOW);
+	//digitalWrite(_INA2,HIGH);
+    //digitalWrite(_INB2,LOW);  
   }
+  //both speed are negative
+  else if(reverse == 1)
+  {
+	PORTD = PORTD & B01111011; //Set to low
+	PORTD = PORTD | B00010000; //Set to high
+	
+	PORTB = PORTB | B00000001; //Set to high  
+	  
+	//digitalWrite(_INA1,LOW);
+    //digitalWrite(_INB1,HIGH);
+	//digitalWrite(_INA2,LOW);
+    //digitalWrite(_INB2,HIGH);
+  }
+  //m1Speed is negative
+  else if(reverse == 2)
+  {
+	PORTD = PORTD & B11111011; //Set to low
+	PORTD = PORTD | B10010000; //Set to high
+	
+	PORTB = PORTB & B11111110; //Set to low    
+	  
+    //digitalWrite(_INA1,LOW);
+    //digitalWrite(_INB1,HIGH);
+    //digitalWrite(_INA2,HIGH);
+    //digitalWrite(_INB2,LOW);
+  }
+  //m2Speed is negative
   else
   {
-    digitalWrite(_INA1,HIGH);
-    digitalWrite(_INB1,LOW);
-	digitalWrite(_INA2,HIGH);
-    digitalWrite(_INB2,LOW);
+	PORTD = PORTD & B01101111; //Set to low
+	PORTD = PORTD | B00000100; //Set to high
+	
+	PORTB = PORTB | B00000001; //Set to high      
+	  
+    //digitalWrite(_INA1,HIGH);
+    //digitalWrite(_INB1,LOW);
+	//digitalWrite(_INA2,LOW);
+    //digitalWrite(_INB2,HIGH);
   }
 }
 
@@ -228,19 +279,18 @@ void DualVNH5019MotorShield::setBrakes(int m1Brake, int m2Brake)
     m1Brake = 400;
   if (m2Brake > 400)  // Max brake
     m2Brake = 400;
-  digitalWrite(_INA1, LOW);
-  digitalWrite(_INB1, LOW);
-  digitalWrite(_INA2, LOW);
-  digitalWrite(_INB2, LOW);
-  #if defined(__AVR_ATmega168__)|| defined(__AVR_ATmega328P__) || defined(__AVR_ATmega32U4__)
-  OCR1A = m1Brake;
-  OCR1B = m2Brake;
-  #else
+	
+  PORTD = PORTD & B01101011;
+	
+  PORTB = PORTB & B11111110;
+  
+  //digitalWrite(_INA1, LOW);
+  //digitalWrite(_INB1, LOW);
+  //digitalWrite(_INA2, LOW);
+  //digitalWrite(_INB2, LOW);
+
   analogWrite(_PWM1,m1Brake * 51 / 80); // default to using analogWrite, mapping 400 to 255
   analogWrite(_PWM2,m2Brake * 51 / 80); // default to using analogWrite, mapping 400 to 255
-  #endif
-  
-  
 }
 
 // Return motor 1 current value in milliamps.
