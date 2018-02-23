@@ -46,8 +46,7 @@ void processInst(){
   Serial.print(inst[0]);
   switch(inst[0]){
     
-    case 'M': moveForward(80, atoi(&inst[1]), true);
-              Serial.println("M");    
+    case 'M': moveForward(80, atoi(&inst[1]), true);  
               break;
     case 'T': turn(-1, atoi(&inst[1]));
               break;
@@ -77,13 +76,13 @@ void setup() {
   initI2C();
   //testSequence2();
   //moveForward(80, 95, true);
-  benTestSequence();
+  //benTestSequence();
  
 }
 
 void loop() {
-  
-
+ 
+  //Serial.println((int)getSensorReadingInCM()[0]);
   if(dataExist()){
     Serial.println("Getting new data...");
     processInst();

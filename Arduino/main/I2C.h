@@ -6,14 +6,15 @@
 #define SLAVE_ADDRESS 0x04
 
 char inBuffer[50] = {0};
-char outBuffer[50] = {0};
+char outBuffer[5] = {0};
 boolean newData = false;
 
 
 void printArray(char arr[], int len){
     //Start from one as first char is empty
-    for(int i = 1; i < len ; i++){
-        Serial.print(arr[i]);
+    Serial.println("In printArray():");
+    for(int i = 0; i < len ; i++){
+        Serial.print((int)arr[i]);
       }
     Serial.println();
     
@@ -28,7 +29,7 @@ void interruptPi(){
 
 void acknowledgeRPI(int len){
   
-  outBuffer[0] = 'M'; 
+  outBuffer[0] = 'A'; 
   for(int i = 0; i < len ; i++){
         outBuffer[i+1] = inBuffer[i];
   }
@@ -55,7 +56,7 @@ void receiveData(int byteCount) {
   
     }
     
-   acknowledgeRPI(len-1);
+   //acknowledgeRPI(len-1);
 	 newData = true;//Set flag for main program to process data
    
   } else {
@@ -72,7 +73,10 @@ void receiveData(int byteCount) {
 
 // callback for sending data
 void sendData() {
+  //char outTest[5] = {'H','E','L','L','O'};
+  //Wire.write(outTest);
   Wire.write(outBuffer);
+  //printArray(outBuffer, 6);
 }
 
 void initI2C(){
@@ -106,11 +110,13 @@ void resetInBuffer(){
 }
 
 
-void setOutBuffer(int * data, int len){
+void setOutBuffer(char * data, int len){
   
   for(int i = 0; i < len ; i++){
         outBuffer[i] = data[i];
+        Serial.print("outBuffer[");Serial.print(i);Serial.print(": ");Serial.println((int)outBuffer[i]); 
   }
+  //outBuffer[5] = '\0';
   
 }
 

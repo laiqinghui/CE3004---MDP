@@ -206,7 +206,7 @@ void turn(int dir, int turnDegree)
     //1 is right, -1 is left
     double cir = Pi * getCir(dir, turnDegree); //circumfrence of circle drawn when turning in cm, current diameter used is between 15.6
 
-    int amount = abs(cir * (turnDegree/360.0) * ticksPerCM/2);//int to ignored decimal value //* getTurnTicksOffsetAmt(turnDegree)
+    int amount = abs(cir * (turnDegree/360.0) * ticksPerCM);//int to ignored decimal value //* getTurnTicksOffsetAmt(turnDegree)
     /*
      * Different Speed Values
      * md.setSpeeds(-221 * dir, 250 * dir);

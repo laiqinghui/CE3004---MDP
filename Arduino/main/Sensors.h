@@ -9,7 +9,8 @@ double getIRSensorReading(int sensor);
 
 
 
-int sensorsValuesArray[5] = {0};
+char sensorsValuesArray[5] = {0};
+
 
 
 int USValue = 0;
@@ -64,18 +65,18 @@ int getUltraSoundDistance(){
 
 }  
 
-int* getSensorReadingInCM(){//Quick and dirty test i.e no avg/median of sensor value
+char* getSensorReadingInCM(){//Quick and dirty test i.e no avg/median of sensor value
     /*
     Return pointer to sensors values array. Reasons for the pointer approach is to facilitate for Exploration where
     one call to this method will be sufficient for updating to RPI.
     Usage example: To get front left sensor reading just call sensorsValuesArray()[1]
     TODO: Generate mean/median of sensors value before assigning
     */
-		sensorsValuesArray[0] = (6787/getIRSensorReading(frontLeftIR) - 3) - 4;
-		sensorsValuesArray[1] = 500; //getUltraSoundDistance()
-		sensorsValuesArray[2] = (6787/getIRSensorReading(frontRightIR) - 3) - 4;
-		sensorsValuesArray[3] = 60.374 * pow( ( getIRSensorReading(right)*(5.0 / 1023.0) ) , -1.16);
-		sensorsValuesArray[4] = 60.374 * pow( ( getIRSensorReading(left)*(5.0 / 1023.0) ) , -1.16);
+		sensorsValuesArray[0] = (6787/getIRSensorReading(frontLeftIR) - 3) - 4; //Front left
+		sensorsValuesArray[1] = 500; //getUltraSoundDistance() //Center
+		sensorsValuesArray[2] = (6787/getIRSensorReading(frontRightIR) - 3) - 4; //Front right
+		sensorsValuesArray[3] = (6787/getIRSensorReading(right) - 3) - 4; //Right
+		sensorsValuesArray[4] = (6787/getIRSensorReading(left) - 3) - 4; //Left
 
 					
 	  return sensorsValuesArray;
