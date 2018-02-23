@@ -157,14 +157,8 @@ void moveForward(int rpm, int distance, boolean pidOn){
     enableInterrupt( e1a, risingM1, RISING);
     enableInterrupt( e2b, risingM2, RISING);
 
-    //md.setM1Speed(158);//184
-    //delay(3);
-    //md.setM2Speed(197);//219
-    //md.setSpeeds(155, 178);//
     md.setSpeeds(100, 100);//
 
-    
-  
 
     while(M1ticks < distanceTicks){
       
@@ -197,9 +191,6 @@ void moveForward(int rpm, int distance, boolean pidOn){
     }//end of while
       
       md.setBrakes(400,400);
-      md.setM1Brake(400);
-      //delay(15);
-      md.setM2Brake(400);
       disableInterrupt(e1a);
       disableInterrupt(e2b);
       setM1Ticks(0);
@@ -222,7 +213,7 @@ double getCir(int dir, int turnDegree)
 void turn(int dir, int turnDegree)
 {
     //1 is right, -1 is left
-    double cir = Pi * 16.15; //circumfrence of circle drawn when turning in cm, current diameter used is between 16.2
+    double cir = Pi * 15.9; //circumfrence of circle drawn when turning in cm, current diameter used is between 16.2
     int amount = abs(cir * (turnDegree/360.0) * ticksPerCM/2);//int to ignored decimal value //* getTurnTicksOffsetAmt(turnDegree)
     
     Serial.print("Target count: ");
@@ -243,7 +234,9 @@ void turn(int dir, int turnDegree)
     */
     int previousRead = 0;
     int currentValue = 0;
-    md.setSpeeds(-70 * dir, 95 * dir);
+    
+    md.setM1Speed(-221 * dir);
+    md.setM2Speed(250 * dir);
     while(ticks < amount)
     {
       currentValue = (PIND>>3)%2;

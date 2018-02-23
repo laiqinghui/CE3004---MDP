@@ -10,7 +10,7 @@ void testSequence1(){
         delay(500);
       }
       
-    //turn(-1, 90);//left
+     turn(1, 90);//left
     delay(500);  
 }
   
@@ -18,8 +18,11 @@ void testSequence1(){
 
   void testSequence2(){
 
-    for(int i = 0; i < 10; i++){
-    moveForward(80, 9.5, true);
+    calibration();
+    
+    for(int i = 0; i < 4; i++){
+    //moveForward(80, 9.5, true);
+    turn(-1, 90);//left
     delay(1000);
     }
 
@@ -46,20 +49,24 @@ void processInst(){
     case 'M': moveForward(80, atoi(&inst[1]), true);
               Serial.println("M");    
               break;
-    case 'T': //turn(-1, atoi(&inst[1]));
+    case 'T': turn(-1, atoi(&inst[1]));
               break;
-    case 'W': moveForward(50, 10, false);
+    case 'W': moveForward(80, 10, true);
               break;
-    case 'A': //turn(-1, 90);
+    case 'A': turn(-1, 90);
               break;
-    case 'D': //turn(1, 90);
+    case 'D': turn(1, 90);
               break;
-    case 'O': //turn(-1, 180);
+    case 'O': turn(-1, 180);
+              break;
+    case 'S': setOutBuffer(getSensorReadingInCM(), 5);
+              interruptPi();//Interrupt RPI to notify data is ready 
               break;
     default:  Serial.println(inst[0]);            
     
     }
-
+    
+  resetInBuffer();
 
 }
 
@@ -75,22 +82,9 @@ void setup() {
 
 void loop() {
   
-  // put your main code here, to run repeatedly:
-  //Serial.println(getSensorReadingInCM()[1]);
-  //Serial.println(getSensorReadingInCM()[2]);
-  //straightUsingEncoder();
-  turn(1, 1080);
-  //calibration();
-  while(true)
-  {
-    
-  }
-  
   if(dataExist()){
     Serial.println("Getting new data...");
     processInst();
-    resetInBuffer();
-    
     }
     
 }
@@ -106,7 +100,9 @@ void straighten()
     {
       while (getCalibrationReading(frontRightIR) > getCalibrationReading(frontLeftIR))
       {
-        md.setSpeeds(70, -95);
+       
+        md.setM1Speed(70);
+        md.setM2Speed(-95);
       }
   
       md.setBrakes(400, 400);
@@ -115,7 +111,9 @@ void straighten()
     {
       while (getCalibrationReading(frontRightIR) < getCalibrationReading(frontLeftIR))
       {
-        md.setSpeeds(-70, 95);
+       
+        md.setM1Speed(-70);
+        md.setM2Speed(95);
       }
       md.setBrakes(400, 400);
     }
@@ -146,14 +144,16 @@ void distanceFromWall(int distance)
   {
     while(getCalibrationReading(frontRightIR) > distance)
       {
-        md.setSpeeds(84, 110);
+        md.setM1Speed(84);
+        md.setM2Speed(110);
       }
   }
   else if(getCalibrationReading(frontRightIR) < distance)
   {
     while(getCalibrationReading(frontRightIR) < distance)
       {
-        md.setSpeeds(-84, -110);
+        md.setM1Speed(-84);
+        md.setM2Speed(-110);
       }
   }
   md.setBrakes(400, 400);

@@ -38,9 +38,8 @@ void receiveData(int byteCount) {
   
     }
     
-   Serial.print("inBuffer: ");
-   printArray(inBuffer, len);
-	 newData = true;
+   acknowledgeRPI(len-1);
+	 newData = true;//Set flag for main program to process data
    
   } else {
     
@@ -54,14 +53,14 @@ void receiveData(int byteCount) {
 
 void interruptPi(){
     digitalWrite(PI_PIN, HIGH);
-    delay(500);
+    delay(100);
     digitalWrite(PI_PIN, LOW);
     
   }
 
 // callback for sending data
 void sendData() {
-  Wire.write("HELLO THIS IS ARDUINO");
+  Wire.write(outBuffer);
 }
 
 void initI2C(){
@@ -85,14 +84,32 @@ char * getinBuffer(){
 	
 }
 
+
 void resetInBuffer(){
 	
 	for(int i = 0; i < 50; i ++ ){
-		
 		inBuffer[i] = 0;
 	}
 	
-	
+}
+
+
+void setOutBuffer(int * data, int len){
+  
+  for(int i = 0; i < len ; i++){
+        outBuffer[i] = data[i];
+  }
+  
+}
+
+void acknowledgeRPI(int len){
+  
+  outBuffer[0] = 'M'; 
+  for(int i = 0; i < len ; i++){
+        outBuffer[i+1] = inBuffer[i];
+  }
+  interruptPi();
+  
 }
 
 boolean dataExist(){
