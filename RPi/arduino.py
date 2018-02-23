@@ -34,7 +34,6 @@ class Arduino(threading.Thread):
         time.sleep(0.6)
         byte = self.readData()
         logging.info(self.readBytesArray(byte))
-        message = "TEST"
         # if acknowledgement byte
         if chr(byte[0]) == "A":
             logging.info("arduino acknowledged")

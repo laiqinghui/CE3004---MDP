@@ -230,15 +230,15 @@ class Exploration:
             self.robot.moveBot(RIGHT)
             move.extend(('O'))
 
-        if not (self.sim):
-            calibrate_front = self.robot.can_calibrate_front()
-            calibrate_right = self.robot.can_calibrate_right()
-            if self.robot.is_corner():
-                move.append('L')
-            elif (calibrate_right[0]):
-                move.append(calibrate_right[1])
-            elif (calibrate_front[0]):
-                move.append(calibrate_front[1])
+        # if not (self.sim):
+        #     calibrate_front = self.robot.can_calibrate_front()
+        #     calibrate_right = self.robot.can_calibrate_right()
+        #     if self.robot.is_corner():
+        #         move.append('L')
+        #     elif (calibrate_right[0]):
+        #         move.append(calibrate_right[1])
+        #     elif (calibrate_front[0]):
+        #         move.append(calibrate_front[1])
         return move
 
     def getExploredArea(self):
