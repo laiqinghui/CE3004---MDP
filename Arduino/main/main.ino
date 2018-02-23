@@ -2,20 +2,20 @@
 #include "I2C.h"
 
 void testSequence1(){
-  
-    for(int i = 0; i < 4; i++){
+  for(int i = 0; i < 4; i++)
+  {
     for(int j = 0; j < 3; j++ ){
-        moveForward(80, 10, true);
-        Serial.println("\n\n\n");
-        delay(500);
-      }
+      moveForward(80, 10, true);
+      Serial.println("\n\n\n");
+      delay(500);
+    }
       
      turn(1, 90);//left
     delay(500);  
-}
-  
   }
+}
 
+<<<<<<< HEAD
   void testSequence2(){
 
     calibration();
@@ -23,11 +23,20 @@ void testSequence1(){
     for(int i = 0; i < 4; i++){
     //moveForward(80, 9.5, true);
     turn(-1, 90);//left
+=======
+void testSequence2()
+{
+  for(int i = 0; i < 10; i++){
+    moveForward(80, 9.5, true);
+>>>>>>> 10bb313b3ed8c9dc814d9a59391f844a9bed34be
     delay(1000);
-    }
-
-  
   }
+}
+
+void benTestSequence()
+{
+  turn(-1, 90);
+}
 
 void processInst(){
   
@@ -75,19 +84,25 @@ void setup() {
   Serial.begin(115200);
   md.init();
   initI2C();
-  testSequence2();
+  //testSequence2();
   //moveForward(80, 95, true);
+  benTestSequence();
  
 }
 
 void loop() {
   
+<<<<<<< HEAD
+=======
+  // put your main code here, to run repeatedly:  
+>>>>>>> 10bb313b3ed8c9dc814d9a59391f844a9bed34be
   if(dataExist()){
     Serial.println("Getting new data...");
     processInst();
     }
     
 }
+<<<<<<< HEAD
 
 
 
@@ -215,3 +230,5 @@ void calibration()
   //Fine tune the distance from wall
   distanceFromWall(12.6);
 }
+=======
+>>>>>>> 10bb313b3ed8c9dc814d9a59391f844a9bed34be
