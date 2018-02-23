@@ -156,8 +156,8 @@ void DualVNH5019MotorShield::setSpeeds(int m1Speed, int m2Speed)
   if (m2Speed > 400)  // Max PWM dutycycle
     m2Speed = 400;
 
-  analogWrite(_PWM1,m1Speed * 51 / 80); // default to using analogWrite, mapping 400 to 255
-  analogWrite(_PWM2,m2Speed * 51 / 80); // default to using analogWrite, mapping 400 to 255
+  OCR1A = m1Speed;
+  OCR1B = m2Speed;
   
   if (m1Speed == 0 && m2Speed == 0)
   {
