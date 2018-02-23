@@ -23,7 +23,7 @@ struct MotorPID {
 
 //------------Other constants and declrations----------
 #define Pi 3.14159265359
-#define singlerevticks 1124.43
+#define singlerevticks 562.215
 
 signed long wheelDiameter = 6*Pi;
 signed long ticksPerCM = singlerevticks/wheelDiameter;
@@ -48,21 +48,10 @@ void risingM1()
   entry_time_M1 = micros();
   squareWidth_M1 = entry_time_M1 - prev_time_M1;
   prev_time_M1 = entry_time_M1;
-  M1ticks+=2;
+  M1ticks++;
   
   
 }
-
-void m1TickCount()
-{
-	M1ticks++;
-}
-
-void m2TickCount()
-{
-  M2ticks+=2;
-}
-
 
 //ISR for Motor2(Left) encoder
 void risingM2()
@@ -70,8 +59,6 @@ void risingM2()
   entry_time_M2 = micros();
   squareWidth_M2 = entry_time_M2 - prev_time_M2;
   prev_time_M2 = entry_time_M2;
-  
-  
 }
 
 void setM1Ticks(int ticks){
@@ -103,10 +90,6 @@ void tuneM1(int desiredRPM, MotorPID *M1){
   double tuneSpeed = 0;
   double currentRPM = sqWidthToRPM(squareWidth_M1);
   
-  //Serial.print("M1 Current RPM: ");
-  //Serial.print(currentRPM);
-  //Serial.print(" ");
-
   M1->currentErr =  desiredRPM - currentRPM;
   //tuneSpeed = M1->prevTuneSpeed + 0.47*M1->currentErr;
   tuneSpeed = M1->prevTuneSpeed + M1->gain*M1->currentErr + (M1->gain/0.05)*(M1->currentErr - M1->prevErr1);
@@ -124,9 +107,6 @@ void tuneM1(int desiredRPM, MotorPID *M1){
   double tuneSpeed = 0;
   double currentRPM = sqWidthToRPM(squareWidth_M2);
   
-  //Serial.print("M2 Current RPM: ");
-  //Serial.println(currentRPM);
-
   M2->currentErr =  desiredRPM - currentRPM;
   //tuneSpeed = M2->prevTuneSpeed + 0.5*M2->currentErr;
   tuneSpeed = M2->prevTuneSpeed + M2->gain*M2->currentErr + (M2->gain/0.05)*(M2->currentErr - M2->prevErr1);
@@ -146,25 +126,14 @@ void moveForward(int rpm, int distance, boolean pidOn){
    signed long interval = 0;
    signed long distanceTicks = distance * ticksPerCM;
    int pidStartRPM = 0*rpm;
-   
-   //unsigned int rpm1 = 0;
-   //unsigned int rpm2 = 0;
-
-
     
     MotorPID M1pid = {100, 0, 0, 0.1};//0.1=>50
     MotorPID M2pid = {100, 0, 0, 0.132};//0.163=>50 0.132=>80
     enableInterrupt( e1a, risingM1, RISING);
     enableInterrupt( e2b, risingM2, RISING);
 
-    //md.setM1Speed(158);//184
-    //delay(3);
-    //md.setM2Speed(197);//219
-    //md.setSpeeds(155, 178);//
     md.setSpeeds(100, 100);//
 
-    
-  
 
     while(M1ticks < distanceTicks){
       
@@ -197,9 +166,6 @@ void moveForward(int rpm, int distance, boolean pidOn){
     }//end of while
       
       md.setBrakes(400,400);
-      md.setM1Brake(400);
-      //delay(15);
-      md.setM2Brake(400);
       disableInterrupt(e1a);
       disableInterrupt(e2b);
       setM1Ticks(0);
@@ -209,129 +175,175 @@ void moveForward(int rpm, int distance, boolean pidOn){
 
 double getCir(int dir, int turnDegree)
 {
-  if(dir == 1 && turnDegree == 1080)
+  if(dir == 1 && turnDegree == 1080 | turnDegree == 180)
   {
-    return 16.15;
+    return 16.82;
   }
   else if(dir == 1 && turnDegree == 90)
   {
-    return 16.05;
+    return 16.35;
+  }
+  else if(dir == -1 && turnDegree == 1080)
+  {
+    return 17.8;
+  }
+  else if(dir == -1 && turnDegree == 180)
+  {
+    return 18.2;
+  }
+  else if(dir == -1 && turnDegree == 90)
+  {
+    return 18.1;
+  }
+  else
+  {
+    return 16.82;
   }
 }
 
 void turn(int dir, int turnDegree)
 {
     //1 is right, -1 is left
-    double cir = Pi * 15.6; //circumfrence of circle drawn when turning in cm, current diameter used is between 15.6
+    double cir = Pi * getCir(dir, turnDegree); //circumfrence of circle drawn when turning in cm, current diameter used is between 15.6
+
     int amount = abs(cir * (turnDegree/360.0) * ticksPerCM/2);//int to ignored decimal value //* getTurnTicksOffsetAmt(turnDegree)
-    
-    Serial.print("Target count: ");
-    Serial.println(amount);
-  
-    //enableInterrupt(e1a, m1TickCount, RISING);
-    //M1ticks = 0; 
-
-    int ticks = 0;
-    delay(100);
-
     /*
-    while(ticks < amount - 100)
-    {
-      md.setSpeeds(-221 * dir, 250 * dir);
-      md.setSpeeds(-168 * dir, 200 * dir);
-    }
+     * Different Speed Values
+     * md.setSpeeds(-221 * dir, 250 * dir);
+     * md.setSpeeds(-168 * dir, 200 * dir);
     */
+    
+    int ticks = 0;
     int previousRead = 0;
     int currentValue = 0;
-    md.setSpeeds(-221 * dir, 250 * dir);
-    while(true)
+    
+    if(dir == 1)
     {
-      currentValue = (PIND>>3)%2;
-      if(currentValue == 1 && previousRead == 0)
+      md.setSpeeds(-221 * dir, 250 * dir);
+      while(true)
       {
-        ticks++;
-        if(ticks == amount)
+        currentValue = (PINB>>5)%2;
+        if(currentValue && !previousRead)
         {
-          break;        
-        }
+          ticks++;
+          if(ticks == amount)
+          {
+            md.setBrakes(400,400);
+            break;        
+          }
+        } 
+        previousRead = currentValue;
       }
-      previousRead = currentValue;
     }
-    md.setBrakes(400,400);
-    Serial.print("Current amt: ");
-    Serial.println(ticks);
-    
-  setSqWidth(0,0);//Reset sqWidth
-  M1ticks = 0;
-  
-  disableInterrupt(e1a);
-}
+    else
 
-void turnCheckList(int dir, int turnDegree)
-{
-    //1 is right, -1 is left
-    double cir = Pi * 16.15; //circumfrence of circle drawn when turning in cm, current diameter used is between 16.2
-    int amount = abs(cir * (turnDegree/360.0) * ticksPerCM/2);//int to ignored decimal value //* getTurnTicksOffsetAmt(turnDegree)
-    
-    Serial.print("Target count: ");
-    Serial.println(amount);
-  
-	  //enableInterrupt(e1a, m1TickCount, RISING);
-    M1ticks = 0; 
-    delay(100);
-    
-    //while(abs(M1ticks) < amount - 500)
-    //{
-      //md.setSpeeds(-221 * dir, 250 * dir);
-    //}
-    
-	  while(M1ticks < amount)
     {
-      md.setSpeeds(-168 * dir, 200 * dir);
+      md.setSpeeds(-221 * dir, 250 * dir);
+      while(true)
+      {
+        currentValue = (PIND>>3)%2;
+        if(currentValue && !previousRead)
+        {
+          ticks++;
+          if(ticks == amount)
+          {
+            md.setBrakes(400,400);
+            break;        
+          }
+        } 
+        previousRead = currentValue;
+      }
     }
-    
-    md.setBrakes(400,400);
-    Serial.print("Current amt: ");
-    Serial.println(M1ticks);
-    
-	setSqWidth(0,0);//Reset sqWidth
-	M1ticks = 0;
-	
-	//disableInterrupt(e1a);
 }
 
- 
-void straightUsingEncoder()
+//Methods for calibration
+void straighten()
 {
-	md.setSpeeds(-70, 85);
-	enableInterrupt(e1a, m1TickCount, RISING);
-	enableInterrupt(e2b, m2TickCount, RISING);
-	
-	int m1Speed = -70;
-	
-	while(true)
-	{
-		setM1Ticks(0);
-		M2ticks = 0;
-		delay(200);
-		
-		if(M1ticks < M2ticks)
-		{
-			m1Speed = m1Speed - 1;
-			md.setM1Speed(m1Speed);
-		}
-		else if(M1ticks > M2ticks)
-		{
-			m1Speed = m1Speed + 1;
-			md.setM1Speed(m1Speed);
-		}
-		Serial.println("Next Update");
-		Serial.println(m1Speed);
-		Serial.println("70");
-    Serial.println(M1ticks);
-    Serial.println(M2ticks);
-		Serial.println(M1ticks - M2ticks);
-	}
-	
-} 
+    if (getCalibrationReading(frontRightIR) > getCalibrationReading(frontLeftIR))
+    {
+      md.setSpeeds(70, -95);
+      while (getCalibrationReading(frontRightIR) > getCalibrationReading(frontLeftIR));
+    }
+    else if(getCalibrationReading(frontRightIR) < getCalibrationReading(frontLeftIR))
+    {
+      md.setSpeeds(-70, 95);
+      while (getCalibrationReading(frontRightIR) < getCalibrationReading(frontLeftIR));
+    }
+    md.setBrakes(400, 400);
+}
 
+void distanceFromWall(double distance)
+{  
+  //Fine tune the distance from wall
+  if(getCalibrationReading(frontRightIR) > distance)
+  {
+    md.setSpeeds(84, 110);
+    while(getCalibrationReading(frontRightIR) > distance);
+  }
+  else if(getCalibrationReading(frontRightIR) < distance)
+  {
+    md.setSpeeds(-84, -110);
+    while(getCalibrationReading(frontRightIR) < distance);
+  }
+  md.setBrakes(400, 400);
+  Serial.println("Set");
+  Serial.println(getCalibrationReading(frontRightIR));
+}
+
+//Calibration
+void calibration()
+{
+  double threshold = 0.3;
+  int wait = 1000;
+  
+  //Quick calibration against wall
+  straighten();
+  delay(wait);
+
+  //Move to the distance from wall
+  distanceFromWall(12.85);
+  delay(wait);
+  
+  //Fine tune the calibration
+  for(int a = 0; a < 5; a++)
+  {
+    if(abs(getCalibrationReading(frontRightIR) - getCalibrationReading(frontLeftIR)) < threshold)
+    {
+      break;
+    }
+    straighten();
+    delay(100);
+  }
+  delay(wait);
+
+  //Fine tune distance from wall
+  distanceFromWall(12.85);
+  delay(wait);
+
+  //Turn to the left by 90
+  turn(-1, 90);
+  delay(wait);
+
+  //Move to the distance from wall
+  distanceFromWall(12.6);
+  delay(wait);
+
+  //Fine tune the calibration
+  for(int a = 0; a < 5; a++)
+  {
+    if(abs(getCalibrationReading(frontRightIR) - getCalibrationReading(frontLeftIR)) < threshold)
+    {
+      break;
+    }
+    straighten();
+    delay(100);
+  }
+  delay(wait);
+
+  //Fine tune the distance from wall
+  distanceFromWall(12.6);
+  delay(wait);
+
+  //Turn to the left by 90
+  turn(-1, 90);
+}

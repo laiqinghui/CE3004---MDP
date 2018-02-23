@@ -71,11 +71,12 @@ int* getSensorReadingInCM(){//Quick and dirty test i.e no avg/median of sensor v
     Usage example: To get front left sensor reading just call sensorsValuesArray()[1]
     TODO: Generate mean/median of sensors value before assigning
     */
-		sensorsValuesArray[0] = 500; //getUltraSoundDistance();
-		sensorsValuesArray[1] = (6787/getIRSensorReading(frontLeftIR) - 3) - 4;
+		sensorsValuesArray[0] = (6787/getIRSensorReading(frontLeftIR) - 3) - 4;
+		sensorsValuesArray[1] = 500; //getUltraSoundDistance()
 		sensorsValuesArray[2] = (6787/getIRSensorReading(frontRightIR) - 3) - 4;
-		sensorsValuesArray[3] = 60.374 * pow( ( getIRSensorReading(left)*(5.0 / 1023.0) ) , -1.16);
-		sensorsValuesArray[4] = 60.374 * pow( ( getIRSensorReading(right)*(5.0 / 1023.0) ) , -1.16);
+		sensorsValuesArray[3] = 60.374 * pow( ( getIRSensorReading(right)*(5.0 / 1023.0) ) , -1.16);
+		sensorsValuesArray[4] = 60.374 * pow( ( getIRSensorReading(left)*(5.0 / 1023.0) ) , -1.16);
+
 					
 	  return sensorsValuesArray;
 }
@@ -99,14 +100,14 @@ double getCalibrationReading(int sensor)
 //Get average reading over a number of samples
 double getIRSensorReading(int sensor)
 {
-  int size = 200;
+  int size = 20;
   
   int listOfReadings[size];
 
   //Get Reading from Sensor
   for(int a = 0; a<size; a++)
   {
-    listOfReadings[a] = analogRead(sensor);    
+    listOfReadings[a] = analogRead(sensor);
   }
 
   //Sort Reading
@@ -129,13 +130,13 @@ double getIRSensorReading(int sensor)
     listOfReadings[size-1-i] = max;
   }
 
-  //Average middle 20
+  //Average middle 3
   short int total = 0;
-  for(int a = 90; a<110; a++)
+  for(int a = 9; a<12; a++)
   {
     total = total + listOfReadings[a];
   }
-  return total/20.0;
+  return total/3.0;
 }
 	
 	

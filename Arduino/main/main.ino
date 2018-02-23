@@ -2,29 +2,32 @@
 #include "I2C.h"
 
 void testSequence1(){
-  
-    for(int i = 0; i < 4; i++){
+  for(int i = 0; i < 4; i++)
+  {
     for(int j = 0; j < 3; j++ ){
-        moveForward(80, 10, true);
-        Serial.println("\n\n\n");
-        delay(500);
-      }
+      moveForward(80, 10, true);
+      Serial.println("\n\n\n");
+      delay(500);
+    }
       
-    //turn(-1, 90);//left
+     turn(1, 90);//left
     delay(500);  
-}
-  
   }
+}
 
-  void testSequence2(){
 
-    for(int i = 0; i < 10; i++){
+void testSequence2()
+{
+  for(int i = 0; i < 10; i++){
     moveForward(80, 9.5, true);
     delay(1000);
-    }
-
-  
   }
+}
+
+void benTestSequence()
+{
+  turn(-1, 90);
+}
 
 void processInst(){
   
@@ -46,20 +49,24 @@ void processInst(){
     case 'M': moveForward(80, atoi(&inst[1]), true);
               Serial.println("M");    
               break;
-    case 'T': //turn(-1, atoi(&inst[1]));
+    case 'T': turn(-1, atoi(&inst[1]));
               break;
-    case 'W': moveForward(50, 10, false);
+    case 'W': moveForward(80, 10, true);
               break;
-    case 'A': //turn(-1, 90);
+    case 'A': turn(-1, 90);
               break;
-    case 'D': //turn(1, 90);
+    case 'D': turn(1, 90);
               break;
-    case 'O': //turn(-1, 180);
+    case 'O': turn(-1, 180);
+              break;
+    case 'S': setOutBuffer(getSensorReadingInCM(), 5);
+              interruptPi();//Interrupt RPI to notify data is ready 
               break;
     default:  Serial.println(inst[0]);            
     
     }
-
+    
+  resetInBuffer();
 
 }
 
@@ -68,29 +75,18 @@ void setup() {
   Serial.begin(115200);
   md.init();
   initI2C();
-  testSequence2();
+  //testSequence2();
   //moveForward(80, 95, true);
+  benTestSequence();
  
 }
 
 void loop() {
   
-  // put your main code here, to run repeatedly:
-  //Serial.println(getSensorReadingInCM()[1]);
-  //Serial.println(getSensorReadingInCM()[2]);
-  //straightUsingEncoder();
-  turn(1, 90);
-  //calibration();
-  while(true)
-  {
-    
-  }
-  
+
   if(dataExist()){
     Serial.println("Getting new data...");
     processInst();
-    resetInBuffer();
-    
     }
     
 }
@@ -98,28 +94,8 @@ void loop() {
 
 
 
-void straighten()
-{
-	int turningSpeed = 70; //previous value 84
-	
-    if (getCalibrationReading(frontRightIR) > getCalibrationReading(frontLeftIR))
-    {
-      while (getCalibrationReading(frontRightIR) > getCalibrationReading(frontLeftIR))
-      {
-        md.setSpeeds(70, -95);
-      }
-  
-      md.setBrakes(400, 400);
-    }
-    else
-    {
-      while (getCalibrationReading(frontRightIR) < getCalibrationReading(frontLeftIR))
-      {
-        md.setSpeeds(-70, 95);
-      }
-      md.setBrakes(400, 400);
-    }
-}
+
+
 
 void distanceFromWall(int distance)
 {
@@ -146,14 +122,16 @@ void distanceFromWall(int distance)
   {
     while(getCalibrationReading(frontRightIR) > distance)
       {
-        md.setSpeeds(84, 110);
+        md.setM1Speed(84);
+        md.setM2Speed(110);
       }
   }
   else if(getCalibrationReading(frontRightIR) < distance)
   {
     while(getCalibrationReading(frontRightIR) < distance)
       {
-        md.setSpeeds(-84, -110);
+        md.setM1Speed(-84);
+        md.setM2Speed(-110);
       }
   }
   md.setBrakes(400, 400);
@@ -161,57 +139,5 @@ void distanceFromWall(int distance)
   Serial.println(getCalibrationReading(frontRightIR));
 }
 
-//Calibration
-void calibration()
-{
-  double threshold = 0.3;
-  int wait = 1000;
-  int distance = 12;
-  
-  //Quick calibration against wall
-  straighten();
-  delay(wait);
 
-  //Move to the distance from wall
-  distanceFromWall(12.85);
-  delay(wait);
-  
-  //Fine tune the calibration
-  for(int a = 0; a < 3; a++)
-  {
-    if(abs(getCalibrationReading(frontRightIR) - getCalibrationReading(frontLeftIR)) < threshold)
-    {
-      break;
-    }
-    straighten();
-    delay(100);
-  }
-  delay(wait);
 
-  //Fine tune distance from wall
-  distanceFromWall(12.85);
-  delay(wait);
-
-  //Turn to the left by 90
-  turn(-1, 90);
-  delay(wait);
-
-  //Move to the distance from wall
-  distanceFromWall(12.6);
-  delay(wait);
-
-  //Fine tune the calibration
-  for(int a = 0; a < 3; a++)
-  {
-    if(abs(getCalibrationReading(frontRightIR) - getCalibrationReading(frontLeftIR)) < threshold)
-    {
-      break;
-    }
-    straighten();
-    delay(100);
-  }
-  delay(wait);
-
-  //Fine tune the distance from wall
-  distanceFromWall(12.6);
-}
