@@ -15,20 +15,11 @@ void testSequence1(){
   }
 }
 
-<<<<<<< HEAD
-  void testSequence2(){
 
-    calibration();
-    
-    for(int i = 0; i < 4; i++){
-    //moveForward(80, 9.5, true);
-    turn(-1, 90);//left
-=======
 void testSequence2()
 {
   for(int i = 0; i < 10; i++){
     moveForward(80, 9.5, true);
->>>>>>> 10bb313b3ed8c9dc814d9a59391f844a9bed34be
     delay(1000);
   }
 }
@@ -92,47 +83,19 @@ void setup() {
 
 void loop() {
   
-<<<<<<< HEAD
-=======
-  // put your main code here, to run repeatedly:  
->>>>>>> 10bb313b3ed8c9dc814d9a59391f844a9bed34be
+
   if(dataExist()){
     Serial.println("Getting new data...");
     processInst();
     }
     
 }
-<<<<<<< HEAD
 
 
 
 
-void straighten()
-{
-	int turningSpeed = 70; //previous value 84
-	
-    if (getCalibrationReading(frontRightIR) > getCalibrationReading(frontLeftIR))
-    {
-      while (getCalibrationReading(frontRightIR) > getCalibrationReading(frontLeftIR))
-      {
-       
-        md.setM1Speed(70);
-        md.setM2Speed(-95);
-      }
-  
-      md.setBrakes(400, 400);
-    }
-    else
-    {
-      while (getCalibrationReading(frontRightIR) < getCalibrationReading(frontLeftIR))
-      {
-       
-        md.setM1Speed(-70);
-        md.setM2Speed(95);
-      }
-      md.setBrakes(400, 400);
-    }
-}
+
+
 
 void distanceFromWall(int distance)
 {
@@ -176,59 +139,5 @@ void distanceFromWall(int distance)
   Serial.println(getCalibrationReading(frontRightIR));
 }
 
-//Calibration
-void calibration()
-{
-  double threshold = 0.3;
-  int wait = 1000;
-  int distance = 12;
-  
-  //Quick calibration against wall
-  straighten();
-  delay(wait);
 
-  //Move to the distance from wall
-  distanceFromWall(12.85);
-  delay(wait);
-  
-  //Fine tune the calibration
-  for(int a = 0; a < 3; a++)
-  {
-    if(abs(getCalibrationReading(frontRightIR) - getCalibrationReading(frontLeftIR)) < threshold)
-    {
-      break;
-    }
-    straighten();
-    delay(100);
-  }
-  delay(wait);
 
-  //Fine tune distance from wall
-  distanceFromWall(12.85);
-  delay(wait);
-
-  //Turn to the left by 90
-  turn(-1, 90);
-  delay(wait);
-
-  //Move to the distance from wall
-  distanceFromWall(12.6);
-  delay(wait);
-
-  //Fine tune the calibration
-  for(int a = 0; a < 3; a++)
-  {
-    if(abs(getCalibrationReading(frontRightIR) - getCalibrationReading(frontLeftIR)) < threshold)
-    {
-      break;
-    }
-    straighten();
-    delay(100);
-  }
-  delay(wait);
-
-  //Fine tune the distance from wall
-  distanceFromWall(12.6);
-}
-=======
->>>>>>> 10bb313b3ed8c9dc814d9a59391f844a9bed34be

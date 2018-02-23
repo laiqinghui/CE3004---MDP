@@ -19,6 +19,23 @@ void printArray(char arr[], int len){
     
   }
 
+void interruptPi(){
+    digitalWrite(PI_PIN, HIGH);
+    delay(100);
+    digitalWrite(PI_PIN, LOW);
+    
+  }  
+
+void acknowledgeRPI(int len){
+  
+  outBuffer[0] = 'M'; 
+  for(int i = 0; i < len ; i++){
+        outBuffer[i+1] = inBuffer[i];
+  }
+  interruptPi();
+  
+}
+
 // callback for received data
 void receiveData(int byteCount) {
   Serial.println("Recieving data...");
@@ -51,12 +68,7 @@ void receiveData(int byteCount) {
     }
 }  // end while
 
-void interruptPi(){
-    digitalWrite(PI_PIN, HIGH);
-    delay(100);
-    digitalWrite(PI_PIN, LOW);
-    
-  }
+
 
 // callback for sending data
 void sendData() {
@@ -102,15 +114,7 @@ void setOutBuffer(int * data, int len){
   
 }
 
-void acknowledgeRPI(int len){
-  
-  outBuffer[0] = 'M'; 
-  for(int i = 0; i < len ; i++){
-        outBuffer[i+1] = inBuffer[i];
-  }
-  interruptPi();
-  
-}
+
 
 boolean dataExist(){
 	

@@ -74,13 +74,9 @@ int* getSensorReadingInCM(){//Quick and dirty test i.e no avg/median of sensor v
 		sensorsValuesArray[0] = (6787/getIRSensorReading(frontLeftIR) - 3) - 4;
 		sensorsValuesArray[1] = 500; //getUltraSoundDistance()
 		sensorsValuesArray[2] = (6787/getIRSensorReading(frontRightIR) - 3) - 4;
-<<<<<<< HEAD
 		sensorsValuesArray[3] = 60.374 * pow( ( getIRSensorReading(right)*(5.0 / 1023.0) ) , -1.16);
 		sensorsValuesArray[4] = 60.374 * pow( ( getIRSensorReading(left)*(5.0 / 1023.0) ) , -1.16);
-=======
-		sensorsValuesArray[3] = (6787/getIRSensorReading(left) - 3) - 4;
-		sensorsValuesArray[4] = (6787/getIRSensorReading(right) - 3) - 4;
->>>>>>> 10bb313b3ed8c9dc814d9a59391f844a9bed34be
+
 					
 	  return sensorsValuesArray;
 }
