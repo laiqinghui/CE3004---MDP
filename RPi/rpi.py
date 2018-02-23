@@ -30,7 +30,7 @@ class RPI(threading.Thread):
         # if fatest path
         if len(message) == 1:
             formatted_instruction = 'C' + ''.join(instruction)
-
+            # aggregate the movement
         # if exploration
         if len(message) > 1:
 

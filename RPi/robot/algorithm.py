@@ -37,6 +37,7 @@ class Algorithm(threading.Thread):
         if self.mode == EXPLORATION:
             self.algorithmClass = Exploration.Exploration(timeLimit=5, direction=self.dir, sim=False)
             dispatcher.connect(self.determine_exploration_path, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
+            dispatcher.send(message=([], False, self.algorithmClass.robot.center, self.algorithmClass.robot.direction), signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
         elif self.mode == FASTEST_PATH:
             self.algorithmClass = FastestPath.FastestPath(exploredMap=gs.MAZEMAP,
                                                           start=[self.r_row, self.r_col],
@@ -49,7 +50,6 @@ class Algorithm(threading.Thread):
 
         logging.info("algorithm initialized")
         # empty move instruction to ask arduino to start sensing environment
-        dispatcher.send(message=([], False, self.algorithmClass.robot.center, self.algorithmClass.robot.direction), signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
 
     def determine_exploration_path(self, message):
 
