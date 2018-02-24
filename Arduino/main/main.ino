@@ -26,7 +26,9 @@ void testSequence2()
 
 void benTestSequence()
 {
-  turn(-1, 90);
+  //turn(1, 1080);
+  //md.setSpeeds(90, 150);
+  calibration();
 }
 
 void processInst(){
@@ -76,7 +78,7 @@ void setup() {
   initI2C();
   //testSequence2();
   //moveForward(80, 95, true);
-  //benTestSequence();
+  benTestSequence();
  
 }
 
@@ -89,54 +91,5 @@ void loop() {
     }
     
 }
-
-
-
-
-
-
-
-void distanceFromWall(int distance)
-{
-	//Go to roughly the distance from wall
-//  if(getCalibrationReading(frontRightIR) > distance)
-//  {
-//    while(getCalibrationReading(frontRightIR) > distance)
-//      {
-//        md.setSpeeds(114, 140);
-//      }
-//  }
-//  else if(getCalibrationReading(frontRightIR) < distance)
-//  {
-//    while(getCalibrationReading(frontRightIR) < distance)
-//      {
-//        md.setSpeeds(-114, -140);
-//      }
-//  }
-//  md.setBrakes(400, 400);
-//  delay(300);
-  
-  //Fine tune the distance from wall
-  if(getCalibrationReading(frontRightIR) > distance)
-  {
-    while(getCalibrationReading(frontRightIR) > distance)
-      {
-        md.setM1Speed(84);
-        md.setM2Speed(110);
-      }
-  }
-  else if(getCalibrationReading(frontRightIR) < distance)
-  {
-    while(getCalibrationReading(frontRightIR) < distance)
-      {
-        md.setM1Speed(-84);
-        md.setM2Speed(-110);
-      }
-  }
-  md.setBrakes(400, 400);
-  Serial.println("Set");
-  Serial.println(getCalibrationReading(frontRightIR));
-}
-
 
 

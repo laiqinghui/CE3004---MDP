@@ -175,29 +175,52 @@ void moveForward(int rpm, int distance, boolean pidOn){
 
 double getCir(int dir, int turnDegree)
 {
-  if(dir == 1 && turnDegree == 1080 | turnDegree == 180)
+  if(dir == 1)
   {
-    return 16.82;
+    if(turnDegree <= 90)
+    {
+      return 15.65;
+    }
+    else if(turnDegree <= 360)
+    {
+      return 15.3;
+    }
+    else if(turnDegree <= 720)
+    {
+      return 15;
+    }
+    else if(turnDegree <= 1080)
+    {
+      return 15;
+    }
+    
   }
-  else if(dir == 1 && turnDegree == 90)
+  else if(dir == -1)
   {
-    return 16.35;
-  }
-  else if(dir == -1 && turnDegree == 1080)
-  {
-    return 17.8;
-  }
-  else if(dir == -1 && turnDegree == 180)
-  {
-    return 18.2;
-  }
-  else if(dir == -1 && turnDegree == 90)
-  {
-    return 18.1;
+    if(turnDegree <= 180)
+    {
+      return 16.7;
+    }
+    else if(turnDegree <= 360)
+    {
+      return 17.2;
+    }
+    else if(turnDegree <= 720)
+    {
+      return 17.25;
+    }
+    else if(turnDegree <= 1080)
+    {
+      return 17.2;
+    }
+    else
+    {
+      return 17.3;
+    }
   }
   else
   {
-    return 16.82;
+    return 17.3;
   }
 }
 
@@ -219,7 +242,7 @@ void turn(int dir, int turnDegree)
     
     if(dir == 1)
     {
-      md.setSpeeds(-221 * dir, 250 * dir);
+      md.setSpeeds(-168 * dir, 200 * dir);
       while(true)
       {
         currentValue = (PINB>>5)%2;
@@ -261,12 +284,12 @@ void straighten()
 {
     if (getCalibrationReading(frontRightIR) > getCalibrationReading(frontLeftIR))
     {
-      md.setSpeeds(70, -95);
+      md.setSpeeds(75, -120);
       while (getCalibrationReading(frontRightIR) > getCalibrationReading(frontLeftIR));
     }
     else if(getCalibrationReading(frontRightIR) < getCalibrationReading(frontLeftIR))
     {
-      md.setSpeeds(-70, 95);
+      md.setSpeeds(-69, 120);
       while (getCalibrationReading(frontRightIR) < getCalibrationReading(frontLeftIR));
     }
     md.setBrakes(400, 400);
@@ -277,33 +300,38 @@ void distanceFromWall(double distance)
   //Fine tune the distance from wall
   if(getCalibrationReading(frontRightIR) > distance)
   {
-    md.setSpeeds(84, 110);
-    while(getCalibrationReading(frontRightIR) > distance);
+    
+    while(getCalibrationReading(frontRightIR) > distance)
+    {
+      md.setSpeeds(90, 150);
+    }
   }
   else if(getCalibrationReading(frontRightIR) < distance)
   {
-    md.setSpeeds(-84, -110);
-    while(getCalibrationReading(frontRightIR) < distance);
+    //
+    while(getCalibrationReading(frontRightIR) < distance)
+    {
+      md.setSpeeds(-90, -150);
+    }
   }
   md.setBrakes(400, 400);
-  Serial.println("Set");
-  Serial.println(getCalibrationReading(frontRightIR));
 }
 
 //Calibration
 void calibration()
 {
-  double threshold = 0.3;
-  int wait = 1000;
+  double threshold = 0.2;
+  int wait = 2000;
   
   //Quick calibration against wall
   straighten();
   delay(wait);
 
   //Move to the distance from wall
-  distanceFromWall(12.85);
+  distanceFromWall(20.5);
   delay(wait);
-  
+
+  /*
   //Fine tune the calibration
   for(int a = 0; a < 5; a++)
   {
@@ -346,4 +374,5 @@ void calibration()
 
   //Turn to the left by 90
   turn(-1, 90);
+  */
 }
