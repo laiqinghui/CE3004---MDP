@@ -2,6 +2,8 @@ package com.grp5.mdp.cz3004;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -82,24 +84,21 @@ public class ArenaFragment extends Fragment {
 
         ArrayList<GridImage> gridList = new ArrayList<GridImage>();
 
-        for(int y = 0; y < 21; y++){
-            for(int x = 0; x < 16; x++){
-                if(x==0 & y==0){
-                    GridImage image = new GridImage(android.R.drawable.screen_background_light, x, y, Constants.UNEXPLORED);
-                    gridList.add(image);
-                } else {
-                    GridImage image = new GridImage(android.R.drawable.screen_background_dark, x, y, Constants.UNEXPLORED);
-                    gridList.add(image);
-                }
+        for(int y = 0; y < 20; y++){
+            for(int x = 0; x < 15; x++){
+                GridImage image = new GridImage(R.drawable.square, x, y, Constants.UNEXPLORED);
+                gridList.add(image);
             }
         }
 
         gridview.setAdapter( new ImageAdapter(getContext(), gridList));
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                Toast.makeText(getContext(), "" + position,
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                Toast.makeText(getContext(), "position: " + position +
+                                " x: " + ImageAdapter.calcCol(position) +
+                                " y: " + ImageAdapter.calcRow(position) +
+                                " coord: " + ImageAdapter.getCoord(position),
                         Toast.LENGTH_SHORT).show();
             }
         });
@@ -184,19 +183,38 @@ public class ArenaFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private class ImageAdapter extends BaseAdapter {
+    private static class ImageAdapter extends BaseAdapter {
         private Context mContext;
-        private ArrayList<GridImage> gridList;
+        private static ArrayList<GridImage> gridList;
 
         public ImageAdapter(Context c, ArrayList<GridImage> glist) {
             mContext = c;
             gridList = glist;
         }
 
+        public static int calcRow(int position) {
+            return position/16 - 1;
+        }
+
+        public static int calcCol(int position) {
+            return (position%16) - 1;
+        }
+
+        public static int getCoord(int position){
+            int x = calcCol(position);
+            int y = calcRow(position);
+            return (14*y)+x+y;
+        }
+
         public int getCount() {
             return 336;
         }
 
+        public static GridImage getGridItem(int position) {
+            return gridList.get(((position-16)%16)-1);
+        }
+
+        @Override
         public Object getItem(int position) {
             return null;
         }
@@ -235,7 +253,7 @@ public class ArenaFragment extends Fragment {
                 } else {
                     return convertView;
                 }
-                imageView.setImageResource(gridList.get(position).getImageId());
+                imageView.setImageResource(gridList.get(getCoord(position)).getImageId());
                 return imageView;
             }
         }
@@ -252,6 +270,14 @@ public class ArenaFragment extends Fragment {
             this.row = row;
             this.col = col;
             this.status = status;
+        }
+
+        public int getRow(){
+            return this.row;
+        }
+
+        public int getCol(){
+            return this.col;
         }
 
         public int getImageId(){
