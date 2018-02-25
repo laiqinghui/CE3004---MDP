@@ -156,8 +156,14 @@ void DualVNH5019MotorShield::setSpeeds(int m1Speed, int m2Speed)
   if (m2Speed > 400)  // Max PWM dutycycle
     m2Speed = 400;
 
+  #if defined(__AVR_ATmega168__)|| defined(__AVR_ATmega328P__) || defined(__AVR_ATmega32U4__)
   OCR1A = m1Speed;
   OCR1B = m2Speed;
+  #else
+  analogWrite(_PWM1,speed * 51 / 80); // default to using analogWrite, mapping 400 to 255
+  analogWrite(_PWM2,speed * 51 / 80); // default to using analogWrite, mapping 400 to 255
+  #endif
+
   
   if (m1Speed == 0 && m2Speed == 0)
   {
@@ -288,9 +294,14 @@ void DualVNH5019MotorShield::setBrakes(int m1Brake, int m2Brake)
   //digitalWrite(_INB1, LOW);
   //digitalWrite(_INA2, LOW);
   //digitalWrite(_INB2, LOW);
-
+  
+  #if defined(__AVR_ATmega168__)|| defined(__AVR_ATmega328P__) || defined(__AVR_ATmega32U4__)
+  OCR1A = m1Brake;
+  OCR1B = m2Brake;
+  #else
   analogWrite(_PWM1,m1Brake * 51 / 80); // default to using analogWrite, mapping 400 to 255
   analogWrite(_PWM2,m2Brake * 51 / 80); // default to using analogWrite, mapping 400 to 255
+  #endif
 }
 
 // Return motor 1 current value in milliamps.
