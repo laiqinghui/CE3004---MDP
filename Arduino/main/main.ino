@@ -21,6 +21,7 @@ void testSequence2()
   for(int i = 0; i < 10; i++){
     moveForward(80, 9.5, true);
     delay(1000);
+    Serial.println("\n\n");
   }
 }
 
@@ -76,9 +77,9 @@ void setup() {
   Serial.begin(115200);
   md.init();
   initI2C();
-  //testSequence2();
+  testSequence2();
   //moveForward(80, 95, true);
-  benTestSequence();
+  //benTestSequence();
  
 }
 

@@ -98,6 +98,9 @@ void tuneM1(int desiredRPM, MotorPID *M1){
   M1->prevTuneSpeed = tuneSpeed;
   M1->prevErr1 = M1->currentErr;
 
+  Serial.print("M1 tunespeed: ");
+  Serial.println(tuneSpeed);
+
  
   }
 
@@ -128,11 +131,11 @@ void moveForward(int rpm, int distance, boolean pidOn){
    int pidStartRPM = 0*rpm;
     
     MotorPID M1pid = {100, 0, 0, 0.1};//0.1=>50
-    MotorPID M2pid = {100, 0, 0, 0.132};//0.163=>50 0.132=>80
+    MotorPID M2pid = {100, 0, 0, 0.134};//0.163=>50 0.134=>80
     enableInterrupt( e1a, risingM1, RISING);
     enableInterrupt( e2b, risingM2, RISING);
 
-    md.setSpeeds(100, 100);//
+    md.setSpeeds(100, 100);
 
 
     while(M1ticks < distanceTicks){

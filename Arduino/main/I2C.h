@@ -5,8 +5,8 @@
 //Slave Address for the Communication
 #define SLAVE_ADDRESS 0x04
 
-char inBuffer[50] = {0};
-char outBuffer[5] = {0};
+char inBuffer[10] = {0};
+char outBuffer[10] = {0};
 boolean newData = false;
 
 
@@ -56,7 +56,7 @@ void receiveData(int byteCount) {
   
     }
     
-   //acknowledgeRPI(len-1);
+   acknowledgeRPI(len-1);
 	 newData = true;//Set flag for main program to process data
    
   } else {
@@ -82,7 +82,7 @@ void sendData() {
 void initI2C(){
 
 	Wire.begin(SLAVE_ADDRESS);
-	pinMode(PI_PIN, OUTPUT);//Need to set this as output on demand 
+	pinMode(PI_PIN, OUTPUT);
   digitalWrite(PI_PIN, LOW);
 
   //define callbacks for i2c communication
