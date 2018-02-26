@@ -10,7 +10,7 @@ void testSequence1(){
       delay(500);
     }
       
-     turn(1, 90);//left
+     turn(-1, 90);//left
     delay(500);  
   }
 }
@@ -79,7 +79,12 @@ void setup() {
   initI2C();
   testSequence2();
   //moveForward(80, 95, true);
+<<<<<<< HEAD
   //benTestSequence();
+=======
+  benTestSequence();
+  testSequence1();
+>>>>>>> 2603a676d23c87b88315614dad1cabf8f6165b7f
  
 }
 

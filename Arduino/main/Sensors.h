@@ -101,7 +101,7 @@ double getCalibrationReading(int sensor)
 //Get average reading over a number of samples
 double getIRSensorReading(int sensor)
 {
-  int size = 20;
+  int size = 10;
   
   int listOfReadings[size];
 
@@ -133,7 +133,7 @@ double getIRSensorReading(int sensor)
 
   //Average middle 3
   short int total = 0;
-  for(int a = 9; a<12; a++)
+  for(int a = 4; a<7; a++)
   {
     total = total + listOfReadings[a];
   }
