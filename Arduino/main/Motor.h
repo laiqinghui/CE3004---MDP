@@ -131,7 +131,7 @@ void moveForward(int rpm, int distance, boolean pidOn){
    int pidStartRPM = 0*rpm;
     
     MotorPID M1pid = {100, 0, 0, 0.1};//0.1=>50
-    MotorPID M2pid = {100, 0, 0, 0.134};//0.163=>50 0.134=>80
+    MotorPID M2pid = {100, 0, 0, 0.18};//0.163=>50 0.134=>80
     enableInterrupt( e1a, risingM1, RISING);
     enableInterrupt( e2b, risingM2, RISING);
 

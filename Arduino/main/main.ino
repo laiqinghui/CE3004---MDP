@@ -49,11 +49,11 @@ void processInst(){
   Serial.print(inst[0]);
   switch(inst[0]){
     
-    case 'M': moveForward(80, atoi(&inst[1]), true);  
+    case 'M': moveForward(50, atoi(&inst[1]), true);  
               break;
     case 'T': turn(-1, atoi(&inst[1]));
               break;
-    case 'W': moveForward(80, 10, true);
+    case 'W': moveForward(50, 9.5, true);
               break;
     case 'A': turn(-1, 90);
               break;
@@ -77,14 +77,11 @@ void setup() {
   Serial.begin(115200);
   md.init();
   initI2C();
-  testSequence2();
+  //testSequence2();
   //moveForward(80, 95, true);
-<<<<<<< HEAD
   //benTestSequence();
-=======
-  benTestSequence();
-  testSequence1();
->>>>>>> 2603a676d23c87b88315614dad1cabf8f6165b7f
+  //testSequence1();
+
  
 }
 

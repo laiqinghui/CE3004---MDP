@@ -30,9 +30,11 @@ void interruptPi(){
 void acknowledgeRPI(int len){
   
   outBuffer[0] = 'A'; 
+  /*
   for(int i = 0; i < len ; i++){
         outBuffer[i+1] = inBuffer[i];
   }
+  */
   interruptPi();
   
 }
