@@ -295,6 +295,21 @@ void straighten()
     md.setBrakes(400, 400);
 }
 
+void straightenTune()
+{
+    if (getCalibrationReading(frontRightIR) > getCalibrationReading(frontLeftIR))
+    {
+      md.setSpeeds(75, 0);
+      while (getCalibrationReading(frontRightIR) > getCalibrationReading(frontLeftIR));
+    }
+    else if(getCalibrationReading(frontRightIR) < getCalibrationReading(frontLeftIR))
+    {
+      md.setSpeeds(-69, 0);
+      while (getCalibrationReading(frontRightIR) < getCalibrationReading(frontLeftIR));
+    }
+    md.setBrakes(400, 400);
+}
+
 void distanceFromWall(double distance)
 {  
   //Fine tune the distance from wall
@@ -303,7 +318,7 @@ void distanceFromWall(double distance)
     
     while(getCalibrationReading(frontRightIR) > distance)
     {
-      md.setSpeeds(90, 150);
+      md.setSpeeds(124, 170);
     }
   }
   else if(getCalibrationReading(frontRightIR) < distance)
@@ -311,7 +326,7 @@ void distanceFromWall(double distance)
     //
     while(getCalibrationReading(frontRightIR) < distance)
     {
-      md.setSpeeds(-90, -150);
+      md.setSpeeds(-122, -170);
     }
   }
   md.setBrakes(400, 400);
@@ -321,31 +336,28 @@ void distanceFromWall(double distance)
 void calibration()
 {
   double threshold = 0.2;
-  int wait = 2000;
+  double startWall = 11.42;
+  double leftWall = 12;
+  int wait = 500;
   
   //Quick calibration against wall
   straighten();
   delay(wait);
 
   //Move to the distance from wall
-  distanceFromWall(20.5);
+  distanceFromWall(startWall);
   delay(wait);
 
-  /*
   //Fine tune the calibration
-  for(int a = 0; a < 5; a++)
+  while(abs(getCalibrationReading(frontRightIR) - getCalibrationReading(frontLeftIR)) > threshold)
   {
-    if(abs(getCalibrationReading(frontRightIR) - getCalibrationReading(frontLeftIR)) < threshold)
-    {
-      break;
-    }
-    straighten();
+    straightenTune();
     delay(100);
   }
   delay(wait);
 
   //Fine tune distance from wall
-  distanceFromWall(12.85);
+  distanceFromWall(startWall);
   delay(wait);
 
   //Turn to the left by 90
@@ -353,26 +365,22 @@ void calibration()
   delay(wait);
 
   //Move to the distance from wall
-  distanceFromWall(12.6);
+  distanceFromWall(leftWall);
   delay(wait);
 
   //Fine tune the calibration
-  for(int a = 0; a < 5; a++)
+  while(abs(getCalibrationReading(frontRightIR) - getCalibrationReading(frontLeftIR)) > threshold)
   {
-    if(abs(getCalibrationReading(frontRightIR) - getCalibrationReading(frontLeftIR)) < threshold)
-    {
-      break;
-    }
-    straighten();
+    straightenTune();
     delay(100);
   }
   delay(wait);
 
   //Fine tune the distance from wall
-  distanceFromWall(12.6);
+  distanceFromWall(leftWall);
   delay(wait);
 
   //Turn to the left by 90
   turn(-1, 90);
-  */
+  delay(wait);
 }

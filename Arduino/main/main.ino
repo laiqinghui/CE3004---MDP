@@ -10,7 +10,7 @@ void testSequence1(){
       delay(500);
     }
       
-     turn(1, 90);//left
+     turn(-1, 90);//left
     delay(500);  
   }
 }
@@ -79,6 +79,7 @@ void setup() {
   //testSequence2();
   //moveForward(80, 95, true);
   benTestSequence();
+  testSequence1();
  
 }
 
