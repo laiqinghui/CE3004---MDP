@@ -6,9 +6,6 @@
 //Function Decleration
 double getIRSensorReading(int sensor);
 
-
-
-
 char sensorsValuesArray[5] = {0};
 
 
@@ -65,17 +62,30 @@ int getUltraSoundDistance(){
 
 }  
 
-char* getSensorReadingInCM(){//Quick and dirty test i.e no avg/median of sensor value
+char* getSensorReadingInCM(){
     /*
     Return pointer to sensors values array. Reasons for the pointer approach is to facilitate for Exploration where
     one call to this method will be sufficient for updating to RPI.
     Usage example: To get front left sensor reading just call sensorsValuesArray()[1]
     TODO: Generate mean/median of sensors value before assigning
     */
-		sensorsValuesArray[0] = (6787/getIRSensorReading(frontLeftIR) - 3) - 4; //Front left
+
+    //PS4 y = 6455.3x - 1.2958
+    //Limit is 35cm
+    int frontLeftValue = getIRSensorReading(frontLeftIR);
+    if(frontLeftValue < 175)
+    {
+      sensorsValuesArray[0] = 0;
+    }
+    else
+    {
+      sensorsValuesArray[0] = (6455.3/frontLeftValue) - 1.2958;
+    }
+
 		sensorsValuesArray[1] = 500; //getUltraSoundDistance() //Center
 
-    //y = 6493.5x - 2.4274
+    //PS2 y = 6493.5x - 2.4274
+    //Limit is 45cm
     int frontRightValue = getIRSensorReading(frontRightIR);
     if(frontRightValue < 133)
     {
@@ -85,8 +95,30 @@ char* getSensorReadingInCM(){//Quick and dirty test i.e no avg/median of sensor 
     {
       sensorsValuesArray[2] = (6493.5/frontRightValue) - 2.4274;
     }
-		sensorsValuesArray[3] = (6787/getIRSensorReading(right) - 3) - 4; //Right
-		sensorsValuesArray[4] = (6787/getIRSensorReading(left) - 3) - 4; //Left
+
+    //PS1 y = 6607.1x - 2.3461
+    //Limit is 60cm
+    int rightValue = getIRSensorReading(right);
+    if(rightValue < 105)
+    {
+      sensorsValuesArray[3] = 0;
+    }
+    else
+    {
+      sensorsValuesArray[3] = (6607.1/rightValue) - 2.3461;
+    }
+
+    //PS3 y = 9147x - 8.5458
+    //Limit is 60cm
+    int leftValue = getIRSensorReading(left);
+    if(leftValue < 105)
+    {
+      sensorsValuesArray[4] = 0;
+    }
+    else
+    {
+      sensorsValuesArray[4] = (9147/leftValue) - 8.5458;
+    }
 
 					
 	  return sensorsValuesArray;
