@@ -74,7 +74,17 @@ char* getSensorReadingInCM(){//Quick and dirty test i.e no avg/median of sensor 
     */
 		sensorsValuesArray[0] = (6787/getIRSensorReading(frontLeftIR) - 3) - 4; //Front left
 		sensorsValuesArray[1] = 500; //getUltraSoundDistance() //Center
-		sensorsValuesArray[2] = (6787/getIRSensorReading(frontRightIR) - 3) - 4; //Front right
+
+    //y = 6493.5x - 2.4274
+    int frontRightValue = getIRSensorReading(frontRightIR);
+    if(frontRightValue < 133)
+    {
+      sensorsValuesArray[2] = 0;
+    }
+    else
+    {
+      sensorsValuesArray[2] = (6493.5/frontRightValue) - 2.4274;
+    }
 		sensorsValuesArray[3] = (6787/getIRSensorReading(right) - 3) - 4; //Right
 		sensorsValuesArray[4] = (6787/getIRSensorReading(left) - 3) - 4; //Left
 
