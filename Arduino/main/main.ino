@@ -21,6 +21,7 @@ void testSequence2()
   for(int i = 0; i < 10; i++){
     moveForward(80, 9.5, true);
     delay(1000);
+    Serial.println("\n\n");
   }
 }
 
@@ -48,11 +49,11 @@ void processInst(){
   Serial.print(inst[0]);
   switch(inst[0]){
     
-    case 'M': moveForward(80, atoi(&inst[1]), true);  
+    case 'M': moveForward(50, atoi(&inst[1]), true);  
               break;
     case 'T': turn(-1, atoi(&inst[1]));
               break;
-    case 'W': moveForward(80, 10, true);
+    case 'W': moveForward(50, 9.5, true);
               break;
     case 'A': turn(-1, 90);
               break;
@@ -78,8 +79,9 @@ void setup() {
   initI2C();
   //testSequence2();
   //moveForward(80, 95, true);
-  benTestSequence();
-  testSequence1();
+  //benTestSequence();
+  //testSequence1();
+
  
 }
 
