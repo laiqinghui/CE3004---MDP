@@ -73,7 +73,7 @@ public class MiscellaneousFragment extends Fragment {
                     public void onClick(View view) {
                         //need to implement getting value of start point and direction
                         TextView tvForward = (TextView) view.findViewById(R.id.forwardField);
-                        String forwardDistance = tvForward.toString();
+                        String forwardDistance = tvForward.getText().toString();
                         String forward = "move"+" "+forwardDistance;
                         ((MainActivity)getActivity()).sendMessage(forward);
                     }
@@ -85,7 +85,7 @@ public class MiscellaneousFragment extends Fragment {
                     public void onClick(View view) {
                         //need to implement getting value of start point and direction
                         TextView tvBackward = (TextView) view.findViewById(R.id.backwardField);
-                        String backwardDistance = tvBackward.toString();
+                        String backwardDistance = tvBackward.getText().toString();
                         String backward = "move"+" "+"-"+backwardDistance;
                         ((MainActivity)getActivity()).sendMessage(backward);
                     }
@@ -97,19 +97,19 @@ public class MiscellaneousFragment extends Fragment {
                     public void onClick(View view) {
                         //need to implement getting value of start point and direction
                         TextView tvTurnLeft = (TextView) view.findViewById(R.id.turnLeftField);
-                        String turnLeftDegree = tvTurnLeft.toString();
+                        String turnLeftDegree = tvTurnLeft.getText().toString();
                         String turnLeft = "rotate"+" "+"-"+turnLeftDegree;
                         ((MainActivity)getActivity()).sendMessage(turnLeft);
                     }
                 }
         );
 
-        btTurnLeft.setOnClickListener(
+        btTurnRight.setOnClickListener(
                 new View.OnClickListener(){
                     public void onClick(View view) {
                         //need to implement getting value of start point and direction
                         TextView tvTurnRight = (TextView) view.findViewById(R.id.turnRightField);
-                        String turnRightDegree = tvTurnRight.toString();
+                        String turnRightDegree = tvTurnRight.getText().toString();
                         String turnRight = "rotate"+" "+turnRightDegree;
                         ((MainActivity)getActivity()).sendMessage(turnRight);
                     }
