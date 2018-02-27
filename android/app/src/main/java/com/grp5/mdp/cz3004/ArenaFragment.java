@@ -73,6 +73,7 @@ public class ArenaFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_arena, container, false);
         GridView gridview = (GridView) view.findViewById(R.id.gridview);
+        Button btCalibrate = view.findViewById(R.id.calibrateButton);
         Button btStartEx = view.findViewById(R.id.startExButton);
         Button btStartFp = view.findViewById(R.id.startFpButton);
         Button btSetStartPoint = view.findViewById(R.id.startPointButton);
@@ -102,6 +103,16 @@ public class ArenaFragment extends Fragment {
                         Toast.LENGTH_SHORT).show();
             }
         });
+
+        btCalibrate.setOnClickListener(
+                new View.OnClickListener(){
+                    public void onClick(View view) {
+                        //need to implement getting value of start point and direction
+                        String calibrate = "ca";
+                        ((MainActivity)getActivity()).sendMessage(calibrate);
+                    }
+                }
+        );
 
         btStartEx.setOnClickListener(
                 new View.OnClickListener(){
