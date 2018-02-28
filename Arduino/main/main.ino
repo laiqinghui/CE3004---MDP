@@ -79,14 +79,19 @@ void setup() {
   initI2C();
   //testSequence2();
   //moveForward(80, 95, true);
-  benTestSequence();
+  //benTestSequence();
   //testSequence1();
 
  
 }
 
 void loop() {
- 
+  Serial.println("Left and Right Front Sensor");
+  Serial.println(getIRSensorReading(A3));
+ Serial.println((int)getSensorReadingInCM()[0]);
+ Serial.println(getIRSensorReading(A1)); //Front Right
+ Serial.println((int)getSensorReadingInCM()[2]);
+ delay(500);
   //Serial.println((int)getSensorReadingInCM()[0]);
   if(dataExist()){
     Serial.println("Getting new data...");
