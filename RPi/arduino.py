@@ -33,8 +33,8 @@ class Arduino(threading.Thread):
     def interruptHandler(self, channel):
         time.sleep(0.6)
         byte = self.readData()
-        logging.info(self.readBytesArray(byte))
         # if acknowledgement byte
+        logging.info("checking if A: " + chr(byte[0]))
         if chr(byte[0]) == "A":
             logging.info("arduino acknowledged")
             self.mutex_w.acquire()
@@ -51,11 +51,12 @@ class Arduino(threading.Thread):
 
     def interpret_sensor_values(self, arr):
         output = [int(x) for x in arr if x != 255]
+        logging.info(output)
+        logging.info("sensor output len should be 5: " + str(len(output)))
         return output
 
     def readBytesArray(self, arr):
         output = ''.join([chr(x) for x in arr if x != 255])
-        logging.info("sensor output len should be 5: " + str(len(output)))
         return output
 
     def ConvertStringToBytes(self, src):
@@ -65,31 +66,32 @@ class Arduino(threading.Thread):
         data = self.ConvertStringToBytes(message)
         try:
             self.bus.write_i2c_block_data(self.address, 0, data)
-
-            dt_started = datetime.datetime.now()
-            base_time = 1
-            while 1:
-                logging.info("waiting for acknowledgement")
-                time.sleep(1)
-                if self.acknowledged:
-                    break
-                # send again if acknowledgement not receive after every 5 second
-                # pass from last send
-                dt_ended = datetime.datetime.now()
-                time_passed = (dt_ended - dt_started).seconds / 5
-                if time_passed > base_time:
-                    base_time = time_passed
-                    self.bus.write_i2c_block_data(self.address, 0, data)
-
-            self.mutex_w.acquire()
             self.acknowledged = False
-            self.mutex_w.release()
+            # dt_started = datetime.datetime.now()
+            # base_time = 1
+            # while 1:
+            #     logging.info("waiting for acknowledgement: " + str(data))
+            #     time.sleep(1)
+            #     if self.acknowledged:
+            #         logging.info("Arduino has acknowledged")
+            #         break
+            #     # send again if acknowledgement not receive after every 5 second
+            #     # pass from last send
+            #     dt_ended = datetime.datetime.now()
+            #     time_passed = (dt_ended - dt_started).seconds / 5
+            #     if time_passed > base_time:
+            #         base_time = time_passed
+            #         self.bus.write_i2c_block_data(self.address, 0, data)
+            #
+            # self.mutex_w.acquire()
+            # self.acknowledged = False
+            # self.mutex_w.release()
 
         except IOError:
             logging.info("Please check if arduino connected.")
 
     def readData(self):
-        number = self.bus.read_i2c_block_data(self.address, 0, 32)
+        number = self.bus.read_i2c_block_data(self.address, 0, 10)
         return number
 
     def start(self):
