@@ -63,22 +63,27 @@ class RPI(threading.Thread):
         dispatcher.send(message=formatted_instruction, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
         logging.info("rpi received message from algorithm and write message to arduino: " + str(formatted_instruction))
 
+        print gs.MAZEMAP
+
     def manage_arduino_signal(self, message):
         """
         - Message received from arduino to be processed and passed to algorithm
         - Updates from Arduino to be processed and passed to Android
         """
+        logging.info("sensor value: " + str(message))
         message[0] = message[0] - 6
         message[2] = message[2] - 6
         message[3] = message[3] - 10
         message[4] = message[4] - 10
+
+        logging.info("send sensor values to algo:" + str(message))
 
         dispatcher.send(message=message, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
         logging.info("rpi received message from arduino and send message to algorithm: " + str(message))
 
     def feedback_android(self, message):
         dispatcher.send(message=message, signal=gs.RPI_ANDROID_SIGNAL, sender=gs.RPI_SENDER)
-        logging.info("rpi send feedback message to android: " + str(message))
+        # logging.info("rpi send feedback message to android: " + str(message))
 
     def start(self):
         self.running = True
