@@ -45,12 +45,17 @@ class Arduino(threading.Thread):
         # if sensor data
         elif chr(byte[0]) == "S":
             logging.info("byte[0]) == S")
-            message = self.readBytesArray(byte[1:])
+            message = self.interpret_sensor_values(byte[1:])
             # message = self.readBytesArray(byte)
             dispatcher.send(message=message, signal=gs.ARDUINO_SIGNAL, sender=gs.ARDUINO_SENDER)
 
+    def interpret_sensor_values(self, arr):
+        output = [int(x) for x in arr if x != 255]
+        return output
+
     def readBytesArray(self, arr):
         output = ''.join([chr(x) for x in arr if x != 255])
+        logging.info("sensor output len should be 5: " + str(len(output)))
         return output
 
     def ConvertStringToBytes(self, src):
