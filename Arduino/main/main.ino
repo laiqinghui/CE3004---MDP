@@ -10,7 +10,7 @@ void testSequence1(){
       delay(500);
     }
       
-     turn(1, 90);//left
+     turn(-1, 90);//left
     delay(500);  
   }
 }
@@ -21,12 +21,15 @@ void testSequence2()
   for(int i = 0; i < 10; i++){
     moveForward(80, 9.5, true);
     delay(1000);
+    Serial.println("\n\n");
   }
 }
 
 void benTestSequence()
 {
-  turn(-1, 90);
+  //turn(1, 720);
+  //md.setSpeeds(124, 170);
+  calibration();
 }
 
 void processInst(){
@@ -46,12 +49,11 @@ void processInst(){
   Serial.print(inst[0]);
   switch(inst[0]){
     
-    case 'M': moveForward(80, atoi(&inst[1]), true);
-              Serial.println("M");    
+    case 'M': moveForward(50, atoi(&inst[1]), true);  
               break;
     case 'T': turn(-1, atoi(&inst[1]));
               break;
-    case 'W': moveForward(80, 10, true);
+    case 'W': moveForward(50, 9.5, true);
               break;
     case 'A': turn(-1, 90);
               break;
@@ -78,66 +80,19 @@ void setup() {
   //testSequence2();
   //moveForward(80, 95, true);
   benTestSequence();
+  //testSequence1();
+
  
 }
 
 void loop() {
-  
-
+ 
+  //Serial.println((int)getSensorReadingInCM()[0]);
   if(dataExist()){
     Serial.println("Getting new data...");
     processInst();
     }
     
 }
-
-
-
-
-
-
-
-void distanceFromWall(int distance)
-{
-	//Go to roughly the distance from wall
-//  if(getCalibrationReading(frontRightIR) > distance)
-//  {
-//    while(getCalibrationReading(frontRightIR) > distance)
-//      {
-//        md.setSpeeds(114, 140);
-//      }
-//  }
-//  else if(getCalibrationReading(frontRightIR) < distance)
-//  {
-//    while(getCalibrationReading(frontRightIR) < distance)
-//      {
-//        md.setSpeeds(-114, -140);
-//      }
-//  }
-//  md.setBrakes(400, 400);
-//  delay(300);
-  
-  //Fine tune the distance from wall
-  if(getCalibrationReading(frontRightIR) > distance)
-  {
-    while(getCalibrationReading(frontRightIR) > distance)
-      {
-        md.setM1Speed(84);
-        md.setM2Speed(110);
-      }
-  }
-  else if(getCalibrationReading(frontRightIR) < distance)
-  {
-    while(getCalibrationReading(frontRightIR) < distance)
-      {
-        md.setM1Speed(-84);
-        md.setM2Speed(-110);
-      }
-  }
-  md.setBrakes(400, 400);
-  Serial.println("Set");
-  Serial.println(getCalibrationReading(frontRightIR));
-}
-
 
 

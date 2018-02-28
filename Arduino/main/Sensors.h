@@ -6,10 +6,8 @@
 //Function Decleration
 double getIRSensorReading(int sensor);
 
+char sensorsValuesArray[5] = {0};
 
-
-
-int sensorsValuesArray[5] = {0};
 
 
 int USValue = 0;
@@ -64,20 +62,92 @@ int getUltraSoundDistance(){
 
 }  
 
-int* getSensorReadingInCM(){//Quick and dirty test i.e no avg/median of sensor value
+char* getSensorReadingInCM(){
     /*
     Return pointer to sensors values array. Reasons for the pointer approach is to facilitate for Exploration where
     one call to this method will be sufficient for updating to RPI.
     Usage example: To get front left sensor reading just call sensorsValuesArray()[1]
     TODO: Generate mean/median of sensors value before assigning
     */
-		sensorsValuesArray[0] = (6787/getIRSensorReading(frontLeftIR) - 3) - 4;
-		sensorsValuesArray[1] = 500; //getUltraSoundDistance()
-		sensorsValuesArray[2] = (6787/getIRSensorReading(frontRightIR) - 3) - 4;
-		sensorsValuesArray[3] = 60.374 * pow( ( getIRSensorReading(right)*(5.0 / 1023.0) ) , -1.16);
-		sensorsValuesArray[4] = 60.374 * pow( ( getIRSensorReading(left)*(5.0 / 1023.0) ) , -1.16);
 
-					
+    //PS4 y = 6511.7x - 1.958
+    //Limit is 50cm
+    int frontLeftValue = getIRSensorReading(frontLeftIR);
+    if(frontLeftValue < 117)
+    {
+      sensorsValuesArray[0] = 0;
+    }
+    else
+    {
+      sensorsValuesArray[0] = (6511.7/frontLeftValue) - 1.958;
+    }
+
+		sensorsValuesArray[1] = 500; //getUltraSoundDistance() //Center
+
+    //PS2 y = 6414.8x - 1.2092 for values above 184 and up to 30cm
+    //when x is 
+    //y = 7819x - 11.552 for values 134-184 and up to 45cm
+    //Limit is 45cm
+    int frontRightValue = getIRSensorReading(frontRightIR);
+    if(frontRightValue < 134)
+    {
+      sensorsValuesArray[2] = 0;
+    }
+    else
+    {
+      if(frontRightValue > 184)
+      {
+        sensorsValuesArray[2] = (6414.8/frontRightValue) - 1.2092;
+      }
+      else
+      {
+        sensorsValuesArray[2] = (7819/frontRightValue) - 11.552;
+      }
+      
+    }
+
+    //PS1 y = 6607.1x - 2.3461
+    //Limit is 60cm
+    int rightValue = getIRSensorReading(right);
+    if(rightValue < 105)
+    {
+      sensorsValuesArray[3] = 0;
+    }
+    else
+    {
+      sensorsValuesArray[3] = (6607.1/rightValue) - 2.3461;
+    }
+
+    //PS3 y = 5336.2x - 0.1843 for values above 200 and until 25cm
+    //when x is 193-200 output 32.5cm
+    //when x is 189-193 output 40
+    //y = y = 13121x - 24.802 for values 140-189 starting from 45cm
+    //Limit is 65cm
+    int leftValue = getIRSensorReading(left);
+    if(leftValue < 140)
+    {
+      sensorsValuesArray[4] = 0;
+    }
+    else
+    {
+      if(leftValue >= 200)
+      {
+        sensorsValuesArray[4] = (5336.2/leftValue) - 0.1843;
+      }
+      else if(leftValue < 200 && leftValue >= 193)
+      {
+        sensorsValuesArray[4] = 32.5;
+      }
+      else if(leftValue < 193 && leftValue > 189)
+      {
+        sensorsValuesArray[4] = 40;
+      }
+      else
+      {
+        sensorsValuesArray[4] = (13121/leftValue) - 24.802;
+      }
+    }
+			
 	  return sensorsValuesArray;
 }
 
@@ -88,19 +158,19 @@ double getCalibrationReading(int sensor)
   if(sensor == frontRightIR)
   {
     //y = 5830.7(1/x) - 1.5979
-    return 5830.7*(1/amount)-1.5979-1;
+    return 5830.7*(1/amount)-2.5979;
   }
   else if(sensor == frontLeftIR)
   {
-    //y = 5718.4*(1/x) - 1.9681
-    return 5718.4*(1/amount)-1.9681;
+    //y = y = 5730.2x - 1.2045
+    return 5730.2*(1/amount)-1.2045;
   }
 }	
 	
 //Get average reading over a number of samples
 double getIRSensorReading(int sensor)
 {
-  int size = 20;
+  int size = 10;
   
   int listOfReadings[size];
 
@@ -132,7 +202,7 @@ double getIRSensorReading(int sensor)
 
   //Average middle 3
   short int total = 0;
-  for(int a = 9; a<12; a++)
+  for(int a = 4; a<7; a++)
   {
     total = total + listOfReadings[a];
   }
