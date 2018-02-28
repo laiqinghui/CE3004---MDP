@@ -15,15 +15,15 @@ class RPI(threading.Thread):
         self.running = False
 
         dispatcher.connect(self.command_rpi, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)
-        dispatcher.connect(self.command_arduino, signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
-        dispatcher.connect(self.command_algorithm, signal=gs.ARDUINO_SIGNAL, sender=gs.ARDUINO_SENDER)
+        dispatcher.connect(self.manage_algorithm_signal, signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
+        dispatcher.connect(self.manage_arduino_signal, signal=gs.ARDUINO_SIGNAL, sender=gs.ARDUINO_SENDER)
 
         logging.info("rpi +initialized")
 
     def command_rpi(self, message):
         logging.info("rpi received message from android and write message: " + str(message))
 
-    def command_arduino(self, message):
+    def manage_algorithm_signal(self, message):
         """
         Message received from algorithm to be processed and passed to arduino
         """
@@ -62,7 +62,7 @@ class RPI(threading.Thread):
         dispatcher.send(message=formatted_instruction, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
         logging.info("rpi received message from algorithm and write message to arduino: " + str(formatted_instruction))
 
-    def command_algorithm(self, message):
+    def manage_arduino_signal(self, message):
         """
         - Message received from arduino to be processed and passed to algorithm
         - Updates from Arduino to be processed and passed to Android
