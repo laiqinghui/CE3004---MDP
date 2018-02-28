@@ -29,7 +29,7 @@ class RPI(threading.Thread):
         """
         # if fatest path
         if len(message) == 1:
-            formatted_instruction = 'C' + ''.join(instruction)
+            formatted_instruction = 'C' + ''.join(instruction) + ';'
             # aggregate the movement
         # if exploration
         if len(message) > 1:
@@ -43,12 +43,12 @@ class RPI(threading.Thread):
             robot_dir = message[3]
 
             if not completed:
-                formatted_instruction = 'S' + ''.join(instruction)
+                formatted_instruction = 'S' + ''.join(instruction) + ';'
                 robot_moving_stop_string_update = '1L'   # robot no longer moving after instruction
             else:
                 # exploration completed, arduino do not need to sense environment
                 # after moving robot
-                formatted_instruction = 'C' + ''.join(instruction)
+                formatted_instruction = 'C' + ''.join(instruction) + ';'
                 robot_moving_stop_string_update = '0L'   # robot still going moving after instruction
 
             explore_mdf_string_update = gs.get_mdf_bitstring(gs.get_explore_status_mazemap(gs.MAZEMAP), 1)
