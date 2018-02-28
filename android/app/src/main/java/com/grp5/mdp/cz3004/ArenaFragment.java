@@ -7,6 +7,7 @@ import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,7 +73,7 @@ public class ArenaFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_arena, container, false);
-        GridView gridview = (GridView) view.findViewById(R.id.gridview);
+        GridView gridview = (GridView) view.findViewById(R.id.map_grid);
         Button btCalibrate = view.findViewById(R.id.calibrateButton);
         Button btStartEx = view.findViewById(R.id.startExButton);
         Button btStartFp = view.findViewById(R.id.startFpButton);
@@ -96,11 +97,11 @@ public class ArenaFragment extends Fragment {
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                Toast.makeText(getContext(), "position: " + position +
-                                " x: " + ImageAdapter.calcCol(position) +
-                                " y: " + ImageAdapter.calcRow(position) +
-                                " coord: " + ImageAdapter.getCoord(position),
-                        Toast.LENGTH_SHORT).show();
+                if(ImageAdapter.getGridItem(position) != null){
+                    Toast.makeText(getContext(), "position: " + position + " x: " + ImageAdapter.calcRow(position)
+                                    + " y: " + ImageAdapter.calcCol(position),
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -204,17 +205,11 @@ public class ArenaFragment extends Fragment {
         }
 
         public static int calcRow(int position) {
-            return position/16 - 1;
+            return getGridItem(position).getRow();
         }
 
         public static int calcCol(int position) {
-            return (position%16) - 1;
-        }
-
-        public static int getCoord(int position){
-            int x = calcCol(position);
-            int y = calcRow(position);
-            return (14*y)+x+y;
+            return getGridItem(position).getCol();
         }
 
         public int getCount() {
@@ -222,7 +217,14 @@ public class ArenaFragment extends Fragment {
         }
 
         public static GridImage getGridItem(int position) {
-            return gridList.get(((position-16)%16)-1);
+            int y = 19-(position/16);
+            int x = position%16 - 1;
+            int index = y*15 + x;
+            if(index >= 0 && gridList.size() > index){
+                return gridList.get(index);
+            } else {
+                return null;
+            }
         }
 
         @Override
@@ -238,10 +240,10 @@ public class ArenaFragment extends Fragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             ImageView imageView;
             TextView textView;
-            if(position<16){
+            if (position == 320){
                 if (convertView == null) {
                     textView = new TextView(mContext);
-                    textView.setText(String.valueOf(position));
+                    textView.setText("");
                 } else {
                     return convertView;
                 }
@@ -249,7 +251,15 @@ public class ArenaFragment extends Fragment {
             } else if(position%16 == 0){
                 if (convertView == null) {
                     textView = new TextView(mContext);
-                    textView.setText(String.valueOf(position/16));
+                    textView.setText(String.valueOf(19-(position/16)));
+                } else {
+                    return convertView;
+                }
+                return textView;
+            } else if(position > 320){
+                if (convertView == null) {
+                    textView = new TextView(mContext);
+                    textView.setText(String.valueOf(position-321));
                 } else {
                     return convertView;
                 }
@@ -264,7 +274,7 @@ public class ArenaFragment extends Fragment {
                 } else {
                     return convertView;
                 }
-                imageView.setImageResource(gridList.get(getCoord(position)).getImageId());
+                imageView.setImageResource(getGridItem(position).getImageId());
                 return imageView;
             }
         }
