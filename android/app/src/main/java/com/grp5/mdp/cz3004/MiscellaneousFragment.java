@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,11 +69,15 @@ public class MiscellaneousFragment extends Fragment {
         Button btTurnLeft = view.findViewById(R.id.turnLeftButton);
         Button btTurnRight = view.findViewById(R.id.turnRightButton);
 
+        EditText tvForward = (EditText) view.findViewById(R.id.forwardField);
+        Log.d("DENUGG", tvForward.toString());
+
         btForward.setOnClickListener(
                 new View.OnClickListener(){
                     public void onClick(View view) {
                         //need to implement getting value of start point and direction
-                        TextView tvForward = (TextView) view.findViewById(R.id.forwardField);
+                        EditText tvForward = (EditText) getActivity().findViewById(R.id.forwardField);
+                        Log.d("DENUGG", tvForward.toString());
                         String forwardDistance = tvForward.getText().toString();
                         String forward = "move"+" "+forwardDistance;
                         ((MainActivity)getActivity()).sendMessage(forward);
@@ -109,7 +114,9 @@ public class MiscellaneousFragment extends Fragment {
                     public void onClick(View view) {
                         //need to implement getting value of start point and direction
                         TextView tvTurnRight = (TextView) view.findViewById(R.id.turnRightField);
+
                         String turnRightDegree = tvTurnRight.getText().toString();
+
                         String turnRight = "rotate"+" "+turnRightDegree;
                         ((MainActivity)getActivity()).sendMessage(turnRight);
                     }

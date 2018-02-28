@@ -153,7 +153,7 @@ char* getSensorReadingInCM(){
 
 double getCalibrationReading(int sensor)
 {  
-  double amount = getIRSensorReading(sensor);
+  double amount = getIRSensorReading_calibration(sensor);
   
   if(sensor == frontRightIR)
   {
@@ -168,7 +168,7 @@ double getCalibrationReading(int sensor)
 }	
 	
 //Get average reading over a number of samples
-double getIRSensorReading(int sensor)
+double getIRSensorReading_calibration(int sensor)
 {
   int size = 10;
   
@@ -207,6 +207,47 @@ double getIRSensorReading(int sensor)
     total = total + listOfReadings[a];
   }
   return total/3.0;
+}
+
+//Get average reading over a number of samples
+double getIRSensorReading(int sensor)
+{
+  int size = 500;
+  
+  int listOfReadings[size];
+
+  //Get Reading from Sensor
+  for(int a = 0; a<size; a++)
+  {
+    listOfReadings[a] = analogRead(sensor);
+  }
+
+  //Sort Reading
+  for (int i = 0; i < size; i++)      
+  {
+    //Find max
+    int max = listOfReadings[0];
+    int maxLocation = 0;
+    for(int j = 0; j < size-i; j++)
+    {
+      if(max < listOfReadings[j])
+      {
+        max = listOfReadings[j];
+        maxLocation = j;
+      }
+    }
+
+    //Swap max with last position
+    listOfReadings[maxLocation] = listOfReadings[size-1-i];
+    listOfReadings[size-1-i] = max;
+  }
+
+  short int total = 0;
+  for(int a = 235; a<266; a++)
+  {
+    total = total + listOfReadings[a];
+  }
+  return total/30.0;
 }
 	
 	

@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         BluetoothFragment.OnFragmentInteractionListener,
         SendTextFragment.OnFragmentInteractionListener,
-        ArenaFragment.OnFragmentInteractionListener,
+        ArenaFragment.OnMapUpdateListener,
         MiscellaneousFragment.OnFragmentInteractionListener{
 
     private BluetoothAdapter BTAdapter;
@@ -246,6 +246,9 @@ public class MainActivity extends AppCompatActivity
                     if(rf != null){
                         rf.setText(readMessage);
                     }
+                    if(readMessage.substring(0, 3) == "MDF"){
+
+                    }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
@@ -310,5 +313,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    public void onMapUpdateReceived(String exploredBin, String obstacleBin){
+        //pass the strings to arena fragment to be parsed
     }
 }
