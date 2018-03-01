@@ -118,10 +118,10 @@ char* getSensorReadingInCM(){
       sensorsValuesArray[3] = (6607.1/rightValue) - 2.3461;
     }
 
-    //PS3 y = 5336.2x - 0.1843 for values above 200 and until 25cm
+    //PS3 y = 5336.2x - 0.1843 for values above 200 and until 25cm //New equation y = 5926.9x - 1.7829
     //when x is 193-200 output 32.5cm
     //when x is 189-193 output 40
-    //y = y = 13121x - 24.802 for values 140-189 starting from 45cm
+    //y = y = 13121x - 24.802 for values 140-189 starting from 45cm //New equation y = 10832x - 9.762
     //Limit is 65cm
     int leftValue = getIRSensorReading(left);
     if(leftValue < 140)
@@ -132,7 +132,7 @@ char* getSensorReadingInCM(){
     {
       if(leftValue >= 200)
       {
-        sensorsValuesArray[4] = (5336.2/leftValue) - 0.1843;
+        sensorsValuesArray[4] = (5926.9/leftValue) - 1.7829;
       }
       else if(leftValue < 200 && leftValue >= 193)
       {
@@ -144,28 +144,12 @@ char* getSensorReadingInCM(){
       }
       else
       {
-        sensorsValuesArray[4] = (13121/leftValue) - 24.802;
+        sensorsValuesArray[4] = (10832/leftValue) - 9.762;
       }
     }
 			
 	  return sensorsValuesArray;
 }
-
-double getCalibrationReading(int sensor)
-{  
-  double amount = getIRSensorReading_calibration(sensor);
-  
-  if(sensor == frontRightIR)
-  {
-    //y = 5830.7(1/x) - 1.5979
-    return 5830.7*(1/amount)-2.5979;
-  }
-  else if(sensor == frontLeftIR)
-  {
-    //y = y = 5730.2x - 1.2045
-    return 5730.2*(1/amount)-1.2045;
-  }
-}	
 	
 //Get average reading over a number of samples
 double getIRSensorReading_calibration(int sensor)
@@ -250,7 +234,21 @@ double getIRSensorReading(int sensor)
   return total/30.0;
 }
 	
-	
+double getCalibrationReading(int sensor)
+{  
+  double amount = getIRSensorReading_calibration(sensor);
+  
+  if(sensor == frontRightIR)
+  {
+    //y = 5830.7(1/x) - 1.5979
+    return 5830.7*(1/amount)-2.5979;
+  }
+  else if(sensor == frontLeftIR)
+  {
+    //y = y = 5730.2x - 1.2045
+    return 5730.2*(1/amount)-1.2045;
+  }
+}  	
 	
 	
 int findMin(int arr[]) {
