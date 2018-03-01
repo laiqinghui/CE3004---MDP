@@ -35,7 +35,7 @@ class Exploration:
         self.startPos = startPos
         self.timeLimit = timeLimit
         self.exploredArea = 0
-        self.currentMap = np.zeros([20, 15])
+        self.currentMap = gs.MAZEMAP
         # if sim:
         #     from Simulator import Robot
         #     self.robot = Robot(self.currentMap, direction, self.startPos, realMap)

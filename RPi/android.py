@@ -16,6 +16,7 @@ FP_START_COL = 18
 FP_GOAL_ROW = 13
 FP_GOAL_COL = 1
 
+
 class Android(threading.Thread):
     def __init__(self):
         super(Android, self).__init__()
@@ -138,4 +139,4 @@ class Android(threading.Thread):
     #         while(self.running):
     #             self.receiveAndroid()
     #     except IOError:
-        #     pass
+    #         pass

@@ -218,7 +218,7 @@ class Robot:
 
         """
         if value != 0:
-            value = round(value - 6, -1)
+            value = round(value - 5, -1)
 
         vals = []
 

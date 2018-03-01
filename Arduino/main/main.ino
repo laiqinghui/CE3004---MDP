@@ -27,8 +27,8 @@ void testSequence2()
 
 void benTestSequence()
 {
-  //turn(1, 1080);
-  //md.setSpeeds(90, 150);
+  //turn(1, 720);
+  //md.setSpeeds(124, 170);
   calibration();
 }
 
@@ -103,7 +103,12 @@ void setup() {
 }
 
 void loop() {
- 
+  Serial.println("Left and Right Front Sensor");
+  Serial.println(getIRSensorReading(A3));
+ Serial.println((int)getSensorReadingInCM()[0]);
+ Serial.println(getIRSensorReading(A1)); //Front Right
+ Serial.println((int)getSensorReadingInCM()[2]);
+ delay(500);
   //Serial.println((int)getSensorReadingInCM()[0]);
   if(dataExist()){
     Serial.println("Getting new data...");

@@ -7,6 +7,7 @@ import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ArenaFragment.OnFragmentInteractionListener} interface
+ * {@link ArenaFragment.OnMapUpdateListener} interface
  * to handle interaction events.
  * Use the {@link ArenaFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -41,7 +42,7 @@ public class ArenaFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    private OnMapUpdateListener mListener;
 
     public ArenaFragment() {
         // Required empty public constructor
@@ -72,7 +73,8 @@ public class ArenaFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_arena, container, false);
-        GridView gridview = (GridView) view.findViewById(R.id.gridview);
+        GridView gridview = (GridView) view.findViewById(R.id.map_grid);
+        Button btCalibrate = view.findViewById(R.id.calibrateButton);
         Button btStartEx = view.findViewById(R.id.startExButton);
         Button btStartFp = view.findViewById(R.id.startFpButton);
         Button btSetStartPoint = view.findViewById(R.id.startPointButton);
@@ -95,13 +97,23 @@ public class ArenaFragment extends Fragment {
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                Toast.makeText(getContext(), "position: " + position +
-                                " x: " + ImageAdapter.calcCol(position) +
-                                " y: " + ImageAdapter.calcRow(position) +
-                                " coord: " + ImageAdapter.getCoord(position),
-                        Toast.LENGTH_SHORT).show();
+                if(ImageAdapter.getGridItem(position) != null){
+                    Toast.makeText(getContext(), "position: " + position + " x: " + ImageAdapter.calcRow(position)
+                                    + " y: " + ImageAdapter.calcCol(position),
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
+
+        btCalibrate.setOnClickListener(
+                new View.OnClickListener(){
+                    public void onClick(View view) {
+                        //need to implement getting value of start point and direction
+                        String calibrate = "ca";
+                        ((MainActivity)getActivity()).sendMessage(calibrate);
+                    }
+                }
+        );
 
         btStartEx.setOnClickListener(
                 new View.OnClickListener(){
@@ -144,21 +156,14 @@ public class ArenaFragment extends Fragment {
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnMapUpdateListener) {
+            mListener = (OnMapUpdateListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnMapUpdateListener");
         }
     }
 
@@ -178,9 +183,9 @@ public class ArenaFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface OnMapUpdateListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onMapUpdateReceived(String exploredBin, String obstacleBin);
     }
 
     private static class ImageAdapter extends BaseAdapter {
@@ -193,17 +198,11 @@ public class ArenaFragment extends Fragment {
         }
 
         public static int calcRow(int position) {
-            return position/16 - 1;
+            return getGridItem(position).getRow();
         }
 
         public static int calcCol(int position) {
-            return (position%16) - 1;
-        }
-
-        public static int getCoord(int position){
-            int x = calcCol(position);
-            int y = calcRow(position);
-            return (14*y)+x+y;
+            return getGridItem(position).getCol();
         }
 
         public int getCount() {
@@ -211,7 +210,14 @@ public class ArenaFragment extends Fragment {
         }
 
         public static GridImage getGridItem(int position) {
-            return gridList.get(((position-16)%16)-1);
+            int y = 19-(position/16);
+            int x = position%16 - 1;
+            int index = y*15 + x;
+            if(index >= 0 && gridList.size() > index){
+                return gridList.get(index);
+            } else {
+                return null;
+            }
         }
 
         @Override
@@ -227,10 +233,10 @@ public class ArenaFragment extends Fragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             ImageView imageView;
             TextView textView;
-            if(position<16){
+            if (position == 320){
                 if (convertView == null) {
                     textView = new TextView(mContext);
-                    textView.setText(String.valueOf(position));
+                    textView.setText("");
                 } else {
                     return convertView;
                 }
@@ -238,7 +244,15 @@ public class ArenaFragment extends Fragment {
             } else if(position%16 == 0){
                 if (convertView == null) {
                     textView = new TextView(mContext);
-                    textView.setText(String.valueOf(position/16));
+                    textView.setText(String.valueOf(19-(position/16)));
+                } else {
+                    return convertView;
+                }
+                return textView;
+            } else if(position > 320){
+                if (convertView == null) {
+                    textView = new TextView(mContext);
+                    textView.setText(String.valueOf(position-321));
                 } else {
                     return convertView;
                 }
@@ -253,7 +267,7 @@ public class ArenaFragment extends Fragment {
                 } else {
                     return convertView;
                 }
-                imageView.setImageResource(gridList.get(getCoord(position)).getImageId());
+                imageView.setImageResource(getGridItem(position).getImageId());
                 return imageView;
             }
         }
