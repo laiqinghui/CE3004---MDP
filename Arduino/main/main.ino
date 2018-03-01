@@ -86,12 +86,10 @@ void setup() {
 }
 
 void loop() {
-  Serial.println("Left and Right Front Sensor");
-  Serial.println(getIRSensorReading(A3));
- Serial.println((int)getSensorReadingInCM()[0]);
- Serial.println(getIRSensorReading(A1)); //Front Right
- Serial.println((int)getSensorReadingInCM()[2]);
- delay(500);
+  Serial.println("Right Sensor");
+  Serial.println(getIRSensorReading(A0));
+ Serial.println((int)getSensorReadingInCM()[3]);
+ delay(1000);
   //Serial.println((int)getSensorReadingInCM()[0]);
   if(dataExist()){
     Serial.println("Getting new data...");

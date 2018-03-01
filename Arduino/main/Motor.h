@@ -178,14 +178,49 @@ void moveForward(int rpm, int distance, boolean pidOn){
 
 double getCir(int dir, int turnDegree)
 {
-  double degree90 = 16.65;
-  double degree180 = 16.4;
-  double degree360 = 16.6; 
-  double degree720 = 16.8;
-  double degree1080 = 15;
+  if(dir == -1)
+  {
+    if(turnDegree == 90)
+    {
+      return 16.7;
+    }
+    else if(turnDegree == 180)
+    {
+      return 16.48;
+    }
+    else
+    {
+      return 16.7;
+    }
+  }
+  else
+  {
+    if(turnDegree == 90)
+    {
+      return 16.3;
+    }
+    else if(turnDegree == 180)
+    {
+      return 16.35;
+    }
+    else
+    {
+      return 16.7;
+    }
+  }
+}
+
+double getCir_test(int dir, int turnDegree)
+{
+  
   
   if(dir == 1)
   {
+    double degree90 = 16.65;
+    double degree180 = 16.4;
+    double degree360 = 16.6; 
+    double degree720 = 16.8;
+    double degree1080 = 15;
     if(turnDegree <= 90)
     {
       return degree90;
@@ -268,7 +303,7 @@ void turn(int dir, int turnDegree)
     
     if(dir == 1)
     {
-      md.setSpeeds(-168 * dir, 196 * dir);
+      md.setSpeeds(-168, 196);
       while(true)
       {
         currentValue = (PINB>>5)%2;
@@ -287,7 +322,7 @@ void turn(int dir, int turnDegree)
     else
 
     {
-      md.setSpeeds(168 * dir, -199 * dir);
+      md.setSpeeds(168, -199);
       while(true)
       {
         currentValue = (PIND>>3)%2;
@@ -361,9 +396,9 @@ void distanceFromWall(double distance)
 //Calibration
 void calibration()
 {
-  double threshold = 0.2;
-  double startWall = 12.11;
-  double leftWall = 13.21;
+  double threshold = 0.1;
+  double startWall = 13.65;
+  double leftWall = 13.88;
   int wait = 500;
   
   //Quick calibration against wall
@@ -375,11 +410,16 @@ void calibration()
   delay(wait);
 
   //Fine tune the calibration
-  while(abs(getCalibrationReading(frontRightIR) - getCalibrationReading(frontLeftIR)) > threshold)
+  while(abs(getCalibrationReading_accurate(frontRightIR) - getCalibrationReading_accurate(frontLeftIR)) > threshold)
   {
     straightenTune();
+    Serial.println("Start");
+    Serial.println(getCalibrationReading(frontRightIR));
+    Serial.println(getCalibrationReading(frontLeftIR));
+    Serial.println("End");
     delay(100);
   }
+  
   delay(wait);
 
   //Fine tune distance from wall
@@ -389,7 +429,7 @@ void calibration()
   //Turn to the left by 90
   turn(-1, 90);
   delay(wait);
-
+  
   //Move to the distance from wall
   distanceFromWall(leftWall);
   delay(wait);

@@ -70,16 +70,16 @@ char* getSensorReadingInCM(){
     TODO: Generate mean/median of sensors value before assigning
     */
 
-    //PS4 y = 6511.7x - 1.958
+    //PS4 y = 5898.2x - 3.0994
     //Limit is 50cm
     int frontLeftValue = getIRSensorReading(frontLeftIR);
-    if(frontLeftValue < 117)
+    if(frontLeftValue < 107)
     {
       sensorsValuesArray[0] = 0;
     }
     else
     {
-      sensorsValuesArray[0] = (6511.7/frontLeftValue) - 1.958;
+      sensorsValuesArray[0] = (5898.2/frontLeftValue) - 3.0994;
     }
 
 		sensorsValuesArray[1] = 500; //getUltraSoundDistance() //Center
@@ -196,7 +196,7 @@ double getIRSensorReading_calibration(int sensor)
 //Get average reading over a number of samples
 double getIRSensorReading(int sensor)
 {
-  int size = 500;
+  int size = 300;
   
   int listOfReadings[size];
 
@@ -227,11 +227,11 @@ double getIRSensorReading(int sensor)
   }
 
   short int total = 0;
-  for(int a = 235; a<266; a++)
+  for(int a = 140; a<160; a++)
   {
     total = total + listOfReadings[a];
   }
-  return total/30.0;
+  return total/20.0;
 }
 	
 double getCalibrationReading(int sensor)
@@ -241,14 +241,30 @@ double getCalibrationReading(int sensor)
   if(sensor == frontRightIR)
   {
     //y = 5830.7(1/x) - 1.5979
-    return 5830.7*(1/amount)-2.5979;
+    return 5430.8*(1/amount) - 0.2397;
   }
   else if(sensor == frontLeftIR)
   {
-    //y = y = 5730.2x - 1.2045
-    return 5730.2*(1/amount)-1.2045;
+    //y = 5310x + 0.5094
+    return 5310*(1/amount)+ 0.5094;
   }
-}  	
+}  
+
+double getCalibrationReading_accurate(int sensor)
+{  
+  double amount = getIRSensorReading(sensor);
+  
+  if(sensor == frontRightIR)
+  {
+    //y = 5430.8x - 0.2397
+    return 5430.8*(1/amount) - 0.2397;
+  }
+  else if(sensor == frontLeftIR)
+  {
+    //y = 5310x + 0.5094
+    return 5310*(1/amount)+ 0.5094;
+  }
+}    
 	
 	
 int findMin(int arr[]) {
