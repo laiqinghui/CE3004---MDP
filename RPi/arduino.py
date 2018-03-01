@@ -50,8 +50,7 @@ class Arduino(threading.Thread):
 
     def interpret_sensor_values(self, arr):
         output = [int(x) for x in arr[:5]]
-        logging.info(output)
-        logging.info("sensor output len should be 5: " + str(len(output)))
+        logging.info("sensor output len should be 5: " + str(output))
         return output
 
     def readBytesArray(self, arr):
@@ -63,15 +62,15 @@ class Arduino(threading.Thread):
 
     def writeData(self, message):
         data = self.ConvertStringToBytes(message)
-        self.mutex_w.acquire()
-        self.acknowledged = False
-        self.mutex_w.release()
-        arduino_write_thread = threading.Thread(target=self.write_threaded, args=(data,))
+        arduino_write_thread = threading.Thread(target=self.write_and_wait_acknowledgement, args=(data,))
         arduino_write_thread.daemon = True
         arduino_write_thread.start()
 
-    def write_threaded(self, data):
+    def write_and_wait_acknowledgement(self, data):
         try:
+            self.mutex_w.acquire()
+            self.acknowledged = False
+            self.mutex_w.release()
             self.bus.write_i2c_block_data(self.address, 0, data)
             dt_started = datetime.datetime.now()
             base_time = 1
