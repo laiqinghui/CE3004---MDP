@@ -16,6 +16,7 @@ Test that information should be able to be passed across following devices
 """
 
 import time
+import threading
 
 from android import Android
 from arduino import Arduino
@@ -31,7 +32,8 @@ if __name__ == "__main__":
     rpi_thread = RPI()
     algo_thread = Algorithm()
     arduino_thread = Arduino()
-    android_thread = Android()
+    # android_thread = Android()
+    android_thread = threading.Thread(target=Android)
 
     rpi_thread.daemon = True
     algo_thread.daemon = True
