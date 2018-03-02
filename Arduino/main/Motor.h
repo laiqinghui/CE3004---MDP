@@ -216,8 +216,8 @@ double getCir_test(int dir, int turnDegree)
     double degree90 = 16.65;
     double degree180 = 16.4;
     double degree360 = 16.6; 
-    double degree720 = 16.8;
-    double degree1080 = 15;
+    double degree720 = 16.85;
+    double degree1080 = 16.75;
     if(turnDegree <= 90)
     {
       return degree90;
@@ -254,6 +254,44 @@ double getCir_test(int dir, int turnDegree)
   }
   else if(dir == -1)
   {
+    double degree90 = 15.5;
+    double degree180 = 15.7; //Last value is 15.7
+    double degree360 = 15.85; 
+    double degree720 = 16;
+    double degree1080 = 15.95;
+    if(turnDegree <= 90)
+    {
+      return degree90;
+    }
+    else if(turnDegree <= 180)
+    {
+      double closenessTo90 = ((turnDegree-90)/90.0)*degree180;
+      double closenessTo180 = ((180 - turnDegree)/90.0)*degree90;
+      
+      return closenessTo90 + closenessTo180;
+    }
+    else if(turnDegree<= 360)
+    {
+      double closenessTo180 = ((turnDegree-180)/180.0)*degree360;
+      double closenessTo360 = ((360 - turnDegree)/180.0)*degree180;
+      
+      return closenessTo180 + closenessTo360;
+    }
+    else if(turnDegree <= 720)
+    {
+      double closenessTo360 = ((turnDegree-360)/360.0)*degree720;
+      double closenessTo720 = ((720 - turnDegree)/360.0)*degree360;
+      
+      return closenessTo360 + closenessTo720;
+    }
+    else if(turnDegree <= 1080)
+    {
+      double closenessTo720 = ((turnDegree-720)/360.0)*degree1080;
+      double closenessTo1080 = ((1080 - turnDegree)/360.0)*degree720;
+      
+      return closenessTo1080 + closenessTo720;
+    }
+    
     if(turnDegree <= 180)
     {
       return 16.7;
@@ -284,8 +322,8 @@ double getCir_test(int dir, int turnDegree)
 void turn(int dir, int turnDegree)
 {
     //1 is right, -1 is left
-    Serial.println(getCir(dir, turnDegree));
-    double cir = Pi * getCir(dir, turnDegree); //circumfrence of circle drawn when turning in cm, current diameter used is between 15.6
+    Serial.println(getCir_test(dir, turnDegree));
+    double cir = Pi * getCir_test(dir, turnDegree); //circumfrence of circle drawn when turning in cm, current diameter used is between 15.6
 
     int amount = abs(cir * (turnDegree/360.0) * ticksPerCM);//int to ignored decimal value //* getTurnTicksOffsetAmt(turnDegree)
     /*
@@ -319,7 +357,7 @@ void turn(int dir, int turnDegree)
     else
 
     {
-      md.setSpeeds(168, -199);
+      md.setSpeeds(168, -202);
       while(true)
       {
         currentValue = (PIND>>3)%2;
