@@ -40,7 +40,7 @@ void processInst(){
   int i = 1;
   char num[1] = {0};
   
-  delay(1000);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations 
+  delay(200);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations 
   
   while(buff[index] != ';'){
     inst[index] = buff[index];
@@ -54,13 +54,13 @@ void processInst(){
     switch(inst[i]){
       
   
-      case 'W': moveForward(50, 9.5, true);
+      case 'W': moveForward(90, 9.5, true);
                 break;
-      case 'A': turn(-1, 90);
+      case 'A': turnTemp(-1, 90);
                 break;
-      case 'D': turn(1, 90);
+      case 'D': turnTemp(1, 90);
                 break;
-      case 'O': turn(-1, 180);
+      case 'O': turn(-1, 190);
                 break;
       case 'c': calibration();
                 break;          
@@ -80,10 +80,13 @@ void processInst(){
       default:  ;//do nothing            
       
       }
-  
-    i++;
     
+    
+    if(index > 2)
+      delay(200);
+    i++;   
     }
+    
     if(inst[0] == 'S'){
   
       setOutBuffer('S', getSensorReadingInCM(), 5);
@@ -101,7 +104,7 @@ void setup() {
   Serial.println("Program Started!");
   md.init();
   initI2C();
-  benTestSequence();
+
 }
 
 void loop() {

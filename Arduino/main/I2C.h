@@ -5,7 +5,7 @@
 //Slave Address for the Communication
 #define SLAVE_ADDRESS 0x04
 
-char inBuffer[10] = {0};
+char inBuffer[20] = {0};
 char outBuffer[10] = {0};
 boolean newData = false;
 int instCount = 0;
