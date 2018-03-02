@@ -97,7 +97,9 @@ void setup() {
 }
 
 void loop() {
-
+  Serial.println("Left");
+  Serial.println(getIRSensorReading(A2));
+  Serial.println((int)getSensorReadingInCM()[4]);
   if(dataExist()){
     processInst();
     }

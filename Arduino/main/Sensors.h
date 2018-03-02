@@ -60,7 +60,7 @@ char* getSensorReadingInCM(){
     TODO: Generate mean/median of sensors value before assigning
     */
 
-    //PS4 y = 5898.2x - 3.0994
+    //PS4 y = 6511.7x - 1.958 //New equation y = 5561x - 0.5057
     //Limit is 50cm
     int frontLeftValue = getIRSensorReading(frontLeftIR);
     if(frontLeftValue < 107)
@@ -69,7 +69,7 @@ char* getSensorReadingInCM(){
     }
     else
     {
-      sensorsValuesArray[0] = (5898.2/frontLeftValue) - 3.0994;
+      sensorsValuesArray[0] = (5561/frontLeftValue) - 0.5057;
     }
 
 		sensorsValuesArray[1] = getUltraSoundDistance(); //Center
@@ -112,7 +112,7 @@ char* getSensorReadingInCM(){
     //PS3 y = 5336.2x - 0.1843 for values above 200 and until 25cm //New equation y = 5926.9x - 1.7829
     //when x is 193-200 output 32.5cm
     //when x is 189-193 output 40
-    //y = y = 13121x - 24.802 for values 140-189 starting from 45cm //New equation y = 10832x - 9.762
+    //y = y = 13121x - 24.802 for values 140-189 starting from 45cm //New equation y = 14042x - 32.846
     //Limit is 65cm
     int leftValue = getIRSensorReading(left);
     if(leftValue < 140)
@@ -125,17 +125,23 @@ char* getSensorReadingInCM(){
       {
         sensorsValuesArray[4] = (5926.9/leftValue) - 1.7829;
       }
+      /*
       else if(leftValue < 200 && leftValue >= 193)
       {
-        sensorsValuesArray[4] = 32.5;
+        sensorsValuesArray[4] = 33.5;
       }
-      else if(leftValue < 193 && leftValue > 189)
+      else if(leftValue < 193 && leftValue > 190)
       {
-        sensorsValuesArray[4] = 40;
+        sensorsValuesArray[4] = 33.5;
       }
       else
       {
-        sensorsValuesArray[4] = (10832/leftValue) - 9.762;
+        sensorsValuesArray[4] = (14042/leftValue) - 32.846;
+      }
+      */
+      else
+      {
+        sensorsValuesArray[4] = -1;
       }
     }
 			
