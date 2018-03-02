@@ -71,10 +71,11 @@ class RPI(threading.Thread):
         - Updates from Arduino to be processed and passed to Android
         """
         logging.info("sensor value: " + str(message))
-        message[0] = message[0] - 6
-        message[2] = message[2] - 6
-        message[3] = message[3] - 10
-        message[4] = message[4] - 10
+        message[0] = message[0] - 11
+        message[1] = message[1] - 7
+        message[2] = message[2] - 11
+        message[3] = message[3] - 16
+        message[4] = message[4] - 14
 
         logging.info("send sensor values to algo:" + str(message))
 
