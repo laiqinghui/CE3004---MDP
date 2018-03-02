@@ -27,9 +27,9 @@ void testSequence2()
 
 void benTestSequence()
 {
-  //turn(1, 720);
+  turn(1, 180);
   //md.setSpeeds(124, 170);
-  calibration();
+  //calibration();
 }
 
 void processInst(){
@@ -101,6 +101,7 @@ void setup() {
   Serial.println("Program Started!");
   md.init();
   initI2C();
+  benTestSequence();
 }
 
 void loop() {
