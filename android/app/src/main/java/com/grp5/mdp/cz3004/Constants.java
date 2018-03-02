@@ -42,4 +42,7 @@ public interface Constants {
     public static final int GOAL = 4;
     public static final int WAYPOINT = 5;
 
+    public static final int ROBOT_HEAD = 6;
+    public static final int ROBOT_BODY = 7;
+
 }
