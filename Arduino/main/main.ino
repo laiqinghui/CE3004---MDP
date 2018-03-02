@@ -38,6 +38,7 @@ void processInst(){
   char inst[5]  = {0}; 
   int index = 0;
   int i = 1;
+  char num[1] = {0};
   
   delay(1000);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations 
   
@@ -70,6 +71,12 @@ void processInst(){
       case 'S': setOutBuffer('S', getSensorReadingInCM(), 5);
                 interruptPi();//Interrupt RPI to notify data is ready 
                 break;
+      case 'I': num[0] = atoi(&inst[2]) +1;
+                Serial.print("num = ");
+                Serial.println(num[0]);
+                setOutBuffer('S', num, 1);
+                interruptPi();
+                break;
       default:  ;//do nothing            
       
       }
@@ -78,7 +85,7 @@ void processInst(){
     
     }
     if(inst[0] == 'S'){
-      delay(100);//Stop for awhile before we check sensor reading
+  
       setOutBuffer('S', getSensorReadingInCM(), 5);
       printArray(outBuffer, 6);
       interruptPi();//Interrupt RPI to notify data is ready 
