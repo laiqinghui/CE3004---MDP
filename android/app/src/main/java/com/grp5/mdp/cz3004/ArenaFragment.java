@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -38,9 +39,11 @@ public class ArenaFragment extends Fragment {
     private static BluetoothAdapter mBluetoothAdapter;
     private static BluetoothChatService mChatService;
 
+    ArrayList<GridImage> gridList = new ArrayList<GridImage>();
+
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private byte exploredBin;
+    private byte obstacleBin;
 
     private OnMapUpdateListener mListener;
 
@@ -84,11 +87,9 @@ public class ArenaFragment extends Fragment {
         Button btReturn = view.findViewById(R.id.returnButton);
         Button btRefresh = view.findViewById(R.id.refreshButton);
 
-        ArrayList<GridImage> gridList = new ArrayList<GridImage>();
-
         for(int y = 0; y < 20; y++){
             for(int x = 0; x < 15; x++){
-                GridImage image = new GridImage(R.drawable.square, x, y, Constants.UNEXPLORED);
+                GridImage image = new GridImage(R.drawable.blue_square, x, y, Constants.UNEXPLORED);
                 gridList.add(image);
             }
         }
@@ -98,7 +99,7 @@ public class ArenaFragment extends Fragment {
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 if(ImageAdapter.getGridItem(position) != null){
-                    Toast.makeText(getContext(), "position: " + position + " x: " + ImageAdapter.calcRow(position)
+                    Toast.makeText(getContext(), "array_index:" + gridList.indexOf(ImageAdapter.getGridItem(position)) + " position: " + position + " x: " + ImageAdapter.calcRow(position)
                                     + " y: " + ImageAdapter.calcCol(position),
                             Toast.LENGTH_SHORT).show();
                 }
@@ -172,6 +173,34 @@ public class ArenaFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
+    public void updateMap(String exploredBin, String obstacleBin) {
+        Log.d("EXPLORED_BIN", exploredBin);
+        Log.d("OBSTACEL_BIN", obstacleBin);
+
+        int obsCount = 0;
+
+        for (int i = 0; i < exploredBin.length(); i++){
+            char c = exploredBin.charAt(i);
+            //Log.d("EXP", String.valueOf(Integer.parseInt(String.valueOf(c))));
+            if(Integer.parseInt(String.valueOf(c)) == 1){
+                GridImage grid = gridList.get(i);
+                if (grid != null) {
+                    char x = obstacleBin.charAt(obsCount);
+                    //Log.d("OBS", String.valueOf(Integer.parseInt(String.valueOf(x))));
+                    if(Integer.parseInt(String.valueOf(x)) == 1){
+                        grid.setStatus(Constants.OBSTACLE);
+                    } else {
+                        grid.setStatus(Constants.EXPLORED);
+                    }
+                    obsCount++;
+                }
+            } else{}
+        }
+        GridView gridview = (GridView) getActivity().findViewById(R.id.map_grid);
+        gridview.setAdapter( new ImageAdapter(getContext(), gridList));
+    }
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -308,6 +337,23 @@ public class ArenaFragment extends Fragment {
 
         public void setStatus(int status){
             this.status = status;
+            switch(status){
+                case Constants.EXPLORED:
+                    this.setImageId(R.drawable.green_square);
+                    break;
+                case Constants.UNEXPLORED:
+                    this.setImageId(R.drawable.blue_square);
+                    break;
+                case Constants.OBSTACLE:
+                    this.setImageId(R.drawable.red_square);
+                    break;
+                case Constants.ROBOT_BODY:
+                    this.setImageId(R.drawable.yellow_square);
+                    break;
+                case Constants.ROBOT_HEAD:
+                    this.setImageId(R.drawable.black_square);
+                    break;
+            }
         }
     }
 }

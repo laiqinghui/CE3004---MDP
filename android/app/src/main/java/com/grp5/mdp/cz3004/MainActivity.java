@@ -33,6 +33,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.math.BigInteger;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         BluetoothFragment.OnFragmentInteractionListener,
@@ -246,8 +248,11 @@ public class MainActivity extends AppCompatActivity
                     if(rf != null){
                         rf.setText(readMessage);
                     }
-                    if(readMessage.substring(0, 3) == "MDF"){
-
+                    if(readMessage.startsWith("MDF")){
+                        String mdfStr = readMessage.substring(3);
+                        String exploredHexStr = mdfStr.split("L")[0];
+                        String obstacleHexStr = mdfStr.split("L")[1];
+                        onMapUpdateReceived(hexToBinary(exploredHexStr), hexToBinary(obstacleHexStr));
                     }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
@@ -263,6 +268,10 @@ public class MainActivity extends AppCompatActivity
             }
         }
     };
+
+    String hexToBinary(String hex) {
+        return new BigInteger("1" + hex,16).toString(2).substring(1);
+    }
 
     /**
      * Sends a message.
@@ -317,5 +326,10 @@ public class MainActivity extends AppCompatActivity
 
     public void onMapUpdateReceived(String exploredBin, String obstacleBin){
         //pass the strings to arena fragment to be parsed
+        ArenaFragment arenaFrag = (ArenaFragment) getSupportFragmentManager().findFragmentByTag("ArenaFragment");
+
+        if(arenaFrag != null){
+            arenaFrag.updateMap(exploredBin.substring(2, 302), obstacleBin);
+        }
     }
 }
