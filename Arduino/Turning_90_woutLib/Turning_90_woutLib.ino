@@ -37,7 +37,7 @@ void loop()
   
 }
 
-void turn(int dir, int turnDegree)
+void turnTemp(int dir, int turnDegree)
 {
     //1 is right, -1 is left
     
