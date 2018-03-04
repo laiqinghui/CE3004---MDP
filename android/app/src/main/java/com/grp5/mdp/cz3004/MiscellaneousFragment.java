@@ -89,7 +89,7 @@ public class MiscellaneousFragment extends Fragment {
                 new View.OnClickListener(){
                     public void onClick(View view) {
                         //need to implement getting value of start point and direction
-                        TextView tvBackward = (TextView) view.findViewById(R.id.backwardField);
+                        EditText tvBackward = (EditText) getActivity().findViewById(R.id.backwardField);
                         String backwardDistance = tvBackward.getText().toString();
                         String backward = "move"+" "+"-"+backwardDistance;
                         ((MainActivity)getActivity()).sendMessage(backward);
@@ -101,7 +101,7 @@ public class MiscellaneousFragment extends Fragment {
                 new View.OnClickListener(){
                     public void onClick(View view) {
                         //need to implement getting value of start point and direction
-                        TextView tvTurnLeft = (TextView) view.findViewById(R.id.turnLeftField);
+                        EditText tvTurnLeft = (EditText) getActivity().findViewById(R.id.turnLeftField);
                         String turnLeftDegree = tvTurnLeft.getText().toString();
                         String turnLeft = "rotate"+" "+"-"+turnLeftDegree;
                         ((MainActivity)getActivity()).sendMessage(turnLeft);
@@ -113,7 +113,7 @@ public class MiscellaneousFragment extends Fragment {
                 new View.OnClickListener(){
                     public void onClick(View view) {
                         //need to implement getting value of start point and direction
-                        TextView tvTurnRight = (TextView) view.findViewById(R.id.turnRightField);
+                        EditText tvTurnRight = (EditText) getActivity().findViewById(R.id.turnRightField);
 
                         String turnRightDegree = tvTurnRight.getText().toString();
 
