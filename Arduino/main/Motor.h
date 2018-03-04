@@ -174,213 +174,48 @@ void moveForward(int rpm, int distance, boolean pidOn){
       disableInterrupt(e2b);
       setM1Ticks(0);
       setSqWidth(0,0);
-      }  
+}  
 
 
-double getCir(int dir, int turnDegree)
+double getTurnAmount(int dir, int turnDegree)
 {
-  if(dir == -1)
-  {
-    if(turnDegree == 90)
-    {
-      return 16.7;
-    }
-    else if(turnDegree == 180)
-    {
-      return 16.48;
-    }
-    else
-    {
-      return 16.7;
-    }
-  }
-  else
-  {
-    if(turnDegree == 90)
-    {
-      return 16.3;
-    }
-    else if(turnDegree == 180)
-    {
-      return 16.35;
-    }
-    else
-    {
-      return 16.7;
-    }
-  }
-}
-
-double getCir_test(int dir, int turnDegree)
-{
-  
-  
-  if(dir == 1)
-  {
-    double degree90 = 16.65;
-    double degree180 = 16.4;
-    double degree360 = 16.6; 
-    double degree720 = 16.85;
-    double degree1080 = 16.75;
-    if(turnDegree <= 90)
-    {
-      return degree90;
-    }
-    else if(turnDegree <= 180)
-    {
-      double closenessTo90 = ((turnDegree-90)/90.0)*degree180;
-      double closenessTo180 = ((180 - turnDegree)/90.0)*degree90;
-      
-      return closenessTo90 + closenessTo180;
-    }
-    else if(turnDegree<= 360)
-    {
-      double closenessTo180 = ((turnDegree-180)/180.0)*degree360;
-      double closenessTo360 = ((360 - turnDegree)/180.0)*degree180;
-      
-      return closenessTo180 + closenessTo360;
-    }
-    else if(turnDegree <= 720)
-    {
-      double closenessTo360 = ((turnDegree-360)/360.0)*degree720;
-      double closenessTo720 = ((720 - turnDegree)/360.0)*degree360;
-      
-      return closenessTo360 + closenessTo720;
-    }
-    else if(turnDegree <= 1080)
-    {
-      double closenessTo720 = ((turnDegree-720)/360.0)*degree1080;
-      double closenessTo1080 = ((1080 - turnDegree)/360.0)*degree720;
-      
-      return closenessTo1080 + closenessTo720;
-    }
-    
-  }
-  else if(dir == -1)
-  {
-    double degree90 = 15.5;
-    double degree180 = 15.7; //Last value is 15.7
-    double degree360 = 15.85; 
-    double degree720 = 16;
-    double degree1080 = 15.95;
-    if(turnDegree <= 90)
-    {
-      return degree90;
-    }
-    else if(turnDegree <= 180)
-    {
-      double closenessTo90 = ((turnDegree-90)/90.0)*degree180;
-      double closenessTo180 = ((180 - turnDegree)/90.0)*degree90;
-      
-      return closenessTo90 + closenessTo180;
-    }
-    else if(turnDegree<= 360)
-    {
-      double closenessTo180 = ((turnDegree-180)/180.0)*degree360;
-      double closenessTo360 = ((360 - turnDegree)/180.0)*degree180;
-      
-      return closenessTo180 + closenessTo360;
-    }
-    else if(turnDegree <= 720)
-    {
-      double closenessTo360 = ((turnDegree-360)/360.0)*degree720;
-      double closenessTo720 = ((720 - turnDegree)/360.0)*degree360;
-      
-      return closenessTo360 + closenessTo720;
-    }
-    else if(turnDegree <= 1080)
-    {
-      double closenessTo720 = ((turnDegree-720)/360.0)*degree1080;
-      double closenessTo1080 = ((1080 - turnDegree)/360.0)*degree720;
-      
-      return closenessTo1080 + closenessTo720;
-    }
-    
-    if(turnDegree <= 180)
-    {
-      return 16.7;
-    }
-    else if(turnDegree <= 360)
-    {
-      return 17.2;
-    }
-    else if(turnDegree <= 720)
-    {
-      return 17.25;
-    }
-    else if(turnDegree <= 1080)
-    {
-      return 17.2;
-    }
-    else
-    {
-      return 17.3;
-    }
-  }
-  else
-  {
-    return 17.3;
-  }
-}
-
-void turnTemp(int dir, int turnDegree)
-{
-    //1 is right, -1 is left
-    double offset;
     if(dir == 1)
-      offset = 0.88;
-    else offset = 0.89;
-        
-    double cir = Pi * 17.6; //circumfrence of circle drawn when turning in cm, current diameter used is 17.6
-    double cmToCounts = singlerevticks/(6*Pi); //cm to counts for wheel
-    int amount = abs(cir * (turnDegree/360.0) * cmToCounts) * offset;//0.93 FOR 50 RPM
-    unsigned long M1ticksbreak = 0;
-    
-    enableInterrupt( e1a, risingM1Ticks, RISING);
-    //md.setSpeeds(-158.921 * dir, 197.318 * dir);//50 RPM
-    md.setM1Speed(-269 * dir);
-    md.setM2Speed(314 * dir);
-    
-  
-    while(1){
-      noInterrupts ();
-      M1ticksbreak = M1ticks;
-      interrupts ();
-      if(M1ticksbreak > amount){
-        break;
-        }
-        
-      
-      } 
-
-        
-    disableInterrupt(e1a);
-    md.setBrakes(400,400);
-    Serial.println("BRAKE");
-    setM1Ticks(0);
-    setSqWidth(0,0);
-    
-
-
+    {
+      if(turnDegree == 90)
+      {
+        return abs(52.4646 * (turnDegree/360.0) * ticksPerCM); //cir is 16.65 or 16.7, it is currently 16.7
+      }
+      else
+      {
+        return abs(51.7734 * (turnDegree/360.0) * ticksPerCM); //cir is 16.4 or 16.48, it is currently 16.48
+      }
+    }
+    else
+    {
+      if(turnDegree == 90)
+      {
+        return abs(51.208 * (turnDegree/360.0) * ticksPerCM); //cir is 15.5 or 16.3, it is currently 16.3
+      }
+      else
+      {
+        return abs(51.365 * (turnDegree/360.0) * ticksPerCM); //cir is 15.7 or 16.35, it is currently 16.35
+      }
+    }
 }
 
 void turn(int dir, int turnDegree)
 {
-    //1 is right, -1 is left
-    Serial.println(getCir_test(dir, turnDegree));
-    double cir = Pi * getCir_test(dir, turnDegree); //circumfrence of circle drawn when turning in cm, current diameter used is between 15.6
-
-    int amount = abs(cir * (turnDegree/360.0) * ticksPerCM);//int to ignored decimal value //* getTurnTicksOffsetAmt(turnDegree)
+    //1 is right, -1 is left 
+    int amount = getTurnAmount(dir, turnDegree);
+    int ticks = 0;
+    int previousRead = 0;
+    int currentValue = 0;
+    
     /*
      * Different Speed Values
      * md.setSpeeds(-221 * dir, 250 * dir);
      * md.setSpeeds(-168 * dir, 200 * dir);
     */
-    
-    int ticks = 0;
-    int previousRead = 0;
-    int currentValue = 0;
-    
     if(dir == 1)
     {
       md.setSpeeds(-168, 196);
@@ -400,7 +235,6 @@ void turn(int dir, int turnDegree)
       }
     }
     else
-
     {
       md.setSpeeds(168, -202);
       while(true)
@@ -418,6 +252,7 @@ void turn(int dir, int turnDegree)
         previousRead = currentValue;
       }
     }
+    delay(100);
 }
 
 //Methods for calibration
@@ -456,19 +291,13 @@ void distanceFromWall(double distance)
   //Fine tune the distance from wall
   if(getCalibrationReading(frontRightIR) > distance)
   {
-    
-    while(getCalibrationReading(frontRightIR) > distance)
-    {
-      md.setSpeeds(118, 140);
-    }
+    md.setSpeeds(118, 140);
+    while(getCalibrationReading(frontRightIR) > distance);
   }
   else if(getCalibrationReading(frontRightIR) < distance)
   {
-    //
-    while(getCalibrationReading(frontRightIR) < distance)
-    {
-      md.setSpeeds(-116, -140);
-    }
+    md.setSpeeds(-116, -140);
+    while(getCalibrationReading(frontRightIR) < distance);
   }
   md.setBrakes(400, 400);
 }
@@ -479,7 +308,7 @@ void calibration()
   double threshold = 0.1;
   double startWall = 13.65;
   double leftWall = 13.88;
-  int wait = 500;
+  int wait = 200;
   
   //Quick calibration against wall
   straighten();
@@ -490,9 +319,19 @@ void calibration()
   delay(wait);
 
   //Fine tune the calibration
+  int count = 0;
   while(abs(getCalibrationReading_accurate(frontRightIR) - getCalibrationReading_accurate(frontLeftIR)) > threshold)
   {
+    if(count == 10);
+    {
+      md.setSpeeds(75, 0);
+      delay(500);
+      md.setBrakes(400, 400);
+      count == 0;
+    }
     straightenTune();
+    count++;
+    
     Serial.println("Start");
     Serial.println(getCalibrationReading(frontRightIR));
     Serial.println(getCalibrationReading(frontLeftIR));
@@ -515,9 +354,22 @@ void calibration()
   delay(wait);
 
   //Fine tune the calibration
-  while(abs(getCalibrationReading(frontRightIR) - getCalibrationReading(frontLeftIR)) > threshold)
+  while(abs(getCalibrationReading_accurate(frontRightIR) - getCalibrationReading_accurate(frontLeftIR)) > threshold)
   {
+    if(count == 10);
+    {
+      md.setSpeeds(75, 0);
+      delay(500);
+      md.setBrakes(400, 400);
+      count == 0;
+    }
     straightenTune();
+    count++;
+    
+    Serial.println("Start");
+    Serial.println(getCalibrationReading(frontRightIR));
+    Serial.println(getCalibrationReading(frontLeftIR));
+    Serial.println("End");
     delay(100);
   }
   delay(wait);
