@@ -13,6 +13,8 @@ class RPI(threading.Thread):
 
         super(RPI, self).__init__()
         self.running = False
+        # self.pc_ws = create_connection("ws://192.168.5.18:8888/ws")
+        self.instrNum = 1
 
         dispatcher.connect(self.command_rpi, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)
         dispatcher.connect(self.manage_algorithm_signal, signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
@@ -27,10 +29,11 @@ class RPI(threading.Thread):
         """
         Message received from algorithm to be processed and passed to arduino
         """
-        # if fatest path
+        # if fastest path
         if len(message) == 1:
-            formatted_instruction = 'C' + ''.join(instruction) + ';'
-            # aggregate the movement
+            raw_instruction = ''.join(instruction)
+            aggregated_instruction_list = gs.aggregate_instruction(raw_instruction)
+            formatted_instruction = 'C' + ','.join(aggregated_instruction_list) + ';'
         # if exploration
         if len(message) > 1:
 
@@ -60,10 +63,20 @@ class RPI(threading.Thread):
             self.feedback_android(map_mdf_update_string)
             self.feedback_android(dir_update_string)
 
-        dispatcher.send(message=formatted_instruction, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
-        logging.info("rpi received message from algorithm and write message to arduino: " + str(formatted_instruction))
+            # try:
+            #     self.pc_ws.send(map_mdf_update_string)
+            #     self.pc_ws.send(dir_update_string)
+            # except:
+            #     pass
 
+        dispatcher.send(message=formatted_instruction, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
         print gs.MAZEMAP
+        print "print instr no: " + str(self.instrNum)
+        print "number of instruction counts" + str(len(formatted_instruction[1:-1]))
+        logging.info("rpi received message from algorithm and write message to arduino: " + str(formatted_instruction))
+        self.instrNum = self.instrNum + 1
+
+        print "==============================================================="
 
     def manage_arduino_signal(self, message):
         """
@@ -71,11 +84,11 @@ class RPI(threading.Thread):
         - Updates from Arduino to be processed and passed to Android
         """
         logging.info("sensor value: " + str(message))
-        message[0] = message[0] - 12
-        message[1] = message[1] - 8
-        message[2] = message[2] - 14
-        message[3] = message[3] - 15
-        message[4] = message[4] - 13
+        message[0] = message[0] - 13
+        message[1] = message[1] - 9
+        message[2] = message[2] - 16
+        message[3] = message[3] - 14
+        message[4] = message[4] - 15
 
         logging.info("send sensor values to algo:" + str(message))
 

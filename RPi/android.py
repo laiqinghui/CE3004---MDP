@@ -16,6 +16,7 @@ FP_START_COL = 18
 FP_GOAL_ROW = 13
 FP_GOAL_COL = 1
 
+
 class Android(threading.Thread):
     def __init__(self):
         super(Android, self).__init__()
@@ -71,7 +72,7 @@ class Android(threading.Thread):
             self.client_sock.send(str(message))
         except BluetoothError:
             logging.info("Bluetooth Error - encountered when attempting to send data to Android device")
-            self.connected = False            
+            self.connected = False
             self.connect()
 
     def receiveAndroid(self):
@@ -107,7 +108,7 @@ class Android(threading.Thread):
                     # DAO = turning
                 elif(command == "rotate"):
                     degrees = int(msg.split()[1])
-                    #dispatcher.send(message=msg, degrees=degrees, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)                
+                    #dispatcher.send(message=msg, degrees=degrees, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)
                 elif(command == "mode"):
                     self.update_mode = not self.update_mode
                 elif(command == "ca"):
