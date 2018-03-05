@@ -4,8 +4,8 @@
 
 #define frontRightIR  A1    //Front right PS2
 #define frontLeftIR  A3    //Front left PS4
-#define left A2  // Left PS3
-#define right A0 // Right PS1
+#define left A0  // Left PS1
+#define right A2 // Right PS3
 int sensorValue = 0;  // variable to store the value coming from the sensor
 int distanceFR = 0;
 int distanceFL = 0;
@@ -38,8 +38,12 @@ void loop() {
   */
   distanceFR = (6787/analogRead(frontRightIR) - 3) - 4;
   distanceFL = (6787/analogRead(frontLeftIR) - 3) - 4;
-  distanceR = 60.374 * pow( ( analogRead(right)*(5.0 / 1023.0) ) , -1.16);
-  distanceL = 60.374 * pow( LVoltage , -1.16);
+  //distanceR = (6787/analogRead(right) - 3) ;
+  //distanceL = (6787/analogRead(left) - 3) ;
+
+  
+  //distanceR = 60.374 * pow( ( analogRead(right)*(5.0 / 1023.0) ) , -1.16);
+  distanceL = 60.374 * pow( ( analogRead(left)*(5.0 / 1023.0) ) , -1.16);
 
   
   Serial.print("Front Left: ");

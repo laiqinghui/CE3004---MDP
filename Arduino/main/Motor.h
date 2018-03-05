@@ -208,8 +208,8 @@ void turnTemp(int dir, int turnDegree)
     //1 is right, -1 is left
     double offset;
     if(dir == 1)
-      offset = 0.88;
-    else offset = 0.89;
+      offset = 0.87;
+    else offset = 0.88;
         
     double cir = Pi * 17.6; //circumfrence of circle drawn when turning in cm, current diameter used is 17.6
     double cmToCounts = singlerevticks/(6*Pi); //cm to counts for wheel

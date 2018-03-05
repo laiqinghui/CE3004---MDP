@@ -48,7 +48,7 @@ void processInst(){
                 break;
       case 'D': turnTemp(1, 90);
                 break;
-      case 'O': turn(-1, 190);
+      case 'O': turn(-1, 180);
                 break;
       case ']': calibration();
                 break;          
@@ -100,10 +100,9 @@ void setup() {
 
 void loop() 
 {
-  Serial.println((int)getSensorReadingInCM()[3]);
-  delay(500);
+  
   if(dataExist()){
-    delay(100);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations 
+    //delay(100);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations 
     processInst();
     }
     

@@ -137,13 +137,34 @@ char* getSensorReadingInCM(){
     //PS1 y = 6607.1x - 2.3461
     //Limit is 60cm
     int leftValue = getIRSensorReading(left);
-    if(leftValue < 165)
+    if(leftValue < 140)
     {
       sensorsValuesArray[4] = -1;
     }
     else
     {
-      sensorsValuesArray[4] = (6607.1/leftValue) - 2.3461;
+      if(leftValue >= 200)
+      {
+        sensorsValuesArray[4] = (6787/leftValue - 3) - 4;;//(5926.9/leftValue) - 1.7829;
+      }
+      /*
+      else if(leftValue < 200 && leftValue >= 193)
+      {
+        sensorsValuesArray[4] = 33.5;
+      }
+      else if(leftValue < 193 && leftValue > 190)
+      {
+        sensorsValuesArray[4] = 33.5;
+      }
+      else
+      {
+        sensorsValuesArray[4] = (14042/leftValue) - 32.846;
+      }
+      */
+      else
+      {
+        sensorsValuesArray[4] = -1;
+      }
     }
 			
 	  return sensorsValuesArray;
