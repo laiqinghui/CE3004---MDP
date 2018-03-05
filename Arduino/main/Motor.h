@@ -256,6 +256,7 @@ void turn(int dir, int turnDegree)
      * Different Speed Values
      * md.setSpeeds(-221 * dir, 250 * dir);
      * md.setSpeeds(-168 * dir, 200 * dir);
+     * md.setSpeeds(-269 * dir, 314 * dir);
     */
     if(dir == 1)
     {
