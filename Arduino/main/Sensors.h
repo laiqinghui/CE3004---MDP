@@ -135,60 +135,35 @@ char* getSensorReadingInCM(){
     }
   */
     //PS1 y = 6607.1x - 2.3461
+    //y = 8932x - 0.0774
     //Limit is 60cm
     int leftValue = getIRSensorReading(left);
-    if(leftValue < 165)
+    if(leftValue < 100)
     {
       sensorsValuesArray[4] = -1;
     }
     else
     {
-      sensorsValuesArray[4] = (6607.1/leftValue) - 2.3461;
+      sensorsValuesArray[4] = (8932/leftValue) - 0.0774;
     }
 			
 	  return sensorsValuesArray;
 }
 
 //Get average reading over a number of samples
-double getIRSensorReading_quick(int sensor)
+double getCalibrationReading(int sensor, boolean quick)
 {
-  int size = 3;
-  
-  int listOfReadings[size];
-
-  //Get Reading from Sensor
-  for(int a = 0; a<size; a++)
-  {
-    listOfReadings[a] = analogRead(sensor);
-    delay(5);
+  double amount = 0;
+  if(quick)
+  {  
+    amount = analogRead(sensor);
   }
-
-  //Sort Reading
-  for (int i = 0; i < size; i++)      
+  else
   {
-    //Find max
-    int max = listOfReadings[0];
-    int maxLocation = 0;
-    for(int j = 0; j < size-i; j++)
-    {
-      if(max < listOfReadings[j])
-      {
-        max = listOfReadings[j];
-        maxLocation = j;
-      }
-    }
-
-    //Swap max with last position
-    listOfReadings[maxLocation] = listOfReadings[size-1-i];
-    listOfReadings[size-1-i] = max;
+    amount = getIRSensorReading(sensor);
   }
-
-  return listOfReadings[1];
-}
-
-double getCalibrationReading(int sensor)
-{  
-  double amount = analogRead(sensor);
+  //Serial.println("Amount");
+  //Serial.println(amount);
   
   if(sensor == frontRightIR)
   {
@@ -207,7 +182,7 @@ double getCalibrationReading(int sensor)
 //Get average reading over a number of samples
 double getIRSensorReading(int sensor)
 {
-  int size = 10;
+  int size = 50;
   
   int listOfReadings[size];
 
@@ -215,7 +190,7 @@ double getIRSensorReading(int sensor)
   for(int a = 0; a<size; a++)
   {
     listOfReadings[a] = analogRead(sensor);
-    delay(5);
+    delay(1);
   }
 
   //Sort Reading
@@ -238,46 +213,13 @@ double getIRSensorReading(int sensor)
     listOfReadings[size-1-i] = max;
   }
 
-  short int total = 0;
-  for(int a = 4; a<7; a++)
+  int total = 0;
+  for(int a = 24; a<26; a++)
   {
     total = total + listOfReadings[a];
   }
   return total/3.0;
-}
-	
-double getCalibrationReadingV2(int sensor)
-{  
-  double amount = getIRSensorReading_quick(sensor);
-  
-  if(sensor == frontRightIR)
-  {
-    //y = 5830.7(1/x) - 1.5979
-    return 5430.8*(1/amount) - 0.2397;
-  }
-  else if(sensor == frontLeftIR)
-  {
-    //y = 5310x + 0.5094
-    return 5310*(1/amount)+ 0.5094;
-  }
-}  
-
-double getCalibrationReading_accurate(int sensor)
-{  
-  double amount = getIRSensorReading(sensor);
-  
-  if(sensor == frontRightIR)
-  {
-    //y = 5430.8x - 0.2397
-    return 5430.8*(1/amount) - 0.2397;
-  }
-  else if(sensor == frontLeftIR)
-  {
-    //y = 5310x + 0.5094
-    return 5310*(1/amount)+ 0.5094;
-  }
-}    
-	
+} 
 	
 int findMin(int arr[]) {
     int min1Index = (arr[0] > arr[1]) ? 1:0;
