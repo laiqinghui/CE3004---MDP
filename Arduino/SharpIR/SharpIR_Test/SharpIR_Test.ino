@@ -43,7 +43,7 @@ void loop() {
 
   
   //distanceR = 60.374 * pow( ( analogRead(right)*(5.0 / 1023.0) ) , -1.16);
-  distanceL = 60.374 * pow( ( analogRead(left)*(5.0 / 1023.0) ) , -1.16);
+  distanceL = (60.374 * pow( ( analogRead(left)*(5.0 / 1023.0) ) , -1.16)) + 5;
 
   
   Serial.print("Front Left: ");

@@ -67,3 +67,14 @@ def get_mdf_bitstring(mmap, format=0):
     if format == 1:     # hexadecimal
         return hex(int(bitstring, 2))[2:]
     assert False, "unhandled format"
+
+
+def aggregate_instruction(instruction):
+    instruction_list = [ch + '1' for ch in instruction]
+    updatedInstruction = [instruction_list[0]]
+    for ch in instruction_list[1:]:
+        if (ch[0] != updatedInstruction[-1][0]):
+            updatedInstruction.append(ch)
+        else:
+            updatedInstruction[-1] = updatedInstruction[-1][0] + str(int(updatedInstruction[-1][1:]) + 1)
+    return updatedInstruction
