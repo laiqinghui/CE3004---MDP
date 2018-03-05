@@ -395,24 +395,25 @@ class Exploration:
         r, c = center
         flag = True
         inds = []
-        distanceShort = 3
+        distanceSuperShort = 1
+        # distanceShort = 3
         distanceLong = 5
 
         if self.robot.direction == NORTH:
-            inds.append(zip([r-1]*distanceShort, range(c+2, c+distanceShort+2)))
-            inds.append(zip([r+1]*distanceLong, range(c+2, c+distanceLong+2)))
+            inds.append(zip([r-1]*distanceSuperShort, range(c+2, c+distanceSuperShort+2)))
+            # inds.append(zip([r+1]*distanceLong, range(c+2, c+distanceLong+2)))
             inds.append(zip([r-1]*distanceLong, range(c-distanceLong-1, c-1))[::-1])
         elif self.robot.direction == EAST:
-            inds.append(zip(range(r+2, r+distanceShort+2), [c+1]*distanceShort))
-            inds.append(zip(range(r+2, r+distanceLong+2), [c-1]*distanceLong))
+            inds.append(zip(range(r+2, r+distanceSuperShort+2), [c+1]*distanceSuperShort))
+            # inds.append(zip(range(r+2, r+distanceLong+2), [c-1]*distanceLong))
             inds.append(zip(range(r-distanceLong-1, r-1), [c+1]*distanceLong)[::-1])
         elif self.robot.direction == WEST:
-            inds.append(zip(range(r-distanceShort-1, r-1), [c-1]*distanceShort)[::-1])
-            inds.append(zip(range(r-distanceLong-1, r-1), [c+1]*distanceLong)[::-1])
+            inds.append(zip(range(r-distanceSuperShort-1, r-1), [c-1]*distanceSuperShort)[::-1])
+            # inds.append(zip(range(r-distanceLong-1, r-1), [c+1]*distanceLong)[::-1])
             inds.append(zip(range(r+2, r+distanceLong+2), [c-1]*distanceLong))
         else:
-            inds.append(zip([r+1]*distanceShort, range(c-distanceShort-1, c-1))[::-1])
-            inds.append(zip([r-1]*distanceLong, range(c-distanceLong-1, c-1))[::-1])
+            inds.append(zip([r+1]*distanceSuperShort, range(c-distanceSuperShort-1, c-1))[::-1])
+            # inds.append(zip([r-1]*distanceLong, range(c-distanceLong-1, c-1))[::-1])
             inds.append(zip([r+1]*distanceLong, range(c+2, c+distanceLong+2)))
 
         for sensor in inds:
