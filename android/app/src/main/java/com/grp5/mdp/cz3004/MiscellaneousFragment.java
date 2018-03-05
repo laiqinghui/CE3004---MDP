@@ -65,19 +65,17 @@ public class MiscellaneousFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_miscellaneous, container, false);
         Button btForward = view.findViewById(R.id.forwardButton);
-        Button btBackward = view.findViewById(R.id.backwardButton);
         Button btTurnLeft = view.findViewById(R.id.turnLeftButton);
         Button btTurnRight = view.findViewById(R.id.turnRightButton);
 
-        EditText tvForward = (EditText) view.findViewById(R.id.forwardField);
-        Log.d("DENUGG", tvForward.toString());
+
 
         btForward.setOnClickListener(
                 new View.OnClickListener(){
                     public void onClick(View view) {
                         //need to implement getting value of start point and direction
                         EditText tvForward = (EditText) getActivity().findViewById(R.id.forwardField);
-                        Log.d("DENUGG", tvForward.toString());
+                        Log.d("DEBUG", tvForward.toString());
                         String forwardDistance = tvForward.getText().toString();
                         String forward = "move"+" "+forwardDistance;
                         ((MainActivity)getActivity()).sendMessage(forward);
@@ -85,17 +83,6 @@ public class MiscellaneousFragment extends Fragment {
                 }
         );
 
-        btBackward.setOnClickListener(
-                new View.OnClickListener(){
-                    public void onClick(View view) {
-                        //need to implement getting value of start point and direction
-                        EditText tvBackward = (EditText) getActivity().findViewById(R.id.backwardField);
-                        String backwardDistance = tvBackward.getText().toString();
-                        String backward = "move"+" "+"-"+backwardDistance;
-                        ((MainActivity)getActivity()).sendMessage(backward);
-                    }
-                }
-        );
 
         btTurnLeft.setOnClickListener(
                 new View.OnClickListener(){
@@ -114,9 +101,7 @@ public class MiscellaneousFragment extends Fragment {
                     public void onClick(View view) {
                         //need to implement getting value of start point and direction
                         EditText tvTurnRight = (EditText) getActivity().findViewById(R.id.turnRightField);
-
                         String turnRightDegree = tvTurnRight.getText().toString();
-
                         String turnRight = "rotate"+" "+turnRightDegree;
                         ((MainActivity)getActivity()).sendMessage(turnRight);
                     }
