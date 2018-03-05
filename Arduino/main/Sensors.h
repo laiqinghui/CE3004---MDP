@@ -137,7 +137,7 @@ char* getSensorReadingInCM(){
     //PS1 y = 6607.1x - 2.3461
     //Limit is 60cm
     int leftValue = getIRSensorReading(left);
-    if(leftValue < 105)
+    if(leftValue < 165)
     {
       sensorsValuesArray[4] = -1;
     }
