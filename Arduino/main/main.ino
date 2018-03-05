@@ -50,7 +50,7 @@ void processInst(){
                 break;
       case 'O': turn(-1, 190);
                 break;
-      case 'c': calibration();
+      case ']': calibration();
                 break;          
       case 'M': moveForward(50, atoi(instBuff+2), true);  
                 break;
