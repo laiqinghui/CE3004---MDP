@@ -44,9 +44,9 @@ void processInst(){
       
       case 'W': moveForward(90, 9.5, true);
                 break;
-      case 'A': turn(-1, 90);
+      case 'A': turnTemp(-1, 90);
                 break;
-      case 'D': turn(1, 90);
+      case 'D': turnTemp(1, 90);
                 break;
       case 'O': turn(-1, 190);
                 break;
