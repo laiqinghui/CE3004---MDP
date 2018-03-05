@@ -44,9 +44,9 @@ void processInst(){
       
       case 'W': moveForward(90, 9.5, true);
                 break;
-      case 'A': turnTemp(-1, 90);
+      case 'A': turn(-1, 90);
                 break;
-      case 'D': turnTemp(1, 90);
+      case 'D': turn(1, 90);
                 break;
       case 'O': turn(-1, 190);
                 break;
@@ -96,8 +96,9 @@ void setup() {
 
 }
 
-void loop() {
-
+void loop() 
+{
+  Serial.println(getIRSensorReading(A2));
   if(dataExist()){
     delay(100);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations 
     processInst();

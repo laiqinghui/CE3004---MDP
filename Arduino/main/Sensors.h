@@ -1,7 +1,7 @@
 #define frontRightIR  A1    //Front right PS2
 #define frontLeftIR  A3    //Front left PS4
-#define left A2  // Left PS3
-#define right A0 // Right PS1
+#define left A0  // Left PS3
+#define right A2 // Right PS1
 
 //Function Decleration
 double getIRSensorReading(int sensor);
