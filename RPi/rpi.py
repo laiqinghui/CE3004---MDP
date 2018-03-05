@@ -13,8 +13,7 @@ class RPI(threading.Thread):
 
         super(RPI, self).__init__()
         self.running = False
-        # self.pc_ws = create_connection("ws://192.168.5.18:8888/ws")
-        self.instrNum = 1
+        self.autoupdate = True
 
         dispatcher.connect(self.command_rpi, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)
         dispatcher.connect(self.manage_algorithm_signal, signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
@@ -23,7 +22,9 @@ class RPI(threading.Thread):
         logging.info("rpi +initialized")
 
     def command_rpi(self, message):
-        logging.info("rpi received message from android and write message: " + str(message))
+        if message == "mode":
+            self.autoupdate = not self.autoupdate
+        # logging.info("rpi received message from android and write message: " + str(message))
 
     def manage_algorithm_signal(self, message):
         """
@@ -96,7 +97,8 @@ class RPI(threading.Thread):
         logging.info("rpi received message from arduino and send message to algorithm: " + str(message))
 
     def feedback_android(self, message):
-        dispatcher.send(message=message, signal=gs.RPI_ANDROID_SIGNAL, sender=gs.RPI_SENDER)
+        if self.autoupdate:
+            dispatcher.send(message=message, signal=gs.RPI_ANDROID_SIGNAL, sender=gs.RPI_SENDER)
         # logging.info("rpi send feedback message to android: " + str(message))
 
     def start(self):
