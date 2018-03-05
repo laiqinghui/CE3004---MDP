@@ -8,84 +8,56 @@
 
     <!-- TODO: Update blank fragment layout -->
 
-    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/gridview"
-        android:layout_width="500dp"
-        android:layout_height="650dp"
-        android:columnWidth="30dp"
-        android:numColumns="16"
-        android:verticalSpacing="5dp"
-        android:horizontalSpacing="5dp"
-        android:stretchMode="columnWidth"
-        android:gravity="center"
-        />
-
     <Button
         android:id="@+id/turnLeftButton"
-        android:layout_marginTop="720dp"
+        android:layout_marginTop="750dp"
         android:layout_marginLeft="140dp"
         android:layout_width="100dp"
-        android:layout_height="55dp"
+        android:layout_height="60dp"
         android:text="turn left" />
 
     <Button
         android:id="@+id/forwardButton"
-        android:layout_marginTop="660dp"
+        android:layout_marginTop="750dp"
         android:layout_marginLeft="250dp"
         android:layout_width="100dp"
-        android:layout_height="55dp"
+        android:layout_height="60dp"
         android:text="Forward" />
-    <Button
-        android:id="@+id/backwardButton"
-        android:layout_marginTop="720dp"
-        android:layout_marginLeft="250dp"
-        android:layout_width="100dp"
-        android:layout_height="55dp"
-        android:text="Backward" />
 
     <Button
         android:id="@+id/turnRightButton"
-        android:layout_marginTop="720dp"
+        android:layout_marginTop="750dp"
         android:layout_marginLeft="360dp"
         android:layout_width="100dp"
-        android:layout_height="55dp"
+        android:layout_height="60dp"
         android:text="turn right" />
 
     <EditText
         android:id="@+id/forwardField"
-         android:layout_marginTop="660dp"
-        android:layout_marginLeft="360dp"
-        android:layout_width="70dp"
-        android:layout_height="50dp"
+         android:layout_marginTop="690dp"
+        android:layout_marginLeft="250dp"
+        android:layout_width="100dp"
+        android:layout_height="55dp"
         android:textAlignment="center"
         android:inputType="number"
         android:text="1" />
 
     <EditText
         android:id="@+id/turnLeftField"
-        android:layout_marginTop="720dp"
-        android:layout_marginLeft="65dp"
-        android:layout_width="70dp"
+        android:layout_marginTop="690dp"
+        android:layout_marginLeft="140dp"
+        android:layout_width="100dp"
         android:layout_height="55dp"
         android:textAlignment="center"
         android:inputType="number"
         android:text="90" />
 
-    <EditText
-        android:id="@+id/backwardField"
-        android:layout_marginTop="775dp"
-        android:layout_marginLeft="265dp"
-        android:layout_width="70dp"
-        android:layout_height="45dp"
-        android:textAlignment="center"
-        android:inputType="number"
-        android:text="1" />
 
     <EditText
         android:id="@+id/turnRightField"
-        android:layout_marginTop="720dp"
-        android:layout_marginLeft="465dp"
-        android:layout_width="70dp"
+        android:layout_marginTop="690dp"
+        android:layout_marginLeft="360dp"
+        android:layout_width="100dp"
         android:layout_height="55dp"
         android:textAlignment="center"
         android:inputType="number"
