@@ -234,7 +234,7 @@ class Exploration:
         #     calibrate_front = self.robot.can_calibrate_front()
         #     calibrate_right = self.robot.can_calibrate_right()
         #     if self.robot.is_corner():
-        #         move.append('L')
+        #         move.append(']')
         #     elif (calibrate_right[0]):
         #         move.append(calibrate_right[1])
         #     elif (calibrate_front[0]):
