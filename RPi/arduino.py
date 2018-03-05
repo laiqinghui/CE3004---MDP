@@ -93,7 +93,7 @@ class Arduino(threading.Thread):
             logging.info("Please check if arduino connected.")
 
     def readData(self):
-        number = self.bus.read_i2c_block_data(self.address, 0, 10)
+        number = self.bus.read_i2c_block_data(self.address, 0, 32)
         return number
 
     def start(self):

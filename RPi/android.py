@@ -80,7 +80,7 @@ class Android(threading.Thread):
             self.client_sock.send(str(message))
         except BluetoothError:
             logging.info("Bluetooth Error - encountered when attempting to send data to Android device")
-            self.connected = False            
+            self.connected = False
             self.connect()
 
     def receiveAndroid(self):
@@ -96,7 +96,7 @@ class Android(threading.Thread):
                 if(command == "ca"):
                     self.waypoint_row = int(msg.split()[1])
                     self.waypoint_col = int(msg.split()[2])
-                    dispatcher.send(message=command, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)                    
+                    dispatcher.send(message=command, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)
                 elif(command == "ex"):
                     self.startAlgorithm(START_ROW, START_COL, waypoint_row, waypoint_col, FP_GOAL_ROW, FP_GOAL_COL, EXPLORATION, EAST)
                 elif(command == "fp"):
@@ -107,11 +107,10 @@ class Android(threading.Thread):
                     for i in range(steps):
                         temp = temp + "W"
                     movemessage = "C" + temp
-                    dispatcher.send(message=movemessage,signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
+                    dispatcher.send(message=movemessage, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
                 elif(command == "rotate"):
                     degrees = int(msg.split()[1])
-                    #dispatcher.send(message=msg, degrees=degrees, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)                
-                elif(command == "mode"): # for toggling modes but android will be handling it so its not needed for now
+                elif(command == "mode"):    # for toggling modes but android will be handling it so its not needed for now
                     dispatcher.send(message=command, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)
                 elif(command == "reset"):
                     logging.info("reset robot")
