@@ -122,61 +122,49 @@ char* getSensorReadingInCM(){
     */
   getIRSensorReading();
   
-
-    //PS4 y = 6511.7x - 1.958 //New equation y = 5561x - 0.5057
-    //Limit is 50cm
-    double frontLeftValue = sensorValues[0];
-    if(frontLeftValue < 107)
-    {
-      sensorsValuesArray[0] = -1;//Cannot be 0 as 0 is considered as null character in char array. I2C will terminate transmission upon the null char. 
-    }
-    else
-    {
-      sensorsValuesArray[0] = (5561/frontLeftValue) - 0.5057;
-    }
+  //PS4 y = 6511.7x - 1.958 //New equation y = 5561x - 0.5057
+  //Limit is 50cm
+  double frontLeftValue = sensorValues[0];
+  if(frontLeftValue < 107)
+  {
+    sensorsValuesArray[0] = -1;//Cannot be 0 as 0 is considered as null character in char array. I2C will terminate transmission upon the null char. 
+  }
+  else
+  {
+    sensorsValuesArray[0] = (5561/frontLeftValue) - 0.5057;
+  }
   
   //Ultrasound reading
   sensorsValuesArray[1] = getUltraSoundDistance(); //Center
 
 
-    //PS2 y = 6414.8x - 1.2092 for values above 184 and up to 30cm
-    //when x is 
-    //y = 7819x - 11.552 for values 134-184 and up to 45cm
-    //Limit is 45cm
-    double frontRightValue = sensorValues[1];
-    if(frontRightValue < 134)
-    {
-      sensorsValuesArray[2] = -1;
-    }
-    else
-    {
-      if(frontRightValue > 184)
-      {
-        sensorsValuesArray[2] = (6414.8/frontRightValue) - 1.2092;
-      }
-      else
-      {
-        sensorsValuesArray[2] = (7819/frontRightValue) - 11.552;
-      }
-      
-    }
+  //PS2 y = 6290.4x - 1.6964
+  //Limit is 45cm
+  double frontRightValue = sensorValues[1];
+  if(frontRightValue < 134)
+  {
+    sensorsValuesArray[2] = -1;
+  }
+  else
+  {
+    sensorsValuesArray[2] = (6290.4/frontRightValue) - 1.6964;
+  }
 
-    //PS3 y = 5336.2x - 0.1843 for values above 200 and until 25cm //New equation y = 5926.9x - 1.7829
-    //Limit is 65cm
-    double rightValue = sensorValues[2];
-    if(rightValue < 95)
-    {
-      sensorsValuesArray[3] = -1;
-    }
-    else
-    {
-        sensorsValuesArray[3] = (5054.8/rightValue) - 0.4362;
-    }
+  //PS3 y = 5336.2x - 0.1843 for values above 200 and until 25cm //New equation y = 5926.9x - 1.7829
+  //Limit is 65cm
+  double rightValue = sensorValues[2];
+  if(rightValue < 95)
+  {
+    sensorsValuesArray[3] = -1;
+  }
+  else
+  {
+      sensorsValuesArray[3] = (5054.8/rightValue) - 0.4362;
+  }
   
-    //PS1 y = 6607.1x - 2.3461
-    //y = 12978x - 2.4047
-    //Limit is 60cm
-    double leftValue = sensorValues[3];
+  //PS1 y = 12978x - 2.4047
+  //Limit is 60cm
+  double leftValue = sensorValues[3];
   if(leftValue < 170)
   {
     sensorsValuesArray[4] = -1;
