@@ -31,7 +31,7 @@ class Arduino(threading.Thread):
         logging.info("arduino initialized")
 
     def interruptHandler(self, channel):
-        time.sleep(0.6)
+        time.sleep(0.15)
         byte = self.readData()
         # if acknowledgement byte
         logging.info("checking if A: " + chr(byte[0]))
