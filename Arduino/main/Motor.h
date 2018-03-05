@@ -187,7 +187,7 @@ double getTurnAmount(int dir, int turnDegree)
       }
       else
       {
-        return abs(50.8 * (turnDegree/360.0) * ticksPerCM); //cir is 16.4 or 16.48, it is currently 16.48
+        return abs(51.7 * (turnDegree/360.0) * ticksPerCM); //cir is 16.4 or 16.48, it is currently 16.48
       }
     }
     else
@@ -198,7 +198,7 @@ double getTurnAmount(int dir, int turnDegree)
       }
       else
       {
-        return abs(49.5 * (turnDegree/360.0) * ticksPerCM); //cir is 15.7 or 16.35, it is currently 16.35
+        return abs(49.65 * (turnDegree/360.0) * ticksPerCM); //cir is 15.7 or 16.35, it is currently 16.35
       }
     }
 }

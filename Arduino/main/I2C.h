@@ -73,7 +73,7 @@ void receiveData(int byteCount) {
    Serial.print(++instCount);
    Serial.println(":"); 
    printArray(inBuffer, len -1);
-   acknowledgeRPI(len-1);
+   //acknowledgeRPI(len-1);
  
       
 	 newData = true;//Set flag for main program to process data
