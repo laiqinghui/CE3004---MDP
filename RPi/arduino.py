@@ -25,7 +25,7 @@ class Arduino(threading.Thread):
         self.address = 0x04
         self.bus = smbus.SMBus(1)
         self.mutex_w = mp.Lock()
-        self.acknowledged = True
+        # self.acknowledged = True
 
         dispatcher.connect(self.writeData, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
         logging.info("arduino initialized")
@@ -37,11 +37,11 @@ class Arduino(threading.Thread):
         logging.info("checking if A: " + chr(byte[0]))
         if chr(byte[0]) == "A":
             logging.info("arduino acknowledged")
-            self.mutex_w.acquire()
-            if self.acknowledged:
-                logging.info("Error: acknowledgement byte from arduino not resolved yet")
-            self.acknowledged = True
-            self.mutex_w.release()
+            # self.mutex_w.acquire()
+            # if self.acknowledged:
+            #     logging.info("Error: acknowledgement byte from arduino not resolved yet")
+            # self.acknowledged = True
+            # self.mutex_w.release()
         # if sensor data
         elif chr(byte[0]) == "S":
             logging.info("byte[0]) == S")
@@ -62,9 +62,10 @@ class Arduino(threading.Thread):
 
     def writeData(self, message):
         data = self.ConvertStringToBytes(message)
-        arduino_write_thread = threading.Thread(target=self.write_and_wait_acknowledgement, args=(data,))
-        arduino_write_thread.daemon = True
-        arduino_write_thread.start()
+        self.bus.write_i2c_block_data(self.address, 0, data)
+        # arduino_write_thread = threading.Thread(target=self.write_and_wait_acknowledgement, args=(data,))
+        # arduino_write_thread.daemon = True
+        # arduino_write_thread.start()
 
     def write_and_wait_acknowledgement(self, data):
         try:
