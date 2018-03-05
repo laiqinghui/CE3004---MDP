@@ -41,5 +41,14 @@ public interface Constants {
     public static final int START = 3;
     public static final int GOAL = 4;
     public static final int WAYPOINT = 5;
+    public static final int STARTDIR = 6;
+
+    public static final int ROBOT_HEAD = 7;
+    public static final int ROBOT_BODY = 8;
+
+    public static final int NORTH = 1;
+    public static final int EAST = 2;
+    public static final int SOUTH = 3;
+    public static final int WEST = 4 ;
 
 }

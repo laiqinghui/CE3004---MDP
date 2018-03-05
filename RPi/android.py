@@ -16,7 +16,6 @@ FP_START_COL = 18
 FP_GOAL_ROW = 13
 FP_GOAL_COL = 1
 
-
 class Android(threading.Thread):
     def __init__(self):
         super(Android, self).__init__()
@@ -50,13 +49,10 @@ class Android(threading.Thread):
         logging.info("Accepted connection from" + str(self.client_info))
         try:
             self.sendAndroid("Connection Secured")
-            while True:
-                self.receiveAndroid()
+            self.connected = True
+            self.receiveAndroid()
         except IOError:
-            logging.info("Bluetooth disconnected or encountered an error, re-establishing broadcast in 1 second")
-            time.sleep(1)
-            self.connect()
-            #pass
+            pass
 
     def startAlgorithm(self, robot_row, robot_col, waypoint_row, waypoint_col, goal_row, goal_col, mode, dir):
         self.algo_thread = Algorithm(robot_row, robot_col, waypoint_row, waypoint_col, goal_row, goal_col, mode, dir)
@@ -74,44 +70,63 @@ class Android(threading.Thread):
         try:
             self.client_sock.send(str(message))
         except BluetoothError:
-            logging.info("Bluetooth Error")
-            self.connect
+            logging.info("Bluetooth Error - encountered when attempting to send data to Android device")
+            self.connected = False            
+            self.connect()
 
     def receiveAndroid(self):
         """
         Receiving message from Android
         """
         try:
-            msg = self.client_sock.recv(1024)
-            dispatcher.send(message=msg, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)
-            self.sendAndroid("Received: " + msg)
-            command = msg.split()[0]
-            if(command == "ex"):
-                robot_row = msg.split()[1]
-                robot_col = msg.split()[2]
-                direction = msg.split()[3]
-                if(not self.engaged):
-                    self.startAlgorithm(robot_row, robot_col, None, None, None, None, 0, direction)
-            elif(command == "fp"):
-                waypoint_row = msg.split()[1]
-                waypoint_col = msg.split()[2]
-                direction = msg.split()[3]
-                if(not self.engaged):
-                    self.startAlgorithm(FP_START_ROW, FP_START_COL, waypoint_row, waypoint_col, FP_GOAL_ROW, FP_GOAL_COL, 1, direction)
-            elif(command == "move"):
-                steps = int(msg.split()[1])
-            elif(command == "rotate"):
-                degrees = int(msg.split()[1])
-            else:
-                logging.info("Invalid message")
-            #elif(command == "reset"):
-            #elif(command == "return"):
-            logging.info("Android thread received: " + msg)
-            return msg
+            while self.connected:
+                msg = self.client_sock.recv(1024)
+                dispatcher.send(message=msg, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)
+                self.sendAndroid("Received: " + msg)
+                command = msg.split()[0]
+                if(command == "ex"):
+                    robot_row = msg.split()[1]
+                    robot_col = msg.split()[2]
+                    direction = msg.split()[3]
+                    if(not self.engaged):
+                        self.startAlgorithm(robot_row, robot_col, None, None, None, None, 0, direction)
+                elif(command == "fp"):
+                    waypoint_row = msg.split()[1]
+                    waypoint_col = msg.split()[2]
+                    direction = msg.split()[3]
+                    if(not self.engaged):
+                        self.startAlgorithm(FP_START_ROW, FP_START_COL, waypoint_row, waypoint_col, FP_GOAL_ROW, FP_GOAL_COL, 1, direction)
+                elif(command == "move"):
+                    steps = int(msg.split()[1])
+                    temp = ""
+                    for i in range(steps):
+                        temp = temp + "W"
+                    movemessage = "C" + temp
+                    dispatcher.send(message=movemessage,signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
+                    # CW
+                    # DAO = turning
+                elif(command == "rotate"):
+                    degrees = int(msg.split()[1])
+                    #dispatcher.send(message=msg, degrees=degrees, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)                
+                elif(command == "mode"):
+                    self.update_mode = not self.update_mode
+                elif(command == "ca"):
+                    logging.info("trigger calibration")
+                elif(command == "reset"):
+                    logging.info("reset robot")
+                elif(command == "return"):
+                    logging.info("trigger return")
+                else:
+                    logging.info("Invalid message")
+                #elif(command == "reset"):
+                #elif(command == "return"):
+                logging.info("Android thread received: " + msg)
+            #return msg
 
         except BluetoothError:
-            logging.info("Bluetooth Error")
-            self.connect
+            logging.info("Bluetooth Error - encountered while receiving data from Android device")
+            self.connected = False
+            self.connect()
 
     def closeAndroidConnection(self):
         self.client_sock.close()
@@ -139,4 +154,4 @@ class Android(threading.Thread):
     #         while(self.running):
     #             self.receiveAndroid()
     #     except IOError:
-    #         pass
+        #     pass

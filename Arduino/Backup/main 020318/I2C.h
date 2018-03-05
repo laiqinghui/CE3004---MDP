@@ -5,8 +5,8 @@
 //Slave Address for the Communication
 #define SLAVE_ADDRESS 0x04
 
-char inBuffer[32] = {0};
-char outBuffer[32] = {0};
+char inBuffer[10] = {0};
+char outBuffer[10] = {0};
 boolean newData = false;
 int instCount = 0;
 
@@ -36,14 +36,15 @@ void setOutBuffer(char opcode, char * data, int len){
   Serial.print("Outbuffer set to op: ");
   Serial.println(opcode);
   for(int i = 0; i < len ; i++){
-        outBuffer[i+1] = data[i]; 
+        outBuffer[i+1] = data[i];
+        //Serial.print("outBuffer[");Serial.print(i+1);Serial.print(": ");Serial.println((int)outBuffer[i+1]); 
   }
   
 }
 
 void acknowledgeRPI(int len){
   
-  setOutBuffer('A', inBuffer, 0);//Not ecohing inst back anymore
+  setOutBuffer('A', inBuffer, len);
   interruptPi();
   
 }
@@ -56,9 +57,9 @@ void receiveData(int byteCount) {
   int len = Wire.available();
  
   
-  Serial.print("Incoming: ");
-  Serial.print(len);
-  Serial.println(" bytes");
+  //Serial.print("Incoming: ");
+  //Serial.print(len);
+  //Serial.println(" bytes");
 
   if(len > 1){
     
@@ -74,7 +75,6 @@ void receiveData(int byteCount) {
    Serial.println(":"); 
    printArray(inBuffer, len -1);
    acknowledgeRPI(len-1);
- 
       
 	 newData = true;//Set flag for main program to process data
    
@@ -109,7 +109,7 @@ void initI2C(){
 
 
   
-char* getinBuffer(){
+char * getinBuffer(){
 	
 	newData = false;
 	return inBuffer;

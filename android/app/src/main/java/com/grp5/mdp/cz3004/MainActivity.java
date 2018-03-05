@@ -33,6 +33,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.math.BigInteger;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         BluetoothFragment.OnFragmentInteractionListener,
@@ -219,22 +221,43 @@ public class MainActivity extends AppCompatActivity
     private final Handler readHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            TextView tv = (TextView) findViewById(R.id.statusText);
+            TextView bluetooth = (TextView) findViewById(R.id.statusText);
+            TextView arena = (TextView) findViewById(R.id.bluetoothStatus);
             //TODO: put statustext into arena fragment
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
                         case BluetoothChatService.STATE_CONNECTED:
-                            tv.setText(getString(R.string.title_connected_to, mConnectedDeviceName));
+                            if(bluetooth != null){
+                                bluetooth.setText(getString(R.string.title_connected_to, mConnectedDeviceName));
+                            }
+                            else if (arena != null){
+                                arena.setText(getString(R.string.title_connected_to, mConnectedDeviceName));
+                            }
                             break;
                         case BluetoothChatService.STATE_CONNECTING:
-                            tv.setText(R.string.title_connecting);
+                            if(bluetooth != null){
+                                bluetooth.setText(R.string.title_connecting);
+                            }
+                            else if (arena != null){
+                                arena.setText(R.string.title_connecting);
+                            }
                             break;
                         case BluetoothChatService.STATE_NONE:
-                            tv.setText(R.string.bluetooth_disconnected);
+                            if(bluetooth != null){
+                                bluetooth.setText(R.string.bluetooth_disconnected);
+                            }
+                            else if (arena != null){
+                                arena.setText(R.string.bluetooth_disconnected);
+                            }
                             break;
                         case BluetoothChatService.STATE_LOST:
-                            tv.setText(R.string.bluetooth_disconnected);
+                            if(bluetooth != null){
+                                bluetooth.setText(R.string.bluetooth_disconnected);
+                            }
+                            else if (arena != null){
+                                arena.setText(R.string.bluetooth_disconnected);
+                            }
                             break;
                     }
                     break;
@@ -246,8 +269,8 @@ public class MainActivity extends AppCompatActivity
                     if(rf != null){
                         rf.setText(readMessage);
                     }
-                    if(readMessage.substring(0, 3) == "MDF"){
-
+                    if(readMessage.startsWith("MDF") || readMessage.startsWith("DIR")){
+                        onMapUpdateReceived(readMessage);
                     }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
@@ -263,6 +286,10 @@ public class MainActivity extends AppCompatActivity
             }
         }
     };
+
+    String hexToBinary(String hex) {
+        return new BigInteger("1" + hex,16).toString(2).substring(1);
+    }
 
     /**
      * Sends a message.
@@ -315,7 +342,26 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public void onMapUpdateReceived(String exploredBin, String obstacleBin){
+    public void onMapUpdateReceived(String message){
         //pass the strings to arena fragment to be parsed
+        ArenaFragment arenaFrag = (ArenaFragment) getSupportFragmentManager().findFragmentByTag("ArenaFragment");
+        Log.d("MDF_OR_DIR", message);
+        if(arenaFrag != null){
+            if(message.startsWith("MDF")){
+                String mdfStr = message.substring(3);
+                String exploredHexStr = mdfStr.split("L")[0];
+                String obstacleHexStr = mdfStr.split("L")[1];
+                String exploredBin = hexToBinary(exploredHexStr);
+                String obstacleBin = hexToBinary(obstacleHexStr);
+                arenaFrag.updateMap(exploredBin.substring(2, 302), obstacleBin);
+            } else if (message.startsWith("DIR")) {
+                String dirStr = message.substring(3);
+                String dirRow = dirStr.split("L")[0];
+                String dirCol = dirStr.split("L")[1];
+                String dirDir = dirStr.split("L")[2];
+                String dirMoveOrStop = dirStr.split("L")[3];
+                arenaFrag.updateRobot(dirRow, dirCol, dirDir, dirMoveOrStop);
+            }
+        }
     }
 }

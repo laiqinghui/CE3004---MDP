@@ -11,9 +11,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,16 +33,32 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  */
 public class ArenaFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     private static BluetoothAdapter mBluetoothAdapter;
     private static BluetoothChatService mChatService;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    ArrayList<GridImage> gridList = new ArrayList<GridImage>();
+
+    private String exploredBin;
+    private String obstacleBin;
+
+    private String dirRow;
+    private String dirCol;
+    private String dirDir;
+    private String dirMoveOrStop;
+
+    private String startRow;
+    private String startCol;
+    private String startPos;
+    private String startDir;
+
+    private String wayRow;
+    private String wayCol;
+    private String wayPos;
+
+    private boolean manualUpdateFlag;
+    private boolean setWayPointFlag;
+    private boolean setStartPointFlag;
+    private boolean setStartDirFlag;
 
     private OnMapUpdateListener mListener;
 
@@ -84,11 +102,9 @@ public class ArenaFragment extends Fragment {
         Button btReturn = view.findViewById(R.id.returnButton);
         Button btRefresh = view.findViewById(R.id.refreshButton);
 
-        ArrayList<GridImage> gridList = new ArrayList<GridImage>();
-
         for(int y = 0; y < 20; y++){
             for(int x = 0; x < 15; x++){
-                GridImage image = new GridImage(R.drawable.square, x, y, Constants.UNEXPLORED);
+                GridImage image = new GridImage(R.drawable.blue_square, x, y, Constants.UNEXPLORED);
                 gridList.add(image);
             }
         }
@@ -98,29 +114,115 @@ public class ArenaFragment extends Fragment {
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 if(ImageAdapter.getGridItem(position) != null){
-                    Toast.makeText(getContext(), "position: " + position + " x: " + ImageAdapter.calcRow(position)
-                                    + " y: " + ImageAdapter.calcCol(position),
-                            Toast.LENGTH_SHORT).show();
+                    GridView gridview = (GridView) getActivity().findViewById(R.id.map_grid);
+
+                    if(setWayPointFlag){
+                        if(wayRow!=null && wayCol!=null){
+                            int index = Integer.valueOf(wayRow)*15 + Integer.valueOf(wayCol);
+                            gridList.get(index).setStatus(Constants.UNEXPLORED);
+                        }
+
+                        ImageAdapter.getGridItem(position).setStatus(Constants.WAYPOINT);
+
+                        wayRow = String.valueOf(ImageAdapter.calcRow(position));
+                        wayCol = String.valueOf(ImageAdapter.calcCol(position));
+
+                        Toast.makeText(getContext(), "Waypoint of row" + ImageAdapter.calcRow(position)
+                                        + " and col " + ImageAdapter.calcCol(position) + "set!",
+                                Toast.LENGTH_SHORT).show();
+                        setWayPointFlag = false;
+                        gridview.setAdapter( new ImageAdapter(getContext(), gridList));
+                    } else if(setStartPointFlag){
+                        if(startRow!=null && startCol!=null && startPos!=null){
+                            int index = Integer.valueOf(startRow)*15 + Integer.valueOf(startCol);
+                            gridList.get(index).setStatus(Constants.UNEXPLORED);
+                        }
+
+                        ImageAdapter.getGridItem(position).setStatus(Constants.START);
+
+                        startRow = String.valueOf(ImageAdapter.calcRow(position));
+                        startCol = String.valueOf(ImageAdapter.calcCol(position));
+                        startPos = String.valueOf(position);
+
+                        Toast.makeText(getContext(), "Startpoint of row" + ImageAdapter.calcRow(position)
+                                        + " and col " + ImageAdapter.calcCol(position) + "set!",
+                                Toast.LENGTH_SHORT).show();
+                        setStartPointFlag = false;
+                        gridview.setAdapter( new ImageAdapter(getContext(), gridList));
+                    } else if(setStartDirFlag){
+                        if(startRow==null || startCol==null || startPos==null){
+                            Toast.makeText(getContext(), "Please set START POINT first!",
+                                    Toast.LENGTH_SHORT).show();
+                        } else{
+                            if(startDir!=null){
+                                int startP = Integer.parseInt(startRow)*15 + Integer.parseInt(startCol);
+                                int index;
+                                switch(Integer.valueOf(startDir)){
+                                   case Constants.NORTH:
+                                       index = startP-15;
+                                       gridList.get(index).setStatus(Constants.UNEXPLORED);
+                                   case Constants.SOUTH:
+                                       index = startP+15;
+                                       gridList.get(index).setStatus(Constants.UNEXPLORED);
+                                   case Constants.EAST:
+                                       index = startP+1;
+                                       gridList.get(index).setStatus(Constants.UNEXPLORED);
+                                   case Constants.WEST:
+                                       index = startP-1;
+                                       gridList.get(index).setStatus(Constants.UNEXPLORED);
+                                }
+                            }
+
+                            ImageAdapter.getGridItem(position).setStatus(Constants.STARTDIR);
+
+                            int startP = Integer.parseInt(startPos);
+
+                            String result = "";
+
+                            if(startP-position == 16){
+                                startDir = String.valueOf(Constants.NORTH);
+                                result = "NORTH";
+                            } else if(startP-position == -16){
+                                startDir = String.valueOf(Constants.SOUTH);
+                                result = "SOUTH";
+                            } else if(startP-position == -1){
+                                startDir = String.valueOf(Constants.EAST);
+                                result = "EAST";
+                            } else if(startP-position == 1){
+                                startDir = String.valueOf(Constants.WEST);
+                                result = "WEST";
+                            } else {
+                                Toast.makeText(getContext(), "ERROR: Try again!",
+                                        Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
+                            Toast.makeText(getContext(), "Startdir "+ result + " of row " + ImageAdapter.calcRow(position)
+                                            + " and col " + ImageAdapter.calcCol(position) + " set!",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                        setStartDirFlag = false;
+                        gridview.setAdapter( new ImageAdapter(getContext(), gridList));
+                    } else {
+                        Toast.makeText(getContext(), "array_index:" + gridList.indexOf(ImageAdapter.getGridItem(position)) + " position: " + position + " row: " + ImageAdapter.calcRow(position)
+                                        + " col: " + ImageAdapter.calcCol(position),
+                                Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
 
-        btCalibrate.setOnClickListener(
-                new View.OnClickListener(){
-                    public void onClick(View view) {
-                        //need to implement getting value of start point and direction
-                        String calibrate = "ca";
-                        ((MainActivity)getActivity()).sendMessage(calibrate);
-                    }
-                }
-        );
-
         btStartEx.setOnClickListener(
                 new View.OnClickListener(){
+
                     public void onClick(View view) {
-                        //need to implement getting value of start point and direction
-                        String startEx = "ex"+" "+"1"+" "+"18"+" "+"4";
-                        ((MainActivity)getActivity()).sendMessage(startEx);
+                        //ex <robot_start_row> <robot_start_col> <starting_direction>
+                        if(startRow!=null && startCol!=null && startDir!=null){
+                            String startEx = "ex"+" "+startRow+" "+startCol+" "+startDir;
+                            ((MainActivity)getActivity()).sendMessage(startEx);
+                        } else {
+                            Toast.makeText(getActivity(), "Coordinates or direction not set!", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
         );
@@ -128,9 +230,40 @@ public class ArenaFragment extends Fragment {
         btStartFp.setOnClickListener(
                 new View.OnClickListener(){
                     public void onClick(View view) {
-                        //need to implement getting value of way point and direction
-                        String startFp = "fp"+" "+"10"+" "+"10"+" "+"2";
-                        ((MainActivity)getActivity()).sendMessage(startFp);
+                        //fp <waypoint_row> <waypoint_col> <starting_direction>
+                        if(wayRow!=null && wayCol!=null && startDir!=null){
+                            String startFp = "fp"+" "+wayRow+" "+wayCol+" "+startDir;
+                            ((MainActivity)getActivity()).sendMessage(startFp);
+                        } else {
+                            Toast.makeText(getActivity(), "Coordinates or direction not set!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+        );
+
+        btSetStartPoint.setOnClickListener(
+                new View.OnClickListener(){
+                    public void onClick(View view) {
+                        setStartPointFlag = true;
+                        Toast.makeText(getActivity(), "Set your START POINT.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+
+        btSetWayPoint.setOnClickListener(
+                new View.OnClickListener(){
+                    public void onClick(View view) {
+                        setWayPointFlag = true;
+                        Toast.makeText(getActivity(), "Set your WAY POINT.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+
+        btSetStartDirection.setOnClickListener(
+                new View.OnClickListener(){
+                    public void onClick(View view) {
+                        setStartDirFlag = true;
+                        Toast.makeText(getActivity(), "Set your START DIRECTION.", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
@@ -144,10 +277,29 @@ public class ArenaFragment extends Fragment {
                 }
         );
 
+        btCalibrate.setOnClickListener(
+                new View.OnClickListener(){
+                    public void onClick(View view) {
+                        //need to implement getting value of start point and direction
+                        String calibrate = "ca";
+                        ((MainActivity)getActivity()).sendMessage(calibrate);
+                    }
+                }
+        );
+
+        btUpdateToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    manualUpdateFlag = isChecked;
+                }
+            }
+        );
+
         btRefresh.setOnClickListener(new View.OnClickListener(){
                     public void onClick(View view) {
-                        if(btUpdateToggle.isChecked()){
+                        if(manualUpdateFlag){
                             //implement  method to refresh grid map
+                            updateMap(exploredBin, obstacleBin);
+                            updateRobot(dirRow, dirCol, dirDir, dirMoveOrStop);
                         }
                     }
                 }
@@ -173,6 +325,101 @@ public class ArenaFragment extends Fragment {
         mListener = null;
     }
 
+    public void updateMap(String exploredBin, String obstacleBin) {
+        Log.d("EXPLORED_BIN", exploredBin);
+        Log.d("OBSTACEL_BIN", obstacleBin);
+
+        this.exploredBin = exploredBin;
+        this.obstacleBin = obstacleBin;
+
+        if(!manualUpdateFlag){
+            int obsCount = 0;
+
+            for (int i = 0; i < exploredBin.length(); i++){
+                char c = exploredBin.charAt(i);
+                //Log.d("EXP", String.valueOf(Integer.parseInt(String.valueOf(c))));
+                if(Integer.parseInt(String.valueOf(c)) == 1){
+                    GridImage grid = gridList.get(i);
+                    if (grid != null) {
+                        char x = obstacleBin.charAt(obsCount);
+                        //Log.d("OBS", String.valueOf(Integer.parseInt(String.valueOf(x))));
+                        if(Integer.parseInt(String.valueOf(x)) == 1){
+                            grid.setStatus(Constants.OBSTACLE);
+                        } else {
+                            grid.setStatus(Constants.EXPLORED);
+                        }
+                        obsCount++;
+                    }
+                } else {
+                    GridImage grid = gridList.get(i);
+                    if (grid != null) {
+                        grid.setStatus(Constants.UNEXPLORED);
+                    }
+                }
+            }
+            GridView gridview = (GridView) getActivity().findViewById(R.id.map_grid);
+            gridview.setAdapter( new ImageAdapter(getContext(), gridList));
+        }
+    }
+
+    public void updateRobot(String dirRow, String dirCol, String dirDir, String dirMoveOrStop) {
+        if(exploredBin!=null && obstacleBin!=null){
+            updateMap(exploredBin, obstacleBin);
+        };
+        this.dirRow = dirRow;
+        this.dirCol = dirCol;
+        this.dirDir = dirDir;
+        this.dirMoveOrStop = dirMoveOrStop;
+
+        if(!manualUpdateFlag){
+            int index = Integer.valueOf(dirRow)*15 + Integer.valueOf(dirCol);
+            GridImage image1 = gridList.get(index);
+            image1.setStatus(Constants.ROBOT_BODY);
+            GridImage image2 = gridList.get(index+1);
+            image2.setStatus(Constants.ROBOT_BODY);
+            GridImage image3 = gridList.get(index-1);
+            image3.setStatus(Constants.ROBOT_BODY);
+            GridImage image4 = gridList.get(index-15);
+            image4.setStatus(Constants.ROBOT_BODY);
+            GridImage image5 = gridList.get(index+15);
+            image5.setStatus(Constants.ROBOT_BODY);
+            GridImage image6 = gridList.get(index-14);
+            image6.setStatus(Constants.ROBOT_BODY);
+            GridImage image7 = gridList.get(index+14);
+            image7.setStatus(Constants.ROBOT_BODY);
+            GridImage image8 = gridList.get(index-16);
+            image8.setStatus(Constants.ROBOT_BODY);
+            GridImage image9 = gridList.get(index+16);
+            image9.setStatus(Constants.ROBOT_BODY);
+
+            switch(Integer.valueOf(dirDir)){
+                case Constants.NORTH:
+                    image4.setStatus(Constants.ROBOT_HEAD);
+                    break;
+                case Constants.SOUTH:
+                    image5.setStatus(Constants.ROBOT_HEAD);
+                    break;
+                case Constants.EAST:
+                    image2.setStatus(Constants.ROBOT_HEAD);
+                    break;
+                case Constants.WEST:
+                    image3.setStatus(Constants.ROBOT_HEAD);
+                    break;
+            }
+
+            TextView move_or_stop = getActivity().findViewById(R.id.robotStatus);
+            if(Integer.valueOf(dirMoveOrStop) == 1){
+                move_or_stop.setText(R.string.robot_stopped);
+            } else {
+                move_or_stop.setText(R.string.robot_moving);
+            }
+
+            GridView gridview = (GridView) getActivity().findViewById(R.id.map_grid);
+            gridview.setAdapter( new ImageAdapter(getContext(), gridList));
+        }
+    }
+
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -185,7 +432,7 @@ public class ArenaFragment extends Fragment {
      */
     public interface OnMapUpdateListener {
         // TODO: Update argument type and name
-        void onMapUpdateReceived(String exploredBin, String obstacleBin);
+        void onMapUpdateReceived(String message);
     }
 
     private static class ImageAdapter extends BaseAdapter {
@@ -197,12 +444,12 @@ public class ArenaFragment extends Fragment {
             gridList = glist;
         }
 
-        public static int calcRow(int position) {
-            return getGridItem(position).getRow();
-        }
-
         public static int calcCol(int position) {
             return getGridItem(position).getCol();
+        }
+
+        public static int calcRow(int position) {
+            return getGridItem(position).getRow();
         }
 
         public int getCount() {
@@ -279,7 +526,7 @@ public class ArenaFragment extends Fragment {
         int col;
         int status;
 
-        GridImage(int imageId, int row, int col, int status){
+        GridImage(int imageId, int col, int row, int status){
             this.imageId = imageId;
             this.row = row;
             this.col = col;
@@ -308,6 +555,32 @@ public class ArenaFragment extends Fragment {
 
         public void setStatus(int status){
             this.status = status;
+            switch(status){
+                case Constants.EXPLORED:
+                    this.setImageId(R.drawable.green_square);
+                    break;
+                case Constants.UNEXPLORED:
+                    this.setImageId(R.drawable.blue_square);
+                    break;
+                case Constants.OBSTACLE:
+                    this.setImageId(R.drawable.red_square);
+                    break;
+                case Constants.ROBOT_BODY:
+                    this.setImageId(R.drawable.yellow_square);
+                    break;
+                case Constants.START:
+                    this.setImageId(R.drawable.orange_square);
+                    break;
+                case Constants.GOAL:
+                    this.setImageId(R.drawable.orange_square);
+                    break;
+                case Constants.WAYPOINT:
+                    this.setImageId(R.drawable.orange_square);
+                    break;
+                case Constants.STARTDIR:
+                    this.setImageId(R.drawable.black_square);
+                    break;
+            }
         }
     }
 }

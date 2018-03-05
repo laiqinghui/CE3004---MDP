@@ -27,57 +27,58 @@ void testSequence2()
 
 void benTestSequence()
 {
-  turn(1, 180);
+  //turn(1, 720);
   //md.setSpeeds(124, 170);
-  //calibration();
+  calibration();
 }
 
 void processInst(){
   
-  char *instBuff = getinBuffer();//inBuffer can be accessed directly but not a nice practice i think
-  int index = 1;//Start with 1 as first character is sensor flag which is checked after moving
-  char num[1] = {0};// For checklist
+  char *buff = getinBuffer();
+  char inst[5]  = {0}; 
+  int index = 0;
+  int i = 1;
   
-  while(instBuff[index] != ';'){ 
+  delay(1000);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations 
+  
+  while(buff[index] != ';'){
+    inst[index] = buff[index];
+    index++;
+  }
+  
+
+  while(i < index){ 
     
-    switch(instBuff[index]){
+  
+    switch(inst[i]){
       
-      case 'W': moveForward(90, 9.5, true);
+  
+      case 'W': moveForward(50, 9.5, true);
                 break;
       case 'A': turn(-1, 90);
                 break;
       case 'D': turn(1, 90);
                 break;
-      case 'O': turn(-1, 190);
+      case 'O': turn(-1, 180);
                 break;
       case 'c': calibration();
                 break;          
-      case 'M': moveForward(50, atoi(instBuff+2), true);  
+      case 'M': moveForward(50, atoi(&inst[2]), true);  
                 break;
-      case 'T': turn(-1, atoi(instBuff+2));
+      case 'T': turn(-1, atoi(&inst[2]));
                 break;
       case 'S': setOutBuffer('S', getSensorReadingInCM(), 5);
                 interruptPi();//Interrupt RPI to notify data is ready 
                 break;
-      case 'I': num[0] = atoi(instBuff+2) +1;
-                Serial.print("num = ");
-                Serial.println(num[0]);
-                setOutBuffer('S', num, 1);
-                interruptPi();
-                break;
       default:  ;//do nothing            
       
       }
-    
-    
-    if(instBuff[++index] != ';')
-      delay(200);
+  
+    i++;
     
     }
-    Serial.print("No. of move inst: ");
-    Serial.println(index-1);
-    if(instBuff[0] == 'S'){
-  
+    if(inst[0] == 'S'){
+      delay(100);//Stop for awhile before we check sensor reading
       setOutBuffer('S', getSensorReadingInCM(), 5);
       printArray(outBuffer, 6);
       interruptPi();//Interrupt RPI to notify data is ready 
@@ -90,17 +91,14 @@ void processInst(){
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("Program Started!!!!");
+  Serial.println("Program Started!");
   md.init();
   initI2C();
-
 }
 
-void loop() 
-{
-  Serial.println(getIRSensorReading(A2));
+void loop() {
+ 
   if(dataExist()){
-    delay(100);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations 
     processInst();
     }
     

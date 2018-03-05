@@ -1,5 +1,5 @@
 #include <Wire.h>
-#include <PinChangeInt.h>
+#include <EnableInterrupt.h>
 #include "DualVNH5019MotorShield.h"
 
 #define Pi 3.1416
@@ -37,7 +37,7 @@ void loop()
   
 }
 
-void turn(int dir, int turnDegree)
+void turnTemp(int dir, int turnDegree)
 {
     //1 is right, -1 is left
     
@@ -62,7 +62,7 @@ void turn(int dir, int turnDegree)
     
     
     
-    PCintPort::attachInterrupt(e1a, &risingM1, RISING);  
+    enableInterrupt( e1a, risingM1, RISING);
     Serial.print("Target count: ");
     Serial.println(amount);
     Serial.print("Offset amt: ");
@@ -83,7 +83,7 @@ void turn(int dir, int turnDegree)
         
       */
     }
-
+    disableInterrupt(e1a);
     md.setBrakes(400,400);
     
 }
@@ -93,7 +93,7 @@ double getTurnTicksOffsetAmt(int turnDegree)
   switch(turnDegree){
     
     case 0 ... 90:
-      return 0.85;
+      return 0.95;
     case 360 ... 450:
       return 0.90;
     default:

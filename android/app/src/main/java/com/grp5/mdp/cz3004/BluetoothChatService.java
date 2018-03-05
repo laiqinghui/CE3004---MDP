@@ -16,20 +16,22 @@
 
 package com.grp5.mdp.cz3004;
 
-        import android.bluetooth.BluetoothAdapter;
-        import android.bluetooth.BluetoothDevice;
-        import android.bluetooth.BluetoothServerSocket;
-        import android.bluetooth.BluetoothSocket;
-        import android.content.Context;
-        import android.os.Bundle;
-        import android.os.Handler;
-        import android.os.Message;
-        import android.util.Log;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothServerSocket;
+import android.bluetooth.BluetoothSocket;
+import android.content.Context;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 
-        import java.io.IOException;
-        import java.io.InputStream;
-        import java.io.OutputStream;
-        import java.util.UUID;
+import com.grp5.mdp.cz3004.Constants;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.UUID;
 
 /**
  * This class does all the work for setting up and managing Bluetooth
@@ -62,10 +64,10 @@ public class BluetoothChatService {
     private int mNewState;
 
     // Constants that indicate the current connection state
-    static final int STATE_NONE = 0;       // we're doing nothing
-    static final int STATE_LISTEN = 1;     // now listening for incoming connections
-    static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
-    static final int STATE_CONNECTED = 3;  // now connected to a remote device
+    public static final int STATE_NONE = 0;       // we're doing nothing
+    public static final int STATE_LISTEN = 1;     // now listening for incoming connections
+    public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
+    public static final int STATE_CONNECTED = 3;  // now connected to a remote device
     static final int STATE_LOST = 4;
     private BluetoothDevice mConnectedDevice;
 
@@ -140,7 +142,6 @@ public class BluetoothChatService {
      * @param secure Socket Security type - Secure (true) , Insecure (false)
      */
     public synchronized void connect(BluetoothDevice device, boolean secure) {
-
         Log.d(TAG, "connect to: " + device);
 
         // Cancel any thread attempting to make a connection
@@ -282,28 +283,20 @@ public class BluetoothChatService {
     /**
      * Indicate that the connection was lost and notify the UI Activity.
      */
-    private synchronized void connectionLost() {
+    private void connectionLost() {
         // Send a failure message back to the Activity
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
         Bundle bundle = new Bundle();
         bundle.putString(Constants.TOAST, "Device connection was lost");
         msg.setData(bundle);
         mHandler.sendMessage(msg);
-        mState = STATE_LOST;
+
+        mState = STATE_NONE;
         // Update UI title
         updateUserInterfaceTitle();
 
-        while(mState != STATE_CONNECTED){
-            connect(mConnectedDevice, true);
-            try {
-                wait(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
         // Start the service over to restart listening mode
-        //BluetoothChatService.this.start();
+        BluetoothChatService.this.start();
     }
 
     /**

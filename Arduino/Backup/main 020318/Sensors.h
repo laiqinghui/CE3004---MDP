@@ -1,7 +1,7 @@
 #define frontRightIR  A1    //Front right PS2
 #define frontLeftIR  A3    //Front left PS4
-#define left A0  // Left PS3
-#define right A2 // Right PS1
+#define left A2  // Left PS3
+#define right A0 // Right PS1
 
 //Function Decleration
 double getIRSensorReading(int sensor);
@@ -60,16 +60,16 @@ char* getSensorReadingInCM(){
     TODO: Generate mean/median of sensors value before assigning
     */
 
-    //PS4 y = 6511.7x - 1.958 //New equation y = 5561x - 0.5057
+    //PS4 y = 6511.7x - 1.958
     //Limit is 50cm
     int frontLeftValue = getIRSensorReading(frontLeftIR);
-    if(frontLeftValue < 107)
+    if(frontLeftValue < 117)
     {
       sensorsValuesArray[0] = -1;//Cannot be 0 as 0 is considered as null character in char array. I2C will terminate transmission upon the null char. 
     }
     else
     {
-      sensorsValuesArray[0] = (5561/frontLeftValue) - 0.5057;
+      sensorsValuesArray[0] = (6511.7/frontLeftValue) - 1.958;
     }
 
 		sensorsValuesArray[1] = getUltraSoundDistance(); //Center
@@ -109,10 +109,10 @@ char* getSensorReadingInCM(){
       sensorsValuesArray[3] = (6607.1/rightValue) - 2.3461;
     }
 
-    //PS3 y = 5336.2x - 0.1843 for values above 200 and until 25cm //New equation y = 5926.9x - 1.7829
+    //PS3 y = 5336.2x - 0.1843 for values above 200 and until 25cm
     //when x is 193-200 output 32.5cm
     //when x is 189-193 output 40
-    //y = y = 13121x - 24.802 for values 140-189 starting from 45cm //New equation y = 14042x - 32.846
+    //y = y = 13121x - 24.802 for values 140-189 starting from 45cm
     //Limit is 65cm
     int leftValue = getIRSensorReading(left);
     if(leftValue < 140)
@@ -123,25 +123,19 @@ char* getSensorReadingInCM(){
     {
       if(leftValue >= 200)
       {
-        sensorsValuesArray[4] = (5926.9/leftValue) - 1.7829;
+        sensorsValuesArray[4] = (5336.2/leftValue) - 0.1843;
       }
-      /*
       else if(leftValue < 200 && leftValue >= 193)
       {
-        sensorsValuesArray[4] = 33.5;
+        sensorsValuesArray[4] = 32.5;
       }
-      else if(leftValue < 193 && leftValue > 190)
+      else if(leftValue < 193 && leftValue > 189)
       {
-        sensorsValuesArray[4] = 33.5;
+        sensorsValuesArray[4] = 40;
       }
       else
       {
-        sensorsValuesArray[4] = (14042/leftValue) - 32.846;
-      }
-      */
-      else
-      {
-        sensorsValuesArray[4] = -1;
+        sensorsValuesArray[4] = (13121/leftValue) - 24.802;
       }
     }
 			
@@ -211,7 +205,7 @@ double getCalibrationReading(int sensor)
 //Get average reading over a number of samples
 double getIRSensorReading(int sensor)
 {
-  int size = 300;
+  int size = 500;
   
   int listOfReadings[size];
 
@@ -242,44 +236,14 @@ double getIRSensorReading(int sensor)
   }
 
   short int total = 0;
-  for(int a = 140; a<160; a++)
+  for(int a = 235; a<266; a++)
   {
     total = total + listOfReadings[a];
   }
-  return total/20.0;
+  return total/30.0;
 }
 	
-double getCalibrationReadingV2(int sensor)
-{  
-  double amount = getIRSensorReading_calibration(sensor);
-  
-  if(sensor == frontRightIR)
-  {
-    //y = 5830.7(1/x) - 1.5979
-    return 5430.8*(1/amount) - 0.2397;
-  }
-  else if(sensor == frontLeftIR)
-  {
-    //y = 5310x + 0.5094
-    return 5310*(1/amount)+ 0.5094;
-  }
-}  
-
-double getCalibrationReading_accurate(int sensor)
-{  
-  double amount = getIRSensorReading(sensor);
-  
-  if(sensor == frontRightIR)
-  {
-    //y = 5430.8x - 0.2397
-    return 5430.8*(1/amount) - 0.2397;
-  }
-  else if(sensor == frontLeftIR)
-  {
-    //y = 5310x + 0.5094
-    return 5310*(1/amount)+ 0.5094;
-  }
-}    
+	
 	
 	
 int findMin(int arr[]) {

@@ -5,19 +5,48 @@
 //Slave Address for the Communication
 #define SLAVE_ADDRESS 0x04
 
-char inBuffer[50] = {0};
-char outBuffer[50] = {0};
+char inBuffer[10] = {0};
+char outBuffer[10] = {0};
 boolean newData = false;
 
 
 void printArray(char arr[], int len){
-    //Start from one as first char is empty
-    for(int i = 1; i < len ; i++){
-        Serial.print(arr[i]);
+    
+    Serial.println("In printArray():");
+    for(int i = 0; i < len ; i++){
+        Serial.print((int)arr[i]);
+        Serial.print(", ");
+        //Serial.print(arr[i]);
       }
     Serial.println();
     
   }
+
+void interruptPi(){
+    digitalWrite(PI_PIN, HIGH);
+    delay(100);
+    digitalWrite(PI_PIN, LOW);
+    
+  }  
+
+void setOutBuffer(char opcode, char * data, int len){
+
+  outBuffer[0] = opcode;
+  Serial.print("Outbuffer set to op: ");
+  Serial.println(opcode);
+  for(int i = 0; i < len ; i++){
+        outBuffer[i+1] = data[i];
+        //Serial.print("outBuffer[");Serial.print(i+1);Serial.print(": ");Serial.println((int)outBuffer[i+1]); 
+  }
+  
+}
+
+void acknowledgeRPI(int len){
+  
+  setOutBuffer('A', inBuffer, len);
+  interruptPi();
+  
+}
 
 // callback for received data
 void receiveData(int byteCount) {
@@ -38,9 +67,10 @@ void receiveData(int byteCount) {
   
     }
     
-    Serial.print("inBuffer: ");
-    printArray(inBuffer, len);
-	newData = true;
+   printArray(inBuffer, len -1);
+   //acknowledgeRPI(len-1);
+      
+	 newData = true;//Set flag for main program to process data
    
   } else {
     
@@ -52,22 +82,19 @@ void receiveData(int byteCount) {
     }
 }  // end while
 
-void interruptPi(){
-    digitalWrite(PI_PIN, HIGH);
-    delay(500);
-    digitalWrite(PI_PIN, LOW);
-    
-  }
+
 
 // callback for sending data
 void sendData() {
-  Wire.write("HELLO THIS IS ARDUINO");
+
+  Wire.write(outBuffer);
+  
 }
 
 void initI2C(){
 
 	Wire.begin(SLAVE_ADDRESS);
-	pinMode(PI_PIN, OUTPUT);//Need to set this as output on demand 
+	pinMode(PI_PIN, OUTPUT);
   digitalWrite(PI_PIN, LOW);
 
   //define callbacks for i2c communication
@@ -85,15 +112,16 @@ char * getinBuffer(){
 	
 }
 
+
 void resetInBuffer(){
 	
-	for(int i = 0; i < 50; i ++ ){
-		
+	for(int i = 0; i < 10; i ++ ){
 		inBuffer[i] = 0;
 	}
 	
-	
 }
+
+
 
 boolean dataExist(){
 	

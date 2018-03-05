@@ -2,18 +2,22 @@
 #include "I2C.h"
 
 
+
 //-----------------------------------------------
 void setup() {
   Serial.begin(115200);
   md.init();
   initI2C();
-  testSequence2();
+  //testSequence2();
  
 }
 
 void loop() {
   
   // put your main code here, to run repeatedly:
+  Serial.println(getSensorReadingInCM()[1]);
+  Serial.println(getSensorReadingInCM()[2]);
+  delay(1000);
   if(dataExist()){
     Serial.println("Getting new data...");
     processInst();
@@ -32,7 +36,7 @@ void testSequence1(){
         delay(500);
       }
       
-    turn(-1, 90);//left
+    //turn(-1, 90);//left
     delay(500);  
 }
   
@@ -68,8 +72,8 @@ void processInst(){
     case 'm': moveForward(80, atoi(&inst[1]));
               Serial.println("m");    
               break;
-    case 't': turn(-1, atoi(&inst[1]));
-              break;
+    //case 't': turn(-1, atoi(&inst[1]));
+              //break;
     default:  Serial.println(inst[0]);            
     
     }
@@ -77,6 +81,7 @@ void processInst(){
 
 }
 
+/*
 void straighten()
 {
     if (getSensorReadingInCM(frontRightIR) > getSensorReadingInCM(frontLeftIR))
@@ -218,5 +223,6 @@ void calibration()
   Serial.println(getSensorReadingInCM(frontRightIR));
   Serial.println(getSensorReadingInCM(frontLeftIR));
 }
+*/
 
   
