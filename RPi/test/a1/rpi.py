@@ -22,12 +22,13 @@ class RPI(threading.Thread):
 
     def command_rpi(self, message):
         logging.info("rpi received message from android and write message: " + str(message))
+        self.command_arduino(int(message))
 
     def command_arduino(self, message):
         """
         Message received from algorithm to be processed and passed to arduino
         """
-        dispatcher.send(message=message, signal=ts.RPI_ARDUINO_SIGNAL, sender=ts.RPI_SENDER)
+        dispatcher.send(message="CI" + str(message) + ";", signal=ts.RPI_ARDUINO_SIGNAL, sender=ts.RPI_SENDER)
         logging.info("rpi received message from algorithm and write message to arduino: " + str(message))
 
     def command_algorithm(self, message):
