@@ -41,7 +41,7 @@ class RPI(threading.Thread):
         dispatcher.send(message=message, signal=ts.RPI_ALGORITHM_SIGNAL, sender=ts.RPI_SENDER)
         logging.info("rpi received message from arduino and write message to algorithm: " + str(message))
 
-        self.ws.send(message)
+        self.ws.send(str(message))
         logging.info("rpi received message from arduino and write message to pc: " + str(message))
 
     def start(self):
