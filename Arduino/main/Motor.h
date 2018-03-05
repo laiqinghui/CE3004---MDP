@@ -203,6 +203,47 @@ double getTurnAmount(int dir, int turnDegree)
     }
 }
 
+void turnTemp(int dir, int turnDegree)
+{
+    //1 is right, -1 is left
+    double offset;
+    if(dir == 1)
+      offset = 0.88;
+    else offset = 0.89;
+        
+    double cir = Pi * 17.6; //circumfrence of circle drawn when turning in cm, current diameter used is 17.6
+    double cmToCounts = singlerevticks/(6*Pi); //cm to counts for wheel
+    int amount = abs(cir * (turnDegree/360.0) * cmToCounts) * offset;//0.93 FOR 50 RPM
+    unsigned long M1ticksbreak = 0;
+    
+    enableInterrupt( e1a, risingM1Ticks, RISING);
+    //md.setSpeeds(-158.921 * dir, 197.318 * dir);//50 RPM
+    md.setM1Speed(-269 * dir);
+    md.setM2Speed(314 * dir);
+    
+  
+    while(1){
+      noInterrupts ();
+      M1ticksbreak = M1ticks;
+      interrupts ();
+      if(M1ticksbreak > amount){
+        break;
+        }
+        
+      
+      } 
+
+        
+    disableInterrupt(e1a);
+    md.setBrakes(400,400);
+    Serial.println("BRAKE");
+    setM1Ticks(0);
+    setSqWidth(0,0);
+    
+
+
+}
+
 void turn(int dir, int turnDegree)
 {
     //1 is right, -1 is left 
