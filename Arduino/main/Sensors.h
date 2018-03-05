@@ -1,7 +1,7 @@
 #define frontRightIR  A1    //Front right PS2
 #define frontLeftIR  A3    //Front left PS4
-#define left A2  // Left PS3
-#define right A0 // Right PS1
+#define left A0  // Left PS3
+#define right A2 // Right PS1
 
 //Function Decleration
 double getIRSensorReading(int sensor);
@@ -97,34 +97,22 @@ char* getSensorReadingInCM(){
       
     }
 
-    //PS1 y = 6607.1x - 2.3461
-    //Limit is 60cm
+    //PS3 y = 5336.2x - 0.1843 for values above 200 and until 25cm //New equation y = 5926.9x - 1.7829
+    //when x is 193-200 output 32.5cm
+    //when x is 189-193 output 40
+    //y = y = 13121x - 24.802 for values 140-189 starting from 45cm //New equation y = 14042x - 32.846
+
+    //y = 5054.8x - 0.4362
+    //Limit is 65cm
     int rightValue = getIRSensorReading(right);
-    if(rightValue < 105)
+    if(rightValue < 95)
     {
       sensorsValuesArray[3] = -1;
     }
     else
     {
-      sensorsValuesArray[3] = (6607.1/rightValue) - 2.3461;
+        sensorsValuesArray[3] = (5054.8/rightValue) - 0.4362;
     }
-
-    //PS3 y = 5336.2x - 0.1843 for values above 200 and until 25cm //New equation y = 5926.9x - 1.7829
-    //when x is 193-200 output 32.5cm
-    //when x is 189-193 output 40
-    //y = y = 13121x - 24.802 for values 140-189 starting from 45cm //New equation y = 14042x - 32.846
-    //Limit is 65cm
-    int leftValue = getIRSensorReading(left);
-    if(leftValue < 140)
-    {
-      sensorsValuesArray[4] = -1;
-    }
-    else
-    {
-      if(leftValue >= 200)
-      {
-        sensorsValuesArray[4] = (5926.9/leftValue) - 1.7829;
-      }
       /*
       else if(leftValue < 200 && leftValue >= 193)
       {
@@ -138,20 +126,33 @@ char* getSensorReadingInCM(){
       {
         sensorsValuesArray[4] = (14042/leftValue) - 32.846;
       }
-      */
+      
       else
       {
-        sensorsValuesArray[4] = -1;
+        sensorsValuesArray[3] = -1;
       }
+      
+    }
+  */
+    //PS1 y = 6607.1x - 2.3461
+    //Limit is 60cm
+    int leftValue = getIRSensorReading(left);
+    if(leftValue < 165)
+    {
+      sensorsValuesArray[4] = -1;
+    }
+    else
+    {
+      sensorsValuesArray[4] = (6607.1/leftValue) - 2.3461;
     }
 			
 	  return sensorsValuesArray;
 }
 
 //Get average reading over a number of samples
-double getIRSensorReading_calibration(int sensor)
+double getIRSensorReading_quick(int sensor)
 {
-  int size = 10;
+  int size = 3;
   
   int listOfReadings[size];
 
@@ -159,6 +160,7 @@ double getIRSensorReading_calibration(int sensor)
   for(int a = 0; a<size; a++)
   {
     listOfReadings[a] = analogRead(sensor);
+    delay(5);
   }
 
   //Sort Reading
@@ -181,18 +183,12 @@ double getIRSensorReading_calibration(int sensor)
     listOfReadings[size-1-i] = max;
   }
 
-  //Average middle 3
-  short int total = 0;
-  for(int a = 4; a<7; a++)
-  {
-    total = total + listOfReadings[a];
-  }
-  return total/3.0;
+  return listOfReadings[1];
 }
 
 double getCalibrationReading(int sensor)
 {  
-  double amount = getIRSensorReading_calibration(sensor);
+  double amount = analogRead(sensor);
   
   if(sensor == frontRightIR)
   {
@@ -211,7 +207,7 @@ double getCalibrationReading(int sensor)
 //Get average reading over a number of samples
 double getIRSensorReading(int sensor)
 {
-  int size = 300;
+  int size = 10;
   
   int listOfReadings[size];
 
@@ -219,6 +215,7 @@ double getIRSensorReading(int sensor)
   for(int a = 0; a<size; a++)
   {
     listOfReadings[a] = analogRead(sensor);
+    delay(5);
   }
 
   //Sort Reading
@@ -242,16 +239,16 @@ double getIRSensorReading(int sensor)
   }
 
   short int total = 0;
-  for(int a = 140; a<160; a++)
+  for(int a = 4; a<7; a++)
   {
     total = total + listOfReadings[a];
   }
-  return total/20.0;
+  return total/3.0;
 }
 	
 double getCalibrationReadingV2(int sensor)
 {  
-  double amount = getIRSensorReading_calibration(sensor);
+  double amount = getIRSensorReading_quick(sensor);
   
   if(sensor == frontRightIR)
   {

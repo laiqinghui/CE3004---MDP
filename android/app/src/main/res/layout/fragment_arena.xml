@@ -18,21 +18,46 @@
         android:paddingTop="15dp"
         />
 
-    <TextView
-        android:id="@+id/robotStatus"
-        android:layout_marginTop="650dp"
-        android:layout_marginLeft="40dp"
-        android:layout_width="230dp"
-        android:layout_height="30dp"
-        android:text="Robot Status" />
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/bluetoothStatus"
-        android:layout_marginTop="650dp"
-        android:layout_marginLeft="300dp"
-        android:layout_width="230dp"
-        android:layout_height="30dp"
-        android:text="Bluetooth Status" />
+        <TextView
+            android:id="@+id/robotStatusText"
+            android:layout_marginTop="650dp"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginLeft="50dp"
+            android:text="@string/robot_status"
+            android:layout_marginStart="50dp" />
+        <TextView
+            android:id="@+id/robotStatus"
+            android:layout_marginTop="650dp"
+            android:layout_width="230dp"
+            android:layout_height="30dp"
+            android:text=""/>
+    </android.support.v7.widget.LinearLayoutCompat>
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/bluetoothStatusText"
+            android:layout_marginTop="650dp"
+            android:layout_marginLeft="300dp"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="@string/bluetooth_status"
+            android:layout_marginStart="300dp" />
+        <TextView
+            android:id="@+id/bluetoothStatus"
+            android:layout_marginTop="650dp"
+            android:layout_width="230dp"
+            android:layout_height="30dp"
+            android:text=""/>
+
+    </android.support.v7.widget.LinearLayoutCompat>
 
     <Button
         android:id="@+id/startExButton"
@@ -41,7 +66,8 @@
         android:layout_marginLeft="40dp"
         android:layout_width="130dp"
         android:layout_height="60dp"
-        android:text="START EXPLORATION" />
+        android:text="@string/start_exploration"
+        android:layout_marginStart="40dp" />
 
     <Button
         android:id="@+id/startFpButton"
@@ -50,7 +76,8 @@
         android:layout_marginLeft="40dp"
         android:layout_width="130dp"
         android:layout_height="60dp"
-        android:text="START FASTEST PATH" />
+        android:text="@string/start_fastest_path"
+        android:layout_marginStart="40dp" />
 
     <Button
         android:id="@+id/startPointButton"
@@ -58,8 +85,8 @@
         android:layout_marginLeft="180dp"
         android:layout_width="100dp"
         android:layout_height="60dp"
-        android:text="Set Start Point"
-        />
+        android:text="@string/set_start_point"
+        android:layout_marginStart="180dp" />
 
     <Button
         android:id="@+id/wayPointButton"
@@ -67,7 +94,8 @@
         android:layout_marginLeft="180dp"
         android:layout_width="100dp"
         android:layout_height="60dp"
-        android:text="Set Way Point" />
+        android:text="@string/set_way_point"
+        android:layout_marginStart="180dp" />
 
     <Button
         android:id="@+id/directionButton"
@@ -75,7 +103,8 @@
         android:layout_marginLeft="300dp"
         android:layout_width="100dp"
         android:layout_height="60dp"
-        android:text="Set Start Direction" />
+        android:text="@string/set_start_direction"
+        android:layout_marginStart="300dp" />
 
     <Button
         android:id="@+id/calibrateButton"
@@ -83,7 +112,8 @@
         android:layout_marginLeft="420dp"
         android:layout_width="120dp"
         android:layout_height="60dp"
-        android:text="Calibrate" />
+        android:text="@string/calibrate"
+        android:layout_marginStart="420dp" />
 
     <ToggleButton
         android:id="@+id/updateToggleButton"
@@ -91,8 +121,9 @@
         android:layout_marginLeft="420dp"
         android:layout_width="80dp"
         android:layout_height="60dp"
-        android:textOn="Manual"
-        android:textOff="Auto" />
+        android:textOn="@string/manual"
+        android:textOff="@string/auto"
+        android:layout_marginStart="420dp" />
 
     <Button
         android:id="@+id/returnButton"
@@ -100,7 +131,8 @@
         android:layout_marginLeft="300dp"
         android:layout_width="100dp"
         android:layout_height="60dp"
-        android:text="return" />
+        android:text="@string/return_robot"
+        android:layout_marginStart="300dp" />
 
     <Button
         android:id="@+id/refreshButton"
@@ -108,11 +140,8 @@
         android:layout_marginLeft="510dp"
         android:layout_width="80dp"
         android:layout_height="60dp"
-        android:text="refresh map"
-        android:textSize="13dp"/>
-
-
-
-
+        android:text="@string/refresh_map"
+        android:textSize="13sp"
+        android:layout_marginStart="510dp" />
 
 </android.support.design.widget.CoordinatorLayout>

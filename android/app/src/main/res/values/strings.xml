@@ -24,7 +24,20 @@
     <string name="title_connected_to">connected to <xliff:g id="device_name">%1$s</xliff:g></string>
     <string name="title_connecting">Connecting…</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="robot_stopped">Robot has stopped.</string>
+    <string name="robot_moving">Robot is moving.</string>
+    <string name="hello_blank_fragment">hello</string>
+    <string name="robot_status">Robot Status:</string>
+    <string name="bluetooth_status">Bluetooth Status:</string>
+    <string name="start_exploration">START EXPLORATION</string>
+    <string name="start_fastest_path">START FASTEST PATH</string>
+    <string name="set_start_point">Set Start Point</string>
+    <string name="set_way_point">Set Way Point</string>
+    <string name="set_start_direction">Set Start Direction</string>
+    <string name="calibrate">Calibrate</string>
+    <string name="manual">Manual</string>
+    <string name="auto">Auto</string>
+    <string name="return_robot">return</string>
+    <string name="refresh_map">refresh map</string>
 
 </resources>
