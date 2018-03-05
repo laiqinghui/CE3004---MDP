@@ -135,7 +135,7 @@ char* getSensorReadingInCM(){
     }
   */
     //PS1 y = 6607.1x - 2.3461
-    //y = 8932x - 0.0774
+    //y = 12978x - 2.4047
     //Limit is 60cm
     int leftValue = getIRSensorReading(left);
 
@@ -154,6 +154,7 @@ char* getSensorReadingInCM(){
     }
     else
     {
+<<<<<<< HEAD
 <<<<<<< HEAD
       if(leftValue >= 200)
       {
@@ -181,6 +182,10 @@ char* getSensorReadingInCM(){
       //sensorsValuesArray[4] = (8932/leftValue) - 0.0774;
 //>>>>>>> 38b66b08769933e794ddd885021de5d2f58b2b1f
     //}
+=======
+      sensorsValuesArray[4] = (12978/leftValue) - 2.4047;
+    }
+>>>>>>> 6893891a35eac4450bf25f356a91d23a9ff05b38
 			
 	  return sensorsValuesArray;
 }
@@ -217,7 +222,7 @@ double getCalibrationReading(int sensor, boolean quick)
 //Get average reading over a number of samples
 double getIRSensorReading(int sensor)
 {
-  int size = 50;
+  int size = 100;
   
   int listOfReadings[size];
 
@@ -241,7 +246,7 @@ double getIRSensorReading(int sensor)
         max = listOfReadings[j];
         maxLocation = j;
       }
-    }
+    }\
 
     //Swap max with last position
     listOfReadings[maxLocation] = listOfReadings[size-1-i];
@@ -249,16 +254,14 @@ double getIRSensorReading(int sensor)
   }
 
   int total = 0;
+<<<<<<< HEAD
   for(int a = 24; a<27; a++)
+=======
+  for(int a = 49; a<52; a++)
+>>>>>>> 6893891a35eac4450bf25f356a91d23a9ff05b38
   {
     total = total + listOfReadings[a];
   }
   return total/3.0;
 } 
-	
-int findMin(int arr[]) {
-    int min1Index = (arr[0] > arr[1]) ? 1:0;
-    int finalMinIndex = (arr[min1Index] > arr[2]) ? 2:min1Index;
-    return finalMinIndex;
-}
 
