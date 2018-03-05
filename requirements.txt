@@ -4,3 +4,4 @@ PyBluez==0.22
 PyDispatcher==2.0.5
 six==1.11.0
 smbus2==0.2.0
+websocket-client==0.47.0
