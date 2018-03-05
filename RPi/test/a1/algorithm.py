@@ -20,7 +20,6 @@ class Algorithm(threading.Thread):
     def test_message_received(self, message):
         logging.info("Algorithm receive message '" + str(message) + "' from RPI")
         logging.info("Algorithm now send message '" + str(message) + "' to Arduino")
-        dispatcher.send(message="message", signal=ts.ALGORITHM_SIGNAL, sender=ts.ALGORITHM_SENDER)
 
     def start(self):
         self.running = True
