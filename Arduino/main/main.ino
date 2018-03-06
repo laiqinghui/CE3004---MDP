@@ -71,12 +71,16 @@ void processInst(){
                     delay(200);
                 }
                 break;
-      case ']': calibration();
-                break;          
-      case 'M': moveForward(50, atoi(instBuff+2), true);  
+      case '|': calibration();
                 break;
+      case ']': fastCalibration(2);
+                break;
+      case 'F': fastCalibration(0);
+                break;                              
+      case 'M': moveForward(50, atoi(instBuff+2), true);
+                return;  
       case 'T': turn(-1, atoi(instBuff+2));
-                break;
+                return;
       case 'S': setOutBuffer('S', getSensorReadingInCM(), 5);
                 interruptPi();//Interrupt RPI to notify data is ready 
                 break;

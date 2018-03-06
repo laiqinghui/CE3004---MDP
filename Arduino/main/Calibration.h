@@ -260,7 +260,7 @@ void fastCalibration(int choice)
     straightenTune();
     delay(wait);
 
-    turn(-1, 180);
+    turn(1, 90);
   }
   else if (choice == 2)
   {
@@ -275,6 +275,6 @@ void fastCalibration(int choice)
     straightenTune();
     delay(wait);
 
-    turn(-1, 180);
+    turn(-1, 90);
   }  
 }
