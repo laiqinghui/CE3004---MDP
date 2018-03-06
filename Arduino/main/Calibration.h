@@ -15,61 +15,6 @@ void distanceFromWall(double distance);
 double getCalibrationReading(int sensor, boolean quick);
 void calibration();
 
-void avoidStraight()
-{
-  while(getUltraSoundDistance() > 8 + 10)
-  {
-    moveForward(80, 10, true);
-    delay(200);
-  }
-  turn(-1, 90);
-  delay(500);
-  
-  moveForward(80, 10, true);
-  delay(500);
-  
-  turn(1, 90);
-  delay(500);
-
-  moveForward(80, 20, true);
-  delay(500);
-
-  turn(1, 90);
-  delay(500);
-
-  moveForward(80, 10, true);
-  delay(500);
-  
-  turn(-1, 90);
-  delay(500);
-
-}
-
-void avoidAngle()
-{
-  while(getUltraSoundDistance() > 8 + 10)
-  {
-    moveForward(80, 10, true);
-    delay(200);
-  }
-  /*
-  turn(-1, 45);
-  delay(500);
-  
-  moveForward(80, 15, true);
-  delay(500);
-  
-  turn(1, 90);
-  delay(500);
-
-  moveForward(80, 15, true);
-  delay(500);
-
-  turn(1, 45);
-  delay(500);
-  */
-}
-
 void straighten()
 {
     if (getCalibrationReading(frontRight, false) > getCalibrationReading(frontLeft, false))
@@ -260,7 +205,7 @@ void fastCalibration(int choice)
     straightenTune();
     delay(wait);
 
-    turn(-1, 180);
+    turn(1, 90);
   }
   else if (choice == 2)
   {
@@ -275,6 +220,6 @@ void fastCalibration(int choice)
     straightenTune();
     delay(wait);
 
-    turn(-1, 180);
+    turn(-1, 90);
   }  
 }
