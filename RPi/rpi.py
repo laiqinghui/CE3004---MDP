@@ -60,13 +60,13 @@ class RPI(threading.Thread):
                 formatted_instruction = 'C' + ''.join(aggregated_instruction_list) + ';'
                 robot_moving_stop_string_update = '0L'   # robot still going moving after instruction
 
-            explore_mdf_string_update = gs.get_mdf_bitstring(gs.get_explore_status_mazemap(gs.MAZEMAP), 1)
-            obstacle_mdf_string_update = gs.get_mdf_bitstring(gs.get_obstacle_mazemap(gs.MAZEMAP), 1)
+            explore_mdf_string_update = gs.get_mdf_bitstring(gs.MAZEMAP, 1, 0)
+            obstacle_mdf_string_update = gs.get_mdf_bitstring(gs.MAZEMAP, 1, 1)
 
             print "MAP EXPLORE STATUS MDF: " + gs.get_mdf_bitstring(gs.get_explore_status_mazemap(gs.MAZEMAP), 0)
             print "OBSTACLE STATUS MDF: " + gs.get_mdf_bitstring(gs.get_obstacle_mazemap(gs.MAZEMAP), 0)
 
-            map_mdf_update_string = "MDF" + explore_mdf_string_update + obstacle_mdf_string_update
+            map_mdf_update_string = "MDF" + explore_mdf_string_update + 'L' + obstacle_mdf_string_update + 'L'
             dir_update_string = "DIR" + str(robot_row) + 'L' + str(robot_col) + 'L' + str(robot_dir) + 'L' + robot_moving_stop_string_update
 
             self.feedback_android(map_mdf_update_string)
