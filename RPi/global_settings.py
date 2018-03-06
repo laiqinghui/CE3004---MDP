@@ -76,5 +76,6 @@ def aggregate_instruction(instruction):
         if (ch[0] != updatedInstruction[-1][0]):
             updatedInstruction.append(ch)
         else:
-            updatedInstruction[-1] = updatedInstruction[-1][0] + str(int(updatedInstruction[-1][1:]) + 1)
+            # updatedInstruction[-1] = updatedInstruction[-1][0] + str(int(updatedInstruction[-1][1:]) + 1)
+            updatedInstruction[-1] = updatedInstruction[-1][0] + chr(ord(updatedInstruction[-1][1:]) + 1)
     return updatedInstruction

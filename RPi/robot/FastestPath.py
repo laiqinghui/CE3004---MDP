@@ -280,6 +280,20 @@ class FastestPath:
         else:
             self.direction = NORTH
 
+    def fastestPathRun(self):
+        """To simulate the fastest path run.
+
+        Returns:
+            movement (list): List of movements from start to goal
+
+        """
+        print "Fastest Path Mode started!"
+        self.getFastestPath()
+        while (self.robot.center.tolist() != self.goal.tolist()):
+            self.moveStep()
+        print "Fastest Path completed!"
+        return self.movement
+
     def getFastestPath(self):
         """To calculate the fastest path and handle a way-point input."""
         path = []

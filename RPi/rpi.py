@@ -20,7 +20,7 @@ class RPI(threading.Thread):
         dispatcher.connect(self.manage_algorithm_signal, signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
         dispatcher.connect(self.manage_arduino_signal, signal=gs.ARDUINO_SIGNAL, sender=gs.ARDUINO_SENDER)
 
-        logging.info("rpi +initialized")
+        logging.info("rpi initialized")
 
     def command_rpi(self, message):
         if message == "mode":
@@ -47,17 +47,24 @@ class RPI(threading.Thread):
             robot_col = message[2][1]
             robot_dir = message[3]
 
+            raw_instruction = ''.join(instruction)
+            aggregated_instruction_list = gs.aggregate_instruction(raw_instruction)
+
             if not completed:
-                formatted_instruction = 'S' + ''.join(instruction) + ';'
+                # formatted_instruction = 'S' + ''.join(instruction) + ';'
+                formatted_instruction = 'S' + ''.join(aggregated_instruction_list) + ';'
                 robot_moving_stop_string_update = '1L'   # robot no longer moving after instruction
             else:
-                # exploration completed, arduino do not need to sense environment
-                # after moving robot
-                formatted_instruction = 'C' + ''.join(instruction) + ';'
+                # exploration completed, arduino do not need to sense environment after moving robot
+                # formatted_instruction = 'C' + ''.join(instruction) + ';'
+                formatted_instruction = 'C' + ''.join(aggregated_instruction_list) + ';'
                 robot_moving_stop_string_update = '0L'   # robot still going moving after instruction
 
             explore_mdf_string_update = gs.get_mdf_bitstring(gs.get_explore_status_mazemap(gs.MAZEMAP), 1)
             obstacle_mdf_string_update = gs.get_mdf_bitstring(gs.get_obstacle_mazemap(gs.MAZEMAP), 1)
+
+            print "MAP EXPLORE STATUS MDF: " + gs.get_mdf_bitstring(gs.get_explore_status_mazemap(gs.MAZEMAP), 0)
+            print "OBSTACLE STATUS MDF: " + gs.get_mdf_bitstring(gs.get_obstacle_mazemap(gs.MAZEMAP), 0)
 
             map_mdf_update_string = "MDF" + explore_mdf_string_update + obstacle_mdf_string_update
             dir_update_string = "DIR" + str(robot_row) + 'L' + str(robot_col) + 'L' + str(robot_dir) + 'L' + robot_moving_stop_string_update
@@ -72,9 +79,10 @@ class RPI(threading.Thread):
             #     pass
 
         dispatcher.send(message=formatted_instruction, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
+        logging.info("robot location: " + str(robot_row) + ", " + str(robot_col))
         print gs.MAZEMAP
-        print "print instr no: " + str(self.instrNum)
-        print "number of instruction counts" + str(len(formatted_instruction[1:-1]))
+        logging.info("print instr no: " + str(self.instrNum))
+        logging.info("number of instruction counts" + str(len(formatted_instruction[1:-1])))
         logging.info("rpi received message from algorithm and write message to arduino: " + str(formatted_instruction))
         self.instrNum = self.instrNum + 1
 
@@ -86,10 +94,10 @@ class RPI(threading.Thread):
         - Updates from Arduino to be processed and passed to Android
         """
         logging.info("sensor value: " + str(message))
-        message[0] = message[0] - 12
+        message[0] = message[0] - 13
         message[1] = message[1] - 8
-        message[2] = message[2] - 14
-        message[3] = message[3] - 15
+        message[2] = message[2] - 12
+        message[3] = message[3] - 13
         message[4] = message[4] - 26
 
         # raw_input("---------press enter to continue-------")

@@ -39,23 +39,25 @@ class Android(threading.Thread):
         self.rpi_thread.start()
         self.arduino_thread.start()
 
+        self.connect()
+
+    def connect(self):
         self.port = 4
         self.server_socket = BluetoothSocket(RFCOMM)
         self.server_socket.bind(("", self.port))
         self.server_socket.listen(1)
         self.uuid = "00001101-0000-1000-8000-00805F9B34FB"
-        self.connect()
-
-    def connect(self):
-        advertise_service(self.server_socket, "MDPGroup5", service_id=self.uuid, service_classes=[self.uuid, SERIAL_PORT_CLASS], profiles=[SERIAL_PORT_PROFILE])
-        logging.info("Waiting for Bluetooth connection on port " + str(self.port))
-        self.client_sock, self.client_info = self.server_socket.accept()
-        logging.info("Accepted connection from" + str(self.client_info))
-        client_MAC = self.client_info[0]
-        if client_MAC != "08:60:6E:AA:6D:E2":
-            logging.info("There was a connection attempt by an unauthorized device. Attempting to rebroadcast..")
-            self.connect()
-            return 0
+        try:
+            advertise_service(self.server_socket, "MDPGroup5", service_id=self.uuid, service_classes=[self.uuid, SERIAL_PORT_CLASS], profiles=[SERIAL_PORT_PROFILE])
+            logging.info("Waiting for Bluetooth connection on port " + str(self.port))
+            self.client_sock, self.client_info = self.server_socket.accept()
+            logging.info("Accepted connection from" + str(self.client_info))
+            client_MAC = self.client_info[0]
+            if client_MAC != "08:60:6E:AA:6D:E2":
+                logging.info("There was a connection attempt by an unauthorized device. Attempting to rebroadcast..")
+                self.client_sock.close()
+                self.connect()
+                return 0
         try:
             self.sendAndroid("Connection Secured")
             self.connected = True
@@ -65,8 +67,12 @@ class Android(threading.Thread):
 
     def startAlgorithm(self, robot_row, robot_col, waypoint_row, waypoint_col, goal_row, goal_col, mode, dir):
         self.algo_thread = Algorithm(robot_row, robot_col, waypoint_row, waypoint_col, goal_row, goal_col, mode, dir)
-        self.algo_thread.daemon = True
-        self.algo_thread.start()
+        # only exploration mode need to start thread
+        if mode == EXPLORATION:
+            self.algo_thread.daemon = True
+            self.algo_thread.start()
+        if mode == FASTEST_PATH:
+            del self.algo_thread
 
     def stopAlgorithm(self):
         self.algo_thread.stop()
@@ -98,9 +104,9 @@ class Android(threading.Thread):
                     self.waypoint_col = int(msg.split()[2])
                     dispatcher.send(message=command, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)
                 elif(command == "ex"):
-                    self.startAlgorithm(START_ROW, START_COL, waypoint_row, waypoint_col, FP_GOAL_ROW, FP_GOAL_COL, EXPLORATION, EAST)
+                    self.startAlgorithm(START_ROW, START_COL, self.waypoint_row, self.waypoint_col, FP_GOAL_ROW, FP_GOAL_COL, EXPLORATION, EAST)
                 elif(command == "fp"):
-                    self.startAlgorithm(START_ROW, START_COL, waypoint_row, waypoint_col, FP_GOAL_ROW, FP_GOAL_COL, FASTEST_PATH, EAST)
+                    self.startAlgorithm(START_ROW, START_COL, self.waypoint_row, self.waypoint_col, FP_GOAL_ROW, FP_GOAL_COL, FASTEST_PATH, EAST)
                 elif(command == "move"):
                     steps = int(msg.split()[1])
                     temp = ""
