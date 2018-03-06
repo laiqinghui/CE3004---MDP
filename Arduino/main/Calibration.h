@@ -15,6 +15,36 @@ void distanceFromWall(double distance);
 double getCalibrationReading(int sensor, boolean quick);
 void calibration();
 
+void avoidStraight()
+{
+  while(getUltraSoundDistance() > 8 + 10)
+  {
+    moveForward(80, 10, true);
+    delay(200);
+  }
+  turn(-1, 90);
+  delay(500);
+  
+  moveForward(80, 10, true);
+  delay(500);
+  
+  turn(1, 90);
+  delay(500);
+
+  moveForward(80, 20, true);
+  delay(500);
+
+  turn(1, 90);
+  delay(500);
+
+  moveForward(80, 10, true);
+  delay(500);
+  
+  turn(-1, 90);
+  delay(500);
+
+}
+
 void avoidAngle()
 {
   while(getUltraSoundDistance() > 8 + 10)
