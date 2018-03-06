@@ -20,7 +20,7 @@ class RPI(threading.Thread):
         dispatcher.connect(self.manage_algorithm_signal, signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
         dispatcher.connect(self.manage_arduino_signal, signal=gs.ARDUINO_SIGNAL, sender=gs.ARDUINO_SENDER)
 
-        logging.info("rpi +initialized")
+        logging.info("rpi initialized")
 
     def command_rpi(self, message):
         if message == "mode":
@@ -47,13 +47,17 @@ class RPI(threading.Thread):
             robot_col = message[2][1]
             robot_dir = message[3]
 
+            raw_instruction = ''.join(instruction)
+            aggregated_instruction_list = gs.aggregate_instruction(raw_instruction)
+
             if not completed:
-                formatted_instruction = 'S' + ''.join(instruction) + ';'
+                # formatted_instruction = 'S' + ''.join(instruction) + ';'
+                formatted_instruction = 'S' + ''.join(aggregated_instruction_list) + ';'
                 robot_moving_stop_string_update = '1L'   # robot no longer moving after instruction
             else:
-                # exploration completed, arduino do not need to sense environment
-                # after moving robot
-                formatted_instruction = 'C' + ''.join(instruction) + ';'
+                # exploration completed, arduino do not need to sense environment after moving robot
+                # formatted_instruction = 'C' + ''.join(instruction) + ';'
+                formatted_instruction = 'C' + ''.join(aggregated_instruction_list) + ';'
                 robot_moving_stop_string_update = '0L'   # robot still going moving after instruction
 
             explore_mdf_string_update = gs.get_mdf_bitstring(gs.get_explore_status_mazemap(gs.MAZEMAP), 1)
@@ -90,13 +94,13 @@ class RPI(threading.Thread):
         - Updates from Arduino to be processed and passed to Android
         """
         logging.info("sensor value: " + str(message))
-        message[0] = message[0] - 12
+        message[0] = message[0] - 13
         message[1] = message[1] - 8
-        message[2] = message[2] - 14
-        message[3] = message[3] - 15
+        message[2] = message[2] - 12
+        message[3] = message[3] - 13
         message[4] = message[4] - 26
 
-        raw_input("---------press enter to continue-------")
+        # raw_input("---------press enter to continue-------")
 
         logging.info("send sensor values to algo:" + str(message))
 
