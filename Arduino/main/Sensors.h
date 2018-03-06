@@ -122,23 +122,23 @@ char* getSensorReadingInCM(){
     */
   getIRSensorReading();
   
-  //PS4 y = 6511.7x - 1.958 //New equation y = 5561x - 0.5057
+  //PS4 y = 5546.9x - 0.7029
   //Limit is 50cm
   double frontLeftValue = sensorValues[0];
-  if(frontLeftValue < 107)
+  if(frontLeftValue < 108)
   {
     sensorsValuesArray[0] = -1;//Cannot be 0 as 0 is considered as null character in char array. I2C will terminate transmission upon the null char. 
   }
   else
   {
-    sensorsValuesArray[0] = (5561/frontLeftValue) - 0.5057;
+    sensorsValuesArray[0] = (5546.9/frontLeftValue) - 0.7029;
   }
   
   //Ultrasound reading
   sensorsValuesArray[1] = getUltraSoundDistance(); //Center
 
 
-  //PS2 y = 6290.4x - 1.6964
+  //PS2 y = 6290.4x - 1.6964 //subtract another 2 to offset
   //Limit is 45cm
   double frontRightValue = sensorValues[1];
   if(frontRightValue < 134)
@@ -147,31 +147,40 @@ char* getSensorReadingInCM(){
   }
   else
   {
-    sensorsValuesArray[2] = (6290.4/frontRightValue) - 1.6964;
+    sensorsValuesArray[2] = (6290.4/frontRightValue) - 3.6964;
   }
 
-  //PS3 y = 5336.2x - 0.1843 for values above 200 and until 25cm //New equation y = 5926.9x - 1.7829
-  //Limit is 65cm
-  double rightValue = sensorValues[2];
-  if(rightValue < 95)
+  //PS3 y = 5260x - 0.3915
+  //Limit is 50cm
+  double rightValue = sensorValues[3];
+  if(rightValue < 100)
   {
     sensorsValuesArray[3] = -1;
   }
   else
   {
-      sensorsValuesArray[3] = (5054.8/rightValue) - 0.4362;
+      sensorsValuesArray[3] = (5260/rightValue) - 0.3915;
   }
   
-  //PS1 y = 12978x - 2.4047
+  //PS1 y = 12978x - 2.4047 //if value is above 70, subtract 1; //add 2 to offset //if value is below 25, subtract 3
   //Limit is 60cm
-  double leftValue = sensorValues[3];
+  double leftValue = sensorValues[2];
   if(leftValue < 170)
   {
     sensorsValuesArray[4] = -1;
   }
   else
   {
-    sensorsValuesArray[4] = (12978/rightValue) - 2.4047;
+    sensorsValuesArray[4] = (12978/leftValue) - 0.4047;
+  }
+  if(sensorsValuesArray[4] <= 25)
+  {
+    sensorsValuesArray[4] = sensorsValuesArray[4] - 3;
+  }
+  
+  if(sensorsValuesArray[4] > 70)
+  {
+    sensorsValuesArray[4] = sensorsValuesArray[4] - 1;
   }
   
   return sensorsValuesArray;
