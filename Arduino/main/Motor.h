@@ -167,10 +167,11 @@ void moveForward(int rpm, int distance, boolean pidOn){
       setSqWidth(0,0);
 }  
 
+//1 is left turn and -1 is right turn
 double getTurnAmount(int dir, int turnDegree){
     if(dir == 1)
     {
-  		double degree90 = 51; //cir is 50.8
+  		double degree90 = 51.8; //cir is 50.8
   		double degree180 = 53.1; //cir is 51.7
   		if(turnDegree < 90)
   		{
@@ -186,7 +187,7 @@ double getTurnAmount(int dir, int turnDegree){
     }
     else
     {
-		double turn90 = 47.8; //cir is 48.55
+		double turn90 = 47.6; //cir is 48.55
 		double turn180 = 49.65; //cir is 49.65
       if(turnDegree == 90)
       {

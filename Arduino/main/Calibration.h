@@ -59,14 +59,14 @@ void straightenTune()
     {     
       while (getCalibrationReading(frontRight, true) > getCalibrationReading(frontLeft, true))
       {
-        md.setSpeeds(150, 0);
+        md.setSpeeds(110, 0);
       }
     }
     else if(getCalibrationReading(frontRight, false) < getCalibrationReading(frontLeft, false))
     {   
       while (getCalibrationReading(frontRight, true) < getCalibrationReading(frontLeft, true))
       {
-         md.setSpeeds(-150, 0);
+         md.setSpeeds(-110, 0);
       }
     }
     md.setBrakes(400, 400);
@@ -110,13 +110,13 @@ double getCalibrationReading(int sensor, boolean quick)
   
   if(sensor == frontRight)
   {
-    //y = 5430.8x - 0.2397
-    return 5430.8*(1/amount)-0.2397;
+    //y = 5401x - 0.1758
+    return 5401*(1/amount)-0.1758;
   }
   else if(sensor == frontLeft)
   {
-    //y = 5310x + 0.5094
-    return 5310*(1/amount)+ 0.5094;
+    //y = 5288.6x + 0.0799
+    return 5288.6*(1/amount)+ 0.0799;
   }
 }	
 
