@@ -46,9 +46,7 @@ void processInst(){
     
     switch(instBuff[index]){
       
-      case 'W': Serial.println("instBuff[index+1]: ");
-                temp = instBuff[index+1] - 48;
-                Serial.println(temp);
+      case 'W': temp = instBuff[index+1] - 48;
                 moveForward(90, 9.5*temp, true);
                 
                 break;
@@ -65,7 +63,8 @@ void processInst(){
                   delay(200);
                 }
                 break;
-      case 'O': for(int a = 0; a < temp; a++){
+      case 'O': temp = instBuff[index+1] - 48;
+                for(int a = 0; a < temp; a++){
                   turn(-1, 180);
                     delay(200);
                 }
@@ -114,7 +113,7 @@ void setup() {
   md.init();
   initI2C();
   
-  benTestSequence();
+  //benTestSequence();
 }
 
 void loop() 
