@@ -29,7 +29,9 @@ void benTestSequence()
 {
   //turn(1, 180);
   //md.setSpeeds(124, 170);
-  calibration();
+  fastCalibration(2);
+  delay(1000);
+  moveForward(80, 9.5, true);
 }
 
 void processInst(){
@@ -93,12 +95,14 @@ void setup() {
   Serial.println("Program Started!!!!");
   md.init();
   initI2C();
-
+  
   //benTestSequence();
 }
 
 void loop() 
 {
+  Serial.println(getIRSensorReading()[3]);
+  
   if(dataExist()){
     //delay(100);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations 
     processInst();

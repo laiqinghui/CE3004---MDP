@@ -178,8 +178,8 @@ double getTurnAmount(int dir, int turnDegree){
   		}
   		else
   		{
-  			double closenessTo90 = ((turnDegree-90)/180.0)*degree180;
-  			double closenessTo180 = ((180 - turnDegree)/180.0)*degree90;
+  			double closenessTo90 = ((turnDegree-90)/90.0)*degree180;
+  			double closenessTo180 = ((180 - turnDegree)/90.0)*degree90;
   		  
   			return abs((closenessTo90 + closenessTo180) * turnDegree/360 * ticksPerCM);
       }

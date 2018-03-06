@@ -36,14 +36,14 @@ void straightenTune()
     {     
       while (getCalibrationReading(frontRight, true) > getCalibrationReading(frontLeft, true))
       {
-        md.setSpeeds(80, 0);
+        md.setSpeeds(150, 0);
       }
     }
     else if(getCalibrationReading(frontRight, false) < getCalibrationReading(frontLeft, false))
     {   
       while (getCalibrationReading(frontRight, true) < getCalibrationReading(frontLeft, true))
       {
-         md.setSpeeds(-69, 0);
+         md.setSpeeds(-150, 0);
       }
     }
     md.setBrakes(400, 400);
@@ -77,7 +77,7 @@ double getCalibrationReading(int sensor, boolean quick)
   {
     if(sensor == frontRight)
     {
-      amount = getIRSensorReading()[2];
+      amount = getIRSensorReading()[1];
     }
     else
     {
@@ -87,13 +87,13 @@ double getCalibrationReading(int sensor, boolean quick)
   
   if(sensor == frontRight)
   {
-    //y = 5830.7(1/x) - 1.5979
-    return 5830.7*(1/amount)-2.5979;
+    //y = 5430.8x - 0.2397
+    return 5430.8*(1/amount)-0.2397;
   }
   else if(sensor == frontLeft)
   {
-    //y = y = 5730.2(1/x) - 1.2045
-    return 5730.2*(1/amount)-1.2045;
+    //y = 5310x + 0.5094
+    return 5310*(1/amount)+ 0.5094;
   }
 }	
 
@@ -117,7 +117,7 @@ void calibration()
   int count = 0;
   while(abs(getCalibrationReading(frontRight, false) - getCalibrationReading(frontLeft, false)) > threshold)
   {
-    if(count == 10)
+    if(count == 4)
     {
       md.setSpeeds(75, 0);
       delay(300);
@@ -127,10 +127,6 @@ void calibration()
     straightenTune();
     count++;
     
-    Serial.println("Start");
-    Serial.println(getCalibrationReading(frontRight, false));
-    Serial.println(getCalibrationReading(frontLeft, false));
-    Serial.println("End");
     delay(100);
   }
   delay(wait);
@@ -151,7 +147,7 @@ void calibration()
   count = 0;
   while(abs(getCalibrationReading(frontRight, false) - getCalibrationReading(frontLeft, false)) > threshold)
   {
-    if(count == 10)
+    if(count == 4)
     {
       md.setSpeeds(75, 0);
       delay(300);
@@ -161,10 +157,6 @@ void calibration()
     straightenTune();
     count++;
     
-    Serial.println("Start");
-    Serial.println(getCalibrationReading(frontRight, false));
-    Serial.println(getCalibrationReading(frontLeft, false));
-    Serial.println("End");
     delay(100);
   }
   delay(wait);
@@ -176,4 +168,58 @@ void calibration()
   //Turn to the left by 90
   turn(-1, 90);
   delay(wait);
+}
+
+//If choice = 0 then it will only calibrate front
+//If choice = 1 then it will calibrate front and left
+//If choice = 2 then it will calibrate front and right
+void fastCalibration(int choice)
+{
+  double threshold = 0.1;
+  double startWall = 13.65;
+  double leftWall = 13.88;
+  int wait = 200;
+  
+  //Quick calibration against wall
+  straighten();
+  delay(wait);
+
+  //Move to the distance from wall
+  distanceFromWall(startWall);
+  delay(wait);
+
+  //Fine tune the calibration
+  straightenTune();
+  delay(wait);
+
+  if(choice == 1)
+  {
+    turn(-1, 90);
+    delay(wait);
+
+    //Move to the distance from wall
+    distanceFromWall(startWall);
+    delay(wait);
+
+    //Fine tune the calibration
+    straightenTune();
+    delay(wait);
+
+    turn(-1, 180);
+  }
+  else if (choice == 2)
+  {
+    turn(1, 90);
+    delay(wait);
+
+    //Move to the distance from wall
+    distanceFromWall(startWall);
+    delay(wait);
+
+    //Fine tune the calibration
+    straightenTune();
+    delay(wait);
+
+    turn(-1, 180);
+  }  
 }
