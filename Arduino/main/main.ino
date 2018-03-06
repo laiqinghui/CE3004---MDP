@@ -101,7 +101,10 @@ void setup() {
 
 void loop() 
 {
-  Serial.println(getIRSensorReading()[3]);
+  Serial.println("Next Set1");
+  Serial.println(getIRSensorReading()[2]);
+  Serial.println((int)getSensorReadingInCM()[4]);
+  delay(1000);
   
   if(dataExist()){
     //delay(100);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations 
