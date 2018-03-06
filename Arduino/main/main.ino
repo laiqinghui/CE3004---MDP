@@ -27,14 +27,11 @@ void testSequence2()
 
 void benTestSequence()
 {
-  //turn(-1, 90);
+  turn(1, 90);
   //md.setSpeeds(124, 170);
   //calibration();
   //delay(1000);
   //moveForward(80, 9.5, true);
-  //delay(1000);
-  //getUltraSoundDistance();
-  //avoidAngle();
 }
 
 void processInst(){
@@ -48,7 +45,9 @@ void processInst(){
     
     switch(instBuff[index]){
       
-      case 'W': temp = instBuff[index+1] - 48;
+      case 'W': Serial.println("instBuff[index+1]: ");
+                temp = instBuff[index+1] - 48;
+                Serial.println(temp);
                 moveForward(90, 9.5*temp, true);
                 
                 break;
