@@ -52,6 +52,7 @@ void avoidAngle()
     moveForward(80, 10, true);
     delay(200);
   }
+  /*
   turn(-1, 45);
   delay(500);
   
@@ -66,6 +67,7 @@ void avoidAngle()
 
   turn(1, 45);
   delay(500);
+  */
 }
 
 void straighten()
