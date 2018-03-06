@@ -27,7 +27,7 @@ void testSequence2()
 
 void benTestSequence()
 {
-  //turn(-1, 90);
+  turn(1, 90);
   //md.setSpeeds(124, 170);
   //calibration();
   //delay(1000);
@@ -45,7 +45,9 @@ void processInst(){
     
     switch(instBuff[index]){
       
-      case 'W': temp = instBuff[index+1] - 48;
+      case 'W': Serial.println("instBuff[index+1]: ");
+                temp = instBuff[index+1] - 48;
+                Serial.println(temp);
                 moveForward(90, 9.5*temp, true);
                 
                 break;
@@ -68,16 +70,12 @@ void processInst(){
                     delay(200);
                 }
                 break;
-      case '|': calibration();
+      case ']': calibration();
+                break;          
+      case 'M': moveForward(50, atoi(instBuff+2), true);  
                 break;
-      case ']': fastCalibration(2);
-                break;
-      case 'F': fastCalibration(0);
-                break;                              
-      case 'M': moveForward(50, atoi(instBuff+2), true);
-                return;  
       case 'T': turn(-1, atoi(instBuff+2));
-                return;
+                break;
       case 'S': setOutBuffer('S', getSensorReadingInCM(), 5);
                 interruptPi();//Interrupt RPI to notify data is ready 
                 break;
@@ -116,7 +114,7 @@ void setup() {
   md.init();
   initI2C();
   
-  //benTestSequence();
+  benTestSequence();
 }
 
 void loop() 
