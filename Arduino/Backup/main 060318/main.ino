@@ -1,5 +1,5 @@
+#include "Motor.h"
 #include "I2C.h"
-#include "Calibration.h"
 
 void testSequence1(){
   for(int i = 0; i < 4; i++)
@@ -27,12 +27,9 @@ void testSequence2()
 
 void benTestSequence()
 {
-  //turn(-1, 90);
+  //turn(1, 180);
   //md.setSpeeds(124, 170);
-  //fastCalibration(2);
-  //delay(1000);
-  //moveForward(80, 9.5, true);
-  //avoidAngle();
+  calibration();
 }
 
 void processInst(){
@@ -96,13 +93,15 @@ void setup() {
   Serial.println("Program Started!!!!");
   md.init();
   initI2C();
-  
+
   //benTestSequence();
+  
+
 }
 
 void loop() 
 {
-
+  //Serial.println((int)getSensorReadingInCM()[4]);
   if(dataExist()){
     //delay(100);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations 
     processInst();
