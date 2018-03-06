@@ -1,4 +1,4 @@
-#include "I2C.h"
+  #include "I2C.h"
 #include "Calibration.h"
 
 void testSequence1(){
@@ -29,9 +29,11 @@ void benTestSequence()
 {
   //turn(-1, 90);
   //md.setSpeeds(124, 170);
-  //fastCalibration(2);
+  //calibration();
   //delay(1000);
   //moveForward(80, 9.5, true);
+  //delay(1000);
+  //getUltraSoundDistance();
   //avoidAngle();
 }
 
@@ -40,18 +42,34 @@ void processInst(){
   char *instBuff = getinBuffer();//inBuffer can be accessed directly but not a nice practice i think
   int index = 1;//Start with 1 as first character is sensor flag which is checked after moving
   char num[1] = {0};// For checklist
+  int temp;
   
   while(instBuff[index] != ';'){ 
     
     switch(instBuff[index]){
       
-      case 'W': moveForward(90, 9.5, true);
+      case 'W': temp = instBuff[index+1] - 48;
+                moveForward(90, 9.5*temp, true);
+                
                 break;
-      case 'A': turn(-1, 90);
+      case 'A': temp = instBuff[index+1] - 48;
+                for(int a = 0; a < temp; a++){
+                  turn(-1, 90);
+                    delay(200);
+                }
+                
                 break;
-      case 'D': turn(1, 90);
+      case 'D': temp = instBuff[index+1] - 48;
+                for(int a = 0; a < temp; a++){
+                  turn(1, 90);
+                  delay(200);
+                }
                 break;
-      case 'O': turn(-1, 180);
+      case 'O': temp = instBuff[index+1] - 48;
+                for(int a = 0; a < temp; a++){
+                  turn(-1, 180);
+                    delay(200);
+                }
                 break;
       case ']': calibration();
                 break;          
@@ -72,9 +90,9 @@ void processInst(){
       
       }
     
-    
-    if(instBuff[++index] != ';')
-      delay(200);
+    index+=2;
+    //if(instBuff[index] != ';')
+      //delay(200);
     
     }
     Serial.print("No. of move inst: ");
