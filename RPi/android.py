@@ -83,8 +83,8 @@ class Android(threading.Thread):
         """
         try:
             self.client_sock.send(str(message))
-        except BluetoothError:
-            logging.info("Bluetooth Error - encountered when attempting to send data to Android device")
+        except BluetoothError, msg:
+            logging.info("Bluetooth Error - encountered when attempting to send data to Android device -- %s" %msg)
             self.connected = False
             self.connect()
 
@@ -110,17 +110,18 @@ class Android(threading.Thread):
                     self.startAlgorithm(START_ROW, START_COL, self.waypoint_row, self.waypoint_col, FP_GOAL_ROW, FP_GOAL_COL, FASTEST_PATH, EAST)
                 elif(command == "move"):
                     stepno = msg.split()[1]
-                    stepstring = "CW"+ stepno
+                    stepstring = "CW"+ stepno +";"
                     dispatcher.send(message=stepstring, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
                 elif(command == "rotate"):
                     degrees = msg.split()[1]
                     if(degrees=="90"):
-                        rotatestring="CD"
+                        rotatestring="CD1"+";"
                     elif(degrees=="-90"):
-                        rotatestring="CA"
+                        rotatestring="CA1"+";"
                     else:
-                        rotatestring = "CT" + degrees
-                    dispatcher.send(meessage=rotatestring, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
+                        rotatestring = "CT" + degrees +";"
+                    logging.info(rotatestring)
+                    dispatcher.send(message=rotatestring, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
                 elif(command == "mode"):    # for toggling modes but android will be handling it so its not needed for now
                     dispatcher.send(message=command, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)
                 elif(command == "reset"):
