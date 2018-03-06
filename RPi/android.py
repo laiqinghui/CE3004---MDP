@@ -69,6 +69,8 @@ class Android(threading.Thread):
         if mode == EXPLORATION:
             self.algo_thread.daemon = True
             self.algo_thread.start()
+        if mode == FASTEST_PATH:
+            del self.algo_thread
 
     def stopAlgorithm(self):
         self.algo_thread.stop()
