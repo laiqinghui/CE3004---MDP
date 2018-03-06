@@ -63,8 +63,8 @@ class RPI(threading.Thread):
             explore_mdf_string_update = gs.get_mdf_bitstring(gs.MAZEMAP, 1, 0)
             obstacle_mdf_string_update = gs.get_mdf_bitstring(gs.MAZEMAP, 1, 1)
 
-            print "MAP EXPLORE STATUS MDF: " + gs.get_mdf_bitstring(gs.get_explore_status_mazemap(gs.MAZEMAP), 0)
-            print "OBSTACLE STATUS MDF: " + gs.get_mdf_bitstring(gs.get_obstacle_mazemap(gs.MAZEMAP), 0)
+            print "MAP EXPLORE STATUS MDF: " + explore_mdf_string_update
+            print "OBSTACLE STATUS MDF: " + obstacle_mdf_string_update
 
             map_mdf_update_string = "MDF" + explore_mdf_string_update + 'L' + obstacle_mdf_string_update + 'L'
             dir_update_string = "DIR" + str(abs(robot_row - 19)) + 'L' + str(robot_col) + 'L' + str(robot_dir) + 'L' + robot_moving_stop_string_update
@@ -95,10 +95,11 @@ class RPI(threading.Thread):
         """
         logging.info("sensor value: " + str(message))
         message[0] = message[0] - 13
-        message[1] = message[1] - 8
+        message[1] = message[1] - 9
         message[2] = message[2] - 12
-        message[3] = message[3] - 13
-        message[4] = message[4] - 26
+        message[3] = message[3] - 12
+        message[4] = message[4] - 17
+
 
         # raw_input("---------press enter to continue-------")
 
