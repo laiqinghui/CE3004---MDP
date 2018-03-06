@@ -123,7 +123,7 @@ double getCalibrationReading(int sensor, boolean quick)
 //Calibration
 void calibration()
 {
-  double threshold = 0.1;
+  double threshold = 0.2;
   double startWall = 13.65;
   double leftWall = 13.88;
   int wait = 200;

@@ -27,9 +27,9 @@ void testSequence2()
 
 void benTestSequence()
 {
-  turn(-1, 90);
+  //turn(-1, 90);
   //md.setSpeeds(124, 170);
-  //calibration();
+  calibration();
   //delay(1000);
   //moveForward(80, 9.5, true);
   //avoidAngle();
