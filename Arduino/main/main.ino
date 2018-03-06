@@ -34,7 +34,7 @@ void benTestSequence()
   //moveForward(80, 9.5, true);
   //delay(1000);
   //getUltraSoundDistance();
-  avoidAngle();
+  //avoidAngle();
 }
 
 void processInst(){
