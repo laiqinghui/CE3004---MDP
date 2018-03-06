@@ -114,7 +114,12 @@ class Android(threading.Thread):
                     dispatcher.send(message=stepstring, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
                 elif(command == "rotate"):
                     degrees = msg.split()[1]
-                    rotatestring = "CT" + degrees
+                    if(degrees=="90"):
+                        rotatestring="CD"
+                    elif(degrees=="-90"):
+                        rotatestring="CA"
+                    else:
+                        rotatestring = "CT" + degrees
                     dispatcher.send(meessage=rotatestring, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
                 elif(command == "mode"):    # for toggling modes but android will be handling it so its not needed for now
                     dispatcher.send(message=command, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)
