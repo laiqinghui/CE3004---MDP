@@ -65,8 +65,10 @@ class Android(threading.Thread):
 
     def startAlgorithm(self, robot_row, robot_col, waypoint_row, waypoint_col, goal_row, goal_col, mode, dir):
         self.algo_thread = Algorithm(robot_row, robot_col, waypoint_row, waypoint_col, goal_row, goal_col, mode, dir)
-        self.algo_thread.daemon = True
-        self.algo_thread.start()
+        # only exploration mode need to start thread
+        if mode == EXPLORATION:
+            self.algo_thread.daemon = True
+            self.algo_thread.start()
 
     def stopAlgorithm(self):
         self.algo_thread.stop()
