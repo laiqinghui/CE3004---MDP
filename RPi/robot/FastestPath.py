@@ -3,7 +3,7 @@
 import copy
 import numpy as np
 
-from Constants import MAX_ROWS, MAX_COLS, NORTH, SOUTH, EAST, WEST, FORWARD, LEFT, RIGHT, START, GOAL
+from Constants import MAX_ROWS, MAX_COLS, NORTH, SOUTH, EAST, WEST, FORWARD, LEFT, RIGHT
 
 
 class Node:
@@ -292,7 +292,6 @@ class FastestPath:
         while (self.robot.center.tolist() != self.goal.tolist()):
             self.moveStep()
         print "Fastest Path completed!"
-        print self.movement
         return self.movement
 
     def getFastestPath(self):
