@@ -362,7 +362,7 @@ class Robot:
 
     # def can_calibrate_right(self):
     #     """To calibrate the robot according to the right wall.
-    # 
+    #
     #     Returns:
     #         flag (bool): Specify the direction to calibrate
     #
