@@ -58,7 +58,6 @@ class Android(threading.Thread):
                 self.client_sock.close()
                 self.connect()
                 return 0
-        try:
             self.sendAndroid("Connection Secured")
             self.connected = True
             self.receiveAndroid()

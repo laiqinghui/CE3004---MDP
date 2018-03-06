@@ -70,6 +70,9 @@ def get_mdf_bitstring(mmap, format=0):
 
 
 def aggregate_instruction(instruction):
+    if len(instruction) == 0:
+        return []
+
     instruction_list = [ch + '1' for ch in instruction]
     updatedInstruction = [instruction_list[0]]
     for ch in instruction_list[1:]:
