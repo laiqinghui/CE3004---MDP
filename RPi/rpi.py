@@ -67,7 +67,7 @@ class RPI(threading.Thread):
             print "OBSTACLE STATUS MDF: " + gs.get_mdf_bitstring(gs.get_obstacle_mazemap(gs.MAZEMAP), 0)
 
             map_mdf_update_string = "MDF" + explore_mdf_string_update + 'L' + obstacle_mdf_string_update + 'L'
-            dir_update_string = "DIR" + str(robot_row) + 'L' + str(robot_col) + 'L' + str(robot_dir) + 'L' + robot_moving_stop_string_update
+            dir_update_string = "DIR" + str(abs(robot_row - 19)) + 'L' + str(robot_col) + 'L' + str(robot_dir) + 'L' + robot_moving_stop_string_update
 
             self.feedback_android(map_mdf_update_string)
             self.feedback_android(dir_update_string)
