@@ -4,6 +4,7 @@ import threading
 import sys
 
 from pydispatch import dispatcher
+from websocket import create_connection
 
 import global_settings as gs
 
@@ -15,6 +16,7 @@ class RPI(threading.Thread):
         self.running = False
         self.autoupdate = True
         self.instrNum = 1
+        # self.pc_ws = create_connection("ws://192.168.5.18:8888/ws")
 
         dispatcher.connect(self.command_rpi, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)
         dispatcher.connect(self.manage_algorithm_signal, signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
@@ -99,7 +101,6 @@ class RPI(threading.Thread):
         message[2] = message[2] - 12
         message[3] = message[3] - 12
         message[4] = message[4] - 17
-
 
         # raw_input("---------press enter to continue-------")
 
