@@ -32,6 +32,12 @@ void benTestSequence()
   //calibration();
   //delay(1000);
   //moveForward(80, 9.5, true);
+<<<<<<< HEAD
+=======
+  //delay(1000);
+  //getUltraSoundDistance();
+  //avoidAngle();
+>>>>>>> a3016299bc75475b80cedf2cc53ae07095ad580d
 }
 
 void processInst(){
