@@ -14,6 +14,7 @@ class RPI(threading.Thread):
         super(RPI, self).__init__()
         self.running = False
         self.autoupdate = True
+        self.instrNum = 1
 
         dispatcher.connect(self.command_rpi, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)
         dispatcher.connect(self.manage_algorithm_signal, signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
@@ -85,11 +86,13 @@ class RPI(threading.Thread):
         - Updates from Arduino to be processed and passed to Android
         """
         logging.info("sensor value: " + str(message))
-        message[0] = message[0] - 13
-        message[1] = message[1] - 9
-        message[2] = message[2] - 16
-        message[3] = message[3] - 14
-        message[4] = message[4] - 15
+        message[0] = message[0] - 12
+        message[1] = message[1] - 8
+        message[2] = message[2] - 14
+        message[3] = message[3] - 15
+        message[4] = message[4] - 26
+
+        # raw_input("---------press enter to continue-------")
 
         logging.info("send sensor values to algo:" + str(message))
 
