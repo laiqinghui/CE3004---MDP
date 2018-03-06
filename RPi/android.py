@@ -58,7 +58,6 @@ class Android(threading.Thread):
                 self.client_sock.close()
                 self.connect()
                 return 0
-        try:
             self.sendAndroid("Connection Secured")
             self.connected = True
             self.receiveAndroid()
@@ -101,21 +100,22 @@ class Android(threading.Thread):
                 command = msg.split()[0]
                 if(command == "ca"):
                     self.waypoint_row = int(msg.split()[1])
+                    self.waypoint_row = -(self.waypoint_row - 19) #Flipping coords for algo
                     self.waypoint_col = int(msg.split()[2])
+                    # remember to add send calibration string
                     dispatcher.send(message=command, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)
                 elif(command == "ex"):
                     self.startAlgorithm(START_ROW, START_COL, self.waypoint_row, self.waypoint_col, FP_GOAL_ROW, FP_GOAL_COL, EXPLORATION, EAST)
                 elif(command == "fp"):
                     self.startAlgorithm(START_ROW, START_COL, self.waypoint_row, self.waypoint_col, FP_GOAL_ROW, FP_GOAL_COL, FASTEST_PATH, EAST)
                 elif(command == "move"):
-                    steps = int(msg.split()[1])
-                    temp = ""
-                    for i in range(steps):
-                        temp = temp + "W"
-                    movemessage = "C" + temp
-                    dispatcher.send(message=movemessage, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
+                    stepno = msg.split()[1]
+                    stepstring = "CW"+ stepno
+                    dispatcher.send(message=stepstring, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
                 elif(command == "rotate"):
-                    degrees = int(msg.split()[1])
+                    degrees = msg.split()[1]
+                    rotatestring = "CT" + degrees
+                    dispatcher.send(meessage=rotatestring, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
                 elif(command == "mode"):    # for toggling modes but android will be handling it so its not needed for now
                     dispatcher.send(message=command, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)
                 elif(command == "reset"):
