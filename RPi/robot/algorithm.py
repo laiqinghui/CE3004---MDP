@@ -44,36 +44,23 @@ class Algorithm(threading.Thread):
                                                           goal=[self.g_row, self.g_col],
                                                           direction=self.dir,
                                                           waypoint=[self.w_row, self.w_col])
-            dispatcher.connect(self.determine_fastest_path, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
+            self.determine_fastest_path()
+            # dispatcher.connect(self.determine_fastest_path, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
         else:
             dispatcher.connect(self.test_message_received, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
 
         logging.info("algorithm initialized")
-        # empty move instruction to ask arduino to start sensing environment
 
     def determine_exploration_path(self, message):
 
         sensor_vals = message
-        # instruction = []
-        # completed = False
-
         instruction, completed, robot_loc, robot_dir = self.algorithmClass.moveStep(sensor_vals)
-
-        print robot_loc
-
         dispatcher.send(message=(instruction, completed, robot_loc, robot_dir), signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
 
-    def determine_fastest_path(self, message):
+    def determine_fastest_path(self):
 
-        sensor_vals = message
-        instruction = []
-        # message e.g. front and side have obstacle or not
-        # logging.info("Fastest path robot now at position " + str(self.r_row) + ", " + str(self.r_col))
-        # logging.info("Algorithm receive obstacle info: " + str(sensor_vals) + ", now calculating robot path...")
-        # time.sleep(1)
-        # instruction = self.algorithmClass.moveStep(sensor_vals)
-
-        dispatcher.send(message=instruction, signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
+        instruction = self.algorithmClass.fastestPathRun()
+        dispatcher.send(message=(instruction, ), signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
 
     def test_message_received(self, message):
         logging.info("Algorithm receive message '" + str(message) + "' from RPI")
