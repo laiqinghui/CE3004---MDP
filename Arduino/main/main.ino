@@ -29,10 +29,12 @@ void benTestSequence()
 {
   //turn(-1, 90);
   //md.setSpeeds(124, 170);
-  calibration();
+  //calibration();
   //delay(1000);
   //moveForward(80, 9.5, true);
-  //avoidAngle();
+  //delay(1000);
+  //getUltraSoundDistance();
+  avoidAngle();
 }
 
 void processInst(){
@@ -65,7 +67,8 @@ void processInst(){
                   delay(200);
                 }
                 break;
-      case 'O': for(int a = 0; a < temp; a++){
+      case 'O': temp = instBuff[index+1] - 48;
+                for(int a = 0; a < temp; a++){
                   turn(-1, 180);
                     delay(200);
                 }
