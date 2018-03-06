@@ -104,9 +104,9 @@ class Android(threading.Thread):
                     self.waypoint_col = int(msg.split()[2])
                     dispatcher.send(message=command, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)
                 elif(command == "ex"):
-                    self.startAlgorithm(START_ROW, START_COL, waypoint_row, waypoint_col, FP_GOAL_ROW, FP_GOAL_COL, EXPLORATION, EAST)
+                    self.startAlgorithm(START_ROW, START_COL, self.waypoint_row, self.waypoint_col, FP_GOAL_ROW, FP_GOAL_COL, EXPLORATION, EAST)
                 elif(command == "fp"):
-                    self.startAlgorithm(START_ROW, START_COL, waypoint_row, waypoint_col, FP_GOAL_ROW, FP_GOAL_COL, FASTEST_PATH, EAST)
+                    self.startAlgorithm(START_ROW, START_COL, self.waypoint_row, self.waypoint_col, FP_GOAL_ROW, FP_GOAL_COL, FASTEST_PATH, EAST)
                 elif(command == "move"):
                     steps = int(msg.split()[1])
                     temp = ""
