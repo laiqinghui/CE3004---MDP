@@ -175,27 +175,31 @@ double getTurnAmount(int dir, int turnDegree){
   		double degree180 = 53.1; //cir is 53.1
   		if(turnDegree < 90)
   		{
-  			return (turnDegree/90)*abs(degree90 * 0.25 * ticksPerCM);
+  			return abs(degree90 * (turnDegree/360.0) * ticksPerCM);
   		}
   		else
   		{
   			double closenessTo90 = ((turnDegree-90)/90.0)*degree180;
   			double closenessTo180 = ((180 - turnDegree)/90.0)*degree90;
   		  
-  			return abs((closenessTo90 + closenessTo180) * turnDegree/360 * ticksPerCM);
+  			return abs((closenessTo90 + closenessTo180) * (turnDegree/360.0) * ticksPerCM);
       }
     }
     else
     {
-		double turn90 = 47.6; //cir is 47.6
-		double turn180 = 49.65; //cir is 49.65
-      if(turnDegree == 90)
+		  double degree90 = 48.55; //cir is 47.6
+		  double degree180 = 49.65; //cir is 49.65
+      if(turnDegree < 90)
       {
-        return abs(48.55 * 0.25 * ticksPerCM); //cir is 48.55
+        Serial.println(abs(degree90 * (turnDegree/360.0) * ticksPerCM));
+        return abs(degree90 * (turnDegree/360.0) * ticksPerCM);
       }
-      else if(turnDegree == 180)
+      else
       {
-        return abs(49.65 * 0.5 * ticksPerCM); //cir is 49.65
+        double closenessTo90 = ((turnDegree-90)/90.0)*degree180;
+        double closenessTo180 = ((180 - turnDegree)/90.0)*degree90;
+        
+        return abs((closenessTo90 + closenessTo180) * (turnDegree/360.0) * ticksPerCM);
       }
     }
 }
