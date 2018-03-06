@@ -27,11 +27,12 @@ void testSequence2()
 
 void benTestSequence()
 {
-  //turn(1, 180);
+  //turn(-1, 90);
   //md.setSpeeds(124, 170);
-  fastCalibration(2);
-  delay(1000);
-  moveForward(80, 9.5, true);
+  //fastCalibration(2);
+  //delay(1000);
+  //moveForward(80, 9.5, true);
+  //avoidAngle();
 }
 
 void processInst(){
@@ -101,7 +102,7 @@ void setup() {
 
 void loop() 
 {
-  
+
   if(dataExist()){
     //delay(100);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations 
     processInst();
