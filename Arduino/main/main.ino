@@ -27,11 +27,7 @@ void testSequence2()
 
 void benTestSequence()
 {
-  for(int a =0; a<10; a++)
-  {
-    turn(-1, 180);
-    delay(1000);
-  }
+  turn(-1, 180);
   //md.setSpeeds(124, 170);
   //calibration();
   //delay(1000);
@@ -43,27 +39,24 @@ void processInst(){
   char *instBuff = getinBuffer();//inBuffer can be accessed directly but not a nice practice i think
   int index = 1;//Start with 1 as first character is sensor flag which is checked after moving
   char num[1] = {0};// For checklist
-  int temp;
+  int moveCount = 0;
   
   while(instBuff[index] != ';'){ 
     
     switch(instBuff[index]){
       
-      case 'W': Serial.println("instBuff[index+1]: ");
-                temp = instBuff[index+1] - 48;
-                Serial.println(temp);
-                moveForward(90, 9.5*temp, true);
-                
+      case 'W': moveCount = instBuff[index+1] - 48;
+                moveForward(90, 9.5*moveCount, true);
                 break;
-      case 'A': temp = instBuff[index+1] - 48;
-                for(int a = 0; a < temp; a++){
+      case 'A': moveCount = instBuff[index+1] - 48;
+                for(int a = 0; a < moveCount; a++){
                   turn(-1, 90);
                     delay(200);
                 }
                 
                 break;
-      case 'D': temp = instBuff[index+1] - 48;
-                for(int a = 0; a < temp; a++){
+      case 'D': moveCount = instBuff[index+1] - 48;
+                for(int a = 0; a < moveCount; a++){
                   turn(1, 90);
                   delay(200);
                 }
@@ -71,11 +64,15 @@ void processInst(){
       case 'O': moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
                   turn(1, 180);
-                  delay(200);
+                    delay(200);
                 }
                 break;
-      case ']': calibration();
+      case ']': fastCalibration(2);
+                break;
+      case 'F': fastCalibration(0);
                 break;          
+      case '|': calibration();
+                break;                     
       case 'M': moveForward(50, atoi(instBuff+2), true);  
                 break;
       case 'T': turn(-1, atoi(instBuff+2));
@@ -118,7 +115,7 @@ void setup() {
   md.init();
   initI2C();
   
-  //benTestSequence();
+  benTestSequence();
 }
 
 void loop() 
