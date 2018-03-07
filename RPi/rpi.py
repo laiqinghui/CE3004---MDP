@@ -15,7 +15,6 @@ class RPI(threading.Thread):
         super(RPI, self).__init__()
         self.running = False
         self.autoupdate = True
-        self.instrNum = 1
         # self.pc_ws = create_connection("ws://192.168.5.18:8888/ws")
 
         dispatcher.connect(self.command_rpi, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)
@@ -25,9 +24,9 @@ class RPI(threading.Thread):
         logging.info("rpi initialized")
 
     def command_rpi(self, message):
+        # logging.info("rpi received message from android and write message: " + str(message))
         if message == "mode":
             self.autoupdate = not self.autoupdate
-        # logging.info("rpi received message from android and write message: " + str(message))
 
     def manage_algorithm_signal(self, message):
         """
@@ -42,9 +41,7 @@ class RPI(threading.Thread):
         if len(message) > 1:
 
             instruction = message[0]
-
             completed = message[1]
-
             robot_row = message[2][0]
             robot_col = message[2][1]
             robot_dir = message[3]
@@ -53,12 +50,10 @@ class RPI(threading.Thread):
             aggregated_instruction_list = gs.aggregate_instruction(raw_instruction)
 
             if not completed:
-                # formatted_instruction = 'S' + ''.join(instruction) + ';'
                 formatted_instruction = 'S' + ''.join(aggregated_instruction_list) + ';'
                 robot_moving_stop_string_update = '1L'   # robot no longer moving after instruction
             else:
                 # exploration completed, arduino do not need to sense environment after moving robot
-                # formatted_instruction = 'C' + ''.join(instruction) + ';'
                 formatted_instruction = 'C' + ''.join(aggregated_instruction_list) + ';'
                 robot_moving_stop_string_update = '0L'   # robot still going moving after instruction
 
@@ -83,11 +78,7 @@ class RPI(threading.Thread):
         dispatcher.send(message=formatted_instruction, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
         logging.info("robot location: " + str(robot_row) + ", " + str(robot_col))
         print gs.MAZEMAP
-        logging.info("print instr no: " + str(self.instrNum))
-        logging.info("number of instruction counts" + str(len(formatted_instruction[1:-1])))
         logging.info("rpi received message from algorithm and write message to arduino: " + str(formatted_instruction))
-        self.instrNum = self.instrNum + 1
-
         print "==============================================================="
 
     def manage_arduino_signal(self, message):
@@ -112,7 +103,7 @@ class RPI(threading.Thread):
     def feedback_android(self, message):
         if self.autoupdate:
             dispatcher.send(message=message, signal=gs.RPI_ANDROID_SIGNAL, sender=gs.RPI_SENDER)
-        # logging.info("rpi send feedback message to android: " + str(message))
+            logging.info("rpi send feedback message to android: " + str(message))
 
     def start(self):
         self.running = True
