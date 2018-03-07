@@ -8,59 +8,42 @@
 #define e2a 11
 #define e2b 13
 
-#define frontLeftReading sensorsCalibrationCM[0]
-#define frontRightReading sensorsCalibrationCM[1]
-
 //Function Declaration
 void straighten();
 void straightenTune();
 void distanceFromWall(double distance);
-double* getCalibrationReading(boolean quick);
+double getCalibrationReading(int sensor, boolean quick);
 void calibration();
-double* calibrationSensorReading();
-
-double sensorCalibrationValues[2];
-double sensorsCalibrationCM[2];
 
 void straighten()
 {
-    getCalibrationReading(false);
-    if(frontRightReading > frontLeftReading)
+    if (getCalibrationReading(frontRight, false) > getCalibrationReading(frontLeft, false))
     {
       md.setSpeeds(75, -120);
-      while(frontRightReading > frontLeftReading)
-      {
-        getCalibrationReading(true);
-      }
+      while (getCalibrationReading(frontRight, true) > getCalibrationReading(frontLeft, true));
     }
-    else if(frontRightReading < frontLeftReading)
+    else if(getCalibrationReading(frontRight, false) < getCalibrationReading(frontLeft, false))
     {
       md.setSpeeds(-69, 120);
-      while(frontRightReading < frontLeftReading)
-      {
-        getCalibrationReading(true);
-      }
+      while (getCalibrationReading(frontRight, true) < getCalibrationReading(frontLeft, true));
     }
     md.setBrakes(400, 400);
 }
 
 void straightenTune()
 {
-    getCalibrationReading(false);
-    if(frontRightReading > frontLeftReading)
-    { 
-      while(frontRightReading > frontLeftReading)
+    if (getCalibrationReading(frontRight, false) > getCalibrationReading(frontLeft, false))
+    {     
+      while (getCalibrationReading(frontRight, true) > getCalibrationReading(frontLeft, true))
       {
         md.setSpeeds(110, 0);
-        getCalibrationReading(true);
       }
     }
-    else if(frontRightReading < frontLeftReading)
-    {
-      while(frontRightReading < frontLeftReading)
+    else if(getCalibrationReading(frontRight, false) < getCalibrationReading(frontLeft, false))
+    {   
+      while (getCalibrationReading(frontRight, true) < getCalibrationReading(frontLeft, true))
       {
-        md.setSpeeds(-110, 0);
-        getCalibrationReading(true);
+         md.setSpeeds(-110, 0);
       }
     }
     md.setBrakes(400, 400);
@@ -69,48 +52,49 @@ void straightenTune()
 void distanceFromWall(double distance)
 {  
   //Fine tune the distance from wall
-  getCalibrationReading(false);
-  if(frontRightReading > distance)
+  if(getCalibrationReading(frontRight, false) > distance)
   {
     md.setSpeeds(118, 140);
-    while(frontRightReading > distance)
-    {
-      getCalibrationReading(true);
-    }
+    while(getCalibrationReading(frontRight, true) > distance);
   }
-  else if(frontRightReading < distance)
+  else if(getCalibrationReading(frontRight, false) < distance)
   {
     md.setSpeeds(-116, -140);
-    while(frontRightReading > distance)
-    {
-      getCalibrationReading(true);
-    }
+    while(getCalibrationReading(frontRight, true) < distance);
   }
   md.setBrakes(400, 400);
 }
 
 //Get average reading over a number of samples
-double* getCalibrationReading(boolean quick)
+double getCalibrationReading(int sensor, boolean quick)
 {
+  double amount = 0;
   if(quick)
   {  
-    sensorCalibrationValues[0] = analogRead(frontLeft);
-    sensorCalibrationValues[1] = analogRead(frontRight);
+    amount = analogRead(sensor);
   }
   else
   {
-    calibrationSensorReading();
+    if(sensor == frontRight)
+    {
+      amount = getIRSensorReading()[1];
+    }
+    else
+    {
+      amount = getIRSensorReading()[0];
+    }
   }
   
-  //FrontRight
-  //y = 5401x - 0.1758
-  sensorsCalibrationCM[1] = 5401*(1/sensorCalibrationValues[1])-0.1758;
-    
-  //Front Left
-  //y = 5288.6x + 0.0799
-  sensorsCalibrationCM[0] = 5288.6*(1/sensorCalibrationValues[0])+ 0.0799;
-
-  return sensorsCalibrationCM;
+  if(sensor == frontRight)
+  {
+    //y = 5401x - 0.1758
+    return 5401*(1/amount)-0.1758;
+  }
+  else if(sensor == frontLeft)
+  {
+    //y = 5288.6x + 0.0799
+    return 5288.6*(1/amount)+ 0.0799;
+  }
 }	
 
 //Calibration
@@ -131,12 +115,8 @@ void calibration()
 
   //Fine tune the calibration
   int count = 0;
-  getCalibrationReading(false);
-  while(abs(frontRightReading - frontLeftReading) > threshold)
+  while(abs(getCalibrationReading(frontRight, false) - getCalibrationReading(frontLeft, false)) > threshold)
   {
-    Serial.println("Set");
-    Serial.println(frontRightReading);
-    Serial.println(frontLeftReading);
     if(count == 4)
     {
       md.setSpeeds(75, 0);
@@ -148,7 +128,6 @@ void calibration()
     count++;
     
     delay(100);
-    getCalibrationReading(false);
   }
   delay(wait);
 
@@ -166,8 +145,7 @@ void calibration()
 
   //Fine tune the calibration
   count = 0;
-  getCalibrationReading(false);
-  while(abs(frontRightReading - frontLeftReading) > threshold)
+  while(abs(getCalibrationReading(frontRight, false) - getCalibrationReading(frontLeft, false)) > threshold)
   {
     if(count == 4)
     {
@@ -180,7 +158,6 @@ void calibration()
     count++;
     
     delay(100);
-    getCalibrationReading(false);
   }
   delay(wait);
 
@@ -204,7 +181,6 @@ void fastCalibration(int choice)
   int wait = 200;
   
   //Quick calibration against wall
-  delay(100);
   straighten();
   delay(wait);
 
@@ -213,9 +189,6 @@ void fastCalibration(int choice)
   delay(wait);
 
   //Fine tune the calibration
-  straightenTune();
-  delay(wait);
-
   straightenTune();
   delay(wait);
 
@@ -232,9 +205,6 @@ void fastCalibration(int choice)
     straightenTune();
     delay(wait);
 
-    straightenTune();
-  delay(wait);
-
     turn(1, 90);
   }
   else if (choice == 2)
@@ -250,33 +220,6 @@ void fastCalibration(int choice)
     straightenTune();
     delay(wait);
 
-    straightenTune();
-  delay(wait);
-
     turn(-1, 90);
   }  
 }
-
-
-double* calibrationSensorReading()
-{
-  int size = 100;
-  
-  int listOfReadingsFL[size];
-  int listOfReadingsFR[size];
-
-  //Get Reading from Sensor
-  for(int a = 0; a<size; a++)
-  {
-    listOfReadingsFL[a] = analogRead(frontLeft);
-    listOfReadingsFR[a] = analogRead(frontRight);
-    delay(1);
-  }
-  
-  //Get median averaged from list
-  sensorCalibrationValues[0] = sortAndAverage(listOfReadingsFL, size);
-  sensorCalibrationValues[1] = sortAndAverage(listOfReadingsFR, size);
-
-  return sensorCalibrationValues;
-}
-
