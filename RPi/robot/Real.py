@@ -113,7 +113,7 @@ class Robot:
             Numpy array of Numpy arrays: Sensor values from all sensors
 
         """
-        # distanceSuperShort = 1
+        distanceSuperShort = 2
         distanceShort = 3
         distanceLong = 5
         r, c = self.center
@@ -175,21 +175,21 @@ class Robot:
 
         # Right Top
         if self.direction == NORTH:
-            self.getValue(zip([r-1]*distanceShort,
-                          range(c+2, c+distanceShort+2)),
-                          sensor_vals[3], distanceShort, True, True)
+            self.getValue(zip([r-1]*distanceSuperShort,
+                          range(c+2, c+distanceSuperShort+2)),
+                          sensor_vals[3], distanceSuperShort, True, True)
         elif self.direction == EAST:
-            self.getValue(zip(range(r+2, r+distanceShort+2),
-                          [c+1]*distanceShort), sensor_vals[3],
-                          distanceShort, True, True)
+            self.getValue(zip(range(r+2, r+distanceSuperShort+2),
+                          [c+1]*distanceSuperShort), sensor_vals[3],
+                          distanceSuperShort, True, True)
         elif self.direction == WEST:
-            self.getValue(zip(range(r-distanceShort-1, r-1),
-                          [c-1]*distanceShort)[::-1], sensor_vals[3],
-                          distanceShort, True, True)
+            self.getValue(zip(range(r-distanceSuperShort-1, r-1),
+                          [c-1]*distanceSuperShort)[::-1], sensor_vals[3],
+                          distanceSuperShort, True, True)
         else:
-            self.getValue(zip([r+1]*distanceShort,
-                          range(c-distanceShort-1, c-1))[::-1],
-                          sensor_vals[3], distanceShort, True, True)
+            self.getValue(zip([r+1]*distanceSuperShort,
+                          range(c-distanceSuperShort-1, c-1))[::-1],
+                          sensor_vals[3], distanceSuperShort, True, True)
 
         # Left Top
         if self.direction == NORTH:
