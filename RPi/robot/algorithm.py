@@ -44,7 +44,7 @@ class Algorithm(threading.Thread):
                                                           goal=[self.g_row, self.g_col],
                                                           direction=self.dir,
                                                           waypoint=[self.w_row, self.w_col])
-            self.determine_fastest_path()
+            # self.determine_fastest_path()
             # dispatcher.connect(self.determine_fastest_path, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
         else:
             dispatcher.connect(self.test_message_received, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
@@ -60,6 +60,10 @@ class Algorithm(threading.Thread):
     def determine_fastest_path(self):
 
         instruction = self.algorithmClass.fastestPathRun()
+        # dispatcher.send(message=(instruction, ), signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
+        return instruction
+
+    def run_fatest_path_on(instruction):
         dispatcher.send(message=(instruction, ), signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
 
     def test_message_received(self, message):
