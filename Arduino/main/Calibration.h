@@ -280,3 +280,40 @@ double* calibrationSensorReading()
   return sensorCalibrationValues;
 }
 
+void tuneM1Negative(int desiredRPM, MotorPID *M1){
+
+
+  double tuneSpeed = 0;
+  double currentRPM = sqWidthToRPM(squareWidth_M1);
+  
+  M1->currentErr =  desiredRPM - currentRPM;
+  //tuneSpeed = M1->prevTuneSpeed + 0.47*M1->currentErr;
+  tuneSpeed = M1->prevTuneSpeed - M1->gain*M1->currentErr + (M1->gain/0.05)*(M1->currentErr - M1->prevErr1);
+
+  md.setM1Speed(tuneSpeed);
+  M1->prevTuneSpeed = tuneSpeed;
+  M1->prevErr1 = M1->currentErr;
+
+  //Serial.print("M1 tunespeed: ");
+  //Serial.println(tuneSpeed);
+
+ 
+  }
+
+void tuneM2Negative(int desiredRPM, MotorPID *M2){
+  
+  
+  double tuneSpeed = 0;
+  double currentRPM = sqWidthToRPM(squareWidth_M2);
+  
+  M2->currentErr =  desiredRPM - currentRPM;
+  //tuneSpeed = M2->prevTuneSpeed + 0.5*M2->currentErr;
+  tuneSpeed = M2->prevTuneSpeed - M2->gain*M2->currentErr + (M2->gain/0.05)*(M2->currentErr - M2->prevErr1);
+
+  md.setM2Speed(tuneSpeed);
+  M2->prevErr1 = M2->currentErr;
+  M2->prevTuneSpeed = tuneSpeed;
+  
+ 
+  }
+

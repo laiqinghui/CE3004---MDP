@@ -115,12 +115,12 @@ void setup() {
   md.init();
   initI2C();
   
-  benTestSequence();
+  //benTestSequence();
 }
 
 void loop() 
 {
-  Serial.println(frontRightReading);
+  //Serial.println(frontRightReading);
   if(dataExist()){
     //delay(100);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations 
     processInst();
