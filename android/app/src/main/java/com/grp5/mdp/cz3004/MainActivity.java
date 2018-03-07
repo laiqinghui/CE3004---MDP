@@ -8,11 +8,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.speech.RecognizerIntent;
 import android.support.v4.app.Fragment;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentActivity;
@@ -24,16 +30,23 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.math.BigInteger;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -47,7 +60,7 @@ public class MainActivity extends AppCompatActivity
 
     BluetoothChatService mChatService;
     String arduinoAddr;
-
+    String bluetoothStatus="Disconnected";
     /**
      * String buffer for outgoing messages
      */
@@ -59,6 +72,28 @@ public class MainActivity extends AppCompatActivity
      * Name of the connected device
      */
     private String mConnectedDeviceName = null;
+    private PopupWindow mPopupWindow;
+    private View mLayout;
+    private String exploredBin = "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+    private String obstacleBin = "0";
+
+    private final int REQUEST_SPEECH_RECOGNIZER = 3000;
+    private String mVoiceCommand;
+    private String dirRow = "1";
+    private String dirCol = "1";
+    private String dirDir = "2";
+    private String dirMoveOrStop = "1";
+    private String exploredHex;
+    private String obstacleHex;
+
+    private static String readMessage;
+
+//    private SensorManager mSensorManager;
+//    private final float[] mAccelerometerReading = new float[3];
+//    private final float[] mMagnetometerReading = new float[3];
+
+//    private final float[] mRotationMatrix = new float[9];
+//    private final float[] mOrientationAngles = new float[3];
 
     @SuppressLint("HandlerLeak")
     @Override
@@ -67,6 +102,8 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+//        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         BTAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -107,7 +144,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             // Create a new Fragment to be placed in the activity layout
-            BluetoothFragment btFragment = BluetoothFragment.newInstance(BTAdapter, mChatService);
+            BluetoothFragment btFragment = BluetoothFragment.newInstance(BTAdapter, mChatService, bluetoothStatus);
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
@@ -115,10 +152,13 @@ public class MainActivity extends AppCompatActivity
 
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, btFragment).commit();
+                    .add(R.id.fragment_container, btFragment, "BluetoothFragment")
+                    .addToBackStack("BluetoothFragment")
+                    .commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mLayout = drawer;
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -128,6 +168,71 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
     }
+
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//
+//        // Get updates from the accelerometer and magnetometer at a constant rate.
+//        // To make batch operations more efficient and reduce power consumption,
+//        // provide support for delaying updates to the application.
+//        //
+//        // In this example, the sensor reporting delay is small enough such that
+//        // the application receives an update before the system checks the sensor
+//        // readings again.
+//        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_UI);
+//        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
+//                SensorManager.SENSOR_DELAY_UI);
+//    }
+
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//
+//        // Don't receive any more updates from either sensor.
+//        mSensorManager.unregisterListener(this);
+//    }
+//
+//    // Get readings from accelerometer and magnetometer. To simplify calculations,
+//    // consider storing these readings as unit vectors.
+//    @Override
+//    public void onSensorChanged(SensorEvent event) {
+//        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+//            System.arraycopy(event.values, 0, mAccelerometerReading,
+//                    0, mAccelerometerReading.length);
+//        }
+//        else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+//            System.arraycopy(event.values, 0, mMagnetometerReading,
+//                    0, mMagnetometerReading.length);
+//        }
+//        updateOrientationAngles();
+//    }
+//
+//    @Override
+//    public void onAccuracyChanged(Sensor sensor, int i) {
+//
+//    }
+
+//    // Compute the three orientation angles based on the most recent readings from
+//    // the device's accelerometer and magnetometer.
+//    public void updateOrientationAngles() {
+//        // Update rotation matrix, which is needed to update orientation angles.
+//        mSensorManager.getRotationMatrix(mRotationMatrix, null,
+//                mAccelerometerReading, mMagnetometerReading);
+//
+//        // "mRotationMatrix" now has up-to-date information.
+//
+//        mSensorManager.getOrientation(mRotationMatrix, mOrientationAngles);
+//
+//        // "mOrientationAngles" now has up-to-date information.
+//
+//        TextView x = (TextView) findViewById(R.id.x_orientation);
+//        TextView y = (TextView) findViewById(R.id.y_orientation);
+//        TextView z = (TextView) findViewById(R.id.z_orientation);
+//        if(x!=null){x.setText(String.valueOf(mOrientationAngles[0]));}
+//        if(y!=null){y.setText(String.valueOf(mOrientationAngles[1]));}
+//        if(z!=null){z.setText(String.valueOf(mOrientationAngles[2]));}
+//    }
 
     @Override
     public void onBackPressed() {
@@ -155,7 +260,73 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            // Initialize a new instance of LayoutInflater service
+            LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+
+            // Inflate the custom layout/view
+            View customView = inflater.inflate(R.layout.popup_layout,null);
+
+                /*
+                    public PopupWindow (View contentView, int width, int height)
+                        Create a new non focusable popup window which can display the contentView.
+                        The dimension of the window must be passed to this constructor.
+
+                        The popup does not provide any background. This should be handled by
+                        the content view.
+
+                    Parameters
+                        contentView : the popup's content
+                        width : the popup's width
+                        height : the popup's height
+                */
+            // Initialize a new instance of popup window
+            mPopupWindow = new PopupWindow(
+                    customView,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+
+            // Set an elevation value for popup window
+            // Call requires API level 21
+            if(Build.VERSION.SDK_INT>=21){
+                mPopupWindow.setElevation(5.0f);
+            }
+
+            TextView mdf_exp = (TextView) customView.findViewById(R.id.mdf_exp);
+            mdf_exp.setText(exploredHex);
+            TextView mdf_obs = (TextView) customView.findViewById(R.id.mdf_obs);
+            mdf_obs.setText(obstacleHex);
+            TextView mdf_log = (TextView) customView.findViewById(R.id.mdf_log);
+            mdf_log.setText(readMessage);
+
+            // Get a reference for the custom view close button
+            ImageButton closeButton = (ImageButton) customView.findViewById(R.id.ib_close);
+
+            // Set a click listener for the popup window close button
+            closeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Dismiss the popup window
+                    mPopupWindow.dismiss();
+                }
+            });
+
+                /*
+                    public void showAtLocation (View parent, int gravity, int x, int y)
+                        Display the content view in a popup window at the specified location. If the
+                        popup window cannot fit on screen, it will be clipped.
+                        Learn WindowManager.LayoutParams for more information on how gravity and the x
+                        and y parameters are related. Specifying a gravity of NO_GRAVITY is similar
+                        to specifying Gravity.LEFT | Gravity.TOP.
+
+                    Parameters
+                        parent : a parent view to get the getWindowToken() token from
+                        gravity : the gravity which controls the placement of the popup window
+                        x : the popup's x location offset
+                        y : the popup's y location offset
+                */
+            // Finally, show the popup window at the center location of root relative layout
+            mPopupWindow.showAtLocation(mLayout, Gravity.CENTER,0,0);
         }
 
         return super.onOptionsItemSelected(item);
@@ -175,25 +346,26 @@ public class MainActivity extends AppCompatActivity
             tagText = "BluetoothFragment";
             fragment = fm.findFragmentByTag(tagText);
             if (fragment == null) {
-                fragment = BluetoothFragment.newInstance(BTAdapter, mChatService);
+                fragment = BluetoothFragment.newInstance(BTAdapter, mChatService, bluetoothStatus);
             }
         } else if (id == R.id.nav_sendText) {
             tagText = "SendTextFragment";
             fragment = fm.findFragmentByTag(tagText);
             if (fragment == null) {
-                fragment = SendTextFragment.newInstance(BTAdapter, mChatService);
+                fragment = SendTextFragment.newInstance(BTAdapter, mChatService, bluetoothStatus);
             }
         } else if (id == R.id.nav_arena) {
             tagText = "ArenaFragment";
             fragment = fm.findFragmentByTag(tagText);
             if (fragment == null) {
-                fragment = ArenaFragment.newInstance(BTAdapter, mChatService);
+                fragment = ArenaFragment.newInstance(BTAdapter, mChatService, bluetoothStatus,
+                        exploredBin, obstacleBin, dirRow, dirCol, dirDir, dirMoveOrStop);
             }
         }  else if (id == R.id.nav_misc) {
             tagText = "MiscFragment";
             fragment = fm.findFragmentByTag(tagText);
             if (fragment == null) {
-                fragment = MiscellaneousFragment.newInstance(BTAdapter, mChatService);
+                fragment = MiscellaneousFragment.newInstance(BTAdapter, mChatService, bluetoothStatus);
             }
         } else {
             fragment=null;
@@ -214,50 +386,74 @@ public class MainActivity extends AppCompatActivity
         arduinoAddr = deviceAddress;
     }
 
+    public void onBluetoothStateChange(String bluetoothStatus) {
+        BluetoothFragment btFrag = (BluetoothFragment) getSupportFragmentManager().findFragmentByTag("BluetoothFragment");
+        if(btFrag!=null){btFrag.updateBTStatus(bluetoothStatus);}else{Log.d("BT_DEBUG", bluetoothStatus);}
+        ArenaFragment arenaFrag = (ArenaFragment) getSupportFragmentManager().findFragmentByTag("ArenaFragment");
+        if(arenaFrag!=null){arenaFrag.updateBTStatus(bluetoothStatus);}else{Log.d("ARENA_DEBUG", bluetoothStatus);}
+    }
+
+    public void onVoiceCommand(String command) {
+        ArenaFragment arenaFrag = (ArenaFragment) getSupportFragmentManager().findFragmentByTag("ArenaFragment");
+        if(arenaFrag!=null){
+            arenaFrag.parseVoiceCommand(command);
+        }else{
+            Log.d("ARENA_DEBUG", command);
+        }
+    }
+
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
     @SuppressLint("HandlerLeak")
     private final Handler readHandler = new Handler() {
+
         @Override
         public void handleMessage(Message msg) {
             TextView bluetooth = (TextView) findViewById(R.id.statusText);
             TextView arena = (TextView) findViewById(R.id.bluetoothStatus);
-            //TODO: put statustext into arena fragment
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
                         case BluetoothChatService.STATE_CONNECTED:
-                            if(bluetooth != null){
-                                bluetooth.setText(getString(R.string.title_connected_to, mConnectedDeviceName));
-                            }
-                            else if (arena != null){
-                                arena.setText(getString(R.string.title_connected_to, mConnectedDeviceName));
-                            }
+                            bluetoothStatus=getString(R.string.title_connected_to, mConnectedDeviceName);
+                            onBluetoothStateChange(bluetoothStatus);
+//                            if(bluetooth != null){
+//                                bluetooth.setText(getString(R.string.title_connected_to, mConnectedDeviceName));
+//                            }
+//                            else if (arena != null){
+//                                arena.setText(getString(R.string.title_connected_to, mConnectedDeviceName));
+//                            }
                             break;
                         case BluetoothChatService.STATE_CONNECTING:
-                            if(bluetooth != null){
-                                bluetooth.setText(R.string.title_connecting);
-                            }
-                            else if (arena != null){
-                                arena.setText(R.string.title_connecting);
-                            }
+                            bluetoothStatus=getResources().getString(R.string.title_connecting);
+                            onBluetoothStateChange(bluetoothStatus);
+//                            if(bluetooth != null){
+//                                bluetooth.setText(R.string.title_connecting);
+//                            }
+//                            else if (arena != null){
+//                                arena.setText(R.string.title_connecting);
+//                            }
                             break;
                         case BluetoothChatService.STATE_NONE:
-                            if(bluetooth != null){
-                                bluetooth.setText(R.string.bluetooth_disconnected);
-                            }
-                            else if (arena != null){
-                                arena.setText(R.string.bluetooth_disconnected);
-                            }
+                            bluetoothStatus=getResources().getString(R.string.bluetooth_disconnected);
+                            onBluetoothStateChange(bluetoothStatus);
+//                            if(bluetooth != null){
+//                                bluetooth.setText(R.string.bluetooth_disconnected);
+//                            }
+//                            else if (arena != null){
+//                                arena.setText(R.string.bluetooth_disconnected);
+//                            }
                             break;
                         case BluetoothChatService.STATE_LOST:
-                            if(bluetooth != null){
-                                bluetooth.setText(R.string.bluetooth_disconnected);
-                            }
-                            else if (arena != null){
-                                arena.setText(R.string.bluetooth_disconnected);
-                            }
+                            bluetoothStatus=getResources().getString(R.string.bluetooth_disconnected);
+                            onBluetoothStateChange(bluetoothStatus);
+//                            if(bluetooth != null){
+//                                bluetooth.setText(R.string.bluetooth_disconnected);
+//                            }
+//                            else if (arena != null){
+//                                arena.setText(R.string.bluetooth_disconnected);
+//                            }
                             break;
                     }
                     break;
@@ -270,6 +466,8 @@ public class MainActivity extends AppCompatActivity
                         rf.setText(readMessage);
                     }
                     if(readMessage.startsWith("MDF") || readMessage.startsWith("DIR")){
+                        Log.d("MDFFF", readMessage);
+                        if(readMessage.startsWith("MDF")){MainActivity.readMessage = readMessage;}
                         onMapUpdateReceived(readMessage);
                     }
                     break;
@@ -351,16 +549,54 @@ public class MainActivity extends AppCompatActivity
                 String mdfStr = message.substring(3);
                 String exploredHexStr = mdfStr.split("L")[0];
                 String obstacleHexStr = mdfStr.split("L")[1];
+                this.exploredHex = exploredHexStr;
+                this.obstacleHex = obstacleHexStr;
                 String exploredBin = hexToBinary(exploredHexStr);
                 String obstacleBin = hexToBinary(obstacleHexStr);
-                arenaFrag.updateMap(exploredBin.substring(2, 302), obstacleBin);
+
+                this.exploredBin = exploredBin.substring(2, 302);
+                this.obstacleBin = obstacleBin;
+                arenaFrag.updateMap(exploredBin.substring(2, 302), obstacleBin, false);
+                arenaFrag.updateRobot(dirRow, dirCol, dirDir, dirMoveOrStop, false);
+
             } else if (message.startsWith("DIR")) {
                 String dirStr = message.substring(3);
                 String dirRow = dirStr.split("L")[0];
                 String dirCol = dirStr.split("L")[1];
                 String dirDir = dirStr.split("L")[2];
                 String dirMoveOrStop = dirStr.split("L")[3];
-                arenaFrag.updateRobot(dirRow, dirCol, dirDir, dirMoveOrStop);
+                this.dirRow = dirRow;
+                this.dirCol = dirCol;
+                this.dirDir = dirDir;
+                this.dirMoveOrStop = dirMoveOrStop;
+                arenaFrag.updateMap(exploredBin, obstacleBin, false);
+                arenaFrag.updateRobot(dirRow, dirCol, dirDir, dirMoveOrStop, false);
+            }
+        }
+    }
+
+    public void startSpeechRecognizer() {
+        Intent intent = new Intent
+                (RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What is your command?");
+        startActivityForResult(intent, REQUEST_SPEECH_RECOGNIZER);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_SPEECH_RECOGNIZER) {
+            if (resultCode == RESULT_OK) {
+                List<String> results = data.getStringArrayListExtra
+                        (RecognizerIntent.EXTRA_RESULTS);
+                mVoiceCommand = results.get(0);
+
+                onVoiceCommand(mVoiceCommand);
+
             }
         }
     }

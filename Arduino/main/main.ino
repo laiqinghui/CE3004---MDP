@@ -27,9 +27,9 @@ void testSequence2()
 
 void benTestSequence()
 {
-  //turn(1, 90);
+  //turn(1, 180);
   //md.setSpeeds(124, 170);
-  calibration();
+  //calibration();
   //delay(1000);
   //moveForward(80, 9.5, true);
 }
@@ -63,7 +63,7 @@ void processInst(){
                 break;
       case 'O': moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
-                  turn(-1, 180);
+                  turn(1, 180);
                     delay(200);
                 }
                 break;
@@ -115,12 +115,12 @@ void setup() {
   md.init();
   initI2C();
   
-  benTestSequence();
+  //benTestSequence();
 }
 
 void loop() 
 {
-  Serial.println(frontRightReading);
+  //Serial.println(frontRightReading);
   if(dataExist()){
     //delay(100);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations 
     processInst();

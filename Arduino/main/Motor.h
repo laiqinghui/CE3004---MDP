@@ -119,18 +119,26 @@ void moveForward(int rpm, double distance, boolean pidOn){
    signed long tuneEntryTime = 0;
    signed long tuneExitTime = 0;
    signed long interval = 0;
-   signed long distanceTicks = 0.95* distance * ticksPerCM;//Delibrate trimming
+   double offset = 1;
+   if(distance == 9.5)
+    offset = 0.92;
+   
+   double distanceTicks = offset  * distance * ticksPerCM;//Delibrate trimming
    unsigned long currentTicks = 0;
     
     MotorPID M1pid = {100, 0, 0, 0.1};//0.1=>50
-    MotorPID M2pid = {100, 0, 0, 0.132 };//0.163=>50 0.134=>80 0.128=>90
+    MotorPID M2pid = {100, 0, 0, 0.117 };//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms
     enableInterrupt( e1a, risingM1, RISING);
     enableInterrupt( e2b, risingM2, RISING);
 
-    md.setSpeeds(100, 100);
+    //md.setSpeeds(100, 100);
+     md.setSpeeds(269, 314);
+    
 
+    Serial.print("Target Ticks: ");
+    Serial.println(distanceTicks);
 
-    while(M1ticks<distanceTicks){
+    while(1){
       
       //Serial.print(sqWidthToRPM(squareWidth_M1));
       //Serial.print(" ");
@@ -143,7 +151,7 @@ void moveForward(int rpm, double distance, boolean pidOn){
 
           tuneM1(rpm, &M1pid);
           tuneM2(rpm, &M2pid);
-          /*
+          
           if(distance > 28.5){
             if(currentTicks < 0.7*distanceTicks){
               tuneM1(rpm, &M1pid);
@@ -156,11 +164,20 @@ void moveForward(int rpm, double distance, boolean pidOn){
               tuneM2(rpm*0.5, &M2pid);
               }
         }  
-        */ 
+        
           tuneExitTime = micros();
         }
       }
-
+      noInterrupts();
+      currentTicks = M1ticks;
+      interrupts();
+      
+      if(currentTicks>=distanceTicks){
+        Serial.print("BreakTicks: ");
+        Serial.println(currentTicks);
+        break;
+      }
+        
      
       
     }//end of while
@@ -177,7 +194,7 @@ double getTurnAmount(int dir, int turnDegree){
     if(dir == 1)
     {
   		double degree90 = 51.8; //cir is 51.8
-  		double degree180 = 52.6; //cir is 53.1
+  		double degree180 = 52.9; //cir is 53.1
   		if(turnDegree < 90)
   		{
   			return abs(degree90 * (turnDegree/360.0) * ticksPerCM);
@@ -192,8 +209,8 @@ double getTurnAmount(int dir, int turnDegree){
     }
     else
     {
-		  double degree90 = 48; //cir is 47.6
-		  double degree180 = 49.15; //cir is 49.65
+		  double degree90 = 47; //cir is 47.6
+		  double degree180 = 47.83; //cir is 49.65
       if(turnDegree < 90)
       {
         Serial.println(abs(degree90 * (turnDegree/360.0) * ticksPerCM));
@@ -222,12 +239,13 @@ void turn(int dir, int turnDegree){
      * md.setSpeeds(-168 * dir, 200 * dir);
      * md.setSpeeds(-269 * dir, 314 * dir);
     */
+    noInterrupts();
     if(dir == 1)
     {
       md.setSpeeds(-269, 314);
       while(true)
       {
-        currentValue = (PINB>>5)%2;
+        currentValue = (PINB>>5) & B001; 
         if(currentValue && !previousRead)
         {
           ticks++;
@@ -245,7 +263,7 @@ void turn(int dir, int turnDegree){
       md.setSpeeds(269, -314);
       while(true)
       {
-        currentValue = (PIND>>3)%2;
+        currentValue = (PIND>>3) & B001;
         if(currentValue && !previousRead)
         {
           ticks++;
@@ -258,4 +276,5 @@ void turn(int dir, int turnDegree){
         previousRead = currentValue;
       }
     }
+    interrupts();
 }
