@@ -60,16 +60,34 @@ def get_explore_status_mazemap(mmap):
     return np.where(mmap > 0, 1, 0)
 
 
-def get_mdf_bitstring(mmap, format=0):
-    bitstring = '11' + ''.join(str(grid) for mazerow in mmap for grid in mazerow) + '11'
+def get_mdf_bitstring(mmap, format=0, exploreOrObstacle=0):
+    bl_coord_map = np.flip(mmap, 0)
+    mdf_map_string_1_2 = ''.join(str(grid) for mazerow in bl_coord_map for grid in mazerow)
+
+    mdf_string = ""
+
+    if exploreOrObstacle == 0:
+        mdf_string = mdf_map_string_1_2.replace("2", "1")
+        mdf_string = "11" + mdf_string + "11"
+    if exploreOrObstacle == 1:
+        mdf_string = mdf_map_string_1_2.replace("0", "")
+        mdf_string = mdf_string.replace("1", "0")
+        mdf_string = mdf_string.replace("2", "1")
+        mdf_string = mdf_string + '0' * (8 - (len(mdf_string) % 8))
+
+    # bitstring = '11' + ''.join(str(grid) for mazerow in mmap for grid in mazerow) + '11'
     if format == 0:     # binary
-        return bin(int(bitstring, 2))[2:]
+        return mdf_string
     if format == 1:     # hexadecimal
-        return hex(int(bitstring, 2))[2:]
+        return '{:0{}X}'.format(int(mdf_string, 2), len(mdf_string) // 4)
+
     assert False, "unhandled format"
 
 
 def aggregate_instruction(instruction):
+    if len(instruction) == 0:
+        return []
+
     instruction_list = [ch + '1' for ch in instruction]
     updatedInstruction = [instruction_list[0]]
     for ch in instruction_list[1:]:

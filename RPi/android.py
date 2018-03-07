@@ -24,6 +24,7 @@ class Android(threading.Thread):
     def __init__(self):
         super(Android, self).__init__()
         self.engaged = 0
+        self.connected = False
         gs.init()
         logging.info("Android thread initialized")
 
@@ -39,7 +40,8 @@ class Android(threading.Thread):
         self.rpi_thread.start()
         self.arduino_thread.start()
 
-        self.connect()
+        while not self.connected:
+            self.connect()
 
     def connect(self):
         self.port = 4
@@ -47,20 +49,23 @@ class Android(threading.Thread):
         self.server_socket.bind(("", self.port))
         self.server_socket.listen(1)
         self.uuid = "00001101-0000-1000-8000-00805F9B34FB"
+        self.target_client = "08:60:6E:AA:6D:E2"
         try:
             advertise_service(self.server_socket, "MDPGroup5", service_id=self.uuid, service_classes=[self.uuid, SERIAL_PORT_CLASS], profiles=[SERIAL_PORT_PROFILE])
             logging.info("Waiting for Bluetooth connection on port " + str(self.port))
             self.client_sock, self.client_info = self.server_socket.accept()
             logging.info("Accepted connection from" + str(self.client_info))
             client_MAC = self.client_info[0]
-            if client_MAC != "08:60:6E:AA:6D:E2":
+            if client_MAC != self.target_client:
                 logging.info("There was a connection attempt by an unauthorized device. Attempting to rebroadcast..")
                 self.client_sock.close()
                 self.connect()
                 return 0
-            self.sendAndroid("Connection Secured")
+
             self.connected = True
+            self.sendAndroid("Connection Secured")
             self.receiveAndroid()
+
         except IOError:
             pass
 
@@ -83,10 +88,9 @@ class Android(threading.Thread):
         """
         try:
             self.client_sock.send(str(message))
-        except BluetoothError:
-            logging.info("Bluetooth Error - encountered when attempting to send data to Android device")
+        except BluetoothError, msg:
+            logging.info("Bluetooth Error - encountered when attempting to send data to Android device -- %s" % msg)
             self.connected = False
-            self.connect()
 
     def receiveAndroid(self):
         """
@@ -100,7 +104,7 @@ class Android(threading.Thread):
                 command = msg.split()[0]
                 if(command == "ca"):
                     self.waypoint_row = int(msg.split()[1])
-                    self.waypoint_row = -(self.waypoint_row - 19) #Flipping coords for algo
+                    self.waypoint_row = -(self.waypoint_row - 19)   # flipping coords for algo
                     self.waypoint_col = int(msg.split()[2])
                     # remember to add send calibration string
                     dispatcher.send(message=command, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)
@@ -110,12 +114,18 @@ class Android(threading.Thread):
                     self.startAlgorithm(START_ROW, START_COL, self.waypoint_row, self.waypoint_col, FP_GOAL_ROW, FP_GOAL_COL, FASTEST_PATH, EAST)
                 elif(command == "move"):
                     stepno = msg.split()[1]
-                    stepstring = "CW"+ stepno
+                    stepstring = "CW" + stepno + ";"
                     dispatcher.send(message=stepstring, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
                 elif(command == "rotate"):
                     degrees = msg.split()[1]
-                    rotatestring = "CT" + degrees
-                    dispatcher.send(meessage=rotatestring, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
+                    if(degrees == "90"):
+                        rotatestring = "CD1" + ";"
+                    elif(degrees == "-90"):
+                        rotatestring = "CA1" + ";"
+                    else:
+                        rotatestring = "CT" + degrees + ";"
+                    logging.info(rotatestring)
+                    dispatcher.send(message=rotatestring, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
                 elif(command == "mode"):    # for toggling modes but android will be handling it so its not needed for now
                     dispatcher.send(message=command, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)
                 elif(command == "reset"):
@@ -129,32 +139,8 @@ class Android(threading.Thread):
         except BluetoothError:
             logging.info("Bluetooth Error - encountered while receiving data from Android device")
             self.connected = False
-            self.connect()
 
     def closeAndroidConnection(self):
         self.client_sock.close()
         self.server_sock.close()
         logging.info("Bluetooth connection ended.")
-
-    # def start(self):
-    #     self.running = True
-    #     super(Android, self).start()
-
-    # def run(self):
-    #     advertise_service(self.server_socket, "MDPGroup5", service_id=self.uuid, service_classes=[self.uuid, SERIAL_PORT_CLASS], profiles=[SERIAL_PORT_PROFILE])
-    #     logging.info("Waiting for Bluetooth connection on port " + str(self.port))
-    #     self.client_sock, self.client_info = self.server_socket.accept()
-    #     logging.info("Accepted connection from" + str(self.client_info))
-
-    #     self.idle()
-
-    # def stop(self):
-    #     self.running = False
-
-    # def idle(self):
-    #     try:
-    #         self.sendAndroid("Connection Secured")
-    #         while(self.running):
-    #             self.receiveAndroid()
-    #     except IOError:
-        #     pass

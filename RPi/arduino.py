@@ -43,7 +43,9 @@ class Arduino(threading.Thread):
             # self.acknowledged = True
             # self.mutex_w.release()
         # if sensor data
-        elif chr(byte[0]) == "S":
+        if chr(byte[0]) == "C":
+            logging.info("send to android that robot has stop moving")
+        if chr(byte[0]) == "S":
             logging.info("byte[0]) == S")
             message = self.interpret_sensor_values(byte[1:])
             dispatcher.send(message=message, signal=gs.ARDUINO_SIGNAL, sender=gs.ARDUINO_SENDER)
