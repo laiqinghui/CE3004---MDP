@@ -87,7 +87,10 @@ class Android(threading.Thread):
         Send a message to Android device
         """
         try:
+            logging.info("Starting to send android this message: %s" %str(message))
             self.client_sock.send(str(message))
+            logging.info("Finished sending android message")
+            
         except BluetoothError, msg:
             logging.info("Bluetooth Error - encountered when attempting to send data to Android device -- %s" % msg)
             self.connected = False
