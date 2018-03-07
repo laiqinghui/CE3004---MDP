@@ -25,6 +25,7 @@ class Android(threading.Thread):
         super(Android, self).__init__()
         self.engaged = 0
         self.connected = False
+        self.fastestPathInstruction = []
         gs.init()
         logging.info("Android thread initialized")
 
@@ -70,13 +71,18 @@ class Android(threading.Thread):
             pass
 
     def startAlgorithm(self, robot_row, robot_col, waypoint_row, waypoint_col, goal_row, goal_col, mode, dir):
-        self.algo_thread = Algorithm(robot_row, robot_col, waypoint_row, waypoint_col, goal_row, goal_col, mode, dir)
-        # only exploration mode need to start thread
+
         if mode == EXPLORATION:
+            self.algo_thread = Algorithm(robot_row, robot_col, waypoint_row, waypoint_col, goal_row, goal_col, mode, dir)
             self.algo_thread.daemon = True
             self.algo_thread.start()
         if mode == FASTEST_PATH:
-            del self.algo_thread
+            if len(self.fastestPathInstruction) > 0:
+                self.algo_thread.run_fatest_path_on(self.fastestPathInstruction)
+                self.fastestPathInstruction = []
+                del self.algo_thread
+            else:
+                logging.info("Fastest path instruction not calculated yet.")
 
     def stopAlgorithm(self):
         self.algo_thread.stop()
@@ -87,10 +93,20 @@ class Android(threading.Thread):
         Send a message to Android device
         """
         try:
-            logging.info("Starting to send android this message: %s" %str(message))
+            logging.info("Starting to send android this message: %s" % str(message))
             self.client_sock.send(str(message))
             logging.info("Finished sending android message")
-            
+
+            # start calculating fastest path once robot finish exploration
+            if len(message) > 3 and message[0:3] == "DIR" and message[-2] == '1':
+                logging.info("Requesting to calculate fastest path")
+                self.stopAlgorithm()
+                robot_row, robot_col, direction = message[3:].split('L')[:-2]
+                robot_row = abs(robot_row - 19)     # flip row
+                self.algo_thread = Algorithm(robot_row, robot_col, self.waypoint_row, self.waypoint_col, FP_GOAL_ROW, FP_GOAL_COL, FASTEST_PATH, direction)
+                self.fastestPathInstruction = self.algo_thread.determine_fastest_path()
+                logging.info("Finished calculating fastest path")
+
         except BluetoothError, msg:
             logging.info("Bluetooth Error - encountered when attempting to send data to Android device -- %s" % msg)
             self.connected = False
@@ -139,9 +155,11 @@ class Android(threading.Thread):
                     logging.info("Invalid message")
                 logging.info("Android thread received: " + msg)
 
-        except BluetoothError:
+        except BluetoothError as e:
             logging.info("Bluetooth Error - encountered while receiving data from Android device")
             self.connected = False
+        except AttributeError as e:
+            logging.info(e)
 
     def closeAndroidConnection(self):
         self.client_sock.close()

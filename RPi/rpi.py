@@ -54,13 +54,13 @@ class RPI(threading.Thread):
             raw_instruction = ''.join(instruction)
             aggregated_instruction_list = gs.aggregate_instruction(raw_instruction)
 
-            if not completed:
-                formatted_instruction = 'S' + ''.join(aggregated_instruction_list) + ';'
-                robot_moving_stop_string_update = '1L'   # robot no longer moving after instruction
-            else:
+            if completed:
                 # exploration completed, arduino do not need to sense environment after moving robot
                 formatted_instruction = 'C' + ''.join(aggregated_instruction_list) + ';'
-                robot_moving_stop_string_update = '0L'   # robot still going moving after instruction
+                robot_moving_stop_string_update = '1L'   # robot still going moving after instruction
+            if not completed:
+                formatted_instruction = 'S' + ''.join(aggregated_instruction_list) + ';'
+                robot_moving_stop_string_update = '0L'   # robot no longer moving after instruction
 
             explore_mdf_string_update = gs.get_mdf_bitstring(gs.MAZEMAP, 1, 0)
             obstacle_mdf_string_update = gs.get_mdf_bitstring(gs.MAZEMAP, 1, 1)
