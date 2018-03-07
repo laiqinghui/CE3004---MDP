@@ -37,7 +37,7 @@ volatile unsigned long M1ticks = 0;
 volatile int squareWidth_M2 = 0;
 volatile signed long prev_time_M2 = 0;
 volatile signed long entry_time_M2 = 0; 
-
+volatile unsigned long M2ticks = 0;
 
 //ISR for Motor1(Right) encoder 
 void risingM1(){
@@ -50,16 +50,19 @@ void risingM1(){
 void risingM1Ticks(){
   M1ticks++;
   }
+ 
 
 //ISR for Motor2(Left) encoder
 void risingM2(){
   entry_time_M2 = micros();
   squareWidth_M2 = entry_time_M2 - prev_time_M2;
   prev_time_M2 = entry_time_M2;
+  M2ticks++;
 }
 
-void setM1Ticks(int ticks){
-	M1ticks = ticks;
+void setTicks(int M1, int M2){
+	M1ticks = M1;
+  M2ticks = M2;
 }
 
 void setSqWidth(int M1, int M2){
@@ -164,15 +167,16 @@ void moveForward(int rpm, double distance, boolean pidOn){
     offset = 0.92;
    
    double distanceTicks = offset  * distance * ticksPerCM;//Delibrate trimming
-   unsigned long currentTicks = 0;
+   unsigned long currentTicksM1 = 0;
+   unsigned long currentTicksM2 = 0;
     
-    MotorPID M1pid = {100, 0, 0, 0.1};//0.1=>50
-    MotorPID M2pid = {100, 0, 0, 0.117 };//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms
+    MotorPID M1pid = {259, 0, 0, 0.1};//0.1=>50
+    MotorPID M2pid = {313 , 0, 0, 0.129};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms
     enableInterrupt( e1a, risingM1, RISING);
     enableInterrupt( e2b, risingM2, RISING);
 
     //md.setSpeeds(100, 100);
-     md.setSpeeds(269, 314);
+    md.setSpeeds(259,313);
     
 
     Serial.print("Target Ticks: ");
@@ -192,11 +196,11 @@ void moveForward(int rpm, double distance, boolean pidOn){
           tuneM1(rpm, &M1pid);
           tuneM2(rpm, &M2pid);
           
-          if(distance > 28.5){
-            if(currentTicks < 0.7*distanceTicks){
+          if(distance >= 19){
+            if(currentTicksM1 < 0.7*distanceTicks){
               tuneM1(rpm, &M1pid);
               tuneM2(rpm, &M2pid);
-            } else if(currentTicks < 0.85*distanceTicks){
+            } else if(currentTicksM1 < 0.85*distanceTicks){
               tuneM1(rpm*0.75, &M1pid);
               tuneM2(rpm*0.75, &M2pid);
             } else{
@@ -209,23 +213,43 @@ void moveForward(int rpm, double distance, boolean pidOn){
         }
       }
       noInterrupts();
-      currentTicks = M1ticks;
+      currentTicksM1 = M1ticks;
+      currentTicksM2 = M2ticks;
       interrupts();
       
-      if(currentTicks>=distanceTicks){
-        Serial.print("BreakTicks: ");
-        Serial.println(currentTicks);
+      if(currentTicksM1>=distanceTicks){
+        md.setM1Brake(400);
+        Serial.print("M1BreakTicks: ");
+        Serial.println(currentTicksM1);
+        Serial.print("M2BreakTicks: ");
+        Serial.println(currentTicksM2);
+        while(1){
+          noInterrupts();
+          currentTicksM1 = M1ticks;
+          currentTicksM2 = M2ticks;
+          interrupts();
+          if(currentTicksM2>=distanceTicks){
+            md.setM2Brake(400);
+            Serial.print("M1BreakTicks: ");
+            Serial.println(currentTicksM1);
+            Serial.print("M2BreakTicks: ");
+            Serial.println(currentTicksM2);
+            break;
+            }
+          }
+          
+      
+      
         break;
-      }
-        
+      }       
      
       
     }//end of while
       
-      md.setBrakes(400,400);
+      //md.setBrakes(400,400);
       disableInterrupt(e1a);
       disableInterrupt(e2b);
-      setM1Ticks(0);
+      setTicks(0,0);
       setSqWidth(0,0);
 }  
 
@@ -340,7 +364,7 @@ void turnPID(int dir, int turnDegree)
 	}
       disableInterrupt(e1a);
       disableInterrupt(e2b);
-      setM1Ticks(0);
+      setTicks(0,0);
       setSqWidth(0,0);
 }
 
