@@ -194,7 +194,7 @@ double getTurnAmount(int dir, int turnDegree){
     if(dir == 1)
     {
   		double degree90 = 51.8; //cir is 51.8
-  		double degree180 = 52.6; //cir is 53.1
+  		double degree180 = 52.9; //cir is 53.1
   		if(turnDegree < 90)
   		{
   			return abs(degree90 * (turnDegree/360.0) * ticksPerCM);
@@ -209,8 +209,8 @@ double getTurnAmount(int dir, int turnDegree){
     }
     else
     {
-		  double degree90 = 48; //cir is 47.6
-		  double degree180 = 49.15; //cir is 49.65
+		  double degree90 = 47; //cir is 47.6
+		  double degree180 = 47.83; //cir is 49.65
       if(turnDegree < 90)
       {
         Serial.println(abs(degree90 * (turnDegree/360.0) * ticksPerCM));
