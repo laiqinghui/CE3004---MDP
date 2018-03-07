@@ -95,10 +95,10 @@ class RPI(threading.Thread):
         """
         logging.info("sensor value: " + str(message))
         message[0] = message[0] - 12
-        message[1] = message[1] - 9
+        message[1] = message[1] - 8
         message[2] = message[2] - 12
         message[3] = message[3] - 12
-        message[4] = message[4] - 17
+        message[4] = message[4] - 20
 
         # raw_input("---------press enter to continue-------")
 
