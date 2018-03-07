@@ -73,10 +73,10 @@ class FastestPath:
         self.calibrateLim = calibrateLim
         self.sim = sim
 
-        if sim:
-            from Simulator import Robot
-            self.robot = Robot(self.exploredMap, direction, start, None)
-        else:
+        # if sim:
+        #     from Simulator import Robot
+        #     self.robot = Robot(self.exploredMap, direction, start, None)
+        if not sim:
             from Real import Robot
             self.robot = Robot(self.exploredMap, direction, start)
 
