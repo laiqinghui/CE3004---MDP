@@ -117,6 +117,43 @@ void tuneM2(int desiredRPM, MotorPID *M2){
  
   }
 
+void tuneM1Negative(int desiredRPM, MotorPID *M1){
+
+
+  double tuneSpeed = 0;
+  double currentRPM = sqWidthToRPM(squareWidth_M1);
+  
+  M1->currentErr =  desiredRPM - currentRPM;
+  //tuneSpeed = M1->prevTuneSpeed + 0.47*M1->currentErr;
+  tuneSpeed = M1->prevTuneSpeed - M1->gain*M1->currentErr + (M1->gain/0.05)*(M1->currentErr - M1->prevErr1);
+
+  md.setM1Speed(tuneSpeed);
+  M1->prevTuneSpeed = tuneSpeed;
+  M1->prevErr1 = M1->currentErr;
+
+  //Serial.print("M1 tunespeed: ");
+  //Serial.println(tuneSpeed);
+
+ 
+  }
+
+void tuneM2Negative(int desiredRPM, MotorPID *M2){
+  
+  
+  double tuneSpeed = 0;
+  double currentRPM = sqWidthToRPM(squareWidth_M2);
+  
+  M2->currentErr =  desiredRPM - currentRPM;
+  //tuneSpeed = M2->prevTuneSpeed + 0.5*M2->currentErr;
+  tuneSpeed = M2->prevTuneSpeed - M2->gain*M2->currentErr + (M2->gain/0.05)*(M2->currentErr - M2->prevErr1);
+
+  md.setM2Speed(tuneSpeed);
+  M2->prevErr1 = M2->currentErr;
+  M2->prevTuneSpeed = tuneSpeed;
+  
+ 
+  }
+ 
 void moveForward(int rpm, double distance, boolean pidOn){
 
    signed long tuneEntryTime = 0;
@@ -193,6 +230,121 @@ void moveForward(int rpm, double distance, boolean pidOn){
 }  
 
 //-1 is left turn and 1 is right turn
+double getTurnAmountPID(int dir, int turnDegree){
+    if(dir == 1)
+    {
+      double degree90 = 51.8; //cir is 51.8
+      double degree180 = 52.9; //cir is 53.1
+      if(turnDegree < 90)
+      {
+        return abs(degree90 * (turnDegree/360.0) * ticksPerCM);
+      }
+      else
+      {
+        double closenessTo90 = ((turnDegree-90)/90.0)*degree180;
+        double closenessTo180 = ((180 - turnDegree)/90.0)*degree90;
+        
+        return abs((closenessTo90 + closenessTo180) * (turnDegree/360.0) * ticksPerCM);
+      }
+    }
+    else
+    {
+      double degree90 = 47; //cir is 47.6
+      double degree180 = 47.83; //cir is 49.65
+      if(turnDegree < 90)
+      {
+        Serial.println(abs(degree90 * (turnDegree/360.0) * ticksPerCM));
+        return abs(degree90 * (turnDegree/360.0) * ticksPerCM);
+      }
+      else
+      {
+        double closenessTo90 = ((turnDegree-90)/90.0)*degree180;
+        double closenessTo180 = ((180 - turnDegree)/90.0)*degree90;
+        
+        return abs((closenessTo90 + closenessTo180) * (turnDegree/360.0) * ticksPerCM);
+      }
+    }
+}
+
+//-1 is left turn and 1 is right turn
+void turnPID(int dir, int turnDegree)
+{
+    //1 is right, -1 is left 
+    int distanceTicks = getTurnAmountPID(dir, turnDegree);    
+    int rpm = 100;
+    /*
+     * Different Speed Values
+     * md.setSpeeds(-221 * dir, 250 * dir);
+     * md.setSpeeds(-168 * dir, 200 * dir);
+     * md.setSpeeds(-269 * dir, 314 * dir);
+    */ 
+   signed long tuneEntryTime = 0;
+   signed long tuneExitTime = 0;
+   signed long interval = 0; 
+   unsigned long currentTicks = 0;
+    
+    MotorPID M1pid = {100, 0, 0, 0.1};//0.1=>50
+    MotorPID M2pid = {100, 0, 0, 0.117 };//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms
+    enableInterrupt( e1a, risingM1, RISING);
+    enableInterrupt( e2b, risingM2, RISING);
+
+    //md.setSpeeds(100, 100);
+    //Dir = 1
+     
+    if(dir == 1)
+	{
+		md.setSpeeds(-269, 314);
+		while(1)
+		{
+			tuneEntryTime = micros();
+			interval = tuneEntryTime - tuneExitTime;
+			if(interval >= 5000)
+			{ 
+			  tuneM1(rpm, &M1pid);
+			  tuneM2Negative(rpm, &M2pid);
+			}  
+			tuneExitTime = micros();
+			noInterrupts();
+			currentTicks = M1ticks;
+			interrupts();
+		  
+			if(currentTicks>=distanceTicks)
+			{
+				break;
+			}
+		}//end of while
+		md.setBrakes(400,400);
+	}
+	else
+	{
+		md.setSpeeds(269, -314);
+		while(1)
+		{
+			tuneEntryTime = micros();
+			interval = tuneEntryTime - tuneExitTime;
+			if(interval >= 5000)
+			{ 
+			  tuneM1(rpm, &M1pid);
+			  tuneM2Negative(rpm, &M2pid);
+			}  
+			tuneExitTime = micros();
+			noInterrupts();
+			currentTicks = M1ticks;
+			interrupts();
+			if(currentTicks>=distanceTicks)
+			{
+				break;
+			}
+		}//end of while
+		md.setBrakes(400,400);
+	}
+      disableInterrupt(e1a);
+      disableInterrupt(e2b);
+      setM1Ticks(0);
+      setSqWidth(0,0);
+}
+
+//-1 is left turn and 1 is right turn
 double getTurnAmount(int dir, int turnDegree){
     if(dir == 1)
     {
@@ -230,111 +382,6 @@ double getTurnAmount(int dir, int turnDegree){
 }
 
 //-1 is left turn and 1 is right turn
-double getTurnAmountPID(int dir, int turnDegree){
-    if(dir == 1)
-    {
-      double degree90 = 51.8; //cir is 51.8
-      double degree180 = 52.9; //cir is 53.1
-      if(turnDegree < 90)
-      {
-        return abs(degree90 * (turnDegree/360.0) * ticksPerCM);
-      }
-      else
-      {
-        double closenessTo90 = ((turnDegree-90)/90.0)*degree180;
-        double closenessTo180 = ((180 - turnDegree)/90.0)*degree90;
-        
-        return abs((closenessTo90 + closenessTo180) * (turnDegree/360.0) * ticksPerCM);
-      }
-    }
-    else
-    {
-      double degree90 = 47; //cir is 47.6
-      double degree180 = 47.83; //cir is 49.65
-      if(turnDegree < 90)
-      {
-        Serial.println(abs(degree90 * (turnDegree/360.0) * ticksPerCM));
-        return abs(degree90 * (turnDegree/360.0) * ticksPerCM);
-      }
-      else
-      {
-        double closenessTo90 = ((turnDegree-90)/90.0)*degree180;
-        double closenessTo180 = ((180 - turnDegree)/90.0)*degree90;
-        
-        return abs((closenessTo90 + closenessTo180) * (turnDegree/360.0) * ticksPerCM);
-      }
-    }
-}
-
-
-void turnPID(int dir, int turnDegree)
-{
-    //1 is right, -1 is left 
-    int distanceTicks = getTurnAmountPID(dir, turnDegree);    
-    int rpm = 100;
-    /*
-     * Different Speed Values
-     * md.setSpeeds(-221 * dir, 250 * dir);
-     * md.setSpeeds(-168 * dir, 200 * dir);
-     * md.setSpeeds(-269 * dir, 314 * dir);
-    */
-
-    
-       signed long tuneEntryTime = 0;
-   signed long tuneExitTime = 0;
-   signed long interval = 0; 
-   unsigned long currentTicks = 0;
-    
-    MotorPID M1pid = {100, 0, 0, 0.1};//0.1=>50
-    MotorPID M2pid = {100, 0, 0, 0.117 };//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms
-    enableInterrupt( e1a, risingM1, RISING);
-    enableInterrupt( e2b, risingM2, RISING);
-
-    //md.setSpeeds(100, 100);
-    //Dir = 1
-     md.setSpeeds(-269, 314);
-    
-
-    Serial.print("Target Ticks: ");
-    Serial.println(distanceTicks);
-
-    while(1){
-      tuneEntryTime = micros();
-        interval = tuneEntryTime - tuneExitTime;
-        if(interval >= 5000){ 
-
-          tuneM1Negative(rpm, &M1pid);
-          tuneM2(rpm, &M2pid);
-        }  
-        
-          tuneExitTime = micros();
-      noInterrupts();
-      currentTicks = M1ticks;
-      interrupts();
-      
-      if(currentTicks>=distanceTicks){
-        Serial.print("BreakTicks: ");
-        Serial.println(currentTicks);
-        break;
-      }
-        
-     
-      
-    }//end of while
-      
-      md.setBrakes(400,400);
-      disableInterrupt(e1a);
-      disableInterrupt(e2b);
-      setM1Ticks(0);
-      setSqWidth(0,0);
-}
-
-
-
-
-
-
-
 void turn(int dir, int turnDegree){
     //1 is right, -1 is left 
     int amount = getTurnAmount(dir, turnDegree);
@@ -388,39 +435,3 @@ void turn(int dir, int turnDegree){
     interrupts();
 }
 
-void tuneM1Negative(int desiredRPM, MotorPID *M1){
-
-
-  double tuneSpeed = 0;
-  double currentRPM = sqWidthToRPM(squareWidth_M1);
-  
-  M1->currentErr =  desiredRPM - currentRPM;
-  //tuneSpeed = M1->prevTuneSpeed + 0.47*M1->currentErr;
-  tuneSpeed = M1->prevTuneSpeed - M1->gain*M1->currentErr + (M1->gain/0.05)*(M1->currentErr - M1->prevErr1);
-
-  md.setM1Speed(tuneSpeed);
-  M1->prevTuneSpeed = tuneSpeed;
-  M1->prevErr1 = M1->currentErr;
-
-  //Serial.print("M1 tunespeed: ");
-  //Serial.println(tuneSpeed);
-
- 
-  }
-
-void tuneM2Negative(int desiredRPM, MotorPID *M2){
-  
-  
-  double tuneSpeed = 0;
-  double currentRPM = sqWidthToRPM(squareWidth_M2);
-  
-  M2->currentErr =  desiredRPM - currentRPM;
-  //tuneSpeed = M2->prevTuneSpeed + 0.5*M2->currentErr;
-  tuneSpeed = M2->prevTuneSpeed - M2->gain*M2->currentErr + (M2->gain/0.05)*(M2->currentErr - M2->prevErr1);
-
-  md.setM2Speed(tuneSpeed);
-  M2->prevErr1 = M2->currentErr;
-  M2->prevTuneSpeed = tuneSpeed;
-  
- 
-  }
