@@ -15,7 +15,11 @@ class RPI(threading.Thread):
         super(RPI, self).__init__()
         self.running = False
         self.autoupdate = True
-        # self.pc_ws = create_connection("ws://192.168.5.18:8888/ws")
+        self.pc_ws = None
+        try:
+            self.pc_ws = create_connection("ws://192.168.5.18:8888/ws")
+        except:
+            pass
 
         dispatcher.connect(self.command_rpi, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)
         dispatcher.connect(self.manage_algorithm_signal, signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
@@ -69,11 +73,11 @@ class RPI(threading.Thread):
             self.feedback_android(map_mdf_update_string)
             self.feedback_android(dir_update_string)
 
-            # try:
-            #     self.pc_ws.send(map_mdf_update_string)
-            #     self.pc_ws.send(dir_update_string)
-            # except:
-            #     pass
+            try:
+                self.pc_ws.send(map_mdf_update_string)
+                self.pc_ws.send(dir_update_string)
+            except:
+                pass
 
         dispatcher.send(message=formatted_instruction, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
         logging.info("robot location: " + str(robot_row) + ", " + str(robot_col))
