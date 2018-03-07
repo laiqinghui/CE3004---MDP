@@ -71,18 +71,18 @@ void distanceFromWall(double distance)
   //Fine tune the distance from wall
   getCalibrationReading(false);
   if(frontRightReading > distance)
-  {
-    md.setSpeeds(118, 140);
+  {    
     while(frontRightReading > distance)
     {
+      md.setSpeeds(118, 140);
       getCalibrationReading(true);
     }
   }
   else if(frontRightReading < distance)
-  {
-    md.setSpeeds(-116, -140);
+  {  
     while(frontRightReading > distance)
     {
+      md.setSpeeds(-116, -140);
       getCalibrationReading(true);
     }
   }
@@ -164,7 +164,7 @@ void calibration()
   distanceFromWall(leftWall);
   delay(wait);
 
-  //Fine tune the calibration
+  //Fine tune the calibrationu
   count = 0;
   getCalibrationReading(false);
   while(abs(frontRightReading - frontLeftReading) > threshold)
@@ -219,6 +219,9 @@ void fastCalibration(int choice)
   straightenTune();
   delay(wait);
 
+  distanceFromWall(startWall);
+  delay(wait);
+
   if(choice == 1)
   {
     turn(-1, 90);
@@ -233,6 +236,9 @@ void fastCalibration(int choice)
     delay(wait);
 
     straightenTune();
+  delay(wait);
+
+  distanceFromWall(startWall);
   delay(wait);
 
     turn(1, 90);
@@ -251,6 +257,9 @@ void fastCalibration(int choice)
     delay(wait);
 
     straightenTune();
+  delay(wait);
+
+  distanceFromWall(startWall);
   delay(wait);
 
     turn(-1, 90);
@@ -279,41 +288,4 @@ double* calibrationSensorReading()
 
   return sensorCalibrationValues;
 }
-
-void tuneM1Negative(int desiredRPM, MotorPID *M1){
-
-
-  double tuneSpeed = 0;
-  double currentRPM = sqWidthToRPM(squareWidth_M1);
-  
-  M1->currentErr =  desiredRPM - currentRPM;
-  //tuneSpeed = M1->prevTuneSpeed + 0.47*M1->currentErr;
-  tuneSpeed = M1->prevTuneSpeed - M1->gain*M1->currentErr + (M1->gain/0.05)*(M1->currentErr - M1->prevErr1);
-
-  md.setM1Speed(tuneSpeed);
-  M1->prevTuneSpeed = tuneSpeed;
-  M1->prevErr1 = M1->currentErr;
-
-  //Serial.print("M1 tunespeed: ");
-  //Serial.println(tuneSpeed);
-
- 
-  }
-
-void tuneM2Negative(int desiredRPM, MotorPID *M2){
-  
-  
-  double tuneSpeed = 0;
-  double currentRPM = sqWidthToRPM(squareWidth_M2);
-  
-  M2->currentErr =  desiredRPM - currentRPM;
-  //tuneSpeed = M2->prevTuneSpeed + 0.5*M2->currentErr;
-  tuneSpeed = M2->prevTuneSpeed - M2->gain*M2->currentErr + (M2->gain/0.05)*(M2->currentErr - M2->prevErr1);
-
-  md.setM2Speed(tuneSpeed);
-  M2->prevErr1 = M2->currentErr;
-  M2->prevTuneSpeed = tuneSpeed;
-  
- 
-  }
 
