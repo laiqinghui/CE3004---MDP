@@ -114,11 +114,12 @@ void tuneM2(int desiredRPM, MotorPID *M2){
  
   }
 
-void moveForward(int rpm, double distance, boolean pidOn){
+void moveForward(int rpm, int distance, boolean pidOn){
 
    signed long tuneEntryTime = 0;
    signed long tuneExitTime = 0;
    signed long interval = 0;
+
    double offset = 1;
    if(distance == 9.5)
     offset = 0.92;
@@ -128,6 +129,7 @@ void moveForward(int rpm, double distance, boolean pidOn){
     
     MotorPID M1pid = {100, 0, 0, 0.1};//0.1=>50
     MotorPID M2pid = {100, 0, 0, 0.117 };//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms
+
     enableInterrupt( e1a, risingM1, RISING);
     enableInterrupt( e2b, risingM2, RISING);
 
@@ -138,8 +140,7 @@ void moveForward(int rpm, double distance, boolean pidOn){
     Serial.print("Target Ticks: ");
     Serial.println(distanceTicks);
 
-    while(1){
-      
+   
       //Serial.print(sqWidthToRPM(squareWidth_M1));
       //Serial.print(" ");
       //Serial.println(sqWidthToRPM(squareWidth_M2));
@@ -178,8 +179,6 @@ void moveForward(int rpm, double distance, boolean pidOn){
         break;
       }
         
-     
-      
     }//end of while
       
       md.setBrakes(400,400);
@@ -239,12 +238,13 @@ void turn(int dir, int turnDegree){
      * md.setSpeeds(-168 * dir, 200 * dir);
      * md.setSpeeds(-269 * dir, 314 * dir);
     */
+    noInterrupts();
     if(dir == 1)
     {
       md.setSpeeds(-269, 314);
       while(true)
       {
-        currentValue = (PINB>>5)%2;
+        currentValue = (PINB>>5) & B001; 
         if(currentValue && !previousRead)
         {
           ticks++;
@@ -262,7 +262,7 @@ void turn(int dir, int turnDegree){
       md.setSpeeds(269, -314);
       while(true)
       {
-        currentValue = (PIND>>3)%2;
+        currentValue = (PIND>>3) & B001;
         if(currentValue && !previousRead)
         {
           ticks++;
@@ -275,4 +275,5 @@ void turn(int dir, int turnDegree){
         previousRead = currentValue;
       }
     }
+    interrupts();
 }
