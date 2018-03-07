@@ -232,10 +232,6 @@ class Exploration:
 
         if not (self.sim):
             calibrate_front = self.robot.can_calibrate_front()
-<<<<<<< HEAD
-=======
-            # calibrate_right = self.robot.can_calibrate_right()
->>>>>>> 7e8d5189b6015e88293e5aca3cb6dc169a7d612c
             if self.robot.is_corner():
                 move.append(']')
             elif (calibrate_front[0]):
