@@ -38,6 +38,7 @@ class RPI(threading.Thread):
         """
         # if fastest path
         if len(message) == 1:
+            instruction = message[0]
             raw_instruction = ''.join(instruction)
             aggregated_instruction_list = gs.aggregate_instruction(raw_instruction)
             formatted_instruction = 'C' + ','.join(aggregated_instruction_list) + ';'
@@ -79,8 +80,10 @@ class RPI(threading.Thread):
             except:
                 pass
 
+            logging.info("robot location: " + str(robot_row) + ", " + str(robot_col))
+
         dispatcher.send(message=formatted_instruction, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
-        logging.info("robot location: " + str(robot_row) + ", " + str(robot_col))
+
         print gs.MAZEMAP
         logging.info("rpi received message from algorithm and write message to arduino: " + str(formatted_instruction))
         print "==============================================================="
