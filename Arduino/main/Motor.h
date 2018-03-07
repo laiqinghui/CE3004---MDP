@@ -119,7 +119,7 @@ void moveForward(int rpm, double distance, boolean pidOn){
    signed long tuneEntryTime = 0;
    signed long tuneExitTime = 0;
    signed long interval = 0;
-   signed long distanceTicks = 0.95* distance * ticksPerCM;//Delibrate trimming
+   double distanceTicks = distance * ticksPerCM;//Delibrate trimming
    unsigned long currentTicks = 0;
     
     MotorPID M1pid = {100, 0, 0, 0.1};//0.1=>50
