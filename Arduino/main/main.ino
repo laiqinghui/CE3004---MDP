@@ -115,7 +115,7 @@ void setup() {
   md.init();
   initI2C();
   
-  benTestSequence();
+  //benTestSequence();
 }
 
 void loop() 
