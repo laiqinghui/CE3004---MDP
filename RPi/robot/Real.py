@@ -113,7 +113,7 @@ class Robot:
             Numpy array of Numpy arrays: Sensor values from all sensors
 
         """
-        distanceSuperShort = 1
+        # distanceSuperShort = 1
         distanceShort = 3
         distanceLong = 5
         r, c = self.center
@@ -175,21 +175,21 @@ class Robot:
 
         # Right Top
         if self.direction == NORTH:
-            self.getValue(zip([r-1]*distanceSuperShort,
-                          range(c+2, c+distanceSuperShort+2)),
-                          sensor_vals[3], distanceSuperShort, True, True)
+            self.getValue(zip([r-1]*distanceShort,
+                          range(c+2, c+distanceShort+2)),
+                          sensor_vals[3], distanceShort, True, True)
         elif self.direction == EAST:
-            self.getValue(zip(range(r+2, r+distanceSuperShort+2),
-                          [c+1]*distanceSuperShort), sensor_vals[3],
-                          distanceSuperShort, True, True)
+            self.getValue(zip(range(r+2, r+distanceShort+2),
+                          [c+1]*distanceShort), sensor_vals[3],
+                          distanceShort, True, True)
         elif self.direction == WEST:
-            self.getValue(zip(range(r-distanceSuperShort-1, r-1),
-                          [c-1]*distanceSuperShort)[::-1], sensor_vals[3],
-                          distanceSuperShort, True, True)
+            self.getValue(zip(range(r-distanceShort-1, r-1),
+                          [c-1]*distanceShort)[::-1], sensor_vals[3],
+                          distanceShort, True, True)
         else:
-            self.getValue(zip([r+1]*distanceSuperShort,
-                          range(c-distanceSuperShort-1, c-1))[::-1],
-                          sensor_vals[3], distanceSuperShort, True, True)
+            self.getValue(zip([r+1]*distanceShort,
+                          range(c-distanceShort-1, c-1))[::-1],
+                          sensor_vals[3], distanceShort, True, True)
 
         # Left Top
         if self.direction == NORTH:
@@ -360,73 +360,51 @@ class Robot:
 
         return flag
 
-    # def can_calibrate_right(self):
-    #     """To calibrate the robot according to the right wall.
-    #
-    #     Returns:
-    #         flag (bool): Specify the direction to calibrate
-    #
-    #     """
-    #     r, c = self.center
-    #     flag = [False, None]
-    #
-    #     if self.direction == NORTH:
-    #         for i in range(2, 3):
-    #             if ((c + i) == MAX_COLS):
-    #                 flag = [True, 'R']
-    #                 break
-    #             elif ((c + i) < MAX_COLS and (self.exploredMap[r-1, c+i] == 2
-    #                   and self.exploredMap[r+1, c+i] == 2)):
-    #                 flag = [True, 'R']
-    #                 break
-    #     elif self.direction == WEST:
-    #         for i in range(2, 3):
-    #             if ((r - i) < 0):
-    #                 flag = [True, 'R']
-    #                 break
-    #             elif ((r - i) >= 0 and (self.exploredMap[r-i, c-1] == 2 and
-    #                   self.exploredMap[r-i, c+1] == 2)):
-    #                 flag = [True, 'R']
-    #                 break
-    #     elif self.direction == EAST:
-    #         for i in range(2, 3):
-    #             if ((r + i) == MAX_ROWS):
-    #                 flag = [True, 'R']
-    #                 break
-    #             elif ((r + i) < MAX_ROWS and (self.exploredMap[r+i, c-1] == 2
-    #                   and self.exploredMap[r+i, c+1] == 2)):
-    #                 flag = [True, 'R']
-    #                 break
-    #     else:
-    #         for i in range(2, 3):
-    #             if ((c-i) < 0):
-    #                 flag = [True, 'R']
-    #                 break
-    #             elif ((c - i) >= 0 and (self.exploredMap[r-1, c-i] == 2 and
-    #                   self.exploredMap[r+1, c-i] == 2)):
-    #                 flag = [True, 'R']
-    #                 break
-    #
-    #     return flag
+    def can_calibrate_right(self):
+        """To calibrate the robot according to the right wall.
 
-    # def descriptor_1(self):
-    #     descriptor = np.zeros([20, 15]).astype(int)
-    #     descriptor[self.exploredMap[::-1, :] != 0] = 1
-    #     bits = '11'
-    #     for row in descriptor:
-    #         bits += ''.join(map(str, row.tolist()))
-    #     bits += '11'
-    #     hex_str = ['%X' % int(bits[i:i+4], 2) for i in range(0, len(bits)-3, 4)]
-    #     return ''.join(hex_str)
-    #
-    # def descriptor_2(self):
-    #     bits = ''
-    #     for row in self.exploredMap[::-1, :]:
-    #         for bit in row:
-    #             if bit == 2:
-    #                 bits += '1'
-    #             elif bit != 0:
-    #                 bits += '0'
-    #     bits += '0'*(4 - len(bits) % 4)
-    #     hex_str = ['%X' % int(bits[i:i+4], 2) for i in range(0, len(bits)-3, 4)]
-    #     return ''.join(hex_str)
+        Returns:
+            flag (bool): Specify the direction to calibrate
+
+        """
+        r, c = self.center
+        flag = [False, None]
+
+        if self.direction == NORTH:
+            for i in range(2, 3):
+                if ((c + i) == MAX_COLS):
+                    flag = [True, 'R']
+                    break
+                elif ((c + i) < MAX_COLS and (self.exploredMap[r-1, c+i] == 2
+                      and self.exploredMap[r+1, c+i] == 2)):
+                    flag = [True, 'R']
+                    break
+        elif self.direction == WEST:
+            for i in range(2, 3):
+                if ((r - i) < 0):
+                    flag = [True, 'R']
+                    break
+                elif ((r - i) >= 0 and (self.exploredMap[r-i, c-1] == 2 and
+                      self.exploredMap[r-i, c+1] == 2)):
+                    flag = [True, 'R']
+                    break
+        elif self.direction == EAST:
+            for i in range(2, 3):
+                if ((r + i) == MAX_ROWS):
+                    flag = [True, 'R']
+                    break
+                elif ((r + i) < MAX_ROWS and (self.exploredMap[r+i, c-1] == 2
+                      and self.exploredMap[r+i, c+1] == 2)):
+                    flag = [True, 'R']
+                    break
+        else:
+            for i in range(2, 3):
+                if ((c-i) < 0):
+                    flag = [True, 'R']
+                    break
+                elif ((c - i) >= 0 and (self.exploredMap[r-1, c-i] == 2 and
+                      self.exploredMap[r+1, c-i] == 2)):
+                    flag = [True, 'R']
+                    break
+
+        return flag
