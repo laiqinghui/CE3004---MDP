@@ -70,6 +70,7 @@ public class BluetoothChatService {
     public static final int STATE_CONNECTED = 3;  // now connected to a remote device
     static final int STATE_LOST = 4;
     private BluetoothDevice mConnectedDevice;
+    private boolean isServer = false;
 
     /**
      * Constructor. Prepares a new BluetoothChat session.
@@ -283,7 +284,7 @@ public class BluetoothChatService {
     /**
      * Indicate that the connection was lost and notify the UI Activity.
      */
-    private void connectionLost() {
+    private synchronized void connectionLost() {
         // Send a failure message back to the Activity
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
         Bundle bundle = new Bundle();
@@ -295,8 +296,19 @@ public class BluetoothChatService {
         // Update UI title
         updateUserInterfaceTitle();
 
-        // Start the service over to restart listening mode
-        BluetoothChatService.this.start();
+        if(!isServer){
+            while(mState != STATE_CONNECTED){
+                connect(mConnectedDevice, true);
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else{
+            // Start the service over to restart listening mode
+            BluetoothChatService.this.start();
+        }
     }
 
     /**
@@ -356,6 +368,7 @@ public class BluetoothChatService {
                                 // Situation normal. Start the connected thread.
                                 connected(socket, socket.getRemoteDevice(),
                                         mSocketType);
+                                isServer = true;
                                 break;
                             case STATE_NONE:
                             case STATE_CONNECTED:
