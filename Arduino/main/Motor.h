@@ -114,23 +114,23 @@ void tuneM2(int desiredRPM, MotorPID *M2){
  
   }
 
-void moveForward(int rpm, double distance, boolean pidOn){
+void moveForward(int rpm, int distance, boolean pidOn){
 
    signed long tuneEntryTime = 0;
    signed long tuneExitTime = 0;
    signed long interval = 0;
-   signed long distanceTicks = 0.95* distance * ticksPerCM;//Delibrate trimming
-   unsigned long currentTicks = 0;
+   signed long distanceTicks = distance * ticksPerCM;
+   int pidStartRPM = 0*rpm;
     
     MotorPID M1pid = {100, 0, 0, 0.1};//0.1=>50
-    MotorPID M2pid = {100, 0, 0, 0.132 };//0.163=>50 0.134=>80 0.128=>90
+    MotorPID M2pid = {100, 0, 0, 0.130 };//0.163=>50 0.134=>80 0.128=>90
     enableInterrupt( e1a, risingM1, RISING);
     enableInterrupt( e2b, risingM2, RISING);
 
     md.setSpeeds(100, 100);
 
 
-    while(M1ticks<distanceTicks){
+    while(M1ticks < distanceTicks){
       
       //Serial.print(sqWidthToRPM(squareWidth_M1));
       //Serial.print(" ");
@@ -144,25 +144,20 @@ void moveForward(int rpm, double distance, boolean pidOn){
           tuneM1(rpm, &M1pid);
           tuneM2(rpm, &M2pid);
           /*
-          if(distance > 28.5){
-            if(currentTicks < 0.7*distanceTicks){
-              tuneM1(rpm, &M1pid);
-              tuneM2(rpm, &M2pid);
-            } else if(currentTicks < 0.85*distanceTicks){
-              tuneM1(rpm*0.75, &M1pid);
-              tuneM2(rpm*0.75, &M2pid);
-            } else{
-              tuneM1(rpm*0.5, &M1pid);
-              tuneM2(rpm*0.5, &M2pid);
-              }
-        }  
-        */ 
+          if(M1ticks < 0.7*distanceTicks){
+            tuneM1(rpm, &M1pid);
+            tuneM2(rpm, &M2pid);
+          } else if(M1ticks < 0.85*distanceTicks){
+            tuneM1(rpm*0.75, &M1pid);
+            tuneM2(rpm*0.75, &M2pid);
+          } else{
+            tuneM1(rpm*0.5, &M1pid);
+            tuneM2(rpm*0.5, &M2pid);
+            }
+            */
           tuneExitTime = micros();
         }
       }
-
-     
-      
     }//end of while
       
       md.setBrakes(400,400);
@@ -222,12 +217,13 @@ void turn(int dir, int turnDegree){
      * md.setSpeeds(-168 * dir, 200 * dir);
      * md.setSpeeds(-269 * dir, 314 * dir);
     */
+    noInterrupts();
     if(dir == 1)
     {
       md.setSpeeds(-269, 314);
       while(true)
       {
-        currentValue = (PINB>>5)%2;
+        currentValue = (PINB>>5) & B001; 
         if(currentValue && !previousRead)
         {
           ticks++;
@@ -245,7 +241,7 @@ void turn(int dir, int turnDegree){
       md.setSpeeds(269, -314);
       while(true)
       {
-        currentValue = (PIND>>3)%2;
+        currentValue = (PIND>>3) & B001;
         if(currentValue && !previousRead)
         {
           ticks++;
@@ -258,4 +254,5 @@ void turn(int dir, int turnDegree){
         previousRead = currentValue;
       }
     }
+    interrupts();
 }
