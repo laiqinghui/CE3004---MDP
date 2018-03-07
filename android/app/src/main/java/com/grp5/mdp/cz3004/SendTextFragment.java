@@ -45,7 +45,7 @@ public class SendTextFragment extends Fragment implements View.OnClickListener{
      * @return A new instance of fragment SendTextFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SendTextFragment newInstance(BluetoothAdapter adapter, BluetoothChatService bcs) {
+    public static SendTextFragment newInstance(BluetoothAdapter adapter, BluetoothChatService bcs, String bluetoothStatus) {
         SendTextFragment fragment = new SendTextFragment();
         mBluetoothAdapter = adapter;
         mChatService = bcs;

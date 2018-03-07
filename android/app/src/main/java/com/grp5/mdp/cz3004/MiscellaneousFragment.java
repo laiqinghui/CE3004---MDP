@@ -47,7 +47,7 @@ public class MiscellaneousFragment extends Fragment {
      * @return A new instance of fragment MiscellaneousFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static MiscellaneousFragment newInstance(BluetoothAdapter adapter, BluetoothChatService bcs) {
+    public static MiscellaneousFragment newInstance(BluetoothAdapter adapter, BluetoothChatService bcs, String bluetoothStatus) {
         MiscellaneousFragment fragment = new MiscellaneousFragment();
         mBluetoothAdapter = adapter;
         mChatService = bcs;

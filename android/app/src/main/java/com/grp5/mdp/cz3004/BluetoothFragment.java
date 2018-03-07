@@ -62,6 +62,7 @@ public class BluetoothFragment extends Fragment implements AdapterView.OnItemCli
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
     private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
     private static final int REQUEST_ENABLE_BT = 3;
+    private static String status;
 
     private ArrayList<DeviceDetails> deviceItemList;
 
@@ -148,6 +149,7 @@ public class BluetoothFragment extends Fragment implements AdapterView.OnItemCli
         Button writeButton = view.findViewById(R.id.writeButton);
         Button saveButton = view.findViewById(R.id.saveButton);
         EditText writeField = view.findViewById(R.id.writeField);
+        TextView bluetoothStatus = view.findViewById(R.id.statusText);
         // Set the adapter
         mListView = (AbsListView) view.findViewById(android.R.id.list);
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
@@ -160,6 +162,7 @@ public class BluetoothFragment extends Fragment implements AdapterView.OnItemCli
 
         writeField.setText(custom_write_text);
 
+        bluetoothStatus.setText(status);
 
         discovery.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -254,10 +257,11 @@ public class BluetoothFragment extends Fragment implements AdapterView.OnItemCli
      *
      */
     // TODO: Rename and change types and number of parameters
-    public static BluetoothFragment newInstance(BluetoothAdapter adapter, BluetoothChatService bcs) {
+    public static BluetoothFragment newInstance(BluetoothAdapter adapter, BluetoothChatService bcs, String bluetoothStatus) {
         BluetoothFragment fragment = new BluetoothFragment();
         mBluetoothAdapter = adapter;
         mChatService = bcs;
+        status = bluetoothStatus;
         return fragment;
     }
 
@@ -305,6 +309,11 @@ public class BluetoothFragment extends Fragment implements AdapterView.OnItemCli
         mChatService.connect(device, secure);
     }
 
+    public void updateBTStatus(String btStatus){
+        TextView tv = getActivity().findViewById(R.id.statusText);
+        if(tv!=null){tv.setText(btStatus);}
+    }
+
     /**
      * The default content for this Fragment has a TextView that is shown when
      * the list is empty. If you would like to change the text, call this method
@@ -330,5 +339,6 @@ public class BluetoothFragment extends Fragment implements AdapterView.OnItemCli
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(String deviceAddress);
+        void onBluetoothStateChange(String bluetoothStatus);
     }
 }
