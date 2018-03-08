@@ -230,7 +230,7 @@ void moveForward(int rpm, double distance, boolean pidOn){
           currentTicksM1 = M1ticks;
           currentTicksM2 = M2ticks;
           interrupts();
-          if(currentTicksM2>=distanceTicks && currentTicksM2>=distanceTicks ){
+          if(currentTicksM1>=distanceTicks && currentTicksM2>=distanceTicks ){
             md.setM1Brake(400);
             md.setM2Brake(400);
             Serial.print("M1BreakTicks: ");
