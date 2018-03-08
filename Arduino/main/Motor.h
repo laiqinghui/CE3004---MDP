@@ -165,19 +165,19 @@ void moveForward(int rpm, double distance, boolean pidOn){
    signed long interval = 0;
    double offset = 1;
    if(distance == 9.5)
-    offset = 0.92;
+    offset = 0.95;
    
    double distanceTicks = offset  * distance * ticksPerCM;//Delibrate trimming
    unsigned long currentTicksM1 = 0;
    unsigned long currentTicksM2 = 0;
     
-    MotorPID M1pid = {255, 0, 0, 0.1};//0.1=>50
-    MotorPID M2pid = {310 , 0, 0, 0.132};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms
+    MotorPID M1pid = {260, 0, 0, 0.1};//0.1=>50
+    MotorPID M2pid = {300 , 0, 0, 0.115};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms
     enableInterrupt( e1a, risingM1, RISING);
     enableInterrupt( e2b, risingM2, RISING);
 
     //md.setSpeeds(100, 100);
-    md.setSpeeds(255,310);
+    md.setSpeeds(260,300);
     
 
     Serial.print("Target Ticks: ");
@@ -219,6 +219,8 @@ void moveForward(int rpm, double distance, boolean pidOn){
       interrupts();
       
       if(currentTicksM1>=distanceTicks || currentTicksM2>=distanceTicks){
+        md.setBrakes(400, 400);
+        /*
         if(currentTicksM1>=distanceTicks)
           md.setM1Brake(400);
         else md.setM2Brake(400);
@@ -232,8 +234,7 @@ void moveForward(int rpm, double distance, boolean pidOn){
           currentTicksM2 = M2ticks;
           interrupts();
           if(currentTicksM1>=distanceTicks && currentTicksM2>=distanceTicks ){
-            md.setM1Brake(400);
-            md.setM2Brake(400);
+            md.setBrakes(400, 400);
             Serial.print("M1BreakTicks: ");
             Serial.println(currentTicksM1);
             Serial.print("M2BreakTicks: ");
@@ -243,9 +244,9 @@ void moveForward(int rpm, double distance, boolean pidOn){
           }
           
       
-      
+        */
         break;
-      }       
+      }  //end of if     
      
       
     }//end of while
