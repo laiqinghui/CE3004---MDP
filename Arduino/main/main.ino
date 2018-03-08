@@ -1,6 +1,7 @@
-  #include "I2C.h"
+#include "I2C.h"
 #include "Calibration.h"
 #include "Extra UltraSound.h"
+#include "MotorBeta.h"
 
 void testSequence1(){
   for(int i = 0; i < 4; i++)
@@ -29,7 +30,7 @@ void testSequence2()
 void benTestSequence()
 {
   //moveForward(80, 30, true);  
-  turnPID(1, 90);
+  turnPID(-1, 90);
   //md.setSpeeds(124, 170);
   //fastCalibration(2);
   //delay(1000);
