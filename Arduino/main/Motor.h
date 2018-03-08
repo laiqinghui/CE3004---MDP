@@ -169,14 +169,9 @@ void moveForward(int rpm, double distance, boolean pidOn){
    unsigned long currentTicksM1 = 0;
    unsigned long currentTicksM2 = 0;
     
-<<<<<<< HEAD
     MotorPID M1pid = {260, 0, 0, 0.1};//0.1=>50
     MotorPID M2pid = {300 , 0, 0, 0.115};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms
-=======
-    MotorPID M1pid = {255, 0, 0, 0.1};//0.1=>50
-    MotorPID M2pid = {310 , 0, 0, 0.132};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms
 
->>>>>>> 3bf1d54fa3d112f7d5675198ccdf0a57c21ec32c
     enableInterrupt( e1a, risingM1, RISING);
     enableInterrupt( e2b, risingM2, RISING);
 
