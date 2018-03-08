@@ -234,10 +234,13 @@ class Exploration:
 
         if not (self.sim):
             calibrate_front = self.robot.can_calibrate_front()
+            calibrate_right = self.robot.can_calibrate_right()
             if self.robot.is_corner():
                 move.append(']')
             elif (calibrate_front[0]):
                 move.append(calibrate_front[1])
+            elif (calibrate_right[0]):
+                move.append(calibrate_right[1])
             # calibrate right every 5 steps if able to
             # elif (self.moveNumber % 5) > self.baseStep:
             #     calibrate_right = self.robot.can_calibrate_right()
