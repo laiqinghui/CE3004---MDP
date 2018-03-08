@@ -128,8 +128,7 @@ void tuneM1Negative(int desiredRPM, MotorPID *M1){
   
   M1->currentErr =  desiredRPM - currentRPM;
   //tuneSpeed = M1->prevTuneSpeed + 0.47*M1->currentErr;
-  tuneSpeed = M1->prevTuneSpeed + M1->gain*M1->currentErr + (M1->gain/0.05)*(M1->currentErr - M1->prevErr1);
-  Serial.println(tuneSpeed);
+  tuneSpeed = M1->prevTuneSpeed - M1->gain*M1->currentErr - (M1->gain/0.05)*(M1->currentErr - M1->prevErr1);
 
   md.setM1Speed(tuneSpeed);
   M1->prevTuneSpeed = tuneSpeed;
@@ -149,7 +148,7 @@ void tuneM2Negative(int desiredRPM, MotorPID *M2){
   
   M2->currentErr =  desiredRPM - currentRPM;
   //tuneSpeed = M2->prevTuneSpeed + 0.5*M2->currentErr;
-  tuneSpeed = M2->prevTuneSpeed + M2->gain*M2->currentErr + (M2->gain/0.05)*(M2->currentErr - M2->prevErr1);
+  tuneSpeed = M2->prevTuneSpeed - M2->gain*M2->currentErr - (M2->gain/0.05)*(M2->currentErr - M2->prevErr1);
 
   md.setM2Speed(tuneSpeed);
   M2->prevErr1 = M2->currentErr;
@@ -173,6 +172,7 @@ void moveForward(int rpm, double distance, boolean pidOn){
     
     MotorPID M1pid = {255, 0, 0, 0.1};//0.1=>50
     MotorPID M2pid = {310 , 0, 0, 0.132};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms
+
     enableInterrupt( e1a, risingM1, RISING);
     enableInterrupt( e2b, risingM2, RISING);
 
@@ -262,7 +262,7 @@ double getTurnAmountPID(int dir, int turnDegree){
     if(dir == 1)
     {
       double degree90 = 50; //cir is 51.8
-      double degree180 = 50.8; //cir is 53.1
+      double degree180 = 50; //cir is 53.1
       if(turnDegree < 90)
       {
         return abs(degree90 * (turnDegree/360.0) * ticksPerCM);
@@ -277,8 +277,8 @@ double getTurnAmountPID(int dir, int turnDegree){
     }
     else
     {
-      double degree90 = 47; //cir is 47.6
-      double degree180 = 48.7; //cir is 49.65
+      double degree90 = 47.6; //cir is 47.6
+      double degree180 = 49; //cir is 49.65
       if(turnDegree < 90)
       {
         Serial.println(abs(degree90 * (turnDegree/360.0) * ticksPerCM));
@@ -390,7 +390,6 @@ void turnPID(int dir, int turnDegree)
    signed long interval = 0; 
    unsigned long currentTicks = 0;
     
-    
     enableInterrupt( e1a, risingM1, RISING);
     enableInterrupt( e2b, risingM2, RISING);
 
@@ -428,6 +427,7 @@ void turnPID(int dir, int turnDegree)
 	{
     MotorPID M1pid = {269, 0, 0, 0.1};//0.1=>50
     MotorPID M2pid = {-314, 0, 0, 0.132 };//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms  
+
 		md.setSpeeds(269, -314);
 		while(1)
 		{
