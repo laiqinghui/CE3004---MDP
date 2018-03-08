@@ -29,7 +29,7 @@ void testSequence2()
 void benTestSequence()
 {
   //moveForward(80, 30, true);  
-  turnPID(-1, 90);
+  turnPID(1, 90);
   //md.setSpeeds(124, 170);
   //fastCalibration(2);
   //delay(1000);
