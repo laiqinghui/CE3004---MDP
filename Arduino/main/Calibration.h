@@ -199,17 +199,16 @@ void calibration()
 void fastCalibration(int choice)
 {
   double threshold = 0.1;
-  double startWall = 13.65;
-  double leftWall = 13.88;
-  int wait = 200;
-  
+  double fromWall = 14;
+  int wait = 100;
+
+  delay(wait);
   //Quick calibration against wall
-  delay(100);
   straighten();
   delay(wait);
 
   //Move to the distance from wall
-  distanceFromWall(startWall);
+  distanceFromWall(fromWall);
   delay(wait);
 
   //Fine tune the calibration
@@ -219,7 +218,7 @@ void fastCalibration(int choice)
   straightenTune();
   delay(wait);
 
-  distanceFromWall(startWall);
+  distanceFromWall(fromWall);
   delay(wait);
 
   if(choice == 1)
@@ -228,7 +227,7 @@ void fastCalibration(int choice)
     delay(wait);
 
     //Move to the distance from wall
-    distanceFromWall(startWall);
+    distanceFromWall(fromWall);
     delay(wait);
 
     //Fine tune the calibration
@@ -236,10 +235,10 @@ void fastCalibration(int choice)
     delay(wait);
 
     straightenTune();
-  delay(wait);
+    delay(wait);
 
-  distanceFromWall(startWall);
-  delay(wait);
+    distanceFromWall(startWall);
+    delay(wait);
 
     turn(1, 90);
   }
