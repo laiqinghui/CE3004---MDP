@@ -1,5 +1,6 @@
   #include "I2C.h"
 #include "Calibration.h"
+#include "Extra UltraSound.h"
 
 void testSequence1(){
   for(int i = 0; i < 4; i++)
@@ -9,8 +10,8 @@ void testSequence1(){
       Serial.println("\n\n\n");
       delay(500);
     }
-      
-     //turn(-1, 90);//left
+
+     //turn(1, 90);//left
     delay(500);  
   }
 }
@@ -27,7 +28,8 @@ void testSequence2()
 
 void benTestSequence()
 {
-  //turnPID(-1, 90);
+  //moveForward(80, 30, true);  
+  turnPID(1, 90);
   //md.setSpeeds(124, 170);
   //fastCalibration(2);
   //delay(1000);
@@ -46,25 +48,25 @@ void processInst(){
     switch(instBuff[index]){
       
       case 'W': moveCount = instBuff[index+1] - 48;
-                moveForward(90, 9.5*moveCount, true);
+                moveForward(70, 9.5*moveCount, true);
                 break;
       case 'A': Serial.println('A');
                 moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
                   
-                  turnTemp(-1, 90);
+                  turnPID(-1, 90);
                     delay(200);
                 }
                 break;
       case 'D': moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
-                  turnTemp(1, 90);
+                  turnPID(1, 90);
                   delay(200);
                 }
                 break;
       case 'O': moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
-                  turnTemp(1, 180);
+                  turnPID(1, 180);
                     delay(200);
                 }
                 break;
@@ -115,12 +117,14 @@ void setup() {
   Serial.println("Program Started!!!!");
   md.init();
   initI2C();
-  //turnPID(-1,90);
+
   //benTestSequence();
 }
 
 void loop() 
 {
+  //PWM_Mode_Setup();
+  //getUltraSound2Reading();
   //Serial.println(getCalibrationReading(false)[1]);
   if(dataExist()){
     //delay(100);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations 
