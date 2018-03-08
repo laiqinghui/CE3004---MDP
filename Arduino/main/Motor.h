@@ -51,7 +51,6 @@ void risingM1Ticks(){
   M1ticks++;
   }
  
-
 //ISR for Motor2(Left) encoder
 void risingM2(){
   entry_time_M2 = micros();
@@ -294,84 +293,8 @@ double getTurnAmountPID(int dir, int turnDegree){
     }
 }
 
-double getTurnTicksOffsetAmt(int turnDegree)
-{
-  switch(turnDegree){
-    
-    case 0 ... 90:
-      return 0.95;
-    case 91 ... 180:
-      return 1;  
-    case 360 ... 450:
-      return 0.90;
-    default:
-      return 0.85;
-    
-    }
-}
-
-void turnTemp1(int dir, int turnDegree)
-{
-    //1 is right, -1 is left
-    
-    /*
-     * Offset Amount(%) for turning angles:
-     * 0 - 90: 85%
-     * 360 - 450: 
-     * 450 - 540: 
-     * 540 - 630: 
-     * 630 - 720: 
-     * 720 - 810: 
-     * 810 - 900:
-     * 900 - 990:
-     * 990 - 1080:
-     */
-    
-    double cir = 3.142 * 17.6; //circumfrence of circle drawn when turning in cm, current diameter used is 17.6
-    double cmToCounts = singlerevticks/(6*3.142); //cm to counts for wheel
-    int amount = abs(cir * (turnDegree/360.0) * cmToCounts) * getTurnTicksOffsetAmt(turnDegree);//int to ignored decimal value
-    unsigned long ticks = 0;
-    boolean brakeSet = false;
-    
-    
-    
-    enableInterrupt( e1a, risingM1, RISING);
-    Serial.print("Target count: ");
-    Serial.println(amount);
-    Serial.print("Offset amt: ");
-    Serial.println(getTurnTicksOffsetAmt(turnDegree));
-    md.setSpeeds(-158.921 * dir, 197.318 * dir);//80 RPM
-    
-    while(1)
-    {
-      noInterrupts();
-      ticks = M1ticks;
-      interrupts();
-      if(ticks > amount){
-        break;
-        }
-      
-      /*
-      if(ticks > amount*0.85 && !brakeSet){ //Activate brakes at 85 percent of target ticks
-        md.setBrakes(400,400);
-        brakeSet = true;
-        Serial.println("Brakes activated ");
-        }
-        
-      */
-    }
-    setTicks(0,0);
-    setSqWidth(0,0);
-    disableInterrupt(e1a);
-    md.setBrakes(400,400);
-    
-}
-
-
-
 //-1 is left turn and 1 is right turn
-void turnPID(int dir, int turnDegree)
-{
+void turnPID(int dir, int turnDegree){
     
     setTicks(0,0);
     setSqWidth(0,0);
@@ -454,96 +377,5 @@ void turnPID(int dir, int turnDegree)
       disableInterrupt(e2b);
       setTicks(0,0);
       setSqWidth(0,0);
-}
-
-//-1 is left turn and 1 is right turn
-double getTurnAmount(int dir, int turnDegree){
-    if(dir == 1)
-    {
-  		double degree90 = 50; //cir is 51.8
-  		double degree180 = 50.8; //cir is 52.9
-  		if(turnDegree < 90)
-  		{
-  			return abs(degree90 * (turnDegree/360.0) * ticksPerCM);
-  		}
-  		else
-  		{
-  			double closenessTo90 = ((turnDegree-90)/90.0)*degree180;
-  			double closenessTo180 = ((180 - turnDegree)/90.0)*degree90;
-  		  
-  			return abs((closenessTo90 + closenessTo180) * (turnDegree/360.0) * ticksPerCM);
-      }
-    }
-    else
-    {
-		  double degree90 = 47; //cir is 47.6
-		  double degree180 = 48.73; //cir is 49.65
-      if(turnDegree < 90)
-      {
-        Serial.println(abs(degree90 * (turnDegree/360.0) * ticksPerCM));
-        return abs(degree90 * (turnDegree/360.0) * ticksPerCM);
-      }
-      else
-      {
-        double closenessTo90 = ((turnDegree-90)/90.0)*degree180;
-        double closenessTo180 = ((180 - turnDegree)/90.0)*degree90;
-        
-        return abs((closenessTo90 + closenessTo180) * (turnDegree/360.0) * ticksPerCM);
-      }
-    }
-}
-
-//-1 is left turn and 1 is right turn
-void turnTemp(int dir, int turnDegree){
-    //1 is right, -1 is left 
-    int amount = getTurnAmount(dir, turnDegree);
-    int ticks = 0;
-    int previousRead = 0;
-    int currentValue = 0;
-    
-    /*
-     * Different Speed Values
-     * md.setSpeeds(-221 * dir, 250 * dir);
-     * md.setSpeeds(-168 * dir, 200 * dir);
-     * md.setSpeeds(-269 * dir, 314 * dir);
-    */
-    noInterrupts();
-    if(dir == 1)
-    {
-      md.setSpeeds(-269, 314);
-      while(true)
-      {
-        currentValue = (PINB>>5) & B001; 
-        if(currentValue && !previousRead)
-        {
-          ticks++;
-          if(ticks == amount)
-          {
-            md.setBrakes(400,400);
-            break;        
-          }
-        } 
-        previousRead = currentValue;
-      }
-    }
-    else
-    {
-      md.setSpeeds(269, -314);
-      while(true)
-      {
-        currentValue = (PIND>>3) & B001;
-        if(currentValue && !previousRead)
-        {
-          ticks++;
-          if(ticks == amount)
-          {
-            md.setBrakes(400,400);
-            break;        
-          }
-        } 
-        previousRead = currentValue;
-      }
-    }
-    interrupts();
 }
 
