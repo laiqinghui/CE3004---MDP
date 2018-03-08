@@ -157,7 +157,7 @@ void calibration()
   delay(wait);
 
   //Turn to the left by 90
-  turnTemp(-1, 90);
+  turnPID(-1, 90);
   delay(wait);
   
   //Move to the distance from wall
@@ -189,7 +189,7 @@ void calibration()
   delay(wait);
 
   //Turn to the left by 90
-  turnTemp(-1, 90);
+  turnPID(-1, 90);
   delay(wait);
 }
 
@@ -223,7 +223,7 @@ void fastCalibration(int choice)
 
   if(choice == 1)
   {
-    turnTemp(-1, 90);
+    turnPID(-1, 90);
     delay(wait);
 
     //Move to the distance from wall
@@ -240,11 +240,11 @@ void fastCalibration(int choice)
     distanceFromWall(fromWall);
     delay(wait);
 
-    turnTemp(1, 90);
+    turnPID(1, 90);
   }
   else if (choice == 2)
   {
-    turnTemp(1, 90);
+    turnPID(1, 90);
     delay(wait);
 
     //Move to the distance from wall
@@ -261,7 +261,7 @@ void fastCalibration(int choice)
   distanceFromWall(fromWall);
   delay(wait);
 
-    turnTemp(-1, 90);
+    turnPID(-1, 90);
   }  
 }
 
