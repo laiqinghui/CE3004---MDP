@@ -71,25 +71,26 @@ void DualVNH5019MotorShield::setM1Speed(int speed)
   }
   if (speed > 400)  // Max PWM dutycycle
     speed = 400;
-  #if defined(__AVR_ATmega168__)|| defined(__AVR_ATmega328P__) || defined(__AVR_ATmega32U4__)
+
   OCR1A = speed;
-  #else
-  analogWrite(_PWM1,speed * 51 / 80); // default to using analogWrite, mapping 400 to 255
-  #endif
+
   if (speed == 0)
   {
+	PORTD = PORTD & B11101011;  
+	  
+
     digitalWrite(_INA1,LOW);   // Make the motor coast no
     digitalWrite(_INB1,LOW);   // matter which direction it is spinning.
   }
   else if (reverse)
   {
-    digitalWrite(_INA1,LOW);
-    digitalWrite(_INB1,HIGH);
+	PORTD = PORTD & B11101111; //Set to low
+	PORTD = PORTD | B00000100; //Set to high
   }
   else
   {
-    digitalWrite(_INA1,HIGH);
-    digitalWrite(_INB1,LOW);
+	PORTD = PORTD & B11101111; //Set to low
+	PORTD = PORTD | B00000100; //Set to high
   }
 }
 
@@ -105,25 +106,22 @@ void DualVNH5019MotorShield::setM2Speed(int speed)
   }
   if (speed > 400)  // Max 
     speed = 400;
-  #if defined(__AVR_ATmega168__)|| defined(__AVR_ATmega328P__) || defined(__AVR_ATmega32U4__)
+
   OCR1B = speed;
-  #else
-  analogWrite(_PWM2,speed * 51 / 80); // default to using analogWrite, mapping 400 to 255
-  #endif 
   if (speed == 0)
   {
-    digitalWrite(_INA2,LOW);   // Make the motor coast no
-    digitalWrite(_INB2,LOW);   // matter which direction it is spinning.
+	PORTD = PORTD & B01111111;
+	PORTB = PORTB & B11111110;
   }
   else if (reverse)
   {
-    digitalWrite(_INA2,LOW);
-    digitalWrite(_INB2,HIGH);
+	PORTD = PORTD & B01111111; //Set to low
+	PORTB = PORTB | B00000001; //Set to high  
   }
   else
   {
-    digitalWrite(_INA2,HIGH);
-    digitalWrite(_INB2,LOW);
+	PORTD = PORTD | B10000000; //Set to high
+	PORTB = PORTB & B11111110; //Set to low
   }
 }
 
@@ -234,58 +232,21 @@ void DualVNH5019MotorShield::setSpeeds(int m1Speed, int m2Speed)
 // Brake motor 1, brake is a number between 0 and 400
 void DualVNH5019MotorShield::setM1Brake(int brake)
 {
-  // normalize brake
-  if (brake < 0)
-  {
-    brake = -brake;
-  }
-  if (brake > 400)  // Max brake
-    brake = 400;
-  digitalWrite(_INA1, LOW);
-  digitalWrite(_INB1, LOW);
-  #if defined(__AVR_ATmega168__)|| defined(__AVR_ATmega328P__) || defined(__AVR_ATmega32U4__)
-  OCR1A = brake;
-  #else
-  analogWrite(_PWM1,brake * 51 / 80); // default to using analogWrite, mapping 400 to 255
-  #endif
+	 PORTD = PORTD & B11101011;
+	 OCR1A = 400;
 }
 
 // Brake motor 2, brake is a number between 0 and 400
 void DualVNH5019MotorShield::setM2Brake(int brake)
 {
-  // normalize brake
-  if (brake < 0)
-  {
-    brake = -brake;
-  }
-  if (brake > 400)  // Max brake
-    brake = 400;
-  digitalWrite(_INA2, LOW);
-  digitalWrite(_INB2, LOW);
-  #if defined(__AVR_ATmega168__)|| defined(__AVR_ATmega328P__) || defined(__AVR_ATmega32U4__)
-  OCR1B = brake;
-  #else
-  analogWrite(_PWM2,brake * 51 / 80); // default to using analogWrite, mapping 400 to 255
-  #endif
+  PORTD = PORTD & B01111111;
+  PORTB = PORTB & B11111110;
+  OCR1B = 400;
 }
 
 // Brake motor 1 and 2, brake is a number between 0 and 400
 void DualVNH5019MotorShield::setBrakes(int m1Brake, int m2Brake)
-{
-  //setM1Brake(m1Brake);
-  //setM2Brake(m2Brake);
-  
-  // normalize brake
-  if (m1Brake < 0 && m2Brake < 0)
-  {
-    m1Brake = -m1Brake;
-	m2Brake = -m2Brake;
-  }
-  if (m1Brake > 400)  // Max brake
-    m1Brake = 400;
-  if (m2Brake > 400)  // Max brake
-    m2Brake = 400;
-	
+{	
   PORTD = PORTD & B01101011;
 	
   PORTB = PORTB & B11111110;
@@ -294,14 +255,9 @@ void DualVNH5019MotorShield::setBrakes(int m1Brake, int m2Brake)
   //digitalWrite(_INB1, LOW);
   //digitalWrite(_INA2, LOW);
   //digitalWrite(_INB2, LOW);
-  
-  #if defined(__AVR_ATmega168__)|| defined(__AVR_ATmega328P__) || defined(__AVR_ATmega32U4__)
-  OCR1A = m1Brake;
-  OCR1B = m2Brake;
-  #else
-  analogWrite(_PWM1,m1Brake * 51 / 80); // default to using analogWrite, mapping 400 to 255
-  analogWrite(_PWM2,m2Brake * 51 / 80); // default to using analogWrite, mapping 400 to 255
-  #endif
+
+  OCR1A = 400;
+  OCR1B = 400;
 }
 
 // Return motor 1 current value in milliamps.

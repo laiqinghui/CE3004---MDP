@@ -1,7 +1,7 @@
 #include "I2C.h"
 #include "Calibration.h"
-#include "Extra UltraSound.h"
 #include "MotorBeta.h"
+
 
 void testSequence1(){
   for(int i = 0; i < 4; i++)
@@ -71,7 +71,10 @@ void processInst(){
                     delay(200);
                 }
                 break;
-      case ']': fastCalibration(2);
+      case ']': PWM_Mode_Setup();
+                //fastCalibration(2);
+                break;
+      case 'R': fastCalibration(1);
                 break;
       case 'F': fastCalibration(0);
                 break;          
@@ -126,7 +129,6 @@ void loop()
 {
   //PWM_Mode_Setup();
   //getUltraSound2Reading();
-  //Serial.println(getCalibrationReading(false)[1]);
   if(dataExist()){
     //delay(100);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations 
     processInst();

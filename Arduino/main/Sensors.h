@@ -1,7 +1,9 @@
+#include "Extra UltraSound.h"
+
 #define frontRight  A1    //Front right PS2
 #define frontLeft  A3    //Front left PS4
-#define left A0  // Left PS3
-#define right A2 // Right PS1
+#define left A0  // Left PS1
+#define right A2 // Right PS3
 
 //Function Declaration
 double* getIRSensorReading();
@@ -135,7 +137,7 @@ char* getSensorReadingInCM(){
   }
   
   //Ultrasound reading
-  sensorsValuesArray[1] = getUltraSoundDistance(); //Center
+  sensorsValuesArray[1] = getUltraSound2Reading();        //getUltraSoundDistance(); //Center
 
 
   //PS2 y = 6290.4x - 1.6964 //subtract another 2 to offset
@@ -182,6 +184,12 @@ char* getSensorReadingInCM(){
   {
     sensorsValuesArray[4] = sensorsValuesArray[4] - 1;
   }
+
+  Serial.println((int)sensorsValuesArray[0]);
+  Serial.println((int)sensorsValuesArray[1]);
+  Serial.println((int)sensorsValuesArray[2]);
+  Serial.println((int)sensorsValuesArray[3]);
+  Serial.println((int)sensorsValuesArray[4]);
   
   return sensorsValuesArray;
 }
