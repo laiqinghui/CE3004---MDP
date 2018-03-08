@@ -53,7 +53,6 @@ void processInst(){
                   turn(-1, 90);
                     delay(200);
                 }
-                
                 break;
       case 'D': moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
