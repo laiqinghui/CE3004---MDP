@@ -27,9 +27,9 @@ void testSequence2()
 
 void benTestSequence()
 {
-  turnPID(1, 90);
+  //turnPID(-1, 90);
   //md.setSpeeds(124, 170);
-  //calibration();
+  //fastCalibration(2);
   //delay(1000);
   //moveForward(80, 9.5, true);
 }
@@ -50,19 +50,19 @@ void processInst(){
                 break;
       case 'A': moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
-                  turn(-1, 90);
+                  turnPID(-1, 90);
                     delay(200);
                 }
                 break;
       case 'D': moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
-                  turn(1, 90);
+                  turnPID(1, 90);
                   delay(200);
                 }
                 break;
       case 'O': moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
-                  turn(1, 180);
+                  turnPID(1, 180);
                     delay(200);
                 }
                 break;
@@ -74,7 +74,7 @@ void processInst(){
                 break;                     
       case 'M': moveForward(50, atoi(instBuff+2), true);  
                 break;
-      case 'T': turn(-1, atoi(instBuff+2));
+      case 'T': turnPID(-1, atoi(instBuff+2));
                 break;
       case 'S': setOutBuffer('S', getSensorReadingInCM(), 5);
                 interruptPi();//Interrupt RPI to notify data is ready 
@@ -119,7 +119,7 @@ void setup() {
 
 void loop() 
 {
-  //Serial.println((int)getSensorReadingInCM()[2]);
+  //Serial.println(getCalibrationReading(false)[1]);
   if(dataExist()){
     //delay(100);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations 
     processInst();
