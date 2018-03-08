@@ -147,7 +147,7 @@ char* getSensorReadingInCM(){
   }
   else
   {
-    sensorsValuesArray[2] = (6290.4/frontRightValue) - 3.6964;
+    sensorsValuesArray[2] = (6290.4/frontRightValue) - 2.6964;
   }
 
   //PS3 y = 5260x - 0.3915

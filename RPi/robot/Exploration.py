@@ -5,6 +5,7 @@ import time
 
 import global_settings as gs
 
+from Real import Robot
 from Constants import NORTH, SOUTH, EAST, WEST, FORWARD, LEFT, RIGHT, START, MAX_ROWS, MAX_COLS
 
 
@@ -32,6 +33,8 @@ class Exploration:
             sim (bool, optional): To specify simulation mode or real mode
 
         """
+        # self.moveNumber = 0
+        # self.baseStep = 0
         self.startPos = startPos
         self.timeLimit = timeLimit
         self.exploredArea = 0
@@ -41,9 +44,7 @@ class Exploration:
         #     self.robot = Robot(self.currentMap, direction, self.startPos, realMap)
         #     self.sensors = self.robot.getSensors()
         # else:
-        from Real import Robot
         self.robot = Robot(self.currentMap, direction, startPos)
-
         self.exploredNeighbours = dict()
         self.sim = sim
         self.calibrateLim = calibrateLim
@@ -196,7 +197,6 @@ class Exploration:
         self.getExploredArea()
 
         if (self.exploredArea == 100):
-            # return move, True, self.robot.center, self.robot.direction
             return move, True, self.robot.center, self.robot.direction
         else:
             return move, False, self.robot.center, self.robot.direction
@@ -230,12 +230,21 @@ class Exploration:
             self.robot.moveBot(RIGHT)
             move.extend(('O'))
 
+        # self.moveNumber += len(move)
+
         if not (self.sim):
             calibrate_front = self.robot.can_calibrate_front()
             if self.robot.is_corner():
                 move.append(']')
             elif (calibrate_front[0]):
                 move.append(calibrate_front[1])
+            # calibrate right every 5 steps if able to
+            # elif (self.moveNumber % 5) > self.baseStep:
+            #     calibrate_right = self.robot.can_calibrate_right()
+            #     if calibrate_right[0]:
+            #         move.append(calibrate_right[1])
+            #         self.baseStep = (self.moveNumber % 5)
+
         return move
 
     def getExploredArea(self):
@@ -392,8 +401,8 @@ class Exploration:
         r, c = center
         flag = True
         inds = []
-        distanceSuperShort = 1
-        # distanceShort = 3
+        distanceSuperShort = 2
+        #distanceShort = 3
         distanceLong = 5
 
         if self.robot.direction == NORTH:

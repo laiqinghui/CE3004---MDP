@@ -71,18 +71,18 @@ void distanceFromWall(double distance)
   //Fine tune the distance from wall
   getCalibrationReading(false);
   if(frontRightReading > distance)
-  {
-    md.setSpeeds(118, 140);
+  {    
     while(frontRightReading > distance)
     {
+      md.setSpeeds(118, 140);
       getCalibrationReading(true);
     }
   }
   else if(frontRightReading < distance)
-  {
-    md.setSpeeds(-116, -140);
+  {  
     while(frontRightReading > distance)
     {
+      md.setSpeeds(-116, -140);
       getCalibrationReading(true);
     }
   }
@@ -164,7 +164,7 @@ void calibration()
   distanceFromWall(leftWall);
   delay(wait);
 
-  //Fine tune the calibration
+  //Fine tune the calibrationu
   count = 0;
   getCalibrationReading(false);
   while(abs(frontRightReading - frontLeftReading) > threshold)
@@ -219,6 +219,9 @@ void fastCalibration(int choice)
   straightenTune();
   delay(wait);
 
+  distanceFromWall(startWall);
+  delay(wait);
+
   if(choice == 1)
   {
     turn(-1, 90);
@@ -233,6 +236,9 @@ void fastCalibration(int choice)
     delay(wait);
 
     straightenTune();
+  delay(wait);
+
+  distanceFromWall(startWall);
   delay(wait);
 
     turn(1, 90);
@@ -251,6 +257,9 @@ void fastCalibration(int choice)
     delay(wait);
 
     straightenTune();
+  delay(wait);
+
+  distanceFromWall(startWall);
   delay(wait);
 
     turn(-1, 90);

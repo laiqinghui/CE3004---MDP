@@ -49,7 +49,7 @@ class FastestPath:
 
     """
 
-    def __init__(self, exploredMap, start, goal, direction, waypoint=None, calibrateLim=5, sim=True):
+    def __init__(self, exploredMap, start, goal, direction, waypoint=None, calibrateLim=5, sim=False):
         """To initialize an instance of the FastestPath class.
 
         Args:
@@ -76,7 +76,7 @@ class FastestPath:
         if sim:
             from Simulator import Robot
             self.robot = Robot(self.exploredMap, direction, start, None)
-        else:
+        if not sim:
             from Real import Robot
             self.robot = Robot(self.exploredMap, direction, start)
 
@@ -289,7 +289,7 @@ class FastestPath:
         """
         print "Fastest Path Mode started!"
         self.getFastestPath()
-        while (self.robot.center.tolist() != self.goal.tolist()):
+        while (self.robot.center.tolist() != self.goal):
             self.moveStep()
         print "Fastest Path completed!"
         return self.movement

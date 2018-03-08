@@ -38,6 +38,7 @@ class RPI(threading.Thread):
         """
         # if fastest path
         if len(message) == 1:
+            instruction = message[0]
             raw_instruction = ''.join(instruction)
             aggregated_instruction_list = gs.aggregate_instruction(raw_instruction)
             formatted_instruction = 'C' + ','.join(aggregated_instruction_list) + ';'
@@ -53,13 +54,13 @@ class RPI(threading.Thread):
             raw_instruction = ''.join(instruction)
             aggregated_instruction_list = gs.aggregate_instruction(raw_instruction)
 
-            if not completed:
-                formatted_instruction = 'S' + ''.join(aggregated_instruction_list) + ';'
-                robot_moving_stop_string_update = '1L'   # robot no longer moving after instruction
-            else:
+            if completed:
                 # exploration completed, arduino do not need to sense environment after moving robot
                 formatted_instruction = 'C' + ''.join(aggregated_instruction_list) + ';'
-                robot_moving_stop_string_update = '0L'   # robot still going moving after instruction
+                robot_moving_stop_string_update = '1L'   # robot still going moving after instruction
+            if not completed:
+                formatted_instruction = 'S' + ''.join(aggregated_instruction_list) + ';'
+                robot_moving_stop_string_update = '0L'   # robot no longer moving after instruction
 
             explore_mdf_string_update = gs.get_mdf_bitstring(gs.MAZEMAP, 1, 0)
             obstacle_mdf_string_update = gs.get_mdf_bitstring(gs.MAZEMAP, 1, 1)
@@ -79,8 +80,10 @@ class RPI(threading.Thread):
             except:
                 pass
 
+            logging.info("robot location: " + str(robot_row) + ", " + str(robot_col))
+
         dispatcher.send(message=formatted_instruction, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
-        logging.info("robot location: " + str(robot_row) + ", " + str(robot_col))
+
         print gs.MAZEMAP
         logging.info("rpi received message from algorithm and write message to arduino: " + str(formatted_instruction))
         print "==============================================================="
@@ -91,11 +94,11 @@ class RPI(threading.Thread):
         - Updates from Arduino to be processed and passed to Android
         """
         logging.info("sensor value: " + str(message))
-        message[0] = message[0] - 13
-        message[1] = message[1] - 9
+        message[0] = message[0] - 12
+        message[1] = message[1] - 8
         message[2] = message[2] - 12
         message[3] = message[3] - 12
-        message[4] = message[4] - 17
+        message[4] = message[4] - 20
 
         # raw_input("---------press enter to continue-------")
 
