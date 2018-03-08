@@ -28,13 +28,23 @@ void PWM_Mode_Setup()
 int getUltraSound2Reading()
 {                              
 	// a low pull on pin COMP/TRIG  triggering a sensor reading
-
+/*
 	PORTD = PORTD & B11111011; //Set to low
 	PORTD = PORTD | B10000100; //Set to high
-             
+	
+           
 	// reading Pin PWM will output pulses 
     unsigned long DistanceMeasured=pulseIn(5,LOW);
+    */ 
+	pinMode(URTRIG,OUTPUT);   
+	 pinMode(URPWM, INPUT);   
+		digitalWrite(URTRIG,HIGH);  
+	     digitalWrite(URTRIG, LOW);
+    digitalWrite(URTRIG, HIGH);               // reading Pin PWM will output pulses
      
+    unsigned long DistanceMeasured=pulseIn(URPWM,LOW);
+	 
+	 Serial.println(DistanceMeasured);
     if(DistanceMeasured>=10200)
     {              
 		// the reading is invalid.
