@@ -54,19 +54,19 @@ void processInst(){
                 moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
                   
-                  turnTemp(-1, 90);
+                  turnPID(-1, 90);
                     delay(200);
                 }
                 break;
       case 'D': moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
-                  turnTemp(1, 90);
+                  turnPID(1, 90);
                   delay(200);
                 }
                 break;
       case 'O': moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
-                  turnTemp(1, 180);
+                  turnPID(1, 180);
                     delay(200);
                 }
                 break;
