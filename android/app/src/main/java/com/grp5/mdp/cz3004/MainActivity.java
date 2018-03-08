@@ -49,7 +49,8 @@ import java.math.BigInteger;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
+        implements
+        NavigationView.OnNavigationItemSelectedListener,
         BluetoothFragment.OnFragmentInteractionListener,
         SendTextFragment.OnFragmentInteractionListener,
         ArenaFragment.OnMapUpdateListener,
@@ -88,12 +89,6 @@ public class MainActivity extends AppCompatActivity
 
     private static String readMessage;
 
-//    private SensorManager mSensorManager;
-//    private final float[] mAccelerometerReading = new float[3];
-//    private final float[] mMagnetometerReading = new float[3];
-
-//    private final float[] mRotationMatrix = new float[9];
-//    private final float[] mOrientationAngles = new float[3];
 
     @SuppressLint("HandlerLeak")
     @Override
@@ -102,8 +97,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-//        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         BTAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -168,71 +161,6 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
     }
-
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//
-//        // Get updates from the accelerometer and magnetometer at a constant rate.
-//        // To make batch operations more efficient and reduce power consumption,
-//        // provide support for delaying updates to the application.
-//        //
-//        // In this example, the sensor reporting delay is small enough such that
-//        // the application receives an update before the system checks the sensor
-//        // readings again.
-//        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_UI);
-//        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
-//                SensorManager.SENSOR_DELAY_UI);
-//    }
-
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//
-//        // Don't receive any more updates from either sensor.
-//        mSensorManager.unregisterListener(this);
-//    }
-//
-//    // Get readings from accelerometer and magnetometer. To simplify calculations,
-//    // consider storing these readings as unit vectors.
-//    @Override
-//    public void onSensorChanged(SensorEvent event) {
-//        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-//            System.arraycopy(event.values, 0, mAccelerometerReading,
-//                    0, mAccelerometerReading.length);
-//        }
-//        else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-//            System.arraycopy(event.values, 0, mMagnetometerReading,
-//                    0, mMagnetometerReading.length);
-//        }
-//        updateOrientationAngles();
-//    }
-//
-//    @Override
-//    public void onAccuracyChanged(Sensor sensor, int i) {
-//
-//    }
-
-//    // Compute the three orientation angles based on the most recent readings from
-//    // the device's accelerometer and magnetometer.
-//    public void updateOrientationAngles() {
-//        // Update rotation matrix, which is needed to update orientation angles.
-//        mSensorManager.getRotationMatrix(mRotationMatrix, null,
-//                mAccelerometerReading, mMagnetometerReading);
-//
-//        // "mRotationMatrix" now has up-to-date information.
-//
-//        mSensorManager.getOrientation(mRotationMatrix, mOrientationAngles);
-//
-//        // "mOrientationAngles" now has up-to-date information.
-//
-//        TextView x = (TextView) findViewById(R.id.x_orientation);
-//        TextView y = (TextView) findViewById(R.id.y_orientation);
-//        TextView z = (TextView) findViewById(R.id.z_orientation);
-//        if(x!=null){x.setText(String.valueOf(mOrientationAngles[0]));}
-//        if(y!=null){y.setText(String.valueOf(mOrientationAngles[1]));}
-//        if(z!=null){z.setText(String.valueOf(mOrientationAngles[2]));}
-//    }
 
     @Override
     public void onBackPressed() {
@@ -400,6 +328,13 @@ public class MainActivity extends AppCompatActivity
         }else{
             Log.d("ARENA_DEBUG", command);
         }
+    }
+
+    public void onOrientationChanged(float x, float y, float z){
+        ArenaFragment arenaFrag = (ArenaFragment) getSupportFragmentManager().findFragmentByTag("ArenaFragment");
+        if(arenaFrag!=null){
+            arenaFrag.tiltSteer(x, y, z);
+        }else{}
     }
 
     /**
