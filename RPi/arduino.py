@@ -36,15 +36,13 @@ class Arduino(threading.Thread):
         # if acknowledgement byte
         logging.info("checking if A: " + chr(byte[0]))
         if chr(byte[0]) == "A":
-            logging.info("arduino acknowledged")
+            logging.info("arduino acknowledged stop moving")
             # self.mutex_w.acquire()
             # if self.acknowledged:
             #     logging.info("Error: acknowledgement byte from arduino not resolved yet")
             # self.acknowledged = True
             # self.mutex_w.release()
         # if sensor data
-        if chr(byte[0]) == "C":
-            logging.info("send to android that robot has stop moving")
         if chr(byte[0]) == "S":
             logging.info("byte[0]) == S")
             message = self.interpret_sensor_values(byte[1:])

@@ -80,7 +80,7 @@ void distanceFromWall(double distance)
   }
   else if(frontRightReading < distance)
   {  
-    while(frontRightReading > distance)
+    while(frontRightReading < distance)
     {
       md.setSpeeds(-116, -140);
       getCalibrationReading(true);
@@ -157,7 +157,7 @@ void calibration()
   delay(wait);
 
   //Turn to the left by 90
-  turn(-1, 90);
+  turnPID(-1, 90);
   delay(wait);
   
   //Move to the distance from wall
@@ -189,7 +189,7 @@ void calibration()
   delay(wait);
 
   //Turn to the left by 90
-  turn(-1, 90);
+  turnPID(-1, 90);
   delay(wait);
 }
 
@@ -199,7 +199,7 @@ void calibration()
 void fastCalibration(int choice)
 {
   double threshold = 0.1;
-  double fromWall = 14;
+  double fromWall = 13;
   int wait = 100;
 
   delay(wait);
@@ -223,7 +223,7 @@ void fastCalibration(int choice)
 
   if(choice == 1)
   {
-    turn(-1, 90);
+    turnPID(-1, 90);
     delay(wait);
 
     //Move to the distance from wall
@@ -237,18 +237,18 @@ void fastCalibration(int choice)
     straightenTune();
     delay(wait);
 
-    distanceFromWall(startWall);
+    distanceFromWall(fromWall);
     delay(wait);
 
-    turn(1, 90);
+    turnPID(1, 90);
   }
   else if (choice == 2)
   {
-    turn(1, 90);
+    turnPID(1, 90);
     delay(wait);
 
     //Move to the distance from wall
-    distanceFromWall(startWall);
+    distanceFromWall(fromWall);
     delay(wait);
 
     //Fine tune the calibration
@@ -258,10 +258,10 @@ void fastCalibration(int choice)
     straightenTune();
   delay(wait);
 
-  distanceFromWall(startWall);
+  distanceFromWall(fromWall);
   delay(wait);
 
-    turn(-1, 90);
+    turnPID(-1, 90);
   }  
 }
 
