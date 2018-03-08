@@ -8,6 +8,7 @@ import android.graphics.PorterDuff;
 import android.icu.text.StringPrepParseException;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +30,8 @@ import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -68,6 +71,8 @@ public class ArenaFragment extends Fragment {
 
     private OnMapUpdateListener mListener;
     private boolean rotateFlag;
+    private Timer mTimer1;
+    private boolean lockFlag;
 
     public ArenaFragment() {
         // Required empty public constructor
@@ -130,14 +135,11 @@ public class ArenaFragment extends Fragment {
         Button btVoice = view.findViewById(R.id.voice_btn);
         Button reset = view.findViewById(R.id.reset);
         final ToggleButton btRotate = view.findViewById(R.id.rotation_btn);
-        final TextView rotateText = view.findViewById(R.id.rotation_text);
 
         btRotate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 rotateFlag = isChecked;
-                if(isChecked){
-                    rotateText.setText(getDeviceDefaultOrientation());
-                }
+                //for tilt display
             }
         });
 
@@ -423,15 +425,6 @@ public class ArenaFragment extends Fragment {
         return view;
     }
 
-    public int getDeviceDefaultOrientation() {
-
-        WindowManager windowManager =  (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
-
-        Configuration config = getResources().getConfiguration();
-
-        return windowManager.getDefaultDisplay().getRotation();
-    }
-
     private void resetMap() {
         exploredBin = "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
         obstacleBin = "0";
@@ -663,12 +656,58 @@ public class ArenaFragment extends Fragment {
         void onMapUpdateReceived(String message);
         void onBluetoothStateChange(String btStatus);
         void onVoiceCommand(String command);
-        //void onOrientationChanged
+        void onOrientationChanged(float x, float y, float z);
     }
 
     public void updateBTStatus(String btStatus){
         TextView tv = getActivity().findViewById(R.id.bluetoothStatus);
         tv.setText(btStatus);
+    }
+
+    public synchronized void tiltSteer(float x, float y, float z) {
+        if(rotateFlag && !lockFlag){
+            if (Math.floor(x) == 0 && Math.floor(y) == -1 && Math.floor(z) == -2){
+                animateTurnLeft();
+                String cmd = "rotate -90";
+                ((MainActivity)getActivity()).sendMessage(cmd);
+                startTimer();
+            } else if (Math.floor(x) == 0 && Math.floor(y) == 1 && Math.floor(z) == 0){
+                animateTurnRight();
+                String cmd = "rotate 90";
+                ((MainActivity)getActivity()).sendMessage(cmd);
+                startTimer();
+            } else if(Math.floor(x) == -0 && Math.floor(y) == -0 && Math.floor(z) == -0){
+                animateForward();
+                String cmd = "move 1";
+                ((MainActivity)getActivity()).sendMessage(cmd);
+                startTimer();
+            }
+
+        }
+    }
+
+    private void stopTimer(){
+        if(mTimer1 != null){
+            mTimer1.cancel();
+            mTimer1.purge();
+        }
+    }
+
+    private void startTimer(){
+        lockFlag = true;
+        mTimer1 = new Timer();
+        final Handler mTimerHandler = new Handler();
+        TimerTask mTt1 = new TimerTask() {
+            public void run() {
+                mTimerHandler.post(new Runnable() {
+                    public void run(){
+                        lockFlag = false;
+                    }
+                });
+            }
+        };
+
+        mTimer1.schedule(mTt1, 1000);
     }
 
     private static class ImageAdapter extends BaseAdapter {
