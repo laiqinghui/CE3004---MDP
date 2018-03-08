@@ -1,11 +1,14 @@
 from tornado import websocket, web, ioloop
 import json
+import os
 
 cl = []
+
 
 class IndexHandler(web.RequestHandler):
     def get(self):
         self.render("index.html")
+
 
 class SocketHandler(websocket.WebSocketHandler):
     def check_origin(self, origin):
@@ -17,11 +20,16 @@ class SocketHandler(websocket.WebSocketHandler):
 
     def on_message(self, message):
         print "receive " + message
-        self.write_message(u"You said: " + message)
+        send_message = {}
+        send_message['data'] = message
+        for conn in cl:
+            conn.write_message(send_message)
+        # if conn is not self:
 
     def on_close(self):
         if self in cl:
             cl.remove(self)
+
 
 class ApiHandler(web.RequestHandler):
 
@@ -30,7 +38,7 @@ class ApiHandler(web.RequestHandler):
         self.finish()
         id = self.get_argument("id")
         value = self.get_argument("value")
-        data = {"id": id, "value" : value}
+        data = {"id": id, "value": value}
         data = json.dumps(data)
         for c in cl:
             c.write_message(data)
@@ -39,14 +47,16 @@ class ApiHandler(web.RequestHandler):
     def post(self):
         pass
 
+
 app = web.Application([
     (r'/', IndexHandler),
     (r'/ws', SocketHandler),
     (r'/api', ApiHandler),
-    (r'/(favicon.ico)', web.StaticFileHandler, {'path': '../'}),
-    (r'/(rest_api_example.png)', web.StaticFileHandler, {'path': './'}),
+    (r'/(.*)', web.StaticFileHandler, {'path': os.getcwd()})
 ])
 
+
 if __name__ == '__main__':
+    print "server listening on port 8888"
     app.listen(8888)
     ioloop.IOLoop.instance().start()
