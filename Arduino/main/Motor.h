@@ -256,138 +256,12 @@ void moveForward(int rpm, double distance, boolean pidOn){
       setTicks(0,0);
       setSqWidth(0,0);
 }  
-/*
-//-1 is left turn and 1 is right turn
-double getTurnAmountPID(int dir, int turnDegree){
-    if(dir == 1)
-    {
-      double degree90 = 50; //cir is 51.8
-      double degree180 = 51; //cir is 53.1
-      if(turnDegree < 90)
-      {
-        return abs(degree90 * (turnDegree/360.0) * ticksPerCM);
-      }
-      else
-      {
-        double closenessTo90 = ((turnDegree-90)/90.0)*degree180;
-        double closenessTo180 = ((180 - turnDegree)/90.0)*degree90;
-        
-        return abs((closenessTo90 + closenessTo180) * (turnDegree/360.0) * ticksPerCM);
-      }
-    }
-    else
-    {
-      double degree90 = 49.4; //cir is 47.6
-      double degree180 = 49; //cir is 49.65
-      if(turnDegree < 90)
-      {
-        Serial.println(abs(degree90 * (turnDegree/360.0) * ticksPerCM));
-        return abs(degree90 * (turnDegree/360.0) * ticksPerCM);
-      }
-      else
-      {
-        double closenessTo90 = ((turnDegree-90)/90.0)*degree180;
-        double closenessTo180 = ((180 - turnDegree)/90.0)*degree90;
-        
-        return abs((closenessTo90 + closenessTo180) * (turnDegree/360.0) * ticksPerCM);
-      }
-    }
-}
-
-//-1 is left turn and 1 is right turn
-void turnPID(int dir, int turnDegree){
-    
-    setTicks(0,0);
-    setSqWidth(0,0);
-    
-    //1 is right, -1 is left 
-    int distanceTicks = getTurnAmountPID(dir, turnDegree);    
-    int rpm = 70;
-    /*
-     * Different Speed Values
-     * md.setSpeeds(-221 * dir, 250 * dir);
-     * md.setSpeeds(-168 * dir, 200 * dir);
-     * md.setSpeeds(-269 * dir, 314 * dir);
-    
-   signed long tuneEntryTime = 0;
-   signed long tuneExitTime = 0;
-   signed long interval = 0; 
-   unsigned long currentTicks = 0;
-    
-    enableInterrupt( e1a, risingM1, RISING);
-    enableInterrupt( e2b, risingM2, RISING);
-
-    //md.setSpeeds(100, 100);
-    //Dir = 1
-     
-    if(dir == 1)
-	{
-    MotorPID M1pid = {-255, 0, 0, 0.1};//0.1=>50
-    MotorPID M2pid = {310, 0, 0, 0.132 };//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms
-		md.setSpeeds(-255, 310);
-		while(1)
-		{
-			tuneEntryTime = micros();
-			interval = tuneEntryTime - tuneExitTime;
-			if(interval >= 5000)
-			{ 
-			  tuneM1Negative(rpm, &M1pid);
-			  tuneM2(rpm, &M2pid);
-			}  
-			tuneExitTime = micros();
-			noInterrupts();
-			currentTicks = M1ticks;
-			interrupts();
-		  
-			if(currentTicks>=distanceTicks)
-			{
-      Serial.println(currentTicks);
-				break;
-			}
-		}//end of while
-		md.setBrakes(400,400);
-	}
-	else
-	{
-    MotorPID M1pid = {269, 0, 0, 0.1};//0.1=>50
-    MotorPID M2pid = {-314, 0, 0, 0.132 };//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms  
-
-		md.setSpeeds(269, -314);
-		while(1)
-		{
-      //Serial.println("In TurnPID");
-			tuneEntryTime = micros();
-			interval = tuneEntryTime - tuneExitTime;
-			if(interval >= 5000)
-			{ 
-			  tuneM1(rpm, &M1pid);
-			  tuneM2Negative(rpm, &M2pid);
-			}  
-			tuneExitTime = micros();
-			noInterrupts();
-			currentTicks = M1ticks;
-			interrupts();
-			if(currentTicks>=distanceTicks)
-			{
-        Serial.println(currentTicks);
-				break;
-			}
-		}//end of while
-		md.setBrakes(400,400);
-	}
-      disableInterrupt(e1a);
-      disableInterrupt(e2b);
-      setTicks(0,0);
-      setSqWidth(0,0);
-      delay(200);
-}
-*/
 
 //-1 is left turn and 1 is right turn
 double getTurnAmount(int dir, int turnDegree){
     if(dir == 1)
     {
-      double degree90 = 50.2; //cir is 51.8
+      double degree90 = 50.5; //cir is 51.8
       double degree180 = 50.7; //cir is 52.9
       if(turnDegree < 90)
       {
@@ -403,7 +277,7 @@ double getTurnAmount(int dir, int turnDegree){
     }
     else
     {
-      double degree90 = 47; //cir is 47.6
+      double degree90 = 48.4; //cir is 47.6
       double degree180 = 48.73; //cir is 49.65
       if(turnDegree < 90)
       {
