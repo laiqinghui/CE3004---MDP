@@ -10,7 +10,7 @@ void testSequence1(){
       Serial.println("\n\n\n");
       delay(500);
     }
-      
+
      //turn(1, 90);//left
     delay(500);  
   }
@@ -50,21 +50,23 @@ void processInst(){
       case 'W': moveCount = instBuff[index+1] - 48;
                 moveForward(90, 9.5*moveCount, true);
                 break;
-      case 'A': moveCount = instBuff[index+1] - 48;
+      case 'A': Serial.println('A');
+                moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
-                  turnPID(-1, 90);
+                  
+                  turnTemp(-1, 90);
                     delay(200);
                 }
                 break;
       case 'D': moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
-                  turnPID(1, 90);
+                  turnTemp(1, 90);
                   delay(200);
                 }
                 break;
       case 'O': moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
-                  turnPID(1, 180);
+                  turnTemp(1, 180);
                     delay(200);
                 }
                 break;
@@ -115,8 +117,8 @@ void setup() {
   Serial.println("Program Started!!!!");
   md.init();
   initI2C();
-  
-  benTestSequence();
+
+  //benTestSequence();
 }
 
 void loop() 
