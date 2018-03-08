@@ -57,7 +57,8 @@ class Android(threading.Thread):
             self.client_sock, self.client_info = self.server_socket.accept()
             logging.info("Accepted connection from" + str(self.client_info))
             client_MAC = self.client_info[0]
-            if client_MAC != self.target_client:
+            # if client_MAC != self.target_client:
+            if True:
                 logging.info("There was a connection attempt by an unauthorized device. Attempting to rebroadcast..")
                 self.client_sock.close()
                 self.connect()
@@ -107,8 +108,8 @@ class Android(threading.Thread):
                 self.fastestPathInstruction = self.algo_thread.determine_fastest_path()
                 logging.info("Finished calculating fastest path")
 
-        except BluetoothError, msg:
-            logging.info("Bluetooth Error - encountered when attempting to send data to Android device -- %s" % msg)
+        except BluetoothError as e:
+            logging.info("Bluetooth Error - encountered when attempting to send data to Android device -- %s" % str(e))
             self.connected = False
 
     def receiveAndroid(self):
