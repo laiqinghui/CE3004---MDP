@@ -137,7 +137,7 @@ char* getSensorReadingInCM(){
   }
   
   //Ultrasound reading
-  sensorsValuesArray[1] = getUltraSound2Reading();        //getUltraSoundDistance(); //Center
+  sensorsValuesArray[1] = getUltraSoundDistance();        //getUltraSoundDistance(); //Center
 
 
   //PS2 y = 6290.4x - 1.6964 //subtract another 2 to offset
@@ -163,7 +163,8 @@ char* getSensorReadingInCM(){
   {
       sensorsValuesArray[3] = (5260/rightValue) - 0.3915;
   }
-  
+
+  /*
   //PS1 y = 12978x - 2.4047 //if value is above 70, subtract 1; //add 2 to offset //if value is below 25, subtract 3
   //Limit is 60cm
   double leftValue = sensorValues[2];
@@ -178,7 +179,8 @@ char* getSensorReadingInCM(){
   if(sensorsValuesArray[4] <= 25)
   {
     sensorsValuesArray[4] = sensorsValuesArray[4] - 3;
-  }
+  }*/
+  sensorsValuesArray[4] = getUltraSound2Reading();
   
   if(sensorsValuesArray[4] > 70)
   {

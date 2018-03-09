@@ -22,6 +22,15 @@ void PWM_Mode_Setup()
       Serial.write(EnPwmCmd[i]);
   } 
 }
+unsigned long getUltraSound2()
+{
+		OCR1A = 0;
+		digitalWrite(URTRIG,HIGH);  
+	     digitalWrite(URTRIG, LOW);
+    digitalWrite(URTRIG, HIGH);               // reading Pin PWM will output pulses
+     
+    return pulseIn(URPWM,LOW);
+}
  
  //Use motor 1 input A, digital pin 2 as trigger for sensor reading
  //Use motor 1 E1B to read sensor output which is digital pin 5
@@ -34,25 +43,13 @@ int getUltraSound2Reading()
 	
            
 	// reading Pin PWM will output pulses 
-    unsigned long DistanceMeasured=pulseIn(5,LOW);
-    */ 
-	pinMode(URTRIG,OUTPUT);   
-	 pinMode(URPWM, INPUT);   
-		digitalWrite(URTRIG,HIGH);  
-	     digitalWrite(URTRIG, LOW);
-    digitalWrite(URTRIG, HIGH);               // reading Pin PWM will output pulses
-     
-    unsigned long DistanceMeasured=pulseIn(URPWM,LOW);
-	 
-	 Serial.println(DistanceMeasured);
-    if(DistanceMeasured>=10200)
-    {              
-		// the reading is invalid.
-		return -1;
-    }
-    else
-    {
+	*/
+    unsigned long DistanceMeasured=0;
+    
+	while(DistanceMeasured == 0 || DistanceMeasured>=10200)
+	{
+		DistanceMeasured = getUltraSound2();
+	}
       return DistanceMeasured/50;           // every 50us low level stands for 1cm
-    }
 
 }
