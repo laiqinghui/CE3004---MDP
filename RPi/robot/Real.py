@@ -323,12 +323,10 @@ class Robot:
                     flag = [True, 'F']
                     break
                 elif ((r - i) >= 0 and (self.exploredMap[r-i][c-1] == 2
-                      and self.exploredMap[r-i][c] == 2
                       and self.exploredMap[r-i][c+1] == 2)):
                     flag = [True, 'F']
                     break
                 elif ((r - i) >= 0 and (self.exploredMap[r-i-2][c-1] == 2
-                      and self.exploredMap[r-i-2][c] == 2
                       and self.exploredMap[r-i-2][c+1] == 2)):
                     flag = [True, 'F']
                     break
@@ -338,12 +336,10 @@ class Robot:
                     flag = [True, 'F']
                     break
                 elif ((c - i) >= 0 and (self.exploredMap[r-1][c-i] == 2
-                      and self.exploredMap[r][c-i] == 2
                       and self.exploredMap[r+1][c-i] == 2)):
                     flag = [True, 'F']
                     break
                 elif ((c - i) >= 0 and (self.exploredMap[r-1][c-i-2] == 2
-                      and self.exploredMap[r][c-i-2] == 2
                       and self.exploredMap[r+1][c-i-2] == 2)):
                     flag = [True, 'F']
                     break
@@ -353,12 +349,10 @@ class Robot:
                     flag = [True, 'F']
                     break
                 elif ((c + i) < MAX_COLS and (self.exploredMap[r-1][c+i] == 2
-                      and self.exploredMap[r][c+i] == 2
                       and self.exploredMap[r+1][c+i] == 2)):
                     flag = [True, 'F']
                     break
                 elif ((c + i) < MAX_COLS and (self.exploredMap[r-1][c+i+2] == 2
-                      and self.exploredMap[r][c+i+2] == 2
                       and self.exploredMap[r+1][c+i+2] == 2)):
                     flag = [True, 'F']
                     break
@@ -367,8 +361,11 @@ class Robot:
                 if ((r + i) == MAX_ROWS):
                     flag = [True, 'F']
                     break
+                elif ((r + i) < MAX_ROWS and (self.exploredMap[r+i][c-1] == 2
+                      and self.exploredMap[r+i][c+1] == 2)):
+                    flag = [True, 'F']
+                    break
                 elif ((r + i) < MAX_ROWS and (self.exploredMap[r+i+2][c-1] == 2
-                      and self.exploredMap[r+i+2][c] == 2
                       and self.exploredMap[r+i+2][c+1] == 2)):
                     flag = [True, 'F']
                     break
