@@ -116,6 +116,35 @@ double* getIRSensorReading()
   return sensorValues;
 } 
 
+//Get average reading over a number of samples
+double* getIRSensorReading()
+{
+  int size = 100;
+  
+  int listOfReadingsFL[size];
+  int listOfReadingsFR[size];
+  int listOfReadingsL[size];
+  int listOfReadingsR[size];
+
+  //Get Reading from Sensor
+  for(int a = 0; a<size; a++)
+  {
+    listOfReadingsFL[a] = analogRead(frontLeft);
+    listOfReadingsFR[a] = analogRead(frontRight);
+    listOfReadingsL[a] = analogRead(left);
+    listOfReadingsR[a] = analogRead(right);
+    delay(1);
+  }
+  
+  //Get median averaged from list
+  sensorValues[0] = sortAndAverage(listOfReadingsFL, size);
+  sensorValues[1] = sortAndAverage(listOfReadingsFR, size);
+  sensorValues[2] = sortAndAverage(listOfReadingsL, size);
+  sensorValues[3] = sortAndAverage(listOfReadingsR, size);
+
+  return sensorValues;
+} 
+
 char* getSensorReadingInCM(){
     /*
     Return pointer to sensors values array. Reasons for the pointer approach is to facilitate for Exploration where

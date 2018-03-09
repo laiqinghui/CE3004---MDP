@@ -2,6 +2,7 @@
 """Implementation of the exploration algorithm for a maze solving robot."""
 import numpy as np
 import time
+import logging
 
 import global_settings as gs
 
@@ -33,8 +34,8 @@ class Exploration:
             sim (bool, optional): To specify simulation mode or real mode
 
         """
-        # self.moveNumber = 0
-        # self.baseStep = 0
+        self.moveNumber = 0
+        self.baseStep = 0
         self.startPos = startPos
         self.timeLimit = timeLimit
         self.exploredArea = 0
@@ -207,6 +208,24 @@ class Exploration:
         # multi step
         front = self.frontFree()
 
+        if not (self.sim):
+            calibrate_front = self.robot.can_calibrate_front()
+            # calibrate_right = self.robot.can_calibrate_right()
+            if self.robot.is_corner():
+                move.append(']')
+            elif (calibrate_front[0]):
+                move.append(calibrate_front[1])
+            # elif (calibrate_right[0]):
+            #     move.append(calibrate_right[1])
+            # calibrate right every 5 steps if able to
+            elif (self.moveNumber % 5) > self.baseStep:
+                logging.info("Exceed every 5 steps")
+                calibrate_right = self.robot.can_calibrate_right()
+                if calibrate_right[0]:
+                    logging.info("do calibrate right")
+                    move.append(calibrate_right[1])
+                    self.baseStep = (self.moveNumber % 5)
+
         if (self.checkFree([1, 2, 3, 0], self.robot.center)):
             self.robot.moveBot(RIGHT)
             move.append(RIGHT)
@@ -230,23 +249,7 @@ class Exploration:
             self.robot.moveBot(RIGHT)
             move.extend(('O'))
 
-        # self.moveNumber += len(move)
-
-        if not (self.sim):
-            calibrate_front = self.robot.can_calibrate_front()
-            calibrate_right = self.robot.can_calibrate_right()
-            if self.robot.is_corner():
-                move.append(']')
-            elif (calibrate_front[0]):
-                move.append(calibrate_front[1])
-            elif (calibrate_right[0]):
-                move.append(calibrate_right[1])
-            # calibrate right every 5 steps if able to
-            # elif (self.moveNumber % 5) > self.baseStep:
-            #     calibrate_right = self.robot.can_calibrate_right()
-            #     if calibrate_right[0]:
-            #         move.append(calibrate_right[1])
-            #         self.baseStep = (self.moveNumber % 5)
+        self.moveNumber += len(move)
 
         return move
 
