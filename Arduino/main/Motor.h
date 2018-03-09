@@ -51,6 +51,10 @@ void risingM1Ticks() {
   M1ticks++;
 }
 
+void risingM2Ticks() {
+  M2ticks++;
+}
+
 //ISR for Motor2(Left) encoder
 void risingM2() {
   entry_time_M2 = micros();
@@ -259,25 +263,27 @@ void moveForward(int rpm, double distance, boolean pidOn) {
 
 //-1 is left turn and 1 is right turn
 double getTurnAmount(int dir, int turnDegree) {
+  //Right Turn
   if (dir == 1)
   {
-    double degree90 = 50.8; //cir is 51.8
-    double degree180 = 51.6; //cir is 52.9
+    double degree90Offset = 1.02; //cir is 51.8
+    double degree180Offset = 0.97; //cir is 52.9
     if (turnDegree <= 90)
     {
-      return abs(degree90 * (turnDegree / 360.0) * ticksPerCM);
+      return abs(49 * 0.25 * ticksPerCM) * degree90Offset;
     }
     else
     {
 
-      return abs(degree180 * (turnDegree / 360.0) * ticksPerCM);
+      return abs(51.6 * 0.5 * ticksPerCM) * degree180Offset;
     }
   }
+  //Left Turn
   else
   {
-    double degree90 = 48.2; //cir is 47.6
+    double degree90Offset = 0.98; //cir is 47.6
     //double degree180 = 48.73; //cir is 49.65
-    return abs(degree90 * (turnDegree / 360.0) * ticksPerCM);
+    return abs(48.2 * (turnDegree / 360.0) * ticksPerCM) * degree90Offset;
   }
 }
 
@@ -333,4 +339,67 @@ void turnPID(int dir, int turnDegree) {
     }
   }
   interrupts();
+}
+
+double getTurnTest(int dir, int turnDegree) {
+  //Right Turn
+  if (dir == 1)
+  {
+    if (turnDegree <= 90)
+    {
+      return abs(49 * 0.25 * ticksPerCM);
+    }
+    else
+    {
+
+      return abs(49.7 * 0.5 * ticksPerCM);
+    }
+  }
+  //Left Turn
+  else
+  {
+    return abs(48.6 * (turnDegree / 360.0) * ticksPerCM);
+  }
+}
+
+void turnTest(int dir, int degree)
+{
+	int m1Speed = -269;
+	int m2Speed = 314;
+	int total = 0;
+	
+	int amount = getTurnTest(dir, degree);
+	setTicks(0, 0);
+	int currentTicksM1 = 0;
+	int currentTicksM2 = 0;
+	enableInterrupt( e1a, risingM1Ticks, RISING);
+	enableInterrupt( e2b, risingM2Ticks, RISING);
+	md.setSpeeds(m1Speed, m2Speed);
+
+	while(currentTicksM1 < amount)
+	{
+    Serial.println(total);
+		noInterrupts();
+		currentTicksM1 = M1ticks;
+		currentTicksM2 = M2ticks;
+		interrupts();
+		
+		if(currentTicksM1 < currentTicksM2)
+		{
+		  m2Speed = m2Speed - 1;
+		  md.setM2Speed(m2Speed);
+		}
+		else if(currentTicksM1 > currentTicksM2)
+		{
+		  m2Speed = m2Speed + 1;
+		  md.setM2Speed(m2Speed);
+		}
+	}
+	md.setBrakes(400, 400);
+ 
+  disableInterrupt(e1a);
+  disableInterrupt(e2b);
+  setTicks(0, 0);
+  setSqWidth(0, 0);
+	
 }

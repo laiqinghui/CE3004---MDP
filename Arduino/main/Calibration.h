@@ -51,20 +51,20 @@ void straightenTune()
     { 
       while(frontRightReading > frontLeftReading)
       {
-        md.setSpeeds(180, 0);
-		    delay(20);
-		    md.setBrakes(400, 400);
-        getCalibrationReading(false);
+        md.setSpeeds(130, 0);
+		    //delay(10);
+		    //md.setBrakes(400, 400);
+        getCalibrationReading(true);
       }
     }
     else if(frontRightReading < frontLeftReading)
     {
       while(frontRightReading < frontLeftReading)
       {
-        md.setSpeeds(-180, 0);
-        delay(20);
-        md.setBrakes(400, 400);
-        getCalibrationReading(false);
+        md.setSpeeds(-130, 0);
+        //delay(10);
+        //md.setBrakes(400, 400);
+        getCalibrationReading(true);
       }
     }
     md.setBrakes(400, 400);
@@ -122,7 +122,7 @@ void calibration()
 {
   double threshold = 0.2;
   double startWall = 13.65;
-  double leftWall = 13.88;
+  double leftWall = 13.;
   int wait = 200;
   
   //Quick calibration against wall
@@ -202,7 +202,7 @@ void calibration()
 //If choice = 2 then it will calibrate front and right
 void fastCalibration(int choice)
 {
-  double threshold = 0.1;
+  double threshold = 0.05;
   double fromWall = 13;
   int wait = 100;
 
@@ -272,7 +272,7 @@ double* calibrationSensorReading()
   {
     listOfReadingsFL[a] = analogRead(frontLeft);
     listOfReadingsFR[a] = analogRead(frontRight);
-    delay(1);
+    delay(2);
   }
   
   //Get median averaged from list
@@ -344,3 +344,32 @@ void benForward(int rpm, double distance, boolean pidOn) {
   setTicks(0, 0);
   setSqWidth(0, 0);
 }
+
+int calibrateTurn()
+{
+	int ticks = 0;
+	int previousRead = 0;
+	int currentValue = 0;
+	
+	md.setSpeeds(75, -120);
+    while (true)
+    {
+      currentValue = (PINB >> 5) & B001;
+      if (currentValue && !previousRead)
+      {
+        ticks++;
+        getCalibrationReading(true);
+        if (ticks >300 && abs(frontRightReading - frontLeftReading) < 0.1)
+        {
+          md.setBrakes(400, 400); 
+          Serial.println(frontRightReading);
+          Serial.println(frontLeftReading);
+          
+          return ticks;
+        }
+        
+      }
+      previousRead = currentValue;
+    }
+}
+

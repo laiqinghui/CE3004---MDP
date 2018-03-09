@@ -7,7 +7,6 @@
 
 //Function Declaration
 double* getIRSensorReading();
-char getUltraSoundDistance();
 char* getSensorReadingInCM();
 double sortAndAverage(int* listOfReadings, int size);
 
@@ -93,10 +92,9 @@ char* getSensorReadingInCM(){
   {
     sensorsValuesArray[0] = (5546.9/frontLeftValue) - 0.7029;
   }
-  
+
   //Ultrasound reading
   sensorsValuesArray[1] = getUltraSoundDistance();        //getUltraSoundDistance(); //Center
-
 
   //PS2 y = 6290.4x - 1.6964 //subtract another 2 to offset
   //Limit is 45cm
@@ -110,7 +108,7 @@ char* getSensorReadingInCM(){
     sensorsValuesArray[2] = (6290.4/frontRightValue) - 2.6964;
   }
 
-  //PS3 y = 5260x - 0.3915
+  //PS3 y = 5260x - 0.3915 //add 3 to offset
   //Limit is 50cm
   double rightValue = sensorValues[3];
   if(rightValue < 100)
@@ -119,7 +117,7 @@ char* getSensorReadingInCM(){
   }
   else
   {
-      sensorsValuesArray[3] = (5260/rightValue) - 0.3915;
+      sensorsValuesArray[3] = (5260/rightValue) + 1.3915;
   }
   
   //PS1 y = 12256x - 1.948 //if value is above 70, subtract 1; //add 2 to offset //if value is below 25, subtract 1

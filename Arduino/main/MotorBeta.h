@@ -30,6 +30,10 @@ void moveForwardOneGrid(int rpm){
    unsigned long interval = 0;
 
    double distanceTicks = 0.95 * 9.5 * ticksPerCM;
+   
+   Serial.print("Target Ticks: ");
+   Serial.println(distanceTicks);
+   
    unsigned long currentTicksM1 = 0;
    unsigned long currentTicksM2 = 0;
    
@@ -42,11 +46,8 @@ void moveForwardOneGrid(int rpm){
    enableInterrupt( e1a, risingM1, RISING);
    enableInterrupt( e2b, risingM2, RISING);
 
+   
    md.setSpeeds(m1setSpeed,m2setSpeed);
-    
-
-   Serial.print("Target Ticks: ");
-   Serial.println(distanceTicks);
 
    while(1){
       
@@ -70,7 +71,7 @@ void moveForwardOneGrid(int rpm){
       
       tuneEntryTime = micros();//Can try removing interval for single grid movement
       interval = tuneEntryTime - tuneExitTime;
-        if(interval >= 5000){
+        if(interval >= 3000){ //change to 3000 to try
         
 			//if(currentTicksM1 < 0.7*distanceTicks){
 			  tuneMotors(rpm, &M1pid, &M2pid);
