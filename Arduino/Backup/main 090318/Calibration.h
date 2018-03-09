@@ -51,16 +51,20 @@ void straightenTune()
     { 
       while(frontRightReading > frontLeftReading)
       {
-        md.setSpeeds(110, 0);
-        getCalibrationReading(true);
+        md.setSpeeds(180, 0);
+		    delay(20);
+		    md.setBrakes(400, 400);
+        getCalibrationReading(false);
       }
     }
     else if(frontRightReading < frontLeftReading)
     {
       while(frontRightReading < frontLeftReading)
       {
-        md.setSpeeds(-110, 0);
-        getCalibrationReading(true);
+        md.setSpeeds(-180, 0);
+        delay(20);
+        md.setBrakes(400, 400);
+        getCalibrationReading(false);
       }
     }
     md.setBrakes(400, 400);
@@ -74,7 +78,7 @@ void distanceFromWall(double distance)
   {    
     while(frontRightReading > distance)
     {
-      md.setSpeeds(118, 140);
+      md.setSpeeds(108, 140);
       getCalibrationReading(true);
     }
   }
@@ -82,7 +86,7 @@ void distanceFromWall(double distance)
   {  
     while(frontRightReading < distance)
     {
-      md.setSpeeds(-116, -140);
+      md.setSpeeds(-108, -135);
       getCalibrationReading(true);
     }
   }
@@ -278,3 +282,65 @@ double* calibrationSensorReading()
   return sensorCalibrationValues;
 }
 
+void benForward(int rpm, double distance, boolean pidOn) {
+
+  signed long tuneEntryTime = 0;
+  signed long tuneExitTime = 0;
+  signed long interval = 0;
+  double offset = 1;
+  if (distance == 9.5)
+    offset = 0.95;
+
+  double distanceTicks = offset  * distance * ticksPerCM;//Delibrate trimming
+  unsigned long currentTicksM1 = 0;
+  unsigned long currentTicksM2 = 0;
+
+  MotorPID M1pid = {260, 0, 0, 0.1};//0.1=>50
+  MotorPID M2pid = {300 , 0, 0, 0.115};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms
+
+  enableInterrupt( e1a, risingM1, RISING);
+  enableInterrupt( e2b, risingM2, RISING);
+
+  //md.setSpeeds(100, 100);
+  md.setSpeeds(260, 300);
+
+
+  Serial.print("Target Ticks: ");
+  Serial.println(distanceTicks);
+
+  while (1) {
+
+    //Serial.print(sqWidthToRPM(squareWidth_M1));
+    //Serial.print(" ");
+    //Serial.println(sqWidthToRPM(squareWidth_M2));
+
+    if (pidOn) {
+      tuneEntryTime = micros();
+      interval = tuneEntryTime - tuneExitTime;
+      if (interval >= 2000) {
+
+        tuneM1(rpm, &M1pid);
+        tuneM2(rpm, &M2pid);
+
+        tuneExitTime = micros();
+      }
+    }
+    noInterrupts();
+    currentTicksM1 = M1ticks;
+    currentTicksM2 = M2ticks;
+    interrupts();
+
+    if (currentTicksM2 >= distanceTicks) {
+      md.setBrakes(400, 400);
+      break;
+    }  //end of if
+
+
+  }//end of while
+
+  //md.setBrakes(400,400);
+  disableInterrupt(e1a);
+  disableInterrupt(e2b);
+  setTicks(0, 0);
+  setSqWidth(0, 0);
+}

@@ -208,6 +208,7 @@ class Exploration:
         # multi step
         front = self.frontFree()
 
+        logging.info("newBaseStep: " + str(self.moveNumber % 5) + ", baseStep: " + str(self.baseStep))
         if not (self.sim):
             calibrate_front = self.robot.can_calibrate_front()
             # calibrate_right = self.robot.can_calibrate_right()
@@ -231,7 +232,7 @@ class Exploration:
             #     move.append(calibrate_right[1])
             # calibrate right every 5 steps if able to
             elif (self.moveNumber % 5) > self.baseStep:
-                logging.info("Exceed every 5 steps")
+                logging.info("Exceed every 5 steps, should calibrate right if can.")
                 calibrate_right = self.robot.can_calibrate_right()
                 if calibrate_right[0]:
                     logging.info("do calibrate right")
