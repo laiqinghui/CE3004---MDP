@@ -8,70 +8,24 @@
 //Function Declaration
 double* getIRSensorReading();
 char* getSensorReadingInCM();
-double sortAndAverage(int* listOfReadings, int size);
+double sortAndAverage(int* listOfReadings, int size, int amount);
 
-double sortAndAverage(int* listOfReadings, int size)
-{
-  //Sort Reading
-  for (int i = 0; i < size; i++)      
-  {
-    //Find max
-    int max = listOfReadings[0];
-    int maxLocation = 0;
-    for(int j = 0; j < size-i; j++)
-    {
-      if(max < listOfReadings[j])
-      {
-        max = listOfReadings[j];
-        maxLocation = j;
-      }
-    }
-
-    //Swap max with last position
-    listOfReadings[maxLocation] = listOfReadings[size-1-i];
-    listOfReadings[size-1-i] = max;
-  }
-
-  int total = 0;
-  for(int a = 49; a<52; a++)
-  {
-    total = total + listOfReadings[a];
-  }
-  return total/3.0;
-}
+/*
+  sensorValues[0] Front Left Sensor
+  sensorValues[1] Front Right Sensor
+  sensorValues[2] Left Sensor
+  sensorValues[3] Right Sensor
+  
+  sensorsValuesArray[0] Front Left Sensor
+  sensorsValuesArray[1] Front Center Sensor (UltraSound)
+  sensorsValuesArray[2] Front Right Sensor
+  sensorsValuesArray[3] Right Sensor
+  sensorsValuesArray[4] Left Sensor
+*/
 
 //These 2 arrays need to be outside if not the values will be weird
 double sensorValues[4];
 char sensorsValuesArray[5];
-
-//Get average reading over a number of samples
-double* getIRSensorReading()
-{
-  int size = 100;
-  
-  int listOfReadingsFL[size];
-  int listOfReadingsFR[size];
-  int listOfReadingsL[size];
-  int listOfReadingsR[size];
-
-  //Get Reading from Sensor
-  for(int a = 0; a<size; a++)
-  {
-    listOfReadingsFL[a] = analogRead(frontLeft);
-    listOfReadingsFR[a] = analogRead(frontRight);
-    listOfReadingsL[a] = analogRead(left);
-    listOfReadingsR[a] = analogRead(right);
-    delay(1);
-  }
-  
-  //Get median averaged from list
-  sensorValues[0] = sortAndAverage(listOfReadingsFL, size);
-  sensorValues[1] = sortAndAverage(listOfReadingsFR, size);
-  sensorValues[2] = sortAndAverage(listOfReadingsL, size);
-  sensorValues[3] = sortAndAverage(listOfReadingsR, size);
-
-  return sensorValues;
-} 
 
 char* getSensorReadingInCM(){
     /*
@@ -144,4 +98,66 @@ char* getSensorReadingInCM(){
   
   return sensorsValuesArray;
 }
+
+double sortAndAverage(int* listOfReadings, int size, int amount)
+{
+  //Sort Reading
+  for (int i = 0; i < size; i++)      
+  {
+    //Find max
+    int max = listOfReadings[0];
+    int maxLocation = 0;
+    for(int j = 0; j < size-i; j++)
+    {
+      if(max < listOfReadings[j])
+      {
+        max = listOfReadings[j];
+        maxLocation = j;
+      }
+    }
+
+    //Swap max with last position
+    listOfReadings[maxLocation] = listOfReadings[size-1-i];
+    listOfReadings[size-1-i] = max;
+  }
+
+  int lowest = (size/2) - (amount/2);
+  int highest = (size/2) + (amount-(amount/2));
+  
+  double total = 0;
+  for(int a = lowest; a<highest; a++)
+  {
+    total = total + listOfReadings[a];
+  }
+  return total/amount;
+}
+
+//Get average reading over a number of samples
+double* getIRSensorReading()
+{
+  int size = 100;
+  
+  int listOfReadingsFL[size];
+  int listOfReadingsFR[size];
+  int listOfReadingsL[size];
+  int listOfReadingsR[size];
+
+  //Get Reading from Sensor
+  for(int a = 0; a<size; a++)
+  {
+    listOfReadingsFL[a] = analogRead(frontLeft);
+    listOfReadingsFR[a] = analogRead(frontRight);
+    listOfReadingsL[a] = analogRead(left);
+    listOfReadingsR[a] = analogRead(right);
+    delay(1);
+  }
+  
+  //Get median averaged from list
+  sensorValues[0] = sortAndAverage(listOfReadingsFL, size, 3);
+  sensorValues[1] = sortAndAverage(listOfReadingsFR, size, 3);
+  sensorValues[2] = sortAndAverage(listOfReadingsL, size, 3);
+  sensorValues[3] = sortAndAverage(listOfReadingsR, size, 3);
+
+  return sensorValues;
+} 
 

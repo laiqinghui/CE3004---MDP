@@ -52,9 +52,9 @@ void straightenTune()
       while(frontRightReading > frontLeftReading)
       {
         md.setSpeeds(130, 0);
-		    //delay(10);
-		    //md.setBrakes(400, 400);
-        getCalibrationReading(true);
+		delay(10);
+		md.setBrakes(400, 400);
+        getCalibrationReading(false);
       }
     }
     else if(frontRightReading < frontLeftReading)
@@ -62,9 +62,9 @@ void straightenTune()
       while(frontRightReading < frontLeftReading)
       {
         md.setSpeeds(-130, 0);
-        //delay(10);
-        //md.setBrakes(400, 400);
-        getCalibrationReading(true);
+		delay(10);
+		md.setBrakes(400, 400);
+        getCalibrationReading(false);
       }
     }
     md.setBrakes(400, 400);
@@ -198,7 +198,7 @@ void calibration()
 }
 
 //If choice = 0 then it will only calibrate front
-//If choice = 1 then it will calibrate front and left
+//If choice = 1 then it will calibrate against right wall
 //If choice = 2 then it will calibrate front and right
 void fastCalibration(int choice)
 {
@@ -208,7 +208,7 @@ void fastCalibration(int choice)
 
   if(choice == 1)
   {
-        turnPID(1, 90);
+    turnPID(1, 90);
     delay(wait);
   }
 
@@ -262,7 +262,7 @@ void fastCalibration(int choice)
 
 double* calibrationSensorReading()
 {
-  int size = 100;
+  int size = 200;
   
   int listOfReadingsFL[size];
   int listOfReadingsFR[size];
@@ -272,104 +272,12 @@ double* calibrationSensorReading()
   {
     listOfReadingsFL[a] = analogRead(frontLeft);
     listOfReadingsFR[a] = analogRead(frontRight);
-    delay(2);
+    delay(1);
   }
   
   //Get median averaged from list
-  sensorCalibrationValues[0] = sortAndAverage(listOfReadingsFL, size);
-  sensorCalibrationValues[1] = sortAndAverage(listOfReadingsFR, size);
+  sensorCalibrationValues[0] = sortAndAverage(listOfReadingsFL, size, 3);
+  sensorCalibrationValues[1] = sortAndAverage(listOfReadingsFR, size, 3);
 
   return sensorCalibrationValues;
 }
-
-void benForward(int rpm, double distance, boolean pidOn) {
-
-  signed long tuneEntryTime = 0;
-  signed long tuneExitTime = 0;
-  signed long interval = 0;
-  double offset = 1;
-  if (distance == 9.5)
-    offset = 0.95;
-
-  double distanceTicks = offset  * distance * ticksPerCM;//Delibrate trimming
-  unsigned long currentTicksM1 = 0;
-  unsigned long currentTicksM2 = 0;
-
-  MotorPID M1pid = {260, 0, 0, 0.1};//0.1=>50
-  MotorPID M2pid = {300 , 0, 0, 0.115};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms
-
-  enableInterrupt( e1a, risingM1, RISING);
-  enableInterrupt( e2b, risingM2, RISING);
-
-  //md.setSpeeds(100, 100);
-  md.setSpeeds(260, 300);
-
-
-  Serial.print("Target Ticks: ");
-  Serial.println(distanceTicks);
-
-  while (1) {
-
-    //Serial.print(sqWidthToRPM(squareWidth_M1));
-    //Serial.print(" ");
-    //Serial.println(sqWidthToRPM(squareWidth_M2));
-
-    if (pidOn) {
-      tuneEntryTime = micros();
-      interval = tuneEntryTime - tuneExitTime;
-      if (interval >= 2000) {
-
-        tuneM1(rpm, &M1pid);
-        tuneM2(rpm, &M2pid);
-
-        tuneExitTime = micros();
-      }
-    }
-    noInterrupts();
-    currentTicksM1 = M1ticks;
-    currentTicksM2 = M2ticks;
-    interrupts();
-
-    if (currentTicksM2 >= distanceTicks) {
-      md.setBrakes(400, 400);
-      break;
-    }  //end of if
-
-
-  }//end of while
-
-  //md.setBrakes(400,400);
-  disableInterrupt(e1a);
-  disableInterrupt(e2b);
-  setTicks(0, 0);
-  setSqWidth(0, 0);
-}
-
-int calibrateTurn()
-{
-	int ticks = 0;
-	int previousRead = 0;
-	int currentValue = 0;
-	
-	md.setSpeeds(75, -120);
-    while (true)
-    {
-      currentValue = (PINB >> 5) & B001;
-      if (currentValue && !previousRead)
-      {
-        ticks++;
-        getCalibrationReading(true);
-        if (ticks >300 && abs(frontRightReading - frontLeftReading) < 0.1)
-        {
-          md.setBrakes(400, 400); 
-          Serial.println(frontRightReading);
-          Serial.println(frontLeftReading);
-          
-          return ticks;
-        }
-        
-      }
-      previousRead = currentValue;
-    }
-}
-
