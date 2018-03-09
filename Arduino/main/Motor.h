@@ -261,8 +261,8 @@ void moveForward(int rpm, double distance, boolean pidOn){
 double getTurnAmount(int dir, int turnDegree){
     if(dir == 1)
     {
-      double degree90 = 50.5; //cir is 51.8
-      double degree180 = 50.7; //cir is 52.9
+      double degree90 = 50.485; //cir is 51.8
+      double degree180 = 50.8; //cir is 52.9
       if(turnDegree < 90)
       {
         return abs(degree90 * (turnDegree/360.0) * ticksPerCM);
@@ -277,20 +277,9 @@ double getTurnAmount(int dir, int turnDegree){
     }
     else
     {
-      double degree90 = 48.4; //cir is 47.6
-      double degree180 = 48.73; //cir is 49.65
-      if(turnDegree < 90)
-      {
-        Serial.println(abs(degree90 * (turnDegree/360.0) * ticksPerCM));
-        return abs(degree90 * (turnDegree/360.0) * ticksPerCM);
-      }
-      else
-      {
-        double closenessTo90 = ((turnDegree-90)/90.0)*degree180;
-        double closenessTo180 = ((180 - turnDegree)/90.0)*degree90;
-        
-        return abs((closenessTo90 + closenessTo180) * (turnDegree/360.0) * ticksPerCM);
-      }
+      double degree90 = 48.2; //cir is 47.6
+      //double degree180 = 48.73; //cir is 49.65
+      return abs(degree90 * (turnDegree/360.0) * ticksPerCM);
     }
 }
 
