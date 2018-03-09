@@ -202,6 +202,12 @@ void fastCalibration(int choice)
   double fromWall = 13;
   int wait = 100;
 
+  if(choice == 1)
+  {
+        turnPID(1, 90);
+    delay(wait);
+  }
+
   delay(wait);
   //Quick calibration against wall
   straighten();
@@ -225,22 +231,6 @@ void fastCalibration(int choice)
   {
     turnPID(-1, 90);
     delay(wait);
-
-    //Move to the distance from wall
-    distanceFromWall(fromWall);
-    delay(wait);
-
-    //Fine tune the calibration
-    straightenTune();
-    delay(wait);
-
-    straightenTune();
-    delay(wait);
-
-    distanceFromWall(fromWall);
-    delay(wait);
-
-    turnPID(1, 90);
   }
   else if (choice == 2)
   {
