@@ -73,6 +73,7 @@ public class ArenaFragment extends Fragment {
     private boolean rotateFlag;
     private Timer mTimer1;
     private boolean lockFlag;
+    private boolean calibrateFlag;
 
     public ArenaFragment() {
         // Required empty public constructor
@@ -118,7 +119,7 @@ public class ArenaFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_arena, container, false);
-        GridView gridview = (GridView) view.findViewById(R.id.map_grid);
+        GridView gridview = view.findViewById(R.id.map_grid);
         Button btCalibrate = view.findViewById(R.id.calibrateButton);
         Button btStartEx = view.findViewById(R.id.startExButton);
         Button btStartFp = view.findViewById(R.id.startFpButton);
@@ -139,7 +140,6 @@ public class ArenaFragment extends Fragment {
         btRotate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 rotateFlag = isChecked;
-                //for tilt display
             }
         });
 
@@ -157,7 +157,7 @@ public class ArenaFragment extends Fragment {
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 if(ImageAdapter.getGridItem(position) != null){
-                    GridView gridview = (GridView) getActivity().findViewById(R.id.map_grid);
+                    GridView gridview = getActivity().findViewById(R.id.map_grid);
 
                     if(setWayPointFlag){
                         if(wayRow!=null && wayCol!=null){
@@ -171,8 +171,8 @@ public class ArenaFragment extends Fragment {
                         wayCol = String.valueOf(ImageAdapter.calcCol(position));
                         wayPos = String.valueOf(position);
 
-                        Toast.makeText(getContext(), "Waypoint of row" + ImageAdapter.calcRow(position)
-                                        + " and col " + ImageAdapter.calcCol(position) + "set!",
+                        Toast.makeText(getContext(), "Waypoint of row: " + ImageAdapter.calcRow(position)
+                                        + " and col: " + ImageAdapter.calcCol(position) + " set!",
                                 Toast.LENGTH_SHORT).show();
                         setWayPointFlag = false;
                         btSetWayPoint.setChecked(false);
@@ -189,8 +189,8 @@ public class ArenaFragment extends Fragment {
                         startCol = String.valueOf(ImageAdapter.calcCol(position));
                         startPos = String.valueOf(position);
 
-                        Toast.makeText(getContext(), "Startpoint of row" + ImageAdapter.calcRow(position)
-                                        + " and col " + ImageAdapter.calcCol(position) + "set!",
+                        Toast.makeText(getContext(), "Startpoint of row: " + ImageAdapter.calcRow(position)
+                                        + " and col: " + ImageAdapter.calcCol(position) + " set!",
                                 Toast.LENGTH_SHORT).show();
                         setStartPointFlag = false;
                         btSetStartPoint.setChecked(false);
@@ -246,8 +246,8 @@ public class ArenaFragment extends Fragment {
                                 return;
                             }
 
-                            Toast.makeText(getContext(), "Startdir "+ result + " of row " + ImageAdapter.calcRow(position)
-                                            + " and col " + ImageAdapter.calcCol(position) + " set!",
+                            Toast.makeText(getContext(), "Startdir "+ result + " of row: " + ImageAdapter.calcRow(position)
+                                            + " and col: " + ImageAdapter.calcCol(position) + " set!",
                                     Toast.LENGTH_SHORT).show();
                         }
                         setStartDirFlag = false;
@@ -259,7 +259,10 @@ public class ArenaFragment extends Fragment {
                         updateMap(exploredBin, obstacleBin, true);
                         updateRobot(dirRow, dirCol, dirDir, "1", true);
                     } else {
-                        Toast.makeText(getContext(), "array_index:" + gridList.indexOf(ImageAdapter.getGridItem(position)) + " position: " + position + " row: " + ImageAdapter.calcRow(position)
+                        Toast.makeText(getContext(), "array_index: "
+                                        + gridList.indexOf(ImageAdapter.getGridItem(position))
+                                        + " position: " + position
+                                        + " row: " + ImageAdapter.calcRow(position)
                                         + " col: " + ImageAdapter.calcCol(position),
                                 Toast.LENGTH_SHORT).show();
                     }
@@ -271,9 +274,16 @@ public class ArenaFragment extends Fragment {
                 new View.OnClickListener(){
 
                     public void onClick(View view) {
-                        String startEx = "ex" + " " + wayRow + " " + wayCol + " "
-                                + startRow + " " + startCol;
-                        ((MainActivity)getActivity()).sendMessage(startEx);
+                        if(wayCol!=null && wayRow!=null){
+                            if(calibrateFlag){
+                                String startEx = "ex";
+                                ((MainActivity)getActivity()).sendMessage(startEx);
+                            } else{
+                                Toast.makeText(getActivity(), "Please CALIBRATE!", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(getActivity(), "WAYPOINT not set!", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
         );
@@ -281,9 +291,16 @@ public class ArenaFragment extends Fragment {
         btStartFp.setOnClickListener(
                 new View.OnClickListener(){
                     public void onClick(View view) {
-                        String startFp = "fp" + " " + wayRow + " " + wayCol + " "
-                                + startRow + " " + startCol;;
-                        ((MainActivity)getActivity()).sendMessage(startFp);
+                        if(wayCol!=null && wayRow!=null){
+                            if(calibrateFlag){
+                                String startFp = "fp";
+                                ((MainActivity)getActivity()).sendMessage(startFp);
+                            } else{
+                                Toast.makeText(getActivity(), "Please CALIBRATE!", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(getActivity(), "WAYPOINT not set!", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
         );
@@ -291,21 +308,18 @@ public class ArenaFragment extends Fragment {
         btSetStartPoint.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 setStartPointFlag = isChecked;
-                if(isChecked){Toast.makeText(getActivity(), "Set your START POINT.", Toast.LENGTH_SHORT).show();}
             }
         });
 
         btSetWayPoint.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 setWayPointFlag = isChecked;
-                if(isChecked){Toast.makeText(getActivity(), "Set your WAY POINT.", Toast.LENGTH_SHORT).show();}
             }
         });
 
         btSetStartDirection.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 setStartDirFlag = isChecked;
-                if(isChecked){Toast.makeText(getActivity(), "Set your START DIRECTION.", Toast.LENGTH_SHORT).show();}
             }
         });
 
@@ -329,6 +343,7 @@ public class ArenaFragment extends Fragment {
                             ((MainActivity)getActivity()).sendMessage(calibrate);
                             updateMap(exploredBin, obstacleBin, true);
                             updateRobot(dirRow, dirCol, dirDir, "1", true);
+                            calibrateFlag = true;
                         } else {
                             Toast.makeText(getActivity(), "WAYPOINT not set!", Toast.LENGTH_SHORT).show();
                         }
@@ -358,7 +373,7 @@ public class ArenaFragment extends Fragment {
                 new View.OnClickListener(){
                     public void onClick(View view) {
                         if(dirRow!=null&&dirCol!=null&&dirDir!=null){
-                            EditText tvForward = (EditText) getActivity().findViewById(R.id.forwardField);
+                            EditText tvForward = getActivity().findViewById(R.id.forwardField);
                             Log.d("DEBUG", tvForward.toString());
                             String forwardDistance = tvForward.getText().toString();
                             String forward = "move"+" "+forwardDistance;
@@ -366,6 +381,8 @@ public class ArenaFragment extends Fragment {
                             for(int i = 0; i < Integer.valueOf(forwardDistance); i++){
                                 animateForward();
                             }
+//                            TextView robotStatus = getActivity().findViewById(R.id.robotStatus);
+//                            robotStatus.setText(R.string.robot_moving);
                         } else {
                             Toast.makeText(getContext(), "Start coordinates and direction not set!",
                                     Toast.LENGTH_SHORT).show();
@@ -380,13 +397,15 @@ public class ArenaFragment extends Fragment {
                 new View.OnClickListener(){
                     public void onClick(View view) {
                         //need to implement getting value of start point and direction
-                        EditText tvTurnLeft = (EditText) getActivity().findViewById(R.id.turnLeftField);
+                        EditText tvTurnLeft = getActivity().findViewById(R.id.turnLeftField);
                         String turnLeftDegree = tvTurnLeft.getText().toString();
                         String turnLeft = "rotate"+" "+"-"+turnLeftDegree;
                         ((MainActivity)getActivity()).sendMessage(turnLeft);
                         for(int i = 0; i < Integer.valueOf(turnLeftDegree)/90; i++){
                             animateTurnLeft();
                         }
+//                        TextView robotStatus = getActivity().findViewById(R.id.robotStatus);
+//                        robotStatus.setText(R.string.robot_moving);
                     }
                 }
         );
@@ -395,13 +414,15 @@ public class ArenaFragment extends Fragment {
                 new View.OnClickListener(){
                     public void onClick(View view) {
                         //need to implement getting value of start point and direction
-                        EditText tvTurnRight = (EditText) getActivity().findViewById(R.id.turnRightField);
+                        EditText tvTurnRight = getActivity().findViewById(R.id.turnRightField);
                         String turnRightDegree = tvTurnRight.getText().toString();
                         String turnRight = "rotate"+" "+turnRightDegree;
                         ((MainActivity)getActivity()).sendMessage(turnRight);
                         for(int i = 0; i < Integer.valueOf(turnRightDegree)/90; i++){
                             animateTurnRight();
                         }
+//                        TextView robotStatus = getActivity().findViewById(R.id.robotStatus);
+//                        robotStatus.setText(R.string.robot_moving);
                     }
                 }
         );
@@ -447,6 +468,8 @@ public class ArenaFragment extends Fragment {
         setStartPointFlag=false;
         setStartDirFlag=false;
 
+        calibrateFlag=false;
+
         updateMap(exploredBin, obstacleBin, true);
         updateRobot(dirRow, dirCol, dirDir, dirMoveOrStop, true);
     }
@@ -472,8 +495,8 @@ public class ArenaFragment extends Fragment {
         Log.d("EXPLORED_BIN", exploredBin);
         Log.d("OBSTACEL_BIN", obstacleBin);
 
-        this.exploredBin = exploredBin;
-        this.obstacleBin = obstacleBin;
+        ArenaFragment.exploredBin = exploredBin;
+        ArenaFragment.obstacleBin = obstacleBin;
 
         if(!manualUpdateFlag || force){
             int obsCount = 0;
@@ -500,17 +523,17 @@ public class ArenaFragment extends Fragment {
                     }
                 }
             }
-            GridView gridview = (GridView) getActivity().findViewById(R.id.map_grid);
+            GridView gridview = getActivity().findViewById(R.id.map_grid);
             gridview.setAdapter( new ImageAdapter(getContext(), gridList));
         }
     }
 
     public void updateRobot(String dirRow, String dirCol, String dirDir,
                             String dirMoveOrStop, boolean force) {
-        this.dirRow = dirRow;
-        this.dirCol = dirCol;
-        this.dirDir = dirDir;
-        this.dirMoveOrStop = dirMoveOrStop;
+        ArenaFragment.dirRow = dirRow;
+        ArenaFragment.dirCol = dirCol;
+        ArenaFragment.dirDir = dirDir;
+        ArenaFragment.dirMoveOrStop = dirMoveOrStop;
 
         if(!manualUpdateFlag || force){
 
@@ -558,7 +581,7 @@ public class ArenaFragment extends Fragment {
                 move_or_stop.setText(R.string.robot_moving);
             }
 
-            GridView gridview = (GridView) getActivity().findViewById(R.id.map_grid);
+            GridView gridview = getActivity().findViewById(R.id.map_grid);
             gridview.setAdapter( new ImageAdapter(getContext(), gridList));
         }
     }
@@ -634,7 +657,7 @@ public class ArenaFragment extends Fragment {
             case "turn right":
                 cmd = "rotate 90";
                 ((MainActivity)getActivity()).sendMessage(cmd);
-                animateTurnRight();;
+                animateTurnRight();
                 break;
             default:
                 Toast.makeText(getContext(), "VOICE: " + command,
@@ -665,20 +688,29 @@ public class ArenaFragment extends Fragment {
     }
 
     public synchronized void tiltSteer(float x, float y, float z) {
-        if(rotateFlag && !lockFlag){
-            if (Math.floor(x) == 0 && Math.floor(y) == -1 && Math.floor(z) == -2){
+        if(rotateFlag && !lockFlag) {
+            TextView xText = getActivity().findViewById(R.id.x_orientation);
+            TextView yText = getActivity().findViewById(R.id.y_orientation);
+            TextView zText = getActivity().findViewById(R.id.z_orientation);
+            xText.setText(String.valueOf(Math.round(x)));
+            yText.setText(String.valueOf(Math.round(y)));
+            zText.setText(String.valueOf(Math.round(z)));
+
+            String cmd;
+
+            if(Math.round(x)==10){
                 animateTurnLeft();
-                String cmd = "rotate -90";
+                cmd = "rotate -90";
                 ((MainActivity)getActivity()).sendMessage(cmd);
                 startTimer();
-            } else if (Math.floor(x) == 0 && Math.floor(y) == 1 && Math.floor(z) == 0){
+            } else if(Math.round(x)==-9){
                 animateTurnRight();
-                String cmd = "rotate 90";
+                cmd = "rotate 90";
                 ((MainActivity)getActivity()).sendMessage(cmd);
                 startTimer();
-            } else if(Math.floor(x) == -0 && Math.floor(y) == -0 && Math.floor(z) == -0){
+            } else if(Math.round(x)<2 && Math.round(x)>-2 && Math.round(y)<5 && Math.round(z)>7){
                 animateForward();
-                String cmd = "move 1";
+                cmd = "move 1";
                 ((MainActivity)getActivity()).sendMessage(cmd);
                 startTimer();
             }

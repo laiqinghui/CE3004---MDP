@@ -22,33 +22,33 @@ package com.grp5.mdp.cz3004;
 public interface Constants {
 
     // Message types sent from the BluetoothChatService Handler
-    public static final int MESSAGE_STATE_CHANGE = 1;
-    public static final int MESSAGE_READ = 2;
-    public static final int MESSAGE_WRITE = 3;
-    public static final int MESSAGE_DEVICE_NAME = 4;
-    public static final int MESSAGE_TOAST = 5;
+    int MESSAGE_STATE_CHANGE = 1;
+    int MESSAGE_READ = 2;
+    int MESSAGE_WRITE = 3;
+    int MESSAGE_DEVICE_NAME = 4;
+    int MESSAGE_TOAST = 5;
 
     // Key names received from the BluetoothChatService Handler
-    public static final String DEVICE_NAME = "device_name";
-    public static final String TOAST = "toast";
+    String DEVICE_NAME = "device_name";
+    String TOAST = "toast";
 
-    public static final String PREF_NAME  = "custom_write_text";
+    String PREF_NAME  = "custom_write_text";
 
     //For status of GridImage
-    public static final int UNEXPLORED = 0;
-    public static final int EXPLORED = 1;
-    public static final int OBSTACLE = 2;
-    public static final int START = 3;
-    public static final int GOAL = 4;
-    public static final int WAYPOINT = 5;
-    public static final int STARTDIR = 6;
+    int UNEXPLORED = 0;
+    int EXPLORED = 1;
+    int OBSTACLE = 2;
+    int START = 3;
+    int GOAL = 4;
+    int WAYPOINT = 5;
+    int STARTDIR = 6;
 
-    public static final int ROBOT_HEAD = 7;
-    public static final int ROBOT_BODY = 8;
+    int ROBOT_HEAD = 7;
+    int ROBOT_BODY = 8;
 
-    public static final int NORTH = 1;
-    public static final int EAST = 2;
-    public static final int SOUTH = 3;
-    public static final int WEST = 4 ;
+    int NORTH = 1;
+    int EAST = 2;
+    int SOUTH = 3;
+    int WEST = 4 ;
 
 }

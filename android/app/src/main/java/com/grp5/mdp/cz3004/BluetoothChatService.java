@@ -297,7 +297,9 @@ public class BluetoothChatService {
         updateUserInterfaceTitle();
 
         if(!isServer){
-            while(mState != STATE_CONNECTED){
+            int counter = 0;
+            while(mState != STATE_CONNECTED && counter < 10){
+                counter++;
                 connect(mConnectedDevice, true);
                 try {
                     wait(1000);
