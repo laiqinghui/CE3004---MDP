@@ -10,6 +10,9 @@ from Real import Robot
 from Constants import NORTH, SOUTH, EAST, WEST, FORWARD, LEFT, RIGHT, START, MAX_ROWS, MAX_COLS
 
 
+CALIBRATE_N_STEPS = 5
+
+
 class Exploration:
     """Implementation of the Right-Wall hugging algorithm for a maze solving robot.
 
@@ -209,7 +212,7 @@ class Exploration:
         front = self.frontFree()
         num_calibration_move = 0
 
-        logging.info("newBaseStep: " + str(self.moveNumber // 5) + ", baseStep: " + str(self.baseStep))
+        logging.info("newBaseStep: " + str(self.moveNumber // CALIBRATE_N_STEPS) + ", baseStep: " + str(self.baseStep))
         if not (self.sim):
             calibrate_front = self.robot.can_calibrate_front()
             calibrate_right = self.robot.can_calibrate_right()
@@ -229,14 +232,12 @@ class Exploration:
                 #     self.robot.setHead()
             elif (calibrate_front[0]):
                 move.append(calibrate_front[1])
-            # calibrate right every 5 steps if able to
-            elif (self.moveNumber // 5) > self.baseStep:
-                print "Exceed every 5 steps, should calibrate right if can."
+            # calibrate right every n steps if able to
+            elif (self.moveNumber // CALIBRATE_N_STEPS) > self.baseStep:
                 calibrate_right = self.robot.can_calibrate_right()
                 if calibrate_right[0]:
-                    print "do calibrate right"
                     move.append(calibrate_right[1])
-                    self.baseStep = (self.moveNumber // 5)
+                    self.baseStep = (self.moveNumber // CALIBRATE_N_STEPS)
 
         num_calibration_move = len(move)
 
