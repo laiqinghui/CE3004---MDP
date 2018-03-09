@@ -319,7 +319,7 @@ class Robot:
 
         if self.direction == NORTH:
             for i in range(2, 3):
-                if ((r-i) < 0):
+                if ((r - i) < 0):
                     flag = [True, 'F']
                     break
                 elif ((r - i) >= 0 and (self.exploredMap[r-i][c-1] == 2
@@ -327,14 +327,24 @@ class Robot:
                       and self.exploredMap[r-i][c+1] == 2)):
                     flag = [True, 'F']
                     break
-        elif self.direction == WEST:
-            for i in range(2, 3):
-                if ((c-i) < 0):
+                elif ((r - i) >= 0 and (self.exploredMap[r-i-2][c-1] == 2
+                      and self.exploredMap[r-i-2][c] == 2
+                      and self.exploredMap[r-i-2][c+1] == 2)):
                     flag = [True, 'F']
                     break
-                elif ((c-i) >= 0 and (self.exploredMap[r-1][c-i] == 2
+        elif self.direction == WEST:
+            for i in range(2, 3):
+                if ((c - i) < 0):
+                    flag = [True, 'F']
+                    break
+                elif ((c - i) >= 0 and (self.exploredMap[r-1][c-i] == 2
                       and self.exploredMap[r][c-i] == 2
                       and self.exploredMap[r+1][c-i] == 2)):
+                    flag = [True, 'F']
+                    break
+                elif ((c - i) >= 0 and (self.exploredMap[r-1][c-i-2] == 2
+                      and self.exploredMap[r][c-i-2] == 2
+                      and self.exploredMap[r+1][c-i-2] == 2)):
                     flag = [True, 'F']
                     break
         elif self.direction == EAST:
@@ -347,14 +357,19 @@ class Robot:
                       and self.exploredMap[r+1][c+i] == 2)):
                     flag = [True, 'F']
                     break
-        else:
-            for i in range(2, 3):
-                if ((r+i) == MAX_ROWS):
+                elif ((c + i) < MAX_COLS and (self.exploredMap[r-1][c+i+2] == 2
+                      and self.exploredMap[r][c+i+2] == 2
+                      and self.exploredMap[r+1][c+i+2] == 2)):
                     flag = [True, 'F']
                     break
-                elif ((r+i) < MAX_ROWS and (self.exploredMap[r+i][c-1] == 2
-                      and self.exploredMap[r+i][c] == 2
-                      and self.exploredMap[r+i][c+1] == 2)):
+        else:
+            for i in range(2, 3):
+                if ((r + i) == MAX_ROWS):
+                    flag = [True, 'F']
+                    break
+                elif ((r + i) < MAX_ROWS and (self.exploredMap[r+i+2][c-1] == 2
+                      and self.exploredMap[r+i+2][c] == 2
+                      and self.exploredMap[r+i+2][c+1] == 2)):
                     flag = [True, 'F']
                     break
 
@@ -399,7 +414,7 @@ class Robot:
                     break
         else:
             for i in range(2, 3):
-                if ((c-i) < 0):
+                if ((c - i) < 0):
                     flag = [True, 'R']
                     break
                 elif ((c - i) >= 0 and (self.exploredMap[r-1, c-i] == 2 and
