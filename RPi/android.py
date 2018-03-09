@@ -58,11 +58,11 @@ class Android(threading.Thread):
             logging.info("Accepted connection from" + str(self.client_info))
             client_MAC = self.client_info[0]
             # if client_MAC != self.target_client:
-            if True:
-                logging.info("There was a connection attempt by an unauthorized device. Attempting to rebroadcast..")
-                self.client_sock.close()
-                self.connect()
-                return 0
+            # if True:
+                # logging.info("There was a connection attempt by an unauthorized device. Attempting to rebroadcast..")
+                # self.client_sock.close()
+                # self.connect()
+                # return 0
 
             self.connected = True
             self.sendAndroid("Connection Secured")
