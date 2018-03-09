@@ -73,8 +73,8 @@ void processInst(){
                     delay(200);
                 }
                 break;
-      case ']': PWM_Mode_Setup();
-                //fastCalibration(2);
+      case ']': //PWM_Mode_Setup();
+                fastCalibration(2);
                 break;
       case 'R': fastCalibration(1);
                 break;

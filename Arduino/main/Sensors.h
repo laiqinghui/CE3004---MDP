@@ -1,4 +1,4 @@
-#include "Extra UltraSound.h"
+//#include "Extra UltraSound.h"
 
 #define frontRight  A1    //Front right PS2
 #define frontLeft  A3    //Front left PS4
@@ -164,7 +164,7 @@ char* getSensorReadingInCM(){
       sensorsValuesArray[3] = (5260/rightValue) - 0.3915;
   }
   
-  //PS1 y = 12978x - 2.4047 //if value is above 70, subtract 1; //add 2 to offset //if value is below 25, subtract 3
+  //PS1 y = 12256x - 1.948 //if value is above 70, subtract 1; //add 2 to offset //if value is below 25, subtract 1
   //Limit is 60cm
   double leftValue = sensorValues[2];
   if(leftValue < 170)
@@ -173,11 +173,11 @@ char* getSensorReadingInCM(){
   }
   else
   {
-    sensorsValuesArray[4] = (12978/leftValue) - 0.4047;
+    sensorsValuesArray[4] = (12256/leftValue) - 0.948;
   }
   if(sensorsValuesArray[4] <= 25)
   {
-    sensorsValuesArray[4] = sensorsValuesArray[4] - 3;
+    sensorsValuesArray[4] = sensorsValuesArray[4] - 1;
   }
   
   if(sensorsValuesArray[4] > 70)
@@ -185,11 +185,6 @@ char* getSensorReadingInCM(){
     sensorsValuesArray[4] = sensorsValuesArray[4] - 1;
   }
 
-  Serial.println((int)sensorsValuesArray[0]);
-  Serial.println((int)sensorsValuesArray[1]);
-  Serial.println((int)sensorsValuesArray[2]);
-  Serial.println((int)sensorsValuesArray[3]);
-  Serial.println((int)sensorsValuesArray[4]);
   
   return sensorsValuesArray;
 }
