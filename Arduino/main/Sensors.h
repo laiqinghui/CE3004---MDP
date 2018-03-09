@@ -1,4 +1,4 @@
-//#include "Extra UltraSound.h"
+#include "UltraSound.h"
 
 #define frontRight  A1    //Front right PS2
 #define frontLeft  A3    //Front left PS4
@@ -10,48 +10,6 @@ double* getIRSensorReading();
 char getUltraSoundDistance();
 char* getSensorReadingInCM();
 double sortAndAverage(int* listOfReadings, int size);
-
-
-char getUltraSoundDistance(){
-  uint8_t DMcmd[4] = {0x22, 0x00, 0x00, 0x22}; //distance measure command
-  char USValue = -1;
-
-  for(int i=0;i<4;i++)
-  {
-    Serial.write(DMcmd[i]);
-  }
-
-  delay(40); //delay for 75 ms
-  unsigned long timer = millis();
-  while(millis() - timer < 30)
-  {
-    if(Serial.available()>0)
-    {
-      int header=Serial.read(); //0x22
-      int highbyte=Serial.read();
-      int lowbyte=Serial.read();
-      int sum=Serial.read();//sum
-
-      if(header == 0x22){
-        if(highbyte==255)
-        {
-          USValue=-1;  //if highbyte =255 , the reading is invalid.
-        }
-        else
-        {
-          USValue = highbyte*255+lowbyte;
-        }
-
-      }
-      else{
-        while(Serial.available())  byte bufferClear = Serial.read();
-        break;
-      }
-    }
-  }
-  return USValue;
-}  
-
 
 double sortAndAverage(int* listOfReadings, int size)
 {
@@ -86,35 +44,6 @@ double sortAndAverage(int* listOfReadings, int size)
 //These 2 arrays need to be outside if not the values will be weird
 double sensorValues[4];
 char sensorsValuesArray[5];
-
-//Get average reading over a number of samples
-double* getIRSensorReading()
-{
-  int size = 100;
-  
-  int listOfReadingsFL[size];
-  int listOfReadingsFR[size];
-  int listOfReadingsL[size];
-  int listOfReadingsR[size];
-
-  //Get Reading from Sensor
-  for(int a = 0; a<size; a++)
-  {
-    listOfReadingsFL[a] = analogRead(frontLeft);
-    listOfReadingsFR[a] = analogRead(frontRight);
-    listOfReadingsL[a] = analogRead(left);
-    listOfReadingsR[a] = analogRead(right);
-    delay(1);
-  }
-  
-  //Get median averaged from list
-  sensorValues[0] = sortAndAverage(listOfReadingsFL, size);
-  sensorValues[1] = sortAndAverage(listOfReadingsFR, size);
-  sensorValues[2] = sortAndAverage(listOfReadingsL, size);
-  sensorValues[3] = sortAndAverage(listOfReadingsR, size);
-
-  return sensorValues;
-} 
 
 //Get average reading over a number of samples
 double* getIRSensorReading()

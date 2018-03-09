@@ -3,38 +3,17 @@
 #include "MotorBeta.h"
 
 
-void testSequence1(){
-  for(int i = 0; i < 4; i++)
-  {
-    for(int j = 0; j < 3; j++ ){
-      moveForward(80, 10, true);
-      Serial.println("\n\n\n");
-      delay(500);
-    }
-
-     //turn(1, 90);//left
-    delay(500);  
-  }
-}
-
-
-void testSequence2()
-{
-  for(int i = 0; i < 10; i++){
-    moveForward(80, 9.5, true);
-    delay(1000);
-    Serial.println("\n\n");
-  }
-}
-
 void benTestSequence()
 {
+  //straightenTune();
   //moveForward(80, 30, true);  
-  turnPID(-1, 90);
+  //turnPID(-1, 90);
   //md.setSpeeds(124, 170);
   //fastCalibration(2);
   //delay(1000);
   //moveForward(80, 9.5, true);
+  //benForward(80, 9.5, true);
+  //moveForwardOneGrid(80);
 }
 
 void processInst(){
@@ -128,14 +107,14 @@ void setup() {
   md.init();
   initI2C();
 
-  //benTestSequence();
+  benTestSequence();
 }
 
 void loop() 
 {
   //PWM_Mode_Setup();
   //getUltraSound2Reading();
-  Serial.println(getSensorReadingInCM()[4]);
+  //Serial.println(getSensorReadingInCM()[4]);
   if(dataExist()){
     //delay(100);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations 
     processInst();
