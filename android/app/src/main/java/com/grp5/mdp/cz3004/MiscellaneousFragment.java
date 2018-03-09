@@ -74,7 +74,7 @@ public class MiscellaneousFragment extends Fragment {
                 new View.OnClickListener(){
                     public void onClick(View view) {
                         //need to implement getting value of start point and direction
-                        EditText tvForward = (EditText) getActivity().findViewById(R.id.forwardField);
+                        EditText tvForward = getActivity().findViewById(R.id.forwardField);
                         Log.d("DEBUG", tvForward.toString());
                         String forwardDistance = tvForward.getText().toString();
                         String forward = "move"+" "+forwardDistance;
@@ -88,7 +88,7 @@ public class MiscellaneousFragment extends Fragment {
                 new View.OnClickListener(){
                     public void onClick(View view) {
                         //need to implement getting value of start point and direction
-                        EditText tvTurnLeft = (EditText) getActivity().findViewById(R.id.turnLeftField);
+                        EditText tvTurnLeft = getActivity().findViewById(R.id.turnLeftField);
                         String turnLeftDegree = tvTurnLeft.getText().toString();
                         String turnLeft = "rotate"+" "+"-"+turnLeftDegree;
                         ((MainActivity)getActivity()).sendMessage(turnLeft);
@@ -100,7 +100,7 @@ public class MiscellaneousFragment extends Fragment {
                 new View.OnClickListener(){
                     public void onClick(View view) {
                         //need to implement getting value of start point and direction
-                        EditText tvTurnRight = (EditText) getActivity().findViewById(R.id.turnRightField);
+                        EditText tvTurnRight = getActivity().findViewById(R.id.turnRightField);
                         String turnRightDegree = tvTurnRight.getText().toString();
                         String turnRight = "rotate"+" "+turnRightDegree;
                         ((MainActivity)getActivity()).sendMessage(turnRight);
