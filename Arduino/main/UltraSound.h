@@ -35,8 +35,8 @@ void Serial_Mode_Setup()
 char getUltraSoundDistance(){
   
   char USValue = -1;
-
-  //delay(40); //delay for 75 ms
+  Serial_Mode_Setup();
+   delay(40); //delay for 75 ms
   unsigned long timer = millis();
   while(millis() - timer < 30)
   {
