@@ -1,4 +1,4 @@
-#include "Extra UltraSound.h"
+#include "UltraSound.h"
 
 #define frontRight  A1    //Front right PS2
 #define frontLeft  A3    //Front left PS4
@@ -10,48 +10,6 @@ double* getIRSensorReading();
 char getUltraSoundDistance();
 char* getSensorReadingInCM();
 double sortAndAverage(int* listOfReadings, int size);
-
-
-char getUltraSoundDistance(){
-  uint8_t DMcmd[4] = {0x22, 0x00, 0x00, 0x22}; //distance measure command
-  char USValue = -1;
-
-  for(int i=0;i<4;i++)
-  {
-    Serial.write(DMcmd[i]);
-  }
-
-  delay(40); //delay for 75 ms
-  unsigned long timer = millis();
-  while(millis() - timer < 30)
-  {
-    if(Serial.available()>0)
-    {
-      int header=Serial.read(); //0x22
-      int highbyte=Serial.read();
-      int lowbyte=Serial.read();
-      int sum=Serial.read();//sum
-
-      if(header == 0x22){
-        if(highbyte==255)
-        {
-          USValue=-1;  //if highbyte =255 , the reading is invalid.
-        }
-        else
-        {
-          USValue = highbyte*255+lowbyte;
-        }
-
-      }
-      else{
-        while(Serial.available())  byte bufferClear = Serial.read();
-        break;
-      }
-    }
-  }
-  return USValue;
-}  
-
 
 double sortAndAverage(int* listOfReadings, int size)
 {
@@ -163,9 +121,8 @@ char* getSensorReadingInCM(){
   {
       sensorsValuesArray[3] = (5260/rightValue) - 0.3915;
   }
-
-  /*
-  //PS1 y = 12978x - 2.4047 //if value is above 70, subtract 1; //add 2 to offset //if value is below 25, subtract 3
+  
+  //PS1 y = 12256x - 1.948 //if value is above 70, subtract 1; //add 2 to offset //if value is below 25, subtract 1
   //Limit is 60cm
   double leftValue = sensorValues[2];
   if(leftValue < 170)
@@ -174,24 +131,18 @@ char* getSensorReadingInCM(){
   }
   else
   {
-    sensorsValuesArray[4] = (12978/leftValue) - 0.4047;
+    sensorsValuesArray[4] = (12256/leftValue) - 0.948;
   }
   if(sensorsValuesArray[4] <= 25)
   {
-    sensorsValuesArray[4] = sensorsValuesArray[4] - 3;
-  }*/
-  sensorsValuesArray[4] = getUltraSound2Reading();
+    sensorsValuesArray[4] = sensorsValuesArray[4] - 1;
+  }
   
   if(sensorsValuesArray[4] > 70)
   {
     sensorsValuesArray[4] = sensorsValuesArray[4] - 1;
   }
 
-  Serial.println((int)sensorsValuesArray[0]);
-  Serial.println((int)sensorsValuesArray[1]);
-  Serial.println((int)sensorsValuesArray[2]);
-  Serial.println((int)sensorsValuesArray[3]);
-  Serial.println((int)sensorsValuesArray[4]);
   
   return sensorsValuesArray;
 }
