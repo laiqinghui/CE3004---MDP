@@ -1,4 +1,4 @@
-#include "Extra UltraSound.h"
+//#include "Extra UltraSound.h"
 
 #define frontRight  A1    //Front right PS2
 #define frontLeft  A3    //Front left PS4
@@ -116,6 +116,35 @@ double* getIRSensorReading()
   return sensorValues;
 } 
 
+//Get average reading over a number of samples
+double* getIRSensorReading()
+{
+  int size = 100;
+  
+  int listOfReadingsFL[size];
+  int listOfReadingsFR[size];
+  int listOfReadingsL[size];
+  int listOfReadingsR[size];
+
+  //Get Reading from Sensor
+  for(int a = 0; a<size; a++)
+  {
+    listOfReadingsFL[a] = analogRead(frontLeft);
+    listOfReadingsFR[a] = analogRead(frontRight);
+    listOfReadingsL[a] = analogRead(left);
+    listOfReadingsR[a] = analogRead(right);
+    delay(1);
+  }
+  
+  //Get median averaged from list
+  sensorValues[0] = sortAndAverage(listOfReadingsFL, size);
+  sensorValues[1] = sortAndAverage(listOfReadingsFR, size);
+  sensorValues[2] = sortAndAverage(listOfReadingsL, size);
+  sensorValues[3] = sortAndAverage(listOfReadingsR, size);
+
+  return sensorValues;
+} 
+
 char* getSensorReadingInCM(){
     /*
     Return pointer to sensors values array. Reasons for the pointer approach is to facilitate for Exploration where
@@ -163,9 +192,8 @@ char* getSensorReadingInCM(){
   {
       sensorsValuesArray[3] = (5260/rightValue) - 0.3915;
   }
-
-  /*
-  //PS1 y = 12978x - 2.4047 //if value is above 70, subtract 1; //add 2 to offset //if value is below 25, subtract 3
+  
+  //PS1 y = 12256x - 1.948 //if value is above 70, subtract 1; //add 2 to offset //if value is below 25, subtract 1
   //Limit is 60cm
   double leftValue = sensorValues[2];
   if(leftValue < 170)
@@ -174,24 +202,18 @@ char* getSensorReadingInCM(){
   }
   else
   {
-    sensorsValuesArray[4] = (12978/leftValue) - 0.4047;
+    sensorsValuesArray[4] = (12256/leftValue) - 0.948;
   }
   if(sensorsValuesArray[4] <= 25)
   {
-    sensorsValuesArray[4] = sensorsValuesArray[4] - 3;
-  }*/
-  sensorsValuesArray[4] = getUltraSound2Reading();
+    sensorsValuesArray[4] = sensorsValuesArray[4] - 1;
+  }
   
   if(sensorsValuesArray[4] > 70)
   {
     sensorsValuesArray[4] = sensorsValuesArray[4] - 1;
   }
 
-  Serial.println((int)sensorsValuesArray[0]);
-  Serial.println((int)sensorsValuesArray[1]);
-  Serial.println((int)sensorsValuesArray[2]);
-  Serial.println((int)sensorsValuesArray[3]);
-  Serial.println((int)sensorsValuesArray[4]);
   
   return sensorsValuesArray;
 }
