@@ -2,7 +2,6 @@
 """Implementation of the exploration algorithm for a maze solving robot."""
 import numpy as np
 import time
-import logging
 
 import global_settings as gs
 
@@ -151,7 +150,7 @@ class Exploration:
                         fsp.getFastestPath()
                         while (fsp.robot.center.tolist() != neighbour.tolist()):
                             fsp.moveStep()
-                            time.sleep(step)
+                            # time.sleep(step)
                         print "Fastest Path to unexplored area!"
 
                         self.robot.center = neighbour
@@ -174,7 +173,7 @@ class Exploration:
             fsp.getFastestPath()
             while (fsp.robot.center.tolist() != self.startPos.tolist()):
                 fsp.moveStep()
-                time.sleep(step)
+                # time.sleep(step)
             print "Starting position reached!"
 
             print fsp.movement
@@ -208,38 +207,37 @@ class Exploration:
         # multi step
         front = self.frontFree()
 
-        self.moveNumber += len(move)
-
-        logging.info("newBaseStep: " + str(self.moveNumber % 5) + ", baseStep: " + str(self.baseStep))
+        # self.moveNumber += len(move)
+        # print "newBaseStep: " + str(self.moveNumber % 5) + ", baseStep: " + str(self.baseStep)
         if not (self.sim):
             calibrate_front = self.robot.can_calibrate_front()
-            # calibrate_right = self.robot.can_calibrate_right()
+            calibrate_right = self.robot.can_calibrate_right()
             if self.robot.is_corner():
                 move.append(']')
-                if self.robot.direction == NORTH:
-                    self.robot.direction = EAST
-                    self.robot.setHead()
-                elif self.robot.direction == SOUTH:
-                    self.robot.direction = WEST
-                    self.robot.setHead()
-                elif self.robot.direction == EAST:
-                    self.robot.direction = SOUTH
-                    self.robot.setHead()
-                else:
-                    self.robot.direction = NORTH
-                    self.robot.setHead()
+                # if self.robot.direction == NORTH:
+                #     self.robot.direction = EAST
+                #     self.robot.setHead()
+                # elif self.robot.direction == SOUTH:
+                #     self.robot.direction = WEST
+                #     self.robot.setHead()
+                # elif self.robot.direction == EAST:
+                #     self.robot.direction = SOUTH
+                #     self.robot.setHead()
+                # else:
+                #     self.robot.direction = NORTH
+                #     self.robot.setHead()
             elif (calibrate_front[0]):
                 move.append(calibrate_front[1])
-            # elif (calibrate_right[0]):
-            #     move.append(calibrate_right[1])
+            elif (calibrate_right[0]):
+                move.append(calibrate_right[1])
             # calibrate right every 5 steps if able to
-            elif (self.moveNumber % 5) > self.baseStep:
-                logging.info("Exceed every 5 steps, should calibrate right if can.")
-                calibrate_right = self.robot.can_calibrate_right()
-                if calibrate_right[0]:
-                    logging.info("do calibrate right")
-                    move.append(calibrate_right[1])
-                    self.baseStep = (self.moveNumber % 5)
+            # elif (self.moveNumber % 5) > self.baseStep:
+            #     print "Exceed every 5 steps, should calibrate right if can."
+            #     calibrate_right = self.robot.can_calibrate_right()
+            #     if calibrate_right[0]:
+            #         print "do calibrate right"
+            #         move.append(calibrate_right[1])
+            #         self.baseStep = (self.moveNumber % 5)
 
         if (self.checkFree([1, 2, 3, 0], self.robot.center)):
             self.robot.moveBot(RIGHT)
