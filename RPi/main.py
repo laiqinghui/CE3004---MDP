@@ -84,13 +84,8 @@ if __name__ == "__main__":
     RPI, Algorithm and Arduino thread will only be initialized when command
     received from Android thread.
     """
-    # TODO: android.py file that connects with Android device using bluetooth
-    # android_thread = threading.Thread(target=Android)
-    # android_thread.daemon = True
-    # android_thread.start()
-    #
-    # while 1:
-    #     time.sleep(1)
+    with open("sensor.txt", "w") as sensor_log:
+        pass
 
     """RUN MAIN.PY TO TEST ALGORITHM & RPI INTERFACE"""
     # python main.py --rr=18 --rc=1 --wr=5 --wc=9 --gr=1 --gc=13 --mode=0 --dir=2
