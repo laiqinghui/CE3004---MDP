@@ -8,10 +8,12 @@ from pydispatch import dispatcher
 
 from robot.algorithm import Algorithm
 # from android import Android
-# from arduino import Arduino
+from arduino import Arduino
 from rpi import RPI
 import global_settings as gs
 import numpy as np
+
+# python test_fastest_path.py --rr=18 --rc=1 --wr=5 --wc=9 --gr=1 --gc=13 --mode=1 --dir=2
 
 
 def initialise_robot_options(argv):
@@ -64,15 +66,15 @@ def start_robot_exploration(rr, rc, wr, wc, gr, gc, m, d, keep_alive=False):
     This function will need to move to the android.py file as a method.
     """
     rpi_thread = RPI()
-    # arduino_thread = Arduino()
+    arduino_thread = Arduino()
     algo_thread = Algorithm(rr, rc, wr, wc, gr, gc, m, d)
 
     rpi_thread.daemon = True
-    # arduino_thread.daemon = True
+    arduino_thread.daemon = True
     # algo_thread.daemon = True
 
     rpi_thread.start()
-    # arduino_thread.start()
+    arduino_thread.start()
     fastestPathInstruction = algo_thread.determine_fastest_path()
     logging.info("Fastest path calculated!")
     algo_thread.run_fatest_path_on(self.fastestPathInstruction)
@@ -115,6 +117,47 @@ if __name__ == "__main__":
 #                            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],   # 17
 #                            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],   # 18
 #                            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]])  # 19
+    gs.MAZEMAP = np.array([[1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1],   # 1
+                           [1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1],   # 2
+                           [1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1],   # 2
+                           [1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1],   # 3
+                           [1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1],   # 4
+                           [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1],   # 5
+                           [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],   # 6
+                           [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],   # 7
+                           [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],   # 8
+                           [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],   # 9
+                           [2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2],   # 21
+                           [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],   # 22
+                           [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],   # 22
+                           [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],   # 23
+                           [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],   # 24
+                           [1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1],   # 25
+                           [1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1],   # 26
+                           [1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1],   # 27
+                           [1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1],   # 28
+                           [1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1]])  # 29
+
+#     gs.MAZEMAP = np.array([[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],   # 0
+#                            [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],   # 1
+#                            [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],   # 1
+#                            [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0],   # 3
+#                            [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0],   # 4
+#                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],   # 5
+#                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],   # 6
+#                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],   # 7
+#                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],   # 8
+#                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],   # 9
+#                            [1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1],   # 10
+#                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],   # 11
+#                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],   # 11
+#                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],   # 13
+#                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],   # 14
+#                            [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],   # 15
+#                            [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],   # 16
+#                            [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],   # 17
+#                            [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],   # 18
+#                            [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]])  # 19
 
     # gs.MAZEMAP = np.array()
 
