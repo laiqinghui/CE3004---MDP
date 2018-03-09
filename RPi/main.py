@@ -101,5 +101,5 @@ if __name__ == "__main__":
 
     while 1:
         time.sleep(1)
-        data = raw_input("Enter the data to be sent to algorithm: ")
-        dispatcher.send(message=[16.0, 16.0, 16.0, 0, 5.0], signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
+        # data = raw_input("Enter the data to be sent to algorithm: ")
+        # dispatcher.send(message=[16.0, 16.0, 16.0, 0, 5.0], signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
