@@ -6,9 +6,8 @@ import logging
 
 import global_settings as gs
 
-from Real import Robot
 from Constants import NORTH, SOUTH, EAST, WEST, FORWARD, LEFT, RIGHT, START, MAX_ROWS, MAX_COLS
-
+from FastestPath import FastestPath
 
 CALIBRATE_N_STEPS = 5
 
@@ -43,12 +42,13 @@ class Exploration:
         self.timeLimit = timeLimit
         self.exploredArea = 0
         self.currentMap = gs.MAZEMAP
-        # if sim:
-        #     from Simulator import Robot
-        #     self.robot = Robot(self.currentMap, direction, self.startPos, realMap)
-        #     self.sensors = self.robot.getSensors()
-        # else:
-        self.robot = Robot(self.currentMap, direction, startPos)
+        if sim:
+            from Simulator import Robot
+            self.robot = Robot(self.currentMap, direction, self.startPos, realMap)
+            self.sensors = self.robot.getSensors()
+        else:
+            from Real import Robot
+            self.robot = Robot(self.currentMap, direction, startPos)
         self.exploredNeighbours = dict()
         self.sim = sim
         self.calibrateLim = calibrateLim
