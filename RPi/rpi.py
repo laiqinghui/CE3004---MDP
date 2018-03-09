@@ -16,6 +16,7 @@ class RPI(threading.Thread):
         self.running = False
         self.autoupdate = True
         self.pc_ws = None
+
         try:
             self.pc_ws = create_connection("ws://192.168.5.18:8888/ws")
         except:
@@ -99,6 +100,9 @@ class RPI(threading.Thread):
         message[2] = message[2] - 12
         message[3] = message[3] - 12
         message[4] = message[4] - 20
+
+        with open("sensor.txt", "a") as sensor_log:
+            sensor_log.write(str(message) + "\n")
 
         # raw_input("---------press enter to continue-------")
 
