@@ -213,6 +213,18 @@ class Exploration:
             # calibrate_right = self.robot.can_calibrate_right()
             if self.robot.is_corner():
                 move.append(']')
+                if self.robot.direction == NORTH:
+                    self.robot.direction = EAST
+                    self.robot.setHead()
+                elif self.robot.direction == SOUTH:
+                    self.robot.direction = WEST
+                    self.robot.setHead()
+                elif self.robot.direction == EAST:
+                    self.robot.direction = SOUTH
+                    self.robot.setHead()
+                else:
+                    self.robot.direction = NORTH
+                    self.robot.setHead()
             elif (calibrate_front[0]):
                 move.append(calibrate_front[1])
             # elif (calibrate_right[0]):
