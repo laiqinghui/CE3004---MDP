@@ -144,15 +144,15 @@ public class BluetoothFragment extends Fragment implements AdapterView.OnItemCli
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_bluetooth, container, false);
-        scan = (ToggleButton) view.findViewById(R.id.scan);
+        scan = view.findViewById(R.id.scan);
         Button discovery = view.findViewById(R.id.discovery_button);
         Button writeButton = view.findViewById(R.id.writeButton);
         Button saveButton = view.findViewById(R.id.saveButton);
         EditText writeField = view.findViewById(R.id.writeField);
         TextView bluetoothStatus = view.findViewById(R.id.statusText);
         // Set the adapter
-        mListView = (AbsListView) view.findViewById(android.R.id.list);
-        ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
+        mListView = view.findViewById(android.R.id.list);
+        mListView.setAdapter(mAdapter);
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
@@ -179,7 +179,7 @@ public class BluetoothFragment extends Fragment implements AdapterView.OnItemCli
             public void onClick(View view) {
                 Log.v("WRITE", "Write button pressed.");
 
-                TextView tv = (TextView) getActivity().findViewById(R.id.writeField);
+                TextView tv = getActivity().findViewById(R.id.writeField);
                 String data = tv.getText().toString();
                 ((MainActivity) getActivity()).sendMessage(data);
             }
@@ -190,7 +190,7 @@ public class BluetoothFragment extends Fragment implements AdapterView.OnItemCli
             @Override
             public void onClick(View view) {
                 Log.v("SAVE", "Save button pressed.");
-                TextView tv = (TextView) getActivity().findViewById(R.id.writeField);
+                TextView tv = getActivity().findViewById(R.id.writeField);
                 String data = tv.getText().toString();
 
                 //TODO: Save data in persistent storage
@@ -293,7 +293,7 @@ public class BluetoothFragment extends Fragment implements AdapterView.OnItemCli
         if (mListener != null) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(deviceItemList.get(position).getAddress());
+            mListener.updateRPiAddress(deviceItemList.get(position).getAddress());
         }
 
     }
@@ -338,7 +338,7 @@ public class BluetoothFragment extends Fragment implements AdapterView.OnItemCli
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(String deviceAddress);
+        void updateRPiAddress(String deviceAddress);
         void onBluetoothStateChange(String bluetoothStatus);
     }
 }

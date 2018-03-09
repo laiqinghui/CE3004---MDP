@@ -63,7 +63,7 @@ public class SendTextFragment extends Fragment implements View.OnClickListener{
 
         View view = inflater.inflate(R.layout.fragment_send_text, container, false);
 
-        Button b = (Button) view.findViewById(R.id.writeButton);
+        Button b = view.findViewById(R.id.writeButton);
 
         b.setOnClickListener(this);
 
@@ -99,7 +99,7 @@ public class SendTextFragment extends Fragment implements View.OnClickListener{
     public void onClick(View view) {
         Log.v(TAG, "Write button pressed.");
 
-        TextView tv = (TextView)getActivity().findViewById(R.id.writeField);
+        TextView tv = getActivity().findViewById(R.id.writeField);
         String data = tv.getText().toString();
 
         ((MainActivity)getActivity()).sendMessage(data);

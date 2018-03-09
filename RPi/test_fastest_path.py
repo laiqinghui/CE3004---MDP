@@ -1,4 +1,5 @@
 import getopt
+import logging
 import sys
 import time
 import threading
@@ -68,11 +69,14 @@ def start_robot_exploration(rr, rc, wr, wc, gr, gc, m, d, keep_alive=False):
 
     rpi_thread.daemon = True
     # arduino_thread.daemon = True
-    algo_thread.daemon = True
+    # algo_thread.daemon = True
 
     rpi_thread.start()
     # arduino_thread.start()
-    algo_thread.start()
+    fastestPathInstruction = algo_thread.determine_fastest_path()
+    logging.info("Fastest path calculated!")
+    algo_thread.run_fatest_path_on(self.fastestPathInstruction)
+    logging.info("Now running on fastest path instruction...")
 
     if keep_alive:
         while 1:
@@ -99,8 +103,8 @@ if __name__ == "__main__":
 #                            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],   # 5
 #                            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],   # 6
 #                            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],   # 7
-#                            [1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1],   # 8
-#                            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],   # 9
+#                            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],   # 8
+#                            [1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1],   # 9
 #                            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],   # 10
 #                            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],   # 11
 #                            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],   # 12
@@ -113,6 +117,9 @@ if __name__ == "__main__":
 #                            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]])  # 19
 
     # gs.MAZEMAP = np.array()
+
+    raw_input("Enter to calculate fastest path")
+    logging.info("Fastest path calculating...")
 
     start_robot_exploration(rr, rc, wr, wc, gr, gc, m, d)
 
