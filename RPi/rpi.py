@@ -29,7 +29,6 @@ class RPI(threading.Thread):
         logging.info("rpi initialized")
 
     def command_rpi(self, message):
-        # logging.info("rpi received message from android and write message: " + str(message))
         if message == "mode":
             self.autoupdate = not self.autoupdate
 
@@ -95,9 +94,9 @@ class RPI(threading.Thread):
         - Updates from Arduino to be processed and passed to Android
         """
         logging.info("sensor value: " + str(message))
-        message[0] = message[0] - 12
+        message[0] = message[0] - 13
         message[1] = message[1] - 8
-        message[2] = message[2] - 12
+        message[2] = message[2] - 13
         message[3] = message[3] - 12
         message[4] = message[4] - 20
 
@@ -114,7 +113,6 @@ class RPI(threading.Thread):
     def feedback_android(self, message):
         if self.autoupdate:
             dispatcher.send(message=message, signal=gs.RPI_ANDROID_SIGNAL, sender=gs.RPI_SENDER)
-            logging.info("rpi send feedback message to android: " + str(message))
 
     def start(self):
         self.running = True
