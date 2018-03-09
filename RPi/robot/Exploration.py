@@ -207,6 +207,7 @@ class Exploration:
         # multi step
         front = self.frontFree()
 
+        self.moveNumber += len(move)
         print "newBaseStep: " + str(self.moveNumber % 5) + ", baseStep: " + str(self.baseStep)
         if not (self.sim):
             calibrate_front = self.robot.can_calibrate_front()
@@ -260,8 +261,6 @@ class Exploration:
             self.robot.moveBot(RIGHT)
             self.robot.moveBot(RIGHT)
             move.extend(('O'))
-
-        self.moveNumber += len(move)
 
         return move
 
