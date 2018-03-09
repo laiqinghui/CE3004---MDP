@@ -2,6 +2,7 @@
 """Implementation of the exploration algorithm for a maze solving robot."""
 import numpy as np
 import time
+import logging
 
 import global_settings as gs
 
@@ -206,9 +207,9 @@ class Exploration:
         move = []
         # multi step
         front = self.frontFree()
+        num_calibration_move = 0
 
-        # self.moveNumber += len(move)
-        # print "newBaseStep: " + str(self.moveNumber % 5) + ", baseStep: " + str(self.baseStep)
+        logging.info("newBaseStep: " + str(self.moveNumber // 5) + ", baseStep: " + str(self.baseStep))
         if not (self.sim):
             calibrate_front = self.robot.can_calibrate_front()
             calibrate_right = self.robot.can_calibrate_right()
@@ -228,16 +229,16 @@ class Exploration:
                 #     self.robot.setHead()
             elif (calibrate_front[0]):
                 move.append(calibrate_front[1])
-            elif (calibrate_right[0]):
-                move.append(calibrate_right[1])
             # calibrate right every 5 steps if able to
-            # elif (self.moveNumber % 5) > self.baseStep:
-            #     print "Exceed every 5 steps, should calibrate right if can."
-            #     calibrate_right = self.robot.can_calibrate_right()
-            #     if calibrate_right[0]:
-            #         print "do calibrate right"
-            #         move.append(calibrate_right[1])
-            #         self.baseStep = (self.moveNumber % 5)
+            elif (self.moveNumber // 5) > self.baseStep:
+                print "Exceed every 5 steps, should calibrate right if can."
+                calibrate_right = self.robot.can_calibrate_right()
+                if calibrate_right[0]:
+                    print "do calibrate right"
+                    move.append(calibrate_right[1])
+                    self.baseStep = (self.moveNumber // 5)
+
+        num_calibration_move = len(move)
 
         if (self.checkFree([1, 2, 3, 0], self.robot.center)):
             self.robot.moveBot(RIGHT)
@@ -261,6 +262,8 @@ class Exploration:
             self.robot.moveBot(RIGHT)
             self.robot.moveBot(RIGHT)
             move.extend(('O'))
+
+        self.moveNumber += (len(move) - num_calibration_move)
 
         return move
 
