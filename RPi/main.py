@@ -7,7 +7,7 @@ from pydispatch import dispatcher
 
 from robot.algorithm import Algorithm
 # from android import Android
-from arduino import Arduino
+# from arduino import Arduino
 from rpi import RPI
 import global_settings as gs
 
@@ -62,15 +62,15 @@ def start_robot_exploration(rr, rc, wr, wc, gr, gc, m, d, keep_alive=False):
     This function will need to move to the android.py file as a method.
     """
     rpi_thread = RPI()
-    arduino_thread = Arduino()
+    # arduino_thread = Arduino()
     algo_thread = Algorithm(rr, rc, wr, wc, gr, gc, m, d)
 
     rpi_thread.daemon = True
-    arduino_thread.daemon = True
+    # arduino_thread.daemon = True
     algo_thread.daemon = True
 
     rpi_thread.start()
-    arduino_thread.start()
+    # arduino_thread.start()
     algo_thread.start()
 
     if keep_alive:
@@ -101,5 +101,5 @@ if __name__ == "__main__":
 
     while 1:
         time.sleep(1)
-        # data = raw_input("Enter the data to be sent to algorithm: ")
-        # dispatcher.send(message=[16.0, 16.0, 16.0, 0, 5.0], signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
+        data = raw_input("Enter the data to be sent to algorithm: ")
+        dispatcher.send(message=[16.0, 16.0, 16.0, 0, 5.0], signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
