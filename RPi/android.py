@@ -57,8 +57,8 @@ class Android(threading.Thread):
             self.client_sock, self.client_info = self.server_socket.accept()
             logging.info("Accepted connection from" + str(self.client_info))
             client_MAC = self.client_info[0]
-            # if client_MAC != self.target_client:
-            if True:
+            # if True:
+            if client_MAC != self.target_client:
                 logging.info("There was a connection attempt by an unauthorized device. Attempting to rebroadcast..")
                 self.client_sock.close()
                 self.connect()
