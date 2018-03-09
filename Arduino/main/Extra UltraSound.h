@@ -4,7 +4,7 @@
 // #       Pin 4 PWM (URM V3.2) -> Pin 3 (Arduino)
 // #       Pin 6 COMP/TRIG (URM V3.2) -> Pin 5 (Arduino)
 // #
-int URPWM = 5; // PWM Output 0－25000US，Every 50US represent 1cm
+int URPWM = 5; // PWM Output 0－25000US，Every 50US represent 1cm E1B
 int URTRIG=2; // PWM trigger pin
  
 unsigned int Distance=0;
@@ -22,37 +22,30 @@ void PWM_Mode_Setup()
       Serial.write(EnPwmCmd[i]);
   } 
 }
+
+unsigned long getReading()
+{
+	OCR1A = 0;
+	digitalWrite(URTRIG, HIGH); 
+	Serial.println("Set");
+	Serial.println(PIND, BIN);
+    digitalWrite(URTRIG, LOW);
+	Serial.println(PIND, BIN);
+    digitalWrite(URTRIG, HIGH);               // reading Pin PWM will output pulses
+     
+    unsigned long value = pulseIn(URPWM,LOW);
+	return value;
+}
  
  //Use motor 1 input A, digital pin 2 as trigger for sensor reading
  //Use motor 1 E1B to read sensor output which is digital pin 5
-int getUltraSound2Reading()
-{                              
-	// a low pull on pin COMP/TRIG  triggering a sensor reading
-/*
-	PORTD = PORTD & B11111011; //Set to low
-	PORTD = PORTD | B10000100; //Set to high
-	
-           
-	// reading Pin PWM will output pulses 
-    unsigned long DistanceMeasured=pulseIn(5,LOW);
-    */ 
-	pinMode(URTRIG,OUTPUT);   
-	 pinMode(URPWM, INPUT);   
-		digitalWrite(URTRIG,HIGH);  
-	     digitalWrite(URTRIG, LOW);
-    digitalWrite(URTRIG, HIGH);               // reading Pin PWM will output pulses
-     
-    unsigned long DistanceMeasured=pulseIn(URPWM,LOW);
-	 
-	 Serial.println(DistanceMeasured);
-    if(DistanceMeasured>=10200)
-    {              
-		// the reading is invalid.
-		return -1;
-    }
-    else
+unsigned int getUltraSound2Reading()
+{
+  unsigned long DistanceMeasured = 0;
+    while(DistanceMeasured == 0 || DistanceMeasured>=10200)
     {
-      return DistanceMeasured/50;           // every 50us low level stands for 1cm
+      DistanceMeasured = getReading();
     }
-
+	Serial.println(PIND, BIN);
+    return DistanceMeasured/50;           // every 50us low level stands for 1cm
 }
