@@ -44,7 +44,7 @@ public class DeviceListAdapter extends ArrayAdapter<DeviceDetails> {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         View line = null;
-        DeviceDetails item = (DeviceDetails)getItem(position);
+        DeviceDetails item = getItem(position);
         final String name = item.getDeviceName();
         TextView macAddress = null;
         View viewToUse = null;
@@ -56,11 +56,11 @@ public class DeviceListAdapter extends ArrayAdapter<DeviceDetails> {
 
         viewToUse = mInflater.inflate(R.layout.device_list_item, null);
         holder = new ViewHolder();
-        holder.titleText = (TextView)viewToUse.findViewById(R.id.titleTextView);
+        holder.titleText = viewToUse.findViewById(R.id.titleTextView);
         viewToUse.setTag(holder);
 
-        macAddress = (TextView)viewToUse.findViewById(R.id.macAddress);
-        line = (View)viewToUse.findViewById(R.id.line);
+        macAddress = viewToUse.findViewById(R.id.macAddress);
+        line = viewToUse.findViewById(R.id.line);
         holder.titleText.setText(item.getDeviceName());
         macAddress.setText(item.getAddress());
 
@@ -68,7 +68,7 @@ public class DeviceListAdapter extends ArrayAdapter<DeviceDetails> {
             macAddress.setVisibility(View.INVISIBLE);
             line.setVisibility(View.INVISIBLE);
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams
-                    ((int) RelativeLayout.LayoutParams.WRAP_CONTENT, (int) RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    (RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             params.addRule(RelativeLayout.CENTER_VERTICAL);
             params.addRule(RelativeLayout.CENTER_HORIZONTAL);
             holder.titleText.setLayoutParams(params);

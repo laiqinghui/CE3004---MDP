@@ -15,7 +15,7 @@
 
     <string name="bluetooth_connected">"Connected."</string>
     <string name="bluetooth_disconnected">"Disconnected."</string>
-    <string name="bluetooth_failed">" Connect failed."</string>
+    <string name="bluetooth_failed">"Connect failed."</string>
     <string name="not_connected">You are not connected to a device</string>
     <string name="start_scan">Start Scan</string>
     <string name="stop_scan">Stop Scan</string>
@@ -27,8 +27,8 @@
     <string name="robot_stopped">Robot has stopped.</string>
     <string name="robot_moving">Robot is moving.</string>
     <string name="hello_blank_fragment">hello</string>
-    <string name="robot_status">Robot Status: </string>
-    <string name="bluetooth_status">Bluetooth Status: </string>
+    <string name="robot_status">Robot Status:\u0020</string>
+    <string name="bluetooth_status">Bluetooth Status:\u0020</string>
     <string name="start_exploration">START EXPLORATION</string>
     <string name="start_fastest_path">START FASTEST PATH</string>
     <string name="set_start_point">Set Start Point</string>

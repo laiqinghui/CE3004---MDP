@@ -2,18 +2,14 @@ package com.grp5.mdp.cz3004;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,7 +17,6 @@ import android.os.Message;
 import android.speech.RecognizerIntent;
 import android.support.v4.app.Fragment;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -41,7 +36,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,7 +43,7 @@ import java.math.BigInteger;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements
+        implements SensorEventListener,
         NavigationView.OnNavigationItemSelectedListener,
         BluetoothFragment.OnFragmentInteractionListener,
         SendTextFragment.OnFragmentInteractionListener,
@@ -57,29 +51,23 @@ public class MainActivity extends AppCompatActivity
         MiscellaneousFragment.OnFragmentInteractionListener{
 
     private BluetoothAdapter BTAdapter;
-    private Fragment fragment;
-
+    /*
+    * Bluetooth chat service to manage all bluetooth connections and read/write
+    * */
     BluetoothChatService mChatService;
-    String arduinoAddr;
+    String rpiAddr;
     String bluetoothStatus="Disconnected";
     /**
      * String buffer for outgoing messages
      */
     private StringBuffer mOutStringBuffer;
-
     public static int REQUEST_BLUETOOTH = 1;
-
-    /**
-     * Name of the connected device
-     */
     private String mConnectedDeviceName = null;
     private PopupWindow mPopupWindow;
     private View mLayout;
     private String exploredBin = "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
     private String obstacleBin = "0";
-
     private final int REQUEST_SPEECH_RECOGNIZER = 3000;
-    private String mVoiceCommand;
     private String dirRow = "1";
     private String dirCol = "1";
     private String dirDir = "2";
@@ -89,14 +77,18 @@ public class MainActivity extends AppCompatActivity
 
     private static String readMessage;
 
+    private SensorManager mSensorManager;
+    private final float[] mAccelerometerReading = new float[3];
 
     @SuppressLint("HandlerLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         BTAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -150,21 +142,63 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         mLayout = drawer;
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
     }
 
     @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // Do something here if sensor accuracy changes.
+        // You must implement this callback in your code.
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Get updates from the accelerometer and magnetometer at a constant rate.
+        // To make batch operations more efficient and reduce power consumption,
+        // provide support for delaying updates to the application.
+        //
+        // In this example, the sensor reporting delay is small enough such that
+        // the application receives an update before the system checks the sensor
+        // readings again.
+        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Don't receive any more updates from either sensor.
+        mSensorManager.unregisterListener(this);
+    }
+
+    // Get readings from accelerometer and magnetometer. To simplify calculations,
+    // consider storing these readings as unit vectors.
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        System.arraycopy(event.values, 0, mAccelerometerReading,
+                0, mAccelerometerReading.length);
+        onOrientationChanged(
+                mAccelerometerReading[0],
+                mAccelerometerReading[1],
+                mAccelerometerReading[2]
+        );
+    }
+
+    @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -220,15 +254,15 @@ public class MainActivity extends AppCompatActivity
                 mPopupWindow.setElevation(5.0f);
             }
 
-            TextView mdf_exp = (TextView) customView.findViewById(R.id.mdf_exp);
+            TextView mdf_exp = customView.findViewById(R.id.mdf_exp);
             mdf_exp.setText(exploredHex);
-            TextView mdf_obs = (TextView) customView.findViewById(R.id.mdf_obs);
+            TextView mdf_obs = customView.findViewById(R.id.mdf_obs);
             mdf_obs.setText(obstacleHex);
-            TextView mdf_log = (TextView) customView.findViewById(R.id.mdf_log);
+            TextView mdf_log = customView.findViewById(R.id.mdf_log);
             mdf_log.setText(readMessage);
 
             // Get a reference for the custom view close button
-            ImageButton closeButton = (ImageButton) customView.findViewById(R.id.ib_close);
+            ImageButton closeButton = customView.findViewById(R.id.ib_close);
 
             // Set a click listener for the popup window close button
             closeButton.setOnClickListener(new View.OnClickListener() {
@@ -260,7 +294,6 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         String tagText;
@@ -304,14 +337,14 @@ public class MainActivity extends AppCompatActivity
                 .addToBackStack(tagText)
                 .commit();
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
     @Override
-    public void onFragmentInteraction(String deviceAddress) {
-        arduinoAddr = deviceAddress;
+    public void updateRPiAddress(String deviceAddress) {
+        rpiAddr = deviceAddress;
     }
 
     public void onBluetoothStateChange(String bluetoothStatus) {
@@ -334,7 +367,7 @@ public class MainActivity extends AppCompatActivity
         ArenaFragment arenaFrag = (ArenaFragment) getSupportFragmentManager().findFragmentByTag("ArenaFragment");
         if(arenaFrag!=null){
             arenaFrag.tiltSteer(x, y, z);
-        }else{}
+        }
     }
 
     /**
@@ -345,50 +378,26 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public void handleMessage(Message msg) {
-            TextView bluetooth = (TextView) findViewById(R.id.statusText);
-            TextView arena = (TextView) findViewById(R.id.bluetoothStatus);
+            TextView bluetooth = findViewById(R.id.statusText);
+            TextView arena = findViewById(R.id.bluetoothStatus);
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
                         case BluetoothChatService.STATE_CONNECTED:
                             bluetoothStatus=getString(R.string.title_connected_to, mConnectedDeviceName);
                             onBluetoothStateChange(bluetoothStatus);
-//                            if(bluetooth != null){
-//                                bluetooth.setText(getString(R.string.title_connected_to, mConnectedDeviceName));
-//                            }
-//                            else if (arena != null){
-//                                arena.setText(getString(R.string.title_connected_to, mConnectedDeviceName));
-//                            }
                             break;
                         case BluetoothChatService.STATE_CONNECTING:
                             bluetoothStatus=getResources().getString(R.string.title_connecting);
                             onBluetoothStateChange(bluetoothStatus);
-//                            if(bluetooth != null){
-//                                bluetooth.setText(R.string.title_connecting);
-//                            }
-//                            else if (arena != null){
-//                                arena.setText(R.string.title_connecting);
-//                            }
                             break;
                         case BluetoothChatService.STATE_NONE:
                             bluetoothStatus=getResources().getString(R.string.bluetooth_disconnected);
                             onBluetoothStateChange(bluetoothStatus);
-//                            if(bluetooth != null){
-//                                bluetooth.setText(R.string.bluetooth_disconnected);
-//                            }
-//                            else if (arena != null){
-//                                arena.setText(R.string.bluetooth_disconnected);
-//                            }
                             break;
                         case BluetoothChatService.STATE_LOST:
                             bluetoothStatus=getResources().getString(R.string.bluetooth_disconnected);
                             onBluetoothStateChange(bluetoothStatus);
-//                            if(bluetooth != null){
-//                                bluetooth.setText(R.string.bluetooth_disconnected);
-//                            }
-//                            else if (arena != null){
-//                                arena.setText(R.string.bluetooth_disconnected);
-//                            }
                             break;
                     }
                     break;
@@ -396,7 +405,7 @@ public class MainActivity extends AppCompatActivity
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
-                    TextView rf = (TextView) findViewById(R.id.readField);
+                    TextView rf = findViewById(R.id.readField);
                     if(rf != null){
                         rf.setText(readMessage);
                     }
@@ -405,6 +414,11 @@ public class MainActivity extends AppCompatActivity
                         if(readMessage.startsWith("MDF")){MainActivity.readMessage = readMessage;}
                         onMapUpdateReceived(readMessage);
                     }
+//                    if(readMessage.equalsIgnoreCase("STOP")){
+//                        Log.d("STOP: ", readMessage);
+//                        TextView robotStatus = findViewById(R.id.robotStatus);
+//                        robotStatus.setText(R.string.robot_stopped);
+//                    }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
@@ -430,7 +444,7 @@ public class MainActivity extends AppCompatActivity
      * @param message A string of text to send.
      */
     protected void sendMessage(String message) {
-        EditText mOutEditText = (EditText) findViewById(R.id.writeField);
+        EditText mOutEditText = findViewById(R.id.writeField);
 
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
@@ -528,7 +542,7 @@ public class MainActivity extends AppCompatActivity
             if (resultCode == RESULT_OK) {
                 List<String> results = data.getStringArrayListExtra
                         (RecognizerIntent.EXTRA_RESULTS);
-                mVoiceCommand = results.get(0);
+                String mVoiceCommand = results.get(0);
 
                 onVoiceCommand(mVoiceCommand);
 

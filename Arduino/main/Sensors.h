@@ -137,7 +137,7 @@ char* getSensorReadingInCM(){
   }
   
   //Ultrasound reading
-  sensorsValuesArray[1] = getUltraSound2Reading();        //getUltraSoundDistance(); //Center
+  sensorsValuesArray[1] = getUltraSoundDistance();        //getUltraSoundDistance(); //Center
 
 
   //PS2 y = 6290.4x - 1.6964 //subtract another 2 to offset
