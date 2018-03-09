@@ -36,8 +36,8 @@ void moveForwardOneGrid(int rpm){
    int m1setSpeed = 100;
    int m2setSpeed = 100;
  
-   MotorPID M1pid = {m1setSpeed, 0, 0, 0.1};//0.1=>50
-   MotorPID M2pid = {m2setSpeed , 0, 0, 0.115};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms
+   MotorPID M1pid = {m1setSpeed, 0, 0, 0.115};//0.1=>50
+   MotorPID M2pid = {m2setSpeed , 0, 0, 0.150};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms
 
    enableInterrupt( e1a, risingM1, RISING);
    enableInterrupt( e2b, risingM2, RISING);
@@ -72,11 +72,11 @@ void moveForwardOneGrid(int rpm){
       interval = tuneEntryTime - tuneExitTime;
         if(interval >= 5000){
         
-			if(currentTicksM1 < 0.7*distanceTicks){
+			//if(currentTicksM1 < 0.7*distanceTicks){
 			  tuneMotors(rpm, &M1pid, &M2pid);
-			}else {
-			  tuneMotors(rpm*0.65, &M1pid, &M2pid);
-			}
+			//}else {
+			  //tuneMotors(rpm*0.65, &M1pid, &M2pid);
+			//}
 			 
           
         

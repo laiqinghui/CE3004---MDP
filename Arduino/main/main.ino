@@ -49,7 +49,9 @@ void processInst(){
     switch(instBuff[index]){
       
       case 'W': moveCount = instBuff[index+1] - 48;
-                moveForward(70, 9.5*moveCount, true);
+                if(moveCount == 1)
+                 moveForwardOneGrid(60);
+                else moveForward(70, 9.5*moveCount, true);
                 break;
       case 'A': Serial.println('A');
                 moveCount = instBuff[index+1] - 48;
