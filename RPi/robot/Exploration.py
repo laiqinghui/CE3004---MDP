@@ -207,37 +207,37 @@ class Exploration:
         # multi step
         front = self.frontFree()
 
-        self.moveNumber += len(move)
-        print "newBaseStep: " + str(self.moveNumber % 5) + ", baseStep: " + str(self.baseStep)
+        # self.moveNumber += len(move)
+        # print "newBaseStep: " + str(self.moveNumber % 5) + ", baseStep: " + str(self.baseStep)
         if not (self.sim):
             calibrate_front = self.robot.can_calibrate_front()
-            # calibrate_right = self.robot.can_calibrate_right()
+            calibrate_right = self.robot.can_calibrate_right()
             if self.robot.is_corner():
                 move.append(']')
-                if self.robot.direction == NORTH:
-                    self.robot.direction = EAST
-                    self.robot.setHead()
-                elif self.robot.direction == SOUTH:
-                    self.robot.direction = WEST
-                    self.robot.setHead()
-                elif self.robot.direction == EAST:
-                    self.robot.direction = SOUTH
-                    self.robot.setHead()
-                else:
-                    self.robot.direction = NORTH
-                    self.robot.setHead()
+                # if self.robot.direction == NORTH:
+                #     self.robot.direction = EAST
+                #     self.robot.setHead()
+                # elif self.robot.direction == SOUTH:
+                #     self.robot.direction = WEST
+                #     self.robot.setHead()
+                # elif self.robot.direction == EAST:
+                #     self.robot.direction = SOUTH
+                #     self.robot.setHead()
+                # else:
+                #     self.robot.direction = NORTH
+                #     self.robot.setHead()
             elif (calibrate_front[0]):
                 move.append(calibrate_front[1])
-            # elif (calibrate_right[0]):
-            #     move.append(calibrate_right[1])
+            elif (calibrate_right[0]):
+                move.append(calibrate_right[1])
             # calibrate right every 5 steps if able to
-            elif (self.moveNumber % 5) > self.baseStep:
-                print "Exceed every 5 steps, should calibrate right if can."
-                calibrate_right = self.robot.can_calibrate_right()
-                if calibrate_right[0]:
-                    print "do calibrate right"
-                    move.append(calibrate_right[1])
-                    self.baseStep = (self.moveNumber % 5)
+            # elif (self.moveNumber % 5) > self.baseStep:
+            #     print "Exceed every 5 steps, should calibrate right if can."
+            #     calibrate_right = self.robot.can_calibrate_right()
+            #     if calibrate_right[0]:
+            #         print "do calibrate right"
+            #         move.append(calibrate_right[1])
+            #         self.baseStep = (self.moveNumber % 5)
 
         if (self.checkFree([1, 2, 3, 0], self.robot.center)):
             self.robot.moveBot(RIGHT)
