@@ -208,7 +208,6 @@ class Exploration:
     def nextMove(self):
         """Decide which direction is free to command robot the next action."""
         move = []
-        # multi step
         front = self.frontFree()
         num_calibration_move = 0
 
@@ -241,6 +240,7 @@ class Exploration:
 
         num_calibration_move = len(move)
 
+        # multi step
         if (self.checkFree([1, 2, 3, 0], self.robot.center)):
             self.robot.moveBot(RIGHT)
             move.append(RIGHT)
@@ -263,6 +263,27 @@ class Exploration:
             self.robot.moveBot(RIGHT)
             self.robot.moveBot(RIGHT)
             move.extend(('O'))
+
+        # single step
+        # if (self.checkFree([1, 2, 3, 0], self.robot.center)):
+        #     self.robot.moveBot(RIGHT)
+        #     move.append(RIGHT)
+        #     if (self.checkFree([0, 1, 2, 3], self.robot.center)):
+        #         self.robot.moveBot(FORWARD)
+        #         move.append(FORWARD)
+        # elif (self.checkFree([0, 1, 2, 3], self.robot.center)):
+        #     self.robot.moveBot(FORWARD)
+        #     move.append(FORWARD)
+        # elif (self.checkFree([3, 0, 1, 2], self.robot.center)):
+        #     self.robot.moveBot(LEFT)
+        #     move.append(LEFT)
+        #     if (self.checkFree([0, 1, 2, 3], self.robot.center)):
+        #         self.robot.moveBot(FORWARD)
+        #         move.append(FORWARD)
+        # else:
+        #     self.robot.moveBot(RIGHT)
+        #     self.robot.moveBot(RIGHT)
+        #     move.extend(('O'))
 
         self.moveNumber += (len(move) - num_calibration_move)
 
