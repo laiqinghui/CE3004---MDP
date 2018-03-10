@@ -6,8 +6,6 @@ import os
 
 from Constants import MAX_ROWS, MAX_COLS, NORTH, SOUTH, EAST, WEST, RIGHT, LEFT
 
-__author__ = "Utsav Garg"
-
 
 class Robot:
 
