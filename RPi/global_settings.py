@@ -56,7 +56,7 @@ def print_modified_mazemap(mmap, robot_row, robot_col, direction):
     for row in range(mmap.shape[0]):
         for col in range(mmap.shape[1]):
             if robot_row == row and robot_col == col:
-                print "X",
+                print robot_symbol,
                 continue
             if mmap[row, col] == 0:
                 print "0",
