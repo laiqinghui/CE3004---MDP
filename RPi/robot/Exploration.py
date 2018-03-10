@@ -4,7 +4,7 @@ import numpy as np
 import time
 import logging
 
-import global_settings as gs
+# import global_settings as gs
 
 from Constants import NORTH, SOUTH, EAST, WEST, FORWARD, LEFT, RIGHT, START, MAX_ROWS, MAX_COLS
 from FastestPath import FastestPath
@@ -41,7 +41,9 @@ class Exploration:
         self.startPos = startPos
         self.timeLimit = timeLimit
         self.exploredArea = 0
-        self.currentMap = gs.MAZEMAP
+        # self.currentMap = gs.MAZEMAP
+        self.currentMap = np.zeros([20, 15], dtype=int)
+
         if sim:
             from Simulator import Robot
             self.robot = Robot(self.currentMap, direction, self.startPos, realMap)
