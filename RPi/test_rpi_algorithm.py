@@ -9,6 +9,8 @@ from robot.algorithm import Algorithm
 from rpi import RPI
 import global_settings as gs
 
+# python test_rpi_algorithm.py --rr=18 --rc=1 --wr=5 --wc=9 --gr=1 --gc=13 --mode=0 --dir=2
+
 
 def initialise_robot_options(argv):
 
