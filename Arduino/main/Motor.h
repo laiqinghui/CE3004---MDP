@@ -345,14 +345,15 @@ double getTurnTest(int dir, int turnDegree) {
   //Right Turn
   if (dir == 1)
   {
-    if (turnDegree <= 90)
+    if (turnDegree == 180)
     {
-      return abs(49 * 0.25 * ticksPerCM);
+	  return abs(49.7 * 0.5 * ticksPerCM);
+      
     }
     else
     {
-
-      return abs(49.7 * 0.5 * ticksPerCM);
+		return abs(49 * (turnDegree / 360.0) * ticksPerCM);
+      
     }
   }
   //Left Turn
@@ -362,44 +363,78 @@ double getTurnTest(int dir, int turnDegree) {
   }
 }
 
-void turnTest(int dir, int degree)
-{
-	int m1Speed = -269;
-	int m2Speed = 314;
-	int total = 0;
+void turnTest(int dir, int degree){
+	sideWall[0] = 0;
+	sideWall[1] = 0;
+	sideWall[2] = 0;
 	
 	int amount = getTurnTest(dir, degree);
-	setTicks(0, 0);
+	
+	int total = 0;
 	int currentTicksM1 = 0;
 	int currentTicksM2 = 0;
-	enableInterrupt( e1a, risingM1Ticks, RISING);
-	enableInterrupt( e2b, risingM2Ticks, RISING);
-	md.setSpeeds(m1Speed, m2Speed);
-
-	while(currentTicksM1 < amount)
+	
+	if(dir == 1)
 	{
-    Serial.println(total);
-		noInterrupts();
-		currentTicksM1 = M1ticks;
-		currentTicksM2 = M2ticks;
-		interrupts();
+		int m1Speed = -269;
+		int m2Speed = 314;
+
+		enableInterrupt( e1a, risingM1Ticks, RISING);
+		enableInterrupt( e2b, risingM2Ticks, RISING);
+		setTicks(0, 0);
+		md.setSpeeds(m1Speed, m2Speed);
+
+		while(currentTicksM1 < amount)
+		{
+			noInterrupts();
+			currentTicksM1 = M1ticks;
+			currentTicksM2 = M2ticks;
+			interrupts();
 		
-		if(currentTicksM1 < currentTicksM2)
-		{
-		  m2Speed = m2Speed - 1;
-		  md.setM2Speed(m2Speed);
+			if(currentTicksM1 < currentTicksM2)
+			{
+			  m2Speed = m2Speed - 1;
+			  OCR1B = m2Speed;
+			}
+			else if(currentTicksM1 > currentTicksM2)
+			{
+			  m2Speed = m2Speed + 1;
+			  OCR1B = m2Speed;
+			}
 		}
-		else if(currentTicksM1 > currentTicksM2)
+	}
+	else
+	{
+		int m1Speed = 269;
+		int m2Speed = -314;
+
+		enableInterrupt( e1a, risingM1Ticks, RISING);
+		enableInterrupt( e2b, risingM2Ticks, RISING);
+		setTicks(0, 0);
+		md.setSpeeds(m1Speed, m2Speed);
+
+		while(currentTicksM1 < amount)
 		{
-		  m2Speed = m2Speed + 1;
-		  md.setM2Speed(m2Speed);
+			noInterrupts();
+			currentTicksM1 = M1ticks;
+			currentTicksM2 = M2ticks;
+			interrupts();
+		
+			if(currentTicksM1 < currentTicksM2)
+			{
+			  m2Speed = m2Speed + 1;
+			  OCR1B = m2Speed;
+			}
+			else if(currentTicksM1 > currentTicksM2)
+			{
+			  m2Speed = m2Speed - 1;
+			  OCR1B = m2Speed;
+			}
 		}
 	}
 	md.setBrakes(400, 400);
- 
-  disableInterrupt(e1a);
-  disableInterrupt(e2b);
-  setTicks(0, 0);
-  setSqWidth(0, 0);
-	
+
+	disableInterrupt(e1a);
+	disableInterrupt(e2b);
+	setTicks(0, 0);
 }

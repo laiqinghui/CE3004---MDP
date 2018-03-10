@@ -6,9 +6,8 @@ import logging
 
 import global_settings as gs
 
-from Real import Robot
 from Constants import NORTH, SOUTH, EAST, WEST, FORWARD, LEFT, RIGHT, START, MAX_ROWS, MAX_COLS
-
+from FastestPath import FastestPath
 
 CALIBRATE_N_STEPS = 5
 
@@ -43,12 +42,13 @@ class Exploration:
         self.timeLimit = timeLimit
         self.exploredArea = 0
         self.currentMap = gs.MAZEMAP
-        # if sim:
-        #     from Simulator import Robot
-        #     self.robot = Robot(self.currentMap, direction, self.startPos, realMap)
-        #     self.sensors = self.robot.getSensors()
-        # else:
-        self.robot = Robot(self.currentMap, direction, startPos)
+        if sim:
+            from Simulator import Robot
+            self.robot = Robot(self.currentMap, direction, self.startPos, realMap)
+            self.sensors = self.robot.getSensors()
+        else:
+            from Real import Robot
+            self.robot = Robot(self.currentMap, direction, startPos)
         self.exploredNeighbours = dict()
         self.sim = sim
         self.calibrateLim = calibrateLim
@@ -100,7 +100,7 @@ class Exploration:
         self.endTime = time.time() + self.timeLimit
         steps = 0
         numCycle = 1
-        step = float(0.1)
+        # step = float(0.1)
 
         if (time.time() <= self.endTime and self.exploredArea < 100):
             if (sensor_vals):
@@ -123,15 +123,15 @@ class Exploration:
                         fsp.getFastestPath()
                         while (fsp.robot.center.tolist() != neighbour.tolist()):
                             fsp.moveStep()
-                            time.sleep(step)
+                            # time.sleep(step)
                         print "Fastest Path to unexplored area!"
 
                         self.robot.center = neighbour
                         self.robot.head = fsp.robot.head
                         self.robot.direction = fsp.robot.direction
 
-                        print fsp.movement
-                        return fsp.movement, False
+                        # print fsp.movement
+                        return fsp.movement, False, self.robot.center, self.robot.direction
                     else:
                         return [], False
             else:
@@ -162,11 +162,11 @@ class Exploration:
                         self.robot.direction = fsp.robot.direction
                         self.robot.getSensors()
 
-                        print fsp.movement
-                        return fsp.movement, False
+                        # print fsp.movement
+                        return fsp.movement, False, self.robot.center, self.robot.direction
                     else:
                         return [], False
-            time.sleep(float(step))
+            # time.sleep(float(step))
         elif (time.time() > self.endTime):
             print "Time limit reached!"
 
@@ -180,8 +180,8 @@ class Exploration:
                 # time.sleep(step)
             print "Starting position reached!"
 
-            print fsp.movement
-            return fsp.movement, True
+            # print fsp.movement
+            return fsp.movement, True, self.robot.center, self.robot.direction
 
         return [], False
 

@@ -23,9 +23,10 @@ double sortAndAverage(int* listOfReadings, int size, int amount);
   sensorsValuesArray[4] Left Sensor
 */
 
-//These 2 arrays need to be outside if not the values will be weird
+//These arrays need to be outside if not the values will be weird
 double sensorValues[4];
 char sensorsValuesArray[5];
+int sideWall[3] = {1, 1, 1};
 
 char* getSensorReadingInCM(){
     /*
@@ -73,6 +74,21 @@ char* getSensorReadingInCM(){
   {
       sensorsValuesArray[3] = (5260/rightValue) + 1.3915;
   }
+  
+  //Keep track of side wall
+  if(sensorsValuesArray[3] <14)
+  {
+	sideWall[2] = sideWall[1];
+	sideWall[1] = sideWall[0];
+	sideWall[0] = 1;
+  }
+  else
+  {
+	sideWall[2] = sideWall[1];
+	sideWall[1] = sideWall[0];
+	sideWall[0] = 0;
+  }
+	  
   
   //PS1 y = 12256x - 1.948 //if value is above 70, subtract 1; //add 2 to offset //if value is below 25, subtract 1
   //Limit is 60cm
@@ -160,4 +176,16 @@ double* getIRSensorReading()
 
   return sensorValues;
 } 
+
+boolean canSideCalibrate()
+{
+	if(sideWall[0] = 1 && sideWall[2] == 1)
+	{
+		return true;
+	}		
+	else
+	{
+		return false;
+	}
+}
 
