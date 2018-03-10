@@ -32,29 +32,35 @@ void processInst(){
       case 'W': moveCount = instBuff[index+1] - 48;
                 if(moveCount == 1)
                   //benForward(80, 9.5, true);
-                 moveForwardOneGrid(60);
-                else moveForward(70, 9.5*moveCount, true);
-                
+                 moveForwardOneGrid(80);
+                else //moveForward(90, 9.5*moveCount, true);
+                     moveForwardBeta(90, 9.5*moveCount);
                 break;
       case 'A': Serial.println('A');
                 moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
                   
-                  turnTest(-1, 90);
+                  turnPID(-1, 90);
                     delay(delayAmount);
                 }
+                //Reset side wall reading
+                resetSideWall();
                 break;
       case 'D': moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
-                  turnTest(1, 90);
+                  turnPID(1, 90);
                   delay(delayAmount);
                 }
+                //Reset side wall reading
+                resetSideWall();
                 break;
       case 'O': moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
-                  turnTest(1, 180);
+                  turnPID(1, 180);
                   delay(delayAmount);  
                 }
+                //Reset side wall reading
+                resetSideWall();
                 break;
       case ']': //PWM_Mode_Setup();
                 fastCalibration(2);
@@ -116,9 +122,7 @@ void loop()
   //getUltraSound2Reading();
   //Serial.println("Set");
   //Serial.println(getCalibrationReading(false)[0]);
-  getUltraSoundDistance();
-  getUltraSoundDistance();
-  getUltraSoundDistance();
+
   
   if(dataExist()){
     //delay(100);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations 

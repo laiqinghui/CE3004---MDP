@@ -25,6 +25,7 @@ void tuneMotors(int desiredRPM, MotorPID *M1, MotorPID *M2){
 
 void moveForwardOneGrid(int rpm){
 
+   
    unsigned long tuneEntryTime = 0;
    unsigned long tuneExitTime = 0;
    unsigned long interval = 0;
@@ -36,13 +37,18 @@ void moveForwardOneGrid(int rpm){
    
    unsigned long currentTicksM1 = 0;
    unsigned long currentTicksM2 = 0;
+   unsigned long previousTicksM1 = 0;
+   unsigned long previousTicksM2 = 0;
+   int ticksToCoverUp = 0;
    
    int m1setSpeed = 100;
    int m2setSpeed = 100;
  
-   MotorPID M1pid = {m1setSpeed, 0, 0, 0.115};//0.1=>50
-   MotorPID M2pid = {m2setSpeed , 0, 0, 0.150};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms
+   MotorPID M1pid = {m1setSpeed, 0, 0, 0.110};//LOUNGE: 0.110=>50/ LAB: 0.115=>50 || LAB: 0.110=>90/ LAB: 0.115=>50
+   MotorPID M2pid = {m2setSpeed , 0, 0, 0.138};//LOUNGE: 0.150->50/LAB: 0.150->50 || LAB: 0.135=>90/ LAB: 
 
+   calibrateBeforeMoveForward();
+    
    enableInterrupt( e1a, risingM1, RISING);
    enableInterrupt( e2b, risingM2, RISING);
 
@@ -55,23 +61,74 @@ void moveForwardOneGrid(int rpm){
       //Serial.print(" ");
       //Serial.println(sqWidthToRPM(squareWidth_M2));
 	  
-	  noInterrupts();
+	    noInterrupts();
       currentTicksM1 = M1ticks;
       currentTicksM2 = M2ticks;
       interrupts();
+      previousTicksM1 = currentTicksM1;
+      previousTicksM2 = currentTicksM2;
+
+      /*
+      if(currentTicksM1 == previousTicksM1){
+        Serial.println("BUG OCCURED!!!");
+        Serial.print("M1Ticks: ");
+        Serial.println(currentTicksM1);
+        Serial.print("M2Ticks: ");
+        Serial.println(currentTicksM2);
+        
+        }
+        */
       
       if(currentTicksM1>=distanceTicks || currentTicksM2>=distanceTicks){
         md.setBrakes(400, 400);
+        /*
         Serial.print("M1BreakTicks: ");
         Serial.println(currentTicksM1);
 		    Serial.print("M2BreakTicks: ");
         Serial.println(currentTicksM2);
+        */
+        if( (distanceTicks - currentTicksM1) > 3 ){ //Only cover the ticks if is more then 3 difference
+          
+          ticksToCoverUp = distanceTicks - currentTicksM1;
+          setTicks(0,0);
+          
+          while(1){
+              //Serial.print("M1Ticks: ");
+              //Serial.println(currentTicksM1);
+              md.setSpeeds(5, 0);
+              noInterrupts();
+              currentTicksM1 = M1ticks;
+              interrupts();
+              if(currentTicksM1 >= ticksToCoverUp){
+                //Serial.print("M1BreakTicks: ");
+                //Serial.println(currentTicksM1);
+                break;
+                }
+            }
+            md.setBrakes(400, 400);
+            
+        }else if( (distanceTicks - currentTicksM2) > 3 ){
+          ticksToCoverUp = distanceTicks - currentTicksM2;
+          setTicks(0,0);
+          while(1){
+              md.setSpeeds(0, 5);
+              noInterrupts();
+              currentTicksM2 = M2ticks;
+              interrupts();
+              if(currentTicksM2 >= ticksToCoverUp){
+                //Serial.print("M2BreakTicks: ");
+                //Serial.println(currentTicksM2);
+                break;
+                }
+            }
+            md.setBrakes(400, 400);
+            }
         break;
       }
       
       tuneEntryTime = micros();//Can try removing interval for single grid movement
       interval = tuneEntryTime - tuneExitTime;
-        if(interval >= 3000){ //change to 3000 to try
+        if(interval >= 5000){ //change to 3000 to try
         
 			//if(currentTicksM1 < 0.7*distanceTicks){
 			  tuneMotors(rpm, &M1pid, &M2pid);
@@ -90,10 +147,13 @@ void moveForwardOneGrid(int rpm){
       disableInterrupt(e2b);
       setTicks(0,0);
       setSqWidth(0,0);
+      
 }
 
 void moveForwardBeta(int rpm, double distance){
 
+   
+   double rightFrontSensor = 0;
    unsigned long tuneEntryTime = 0;
    unsigned long tuneExitTime = 0;
    unsigned long interval = 0;
@@ -107,6 +167,8 @@ void moveForwardBeta(int rpm, double distance){
  
    MotorPID M1pid = {m1setSpeed, 0, 0, 0.1};//0.1=>50
    MotorPID M2pid = {m2setSpeed , 0, 0, 0.115};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms
+
+   calibrateBeforeMoveForward();
 
    enableInterrupt( e1a, risingM1, RISING);
    enableInterrupt( e2b, risingM2, RISING);

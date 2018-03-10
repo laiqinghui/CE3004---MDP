@@ -112,7 +112,6 @@ void calibration(){
 }
 
 
-
 void sideCalibration()
 {
 	if(canSideCalibrate())
@@ -148,12 +147,12 @@ void sideCalibration()
 //If choice = 2 then it will calibrate front and right
 void fastCalibration(int choice){
   double threshold = 0.05;
-  double fromWall = 13;
+  double fromWall = 14;//13
   int wait = 100;
 
   if(choice == 1)
   {
-    turnTest(1, 90);
+    turnPID(1, 90);
     delay(wait);
   }
   
@@ -174,12 +173,12 @@ void fastCalibration(int choice){
 
   if(choice == 1)
   {
-    turnTest(-1, 90);
+    turnPID(-1, 90);
     delay(wait);
   }
   else if (choice == 2)
   {
-    turnTest(1, 90);
+    turnPID(1, 90);
     delay(wait);
 
     //Move to the distance from wall
@@ -193,16 +192,30 @@ void fastCalibration(int choice){
 	distanceFromWall(fromWall);
 	delay(wait);
 
-    turnTest(-1, 90);
+    turnPID(-1, 90);
   }  
 }
+
+void calibrateBeforeMoveForward(){
+    double rightFrontSensor = 0;
+    rightFrontSensor = getSideCalibrationReading(true)[0];
+      Serial.println("rightFrontSensor: ");
+      Serial.println(rightFrontSensor);
+      if(rightFrontSensor < 10 || (rightFrontSensor > 13)){
+        Serial.println("Need to calibrate");
+          if(canSideCalibrate()){
+            fastCalibration(1);
+          } else Serial.println("No walls to calibrate");
+        }
+    
+    }
 
 //Side Sensor Values
 double* getSideCalibrationReading(boolean quick){
   if(quick)
   {  
     calibrationSideSensorRaw[0] = analogRead(right);
-    calibrationSideSensorRaw[1] = analogRead(rightBack);
+    //calibrationSideSensorRaw[1] = analogRead(rightBack);
   }
   else
   {

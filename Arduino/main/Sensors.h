@@ -28,6 +28,13 @@ double sensorValues[4];
 char sensorsValuesArray[5];
 int sideWall[3] = {1, 1, 1};
 
+void resetSideWall(){
+   sideWall[0] = 0;
+   sideWall[1] = 0;
+   sideWall[2] = 0;
+   
+  }
+
 char* getSensorReadingInCM(){
     /*
     Return pointer to sensors values array. Reasons for the pointer approach is to facilitate for Exploration where
