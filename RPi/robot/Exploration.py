@@ -98,7 +98,6 @@ class Exploration:
 
         """
         self.endTime = time.time() + self.timeLimit
-        steps = 0
         numCycle = 1
 
         if (time.time() <= self.endTime and self.exploredArea < 100):
@@ -107,12 +106,38 @@ class Exploration:
             else:
                 current = self.moveStep()
 
-            steps += 1
             currentPos = tuple(self.robot.center)
 
             if (currentPos in self.visited):
                 self.visited[currentPos] += 1
-                if (self.visited[currentPos] > 3):
+
+                if (np.array_equal(self.robot.center, self.startPos)):
+                    numCycle += 1
+                    if (numCycle > 1 and self.exploredArea < 100):
+                        neighbour = self.getExploredNeighbour()
+                        if (neighbour):
+                            neighbour = np.asarray(neighbour)
+                            fsp = FastestPath(self.currentMap, self.robot.center,
+                                              neighbour, self.robot.direction, None)
+
+                            fsp.getFastestPath()
+
+                            i = 0
+                            while i < len(current[0]):
+                                fsp.movement.append(current[0][i])
+                                i += 1
+
+                            while (fsp.robot.center.tolist() != neighbour.tolist()):
+                                fsp.moveStep()
+                            print "Fastest Path to unexplored area!"
+
+                            self.robot.center = neighbour
+                            self.robot.head = fsp.robot.head
+                            self.robot.direction = fsp.robot.direction
+                            self.robot.getSensors()
+
+                            return fsp.movement, False, self.robot.center, self.robot.direction
+                elif (self.visited[currentPos] > 3):
                     neighbour = self.getExploredNeighbour()
                     if (neighbour):
                         neighbour = np.asarray(neighbour)
@@ -140,33 +165,6 @@ class Exploration:
 
                 return current, False, self.robot.center, self.robot.direction
 
-            if (np.array_equal(self.robot.center, self.startPos)):
-                numCycle += 1
-                if (numCycle > 1 and steps > 4 and self.exploredArea < 100):
-                    neighbour = self.getExploredNeighbour()
-                    if (neighbour):
-                        neighbour = np.asarray(neighbour)
-                        fsp = FastestPath(self.currentMap, self.robot.center,
-                                          neighbour, self.robot.direction, None)
-
-                        fsp.getFastestPath()
-
-                        i = 0
-                        while i < len(current[0]):
-                            fsp.movement.append(current[0][i])
-                            i += 1
-
-                        while (fsp.robot.center.tolist() != neighbour.tolist()):
-                            fsp.moveStep()
-                        print "Fastest Path to unexplored area!"
-
-                        self.robot.center = neighbour
-                        self.robot.head = fsp.robot.head
-                        self.robot.direction = fsp.robot.direction
-                        self.robot.getSensors()
-
-                        return fsp.movement, False, self.robot.center, self.robot.direction
-
             return current, False, self.robot.center, self.robot.direction
 
         elif (time.time() > self.endTime):
@@ -174,7 +172,7 @@ class Exploration:
 
         if (self.exploredArea == 100):
             if (np.array_equal(self.robot.center, self.startPos)):
-                print "Exploration completed***."
+                print "Exploration completed."
 
                 return [], True, self.robot.center, self.robot.direction
             else:
