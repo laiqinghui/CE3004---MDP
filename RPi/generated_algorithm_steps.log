@@ -1,0 +1,97 @@
+10-03-2018:16:12:54,970 INFO     [rpi.py:29] rpi initialized
+10-03-2018:16:12:54,986 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: S;
+10-03-2018:16:12:54,986 INFO     [algorithm.py:52] algorithm initialized
+10-03-2018:16:13:34,92 INFO     [Exploration.py:214] newBaseStep: 0, baseStep: 0
+10-03-2018:16:13:34,125 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:13:35,253 INFO     [Exploration.py:214] newBaseStep: 0, baseStep: 0
+10-03-2018:16:13:35,335 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:13:40,631 INFO     [Exploration.py:214] newBaseStep: 0, baseStep: 0
+10-03-2018:16:13:40,726 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:13:43,927 INFO     [Exploration.py:214] newBaseStep: 0, baseStep: 0
+10-03-2018:16:13:44,7 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:13:45,145 INFO     [Exploration.py:214] newBaseStep: 0, baseStep: 0
+10-03-2018:16:13:45,200 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:13:46,733 INFO     [Exploration.py:214] newBaseStep: 1, baseStep: 0
+10-03-2018:16:13:46,763 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SR1W1;
+10-03-2018:16:13:47,898 INFO     [Exploration.py:214] newBaseStep: 1, baseStep: 1
+10-03-2018:16:13:47,992 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:13:49,92 INFO     [Exploration.py:214] newBaseStep: 1, baseStep: 1
+10-03-2018:16:13:49,198 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:13:50,55 INFO     [Exploration.py:214] newBaseStep: 1, baseStep: 1
+10-03-2018:16:13:50,148 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:13:51,177 INFO     [Exploration.py:214] newBaseStep: 1, baseStep: 1
+10-03-2018:16:13:51,244 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:13:52,539 INFO     [Exploration.py:214] newBaseStep: 2, baseStep: 1
+10-03-2018:16:13:52,598 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SR1W1;
+10-03-2018:16:13:53,796 INFO     [Exploration.py:214] newBaseStep: 2, baseStep: 2
+10-03-2018:16:13:53,845 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:13:55,276 INFO     [Exploration.py:214] newBaseStep: 2, baseStep: 2
+10-03-2018:16:13:55,369 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: S]1A1W5;
+10-03-2018:16:13:58,457 INFO     [Exploration.py:214] newBaseStep: 3, baseStep: 2
+10-03-2018:16:13:58,503 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SR1W1;
+10-03-2018:16:13:59,723 INFO     [Exploration.py:214] newBaseStep: 3, baseStep: 3
+10-03-2018:16:13:59,798 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:14:02,815 INFO     [Exploration.py:214] newBaseStep: 4, baseStep: 3
+10-03-2018:16:14:02,892 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SR1W1;
+10-03-2018:16:14:04,523 INFO     [Exploration.py:214] newBaseStep: 4, baseStep: 4
+10-03-2018:16:14:04,615 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:14:06,463 INFO     [Exploration.py:214] newBaseStep: 4, baseStep: 4
+10-03-2018:16:14:06,509 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:14:07,693 INFO     [Exploration.py:214] newBaseStep: 4, baseStep: 4
+10-03-2018:16:14:07,828 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:14:09,39 INFO     [Exploration.py:214] newBaseStep: 4, baseStep: 4
+10-03-2018:16:14:09,117 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:14:12,154 INFO     [Exploration.py:214] newBaseStep: 5, baseStep: 4
+10-03-2018:16:14:12,230 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SR1W1;
+10-03-2018:16:14:18,940 INFO     [Exploration.py:214] newBaseStep: 5, baseStep: 5
+10-03-2018:16:14:19,0 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:14:20,778 INFO     [Exploration.py:214] newBaseStep: 5, baseStep: 5
+10-03-2018:16:14:20,861 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:14:22,61 INFO     [Exploration.py:214] newBaseStep: 5, baseStep: 5
+10-03-2018:16:14:22,138 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:14:22,861 INFO     [Exploration.py:214] newBaseStep: 5, baseStep: 5
+10-03-2018:16:14:22,907 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:14:23,476 INFO     [Exploration.py:214] newBaseStep: 6, baseStep: 5
+10-03-2018:16:14:23,572 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: S]1A1W3;
+10-03-2018:16:14:24,555 INFO     [Exploration.py:214] newBaseStep: 6, baseStep: 5
+10-03-2018:16:14:24,677 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SR1W1;
+10-03-2018:16:14:25,723 INFO     [Exploration.py:214] newBaseStep: 7, baseStep: 6
+10-03-2018:16:14:25,799 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SR1W1;
+10-03-2018:16:14:26,571 INFO     [Exploration.py:214] newBaseStep: 7, baseStep: 7
+10-03-2018:16:14:26,644 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:14:27,338 INFO     [Exploration.py:214] newBaseStep: 7, baseStep: 7
+10-03-2018:16:14:27,446 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:14:28,78 INFO     [Exploration.py:214] newBaseStep: 7, baseStep: 7
+10-03-2018:16:14:28,125 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:14:28,908 INFO     [Exploration.py:214] newBaseStep: 7, baseStep: 7
+10-03-2018:16:14:29,46 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:14:30,987 INFO     [Exploration.py:214] newBaseStep: 8, baseStep: 7
+10-03-2018:16:14:31,85 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SR1W1;
+10-03-2018:16:14:33,707 INFO     [Exploration.py:214] newBaseStep: 8, baseStep: 8
+10-03-2018:16:14:33,799 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:14:34,861 INFO     [Exploration.py:214] newBaseStep: 8, baseStep: 8
+10-03-2018:16:14:34,907 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:14:35,940 INFO     [Exploration.py:214] newBaseStep: 8, baseStep: 8
+10-03-2018:16:14:36,15 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: S]1A1W5;
+10-03-2018:16:14:37,644 INFO     [Exploration.py:214] newBaseStep: 9, baseStep: 8
+10-03-2018:16:14:37,739 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SR1W1;
+10-03-2018:16:14:39,46 INFO     [Exploration.py:214] newBaseStep: 10, baseStep: 9
+10-03-2018:16:14:39,122 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SR1W1;
+10-03-2018:16:14:40,398 INFO     [Exploration.py:214] newBaseStep: 10, baseStep: 10
+10-03-2018:16:14:40,460 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:14:42,92 INFO     [Exploration.py:214] newBaseStep: 10, baseStep: 10
+10-03-2018:16:14:42,171 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW1;
+10-03-2018:16:14:43,598 INFO     [Exploration.py:214] newBaseStep: 10, baseStep: 10
+10-03-2018:16:14:43,691 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SW3;
+10-03-2018:16:14:45,499 INFO     [Exploration.py:214] newBaseStep: 11, baseStep: 10
+10-03-2018:16:14:45,598 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SR1W1;
+10-03-2018:16:14:47,707 INFO     [Exploration.py:214] newBaseStep: 11, baseStep: 11
+10-03-2018:16:14:47,769 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: S]1A1W3;
+10-03-2018:16:14:54,94 INFO     [Exploration.py:214] newBaseStep: 12, baseStep: 11
+10-03-2018:16:14:54,171 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SD1W4;
+10-03-2018:16:15:02,693 INFO     [Exploration.py:214] newBaseStep: 13, baseStep: 11
+10-03-2018:16:15:02,773 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SF1D1W3;
+10-03-2018:16:15:45,615 INFO     [Exploration.py:214] newBaseStep: 14, baseStep: 11
+10-03-2018:16:15:45,663 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: S]1O1;
+10-03-2018:16:15:48,555 INFO     [Exploration.py:214] newBaseStep: 14, baseStep: 11
+10-03-2018:16:15:48,630 INFO     [rpi.py:87] rpi received message from algorithm and write message to arduino: SR1W<;

@@ -18,12 +18,12 @@ FASTEST_PATH = 1
 
 class Algorithm(threading.Thread):
 
-    def __init__(self, robot_row, robot_col, waypoint_row, waypoint_col, goal_row, goal_col, mode, dir):
+    def __init__(self, robot_row, robot_col, waypoint_row, waypoint_col, goal_row, goal_col, mode, direction):
 
         super(Algorithm, self).__init__()
         self.running = False
 
-        self.dir = dir
+        self.direction = direction
         self.r_row = robot_row
         self.r_col = robot_col
         self.w_row = waypoint_row
@@ -35,14 +35,14 @@ class Algorithm(threading.Thread):
         self.algorithmClass = None
 
         if self.mode == EXPLORATION:
-            self.algorithmClass = Exploration.Exploration(timeLimit=5, direction=self.dir, sim=False)
+            self.algorithmClass = Exploration.Exploration(timeLimit=5, direction=self.direction, sim=False)
             dispatcher.connect(self.determine_exploration_path, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
             dispatcher.send(message=([], False, self.algorithmClass.robot.center, self.algorithmClass.robot.direction), signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
         elif self.mode == FASTEST_PATH:
             self.algorithmClass = FastestPath.FastestPath(exploredMap=gs.MAZEMAP,
                                                           start=[self.r_row, self.r_col],
                                                           goal=[self.g_row, self.g_col],
-                                                          direction=self.dir,
+                                                          direction=self.direction,
                                                           waypoint=[self.w_row, self.w_col])
             # self.determine_fastest_path()
             # dispatcher.connect(self.determine_fastest_path, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
