@@ -42,8 +42,6 @@ class Exploration:
         self.timeLimit = timeLimit
         self.exploredArea = 0
         self.currentMap = gs.MAZEMAP
-        # self.currentMap = np.zeros([20, 15], dtype=int)
-
         if sim:
             from Simulator import Robot
             self.robot = Robot(self.currentMap, direction, self.startPos, realMap)
@@ -102,7 +100,6 @@ class Exploration:
         self.endTime = time.time() + self.timeLimit
         steps = 0
         numCycle = 1
-        # step = float(0.1)
 
         if (time.time() <= self.endTime and self.exploredArea < 100):
             if (sensor_vals):
@@ -123,6 +120,12 @@ class Exploration:
                                           neighbour, self.robot.direction, None)
 
                         fsp.getFastestPath()
+
+                        i = 0
+                        while i < len(current[0]):
+                            fsp.movement.append(current[0][i])
+                            i += 1
+
                         while (fsp.robot.center.tolist() != neighbour.tolist()):
                             fsp.moveStep()
                             # time.sleep(step)
@@ -134,8 +137,6 @@ class Exploration:
 
                         # print fsp.movement
                         return fsp.movement, False, self.robot.center, self.robot.direction
-                    else:
-                        return current, False
             else:
                 self.visited[currentPos] = 1
 
@@ -154,6 +155,12 @@ class Exploration:
                                           neighbour, self.robot.direction, None)
 
                         fsp.getFastestPath()
+
+                        i = 0
+                        while i < len(current[0]):
+                            fsp.movement.append(current[0][i])
+                            i += 1
+
                         while (fsp.robot.center.tolist() != neighbour.tolist()):
                             fsp.moveStep()
                             # time.sleep(step)
@@ -166,26 +173,28 @@ class Exploration:
 
                         # print fsp.movement
                         return fsp.movement, False, self.robot.center, self.robot.direction
-                    else:
-                        return current, False
-            # time.sleep(float(step))
+
+            return current, False
+
         elif (time.time() > self.endTime):
             print "Time limit reached!"
 
         if (self.exploredArea == 100):
-            fsp = FastestPath(self.currentMap, self.robot.center, self.startPos, self.robot.direction, None)
-            print "Exploration completed. Back to starting position!"
+            if (np.array_equal(self.robot.center, self.startPos)):
+                print "Exploration completed."
+                return [], True
+            else:
+                fsp = FastestPath(self.currentMap, self.robot.center, self.startPos, self.robot.direction, None)
+                print "Exploration completed. Back to starting position!"
 
-            fsp.getFastestPath()
-            while (fsp.robot.center.tolist() != self.startPos.tolist()):
-                fsp.moveStep()
-                # time.sleep(step)
-            print "Starting position reached!"
+                fsp.getFastestPath()
+                while (fsp.robot.center.tolist() != self.startPos.tolist()):
+                    fsp.moveStep()
+                    # time.sleep(step)
+                print "Starting position reached!"
 
-            # print fsp.movement
-            return fsp.movement, True, self.robot.center, self.robot.direction
-
-        return current, False
+                # print fsp.movement
+                return fsp.movement, True, fsp.robot.center, self.robot.direction
 
     def moveStep(self, sensor_vals=None):
         """Move the robot one step for exploration.
