@@ -55,9 +55,6 @@ class Algorithm(threading.Thread):
 
         sensor_vals = message
         instruction, completed, robot_loc, robot_dir = self.algorithmClass.moveStep(sensor_vals)
-
-        logging.info("Completed: " + completed + ", instruction: " + str(instruction))
-
         dispatcher.send(message=(instruction, completed, robot_loc, robot_dir), signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
 
     def determine_fastest_path(self):
