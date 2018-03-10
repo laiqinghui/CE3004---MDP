@@ -80,11 +80,10 @@ class RPI(threading.Thread):
             except:
                 pass
 
-            logging.info("robot location: " + str(robot_row) + ", " + str(robot_col))
+            gs.print_modified_mazemap(gs.MAZEMAP, robot_row, robot_col, robot_dir)
 
         dispatcher.send(message=formatted_instruction, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
 
-        print gs.MAZEMAP
         logging.info("rpi received message from algorithm and write message to arduino: " + str(formatted_instruction))
         print "==============================================================="
 
