@@ -42,13 +42,32 @@ def init():
                         level=logging.INFO)
 
 
-def print_mazemap(mmap):
-    for mazerow in mmap:
-        for grid in mazerow:
-            if grid is None:
-                print "?",
-            else:
-                print grid,
+def print_modified_mazemap(mmap, robot_row, robot_col, direction):
+    robot_symbol = ""
+    if direction == 1:
+        robot_symbol = "^"
+    elif direction == 2:
+        robot_symbol = ">"
+    elif direction == 3:
+        robot_symbol = "v"
+    elif direction == 4:
+        robot_symbol = "<"
+
+    for row in range(mmap.shape[0]):
+        for col in range(mmap.shape[1]):
+            if robot_row == row and robot_col == col:
+                print robot_symbol,
+                continue
+            if mmap[row, col] == 0:
+                print "0",
+                continue
+            if mmap[row, col] == 1:
+                print "1",
+                continue
+            if mmap[row, col] == 2:
+                print chr(254),
+                continue
+            print mmap[row, col],
         print ""
 
 
