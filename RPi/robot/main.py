@@ -3,7 +3,7 @@ import numpy as np
 from Exploration import Exploration
 from FastestPath import FastestPath
 
-from Constants import START, NORTH, GOAL
+from Constants import START, NORTH, GOAL, EAST
 
 """ To test algorithm:
     - Choose from sample arena 1 to 5
@@ -32,12 +32,12 @@ step = float(0.1)
 
 temp = exp.explore()
 print temp
-# print exp.robot.exploredMap
+print exp.robot.exploredMap
 
 while not temp[1]:
     temp = exp.explore()
     print temp
-    # print exp.robot.exploredMap
+    print exp.robot.exploredMap
 
 print "Map Descriptor 1  -->  "+str(exp.robot.descriptor_1())
 print "Map Descriptor 2  -->  "+str(exp.robot.descriptor_2())
@@ -59,16 +59,7 @@ if (choice2 == "Y" or choice2 == "y"):
 
     print "Waypoint is " +str(waypoint)
 
-    # fsp = FastestPath(exp.currentMap, START, GOAL, NORTH, waypoint)
-    # print "Fastest Path Mode started!"
-    # fsp.getFastestPath()
-    # while (fsp.robot.center.tolist() != GOAL.tolist()):
-    #     fsp.moveStep()
-    # #    time.sleep(step)
-    # print "Fastest Path completed!"
-    # print fsp.movement
-
-    fsp = FastestPath(exp.currentMap, START, GOAL, NORTH, waypoint)
+    fsp = FastestPath(exp.currentMap, START, GOAL, EAST, waypoint)
     print fsp.fastestPathRun()
 else:
     print "Program Terminated"

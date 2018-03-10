@@ -147,16 +147,6 @@ class Robot:
         else:
             self.getValue(zip([r+1]*distanceLong, range(c-distanceLong-1, c-1))[::-1])
 
-        # Right Bottom
-        # if self.direction == NORTH:
-        #     self.getValue(zip([r+1]*distanceLong, range(c+2, c+distanceLong+2)))
-        # elif self.direction == EAST:
-        #     self.getValue(zip(range(r+2, r+distanceLong+2), [c-1]*distanceLong))
-        # elif self.direction == WEST:
-        #     self.getValue(zip(range(r-distanceLong-1, r-1), [c+1]*distanceLong)[::-1])
-        # else:
-        #     self.getValue(zip([r-1]*distanceLong, range(c-distanceLong-1, c-1))[::-1])
-
         # Left Top
         if self.direction == NORTH:
             self.getValue(zip([r-1]*distanceLong, range(c-distanceLong-1, c-1))[::-1])

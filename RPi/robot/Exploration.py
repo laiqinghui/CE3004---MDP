@@ -128,22 +128,17 @@ class Exploration:
 
                         while (fsp.robot.center.tolist() != neighbour.tolist()):
                             fsp.moveStep()
-                            # time.sleep(step)
                         print "Fastest Path to unexplored area!"
 
                         self.robot.center = neighbour
                         self.robot.head = fsp.robot.head
                         self.robot.direction = fsp.robot.direction
 
-                        # print fsp.movement
                         return fsp.movement, False, self.robot.center, self.robot.direction
             else:
                 self.visited[currentPos] = 1
 
-                if (current[1]):
-                    print "Exploration completed"
-
-                return current
+                return current, False, self.robot.center, self.robot.direction
 
             if (np.array_equal(self.robot.center, self.startPos)):
                 numCycle += 1
@@ -163,7 +158,6 @@ class Exploration:
 
                         while (fsp.robot.center.tolist() != neighbour.tolist()):
                             fsp.moveStep()
-                            # time.sleep(step)
                         print "Fastest Path to unexplored area!"
 
                         self.robot.center = neighbour
@@ -171,18 +165,18 @@ class Exploration:
                         self.robot.direction = fsp.robot.direction
                         self.robot.getSensors()
 
-                        # print fsp.movement
                         return fsp.movement, False, self.robot.center, self.robot.direction
 
-            return current, False
+            return current, False, self.robot.center, self.robot.direction
 
         elif (time.time() > self.endTime):
             print "Time limit reached!"
 
         if (self.exploredArea == 100):
             if (np.array_equal(self.robot.center, self.startPos)):
-                print "Exploration completed."
-                return [], True
+                print "Exploration completed***."
+
+                return [], True, self.robot.center, self.robot.direction
             else:
                 fsp = FastestPath(self.currentMap, self.robot.center, self.startPos, self.robot.direction, None)
                 print "Exploration completed. Back to starting position!"
@@ -190,10 +184,8 @@ class Exploration:
                 fsp.getFastestPath()
                 while (fsp.robot.center.tolist() != self.startPos.tolist()):
                     fsp.moveStep()
-                    # time.sleep(step)
                 print "Starting position reached!"
 
-                # print fsp.movement
                 return fsp.movement, True, fsp.robot.center, self.robot.direction
 
     def moveStep(self, sensor_vals=None):
@@ -211,10 +203,7 @@ class Exploration:
         move = self.nextMove()
         self.getExploredArea()
 
-        if (self.exploredArea == 100):
-            return move, True, self.robot.center, self.robot.direction
-        else:
-            return move, False, self.robot.center, self.robot.direction
+        return move
 
     def nextMove(self):
         """Decide which direction is free to command robot the next action."""
@@ -455,24 +444,20 @@ class Exploration:
         flag = True
         inds = []
         distanceSuperShort = 2
-        #distanceShort = 3
+        # distanceShort = 3
         distanceLong = 5
 
         if self.robot.direction == NORTH:
             inds.append(zip([r-1]*distanceSuperShort, range(c+2, c+distanceSuperShort+2)))
-            # inds.append(zip([r+1]*distanceLong, range(c+2, c+distanceLong+2)))
             inds.append(zip([r-1]*distanceLong, range(c-distanceLong-1, c-1))[::-1])
         elif self.robot.direction == EAST:
             inds.append(zip(range(r+2, r+distanceSuperShort+2), [c+1]*distanceSuperShort))
-            # inds.append(zip(range(r+2, r+distanceLong+2), [c-1]*distanceLong))
             inds.append(zip(range(r-distanceLong-1, r-1), [c+1]*distanceLong)[::-1])
         elif self.robot.direction == WEST:
             inds.append(zip(range(r-distanceSuperShort-1, r-1), [c-1]*distanceSuperShort)[::-1])
-            # inds.append(zip(range(r-distanceLong-1, r-1), [c+1]*distanceLong)[::-1])
             inds.append(zip(range(r+2, r+distanceLong+2), [c-1]*distanceLong))
         else:
             inds.append(zip([r+1]*distanceSuperShort, range(c-distanceSuperShort-1, c-1))[::-1])
-            # inds.append(zip([r-1]*distanceLong, range(c-distanceLong-1, c-1))[::-1])
             inds.append(zip([r+1]*distanceLong, range(c+2, c+distanceLong+2)))
 
         for sensor in inds:
