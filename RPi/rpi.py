@@ -16,6 +16,7 @@ class RPI(threading.Thread):
         self.running = False
         self.autoupdate = True
         self.pc_ws = None
+
         try:
             self.pc_ws = create_connection("ws://192.168.5.18:8888/ws")
         except:
@@ -28,7 +29,6 @@ class RPI(threading.Thread):
         logging.info("rpi initialized")
 
     def command_rpi(self, message):
-        # logging.info("rpi received message from android and write message: " + str(message))
         if message == "mode":
             self.autoupdate = not self.autoupdate
 
@@ -94,11 +94,14 @@ class RPI(threading.Thread):
         - Updates from Arduino to be processed and passed to Android
         """
         logging.info("sensor value: " + str(message))
-        message[0] = message[0] - 12
+        message[0] = message[0] - 13
         message[1] = message[1] - 8
-        message[2] = message[2] - 12
+        message[2] = message[2] - 13
         message[3] = message[3] - 12
         message[4] = message[4] - 20
+
+        with open("sensor.txt", "a") as sensor_log:
+            sensor_log.write(str(message) + "\n")
 
         # raw_input("---------press enter to continue-------")
 
@@ -110,7 +113,6 @@ class RPI(threading.Thread):
     def feedback_android(self, message):
         if self.autoupdate:
             dispatcher.send(message=message, signal=gs.RPI_ANDROID_SIGNAL, sender=gs.RPI_SENDER)
-            logging.info("rpi send feedback message to android: " + str(message))
 
     def start(self):
         self.running = True

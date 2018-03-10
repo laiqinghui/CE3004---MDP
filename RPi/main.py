@@ -7,7 +7,7 @@ from pydispatch import dispatcher
 
 from robot.algorithm import Algorithm
 # from android import Android
-from arduino import Arduino
+# from arduino import Arduino
 from rpi import RPI
 import global_settings as gs
 
@@ -62,15 +62,15 @@ def start_robot_exploration(rr, rc, wr, wc, gr, gc, m, d, keep_alive=False):
     This function will need to move to the android.py file as a method.
     """
     rpi_thread = RPI()
-    arduino_thread = Arduino()
+    # arduino_thread = Arduino()
     algo_thread = Algorithm(rr, rc, wr, wc, gr, gc, m, d)
 
     rpi_thread.daemon = True
-    arduino_thread.daemon = True
+    # arduino_thread.daemon = True
     algo_thread.daemon = True
 
     rpi_thread.start()
-    arduino_thread.start()
+    # arduino_thread.start()
     algo_thread.start()
 
     if keep_alive:
@@ -84,13 +84,8 @@ if __name__ == "__main__":
     RPI, Algorithm and Arduino thread will only be initialized when command
     received from Android thread.
     """
-    # TODO: android.py file that connects with Android device using bluetooth
-    # android_thread = threading.Thread(target=Android)
-    # android_thread.daemon = True
-    # android_thread.start()
-    #
-    # while 1:
-    #     time.sleep(1)
+    with open("sensor.txt", "w") as sensor_log:
+        pass
 
     """RUN MAIN.PY TO TEST ALGORITHM & RPI INTERFACE"""
     # python main.py --rr=18 --rc=1 --wr=5 --wc=9 --gr=1 --gc=13 --mode=0 --dir=2
