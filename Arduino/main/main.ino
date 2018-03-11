@@ -31,7 +31,6 @@ void processInst(){
       
       case 'W': moveCount = instBuff[index+1] - 48;
                 if(moveCount == 1)
-                  //benForward(80, 9.5, true);
                  moveForwardOneGrid(80);
                 else //moveForward(90, 9.5*moveCount, true);
                      moveForwardBeta(90, 9.5*moveCount);
@@ -39,7 +38,6 @@ void processInst(){
       case 'A': Serial.println('A');
                 moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
-                  
                   turnPID(-1, 90);
                     delay(delayAmount);
                 }

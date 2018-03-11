@@ -300,29 +300,36 @@ double* calibrationFrontSensorReading(){
   return calibrationFrontSensorRaw;
 }
 
-void distanceFromWall(double distance){  
+void distanceFromWall(double distance){ 
+  
   //Fine tune the distance from wall
   getFrontCalibrationReading(false);
   if(frontRightReading > distance)
-  {    
+  { 
+      
     while(frontRightReading > distance)
     {
+      
       md.setSpeeds(108, 140);
       getFrontCalibrationReading(true);
     }
   }
   else if(frontRightReading < distance)
   {  
+     
     while(frontRightReading < distance)
     {
+      
       md.setSpeeds(-108, -135);
       getFrontCalibrationReading(true);
+      
     }
   }
   md.setBrakes(400, 400);
 }
 
 void straighten(){
+     
     getFrontCalibrationReading(false);
     if(frontRightReading > frontLeftReading)
     {
@@ -344,14 +351,15 @@ void straighten(){
 }
 
 void straightenTune(){
+    
     getFrontCalibrationReading(false);
     if(frontRightReading > frontLeftReading)
     { 
       while(frontRightReading > frontLeftReading)
       {
         md.setSpeeds(130, 0);
-		delay(10);
-		md.setBrakes(400, 400);
+		    delay(50);//Change from 10 to make it faster
+		    md.setBrakes(400, 400);
         getFrontCalibrationReading(false);
       }
     }
@@ -360,8 +368,8 @@ void straightenTune(){
       while(frontRightReading < frontLeftReading)
       {
         md.setSpeeds(-130, 0);
-		delay(10);
-		md.setBrakes(400, 400);
+		    delay(50);//10
+		    md.setBrakes(400, 400);
         getFrontCalibrationReading(false);
       }
     }

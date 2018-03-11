@@ -68,16 +68,6 @@ void moveForwardOneGrid(int rpm){
       previousTicksM1 = currentTicksM1;
       previousTicksM2 = currentTicksM2;
 
-      /*
-      if(currentTicksM1 == previousTicksM1){
-        Serial.println("BUG OCCURED!!!");
-        Serial.print("M1Ticks: ");
-        Serial.println(currentTicksM1);
-        Serial.print("M2Ticks: ");
-        Serial.println(currentTicksM2);
-        
-        }
-        */
       
       if(currentTicksM1>=distanceTicks || currentTicksM2>=distanceTicks){
         md.setBrakes(400, 400);
@@ -165,10 +155,8 @@ void moveForwardBeta(int rpm, double distance){
    int m1setSpeed = 100;
    int m2setSpeed = 100;
  
-   MotorPID M1pid = {m1setSpeed, 0, 0, 0.1};//0.1=>50
-   MotorPID M2pid = {m2setSpeed , 0, 0, 0.115};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms
-
-   calibrateBeforeMoveForward();
+   MotorPID M1pid = {m1setSpeed, 0, 0, 0.110};//0.1=>50
+   MotorPID M2pid = {m2setSpeed , 0, 0, 0.138};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms
 
    enableInterrupt( e1a, risingM1, RISING);
    enableInterrupt( e2b, risingM2, RISING);
@@ -181,21 +169,25 @@ void moveForwardBeta(int rpm, double distance){
 
    while(1){
       
-      //Serial.print(sqWidthToRPM(squareWidth_M1));
-      //Serial.print(" ");
-      //Serial.println(sqWidthToRPM(squareWidth_M2));
-	  
-	  noInterrupts();
+      /*
+      rightFrontSensor = getSideCalibrationReading(true)[0];
+      if(rightFrontSensor < 10 || (rightFrontSensor > 13)){
+            fastCalibration(1);
+        }
+      */ 
+	    noInterrupts();
       currentTicksM1 = M1ticks;
       currentTicksM2 = M2ticks;
       interrupts();
       
       if(currentTicksM1>=distanceTicks || currentTicksM2>=distanceTicks){
         md.setBrakes(400, 400);
+        /*
         Serial.print("M1BreakTicks: ");
         Serial.println(currentTicksM1);
-		Serial.print("M2BreakTicks: ");
+		    Serial.print("M2BreakTicks: ");
         Serial.println(currentTicksM2);
+        */
         break;
       }
       
@@ -204,20 +196,18 @@ void moveForwardBeta(int rpm, double distance){
         if(interval >= 5000){
         
 			if(currentTicksM1 < 0.7*distanceTicks){
-			  tuneM1(rpm, &M1pid);
-			  tuneM2(rpm, &M2pid);
-			  //tuneMotors(rpm, &M1pid, &M2pid);
+			  //tuneM1(rpm, &M1pid);
+			  //tuneM2(rpm, &M2pid);
+			  tuneMotors(rpm, &M1pid, &M2pid);
 			}else if(currentTicksM1 < 0.85*distanceTicks){
-			  tuneM1(rpm*0.75, &M1pid);
-			  tuneM2(rpm*0.75, &M2pid);
-			  //tuneMotors(rpm*0.75, &M1pid, &M2pid);
+			  //tuneM1(rpm*0.75, &M1pid);
+			  //tuneM2(rpm*0.75, &M2pid);
+			  tuneMotors(rpm*0.75, &M1pid, &M2pid);
 			}else{
-			  tuneM1(rpm*0.4, &M1pid);
-			  tuneM2(rpm*0.4, &M2pid);
-			  //tuneMotors(rpm*0.4, &M1pid, &M2pid);
+			  //tuneM1(rpm*0.4, &M1pid);
+			  //tuneM2(rpm*0.4, &M2pid);
+			  tuneMotors(rpm*0.4, &M1pid, &M2pid);
 			}
-          
-        
           tuneExitTime = micros();
         }
 
