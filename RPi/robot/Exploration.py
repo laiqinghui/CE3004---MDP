@@ -42,8 +42,6 @@ class Exploration:
         self.timeLimit = timeLimit
         self.exploredArea = 0
         self.currentMap = gs.MAZEMAP
-        # self.currentMap = np.zeros([20, 15], dtype=int)
-
         if sim:
             from Simulator import Robot
             self.robot = Robot(self.currentMap, direction, self.startPos, realMap)
@@ -100,9 +98,7 @@ class Exploration:
 
         """
         self.endTime = time.time() + self.timeLimit
-        steps = 0
         numCycle = 1
-        # step = float(0.1)
 
         if (time.time() <= self.endTime and self.exploredArea < 100):
             if (sensor_vals):
@@ -110,12 +106,38 @@ class Exploration:
             else:
                 current = self.moveStep()
 
-            steps += 1
             currentPos = tuple(self.robot.center)
 
             if (currentPos in self.visited):
                 self.visited[currentPos] += 1
-                if (self.visited[currentPos] > 3):
+
+                if (np.array_equal(self.robot.center, self.startPos)):
+                    numCycle += 1
+                    if (numCycle > 1 and self.exploredArea < 100):
+                        neighbour = self.getExploredNeighbour()
+                        if (neighbour):
+                            neighbour = np.asarray(neighbour)
+                            fsp = FastestPath(self.currentMap, self.robot.center,
+                                              neighbour, self.robot.direction, None)
+
+                            fsp.getFastestPath()
+
+                            i = 0
+                            while i < len(current[0]):
+                                fsp.movement.append(current[0][i])
+                                i += 1
+
+                            while (fsp.robot.center.tolist() != neighbour.tolist()):
+                                fsp.moveStep()
+                            print "Fastest Path to unexplored area!"
+
+                            self.robot.center = neighbour
+                            self.robot.head = fsp.robot.head
+                            self.robot.direction = fsp.robot.direction
+                            self.robot.getSensors()
+
+                            return fsp.movement, False, self.robot.center, self.robot.direction
+                elif (self.visited[currentPos] > 3):
                     neighbour = self.getExploredNeighbour()
                     if (neighbour):
                         neighbour = np.asarray(neighbour)
@@ -123,69 +145,46 @@ class Exploration:
                                           neighbour, self.robot.direction, None)
 
                         fsp.getFastestPath()
+
+                        i = 0
+                        while i < len(current[0]):
+                            fsp.movement.append(current[0][i])
+                            i += 1
+
                         while (fsp.robot.center.tolist() != neighbour.tolist()):
                             fsp.moveStep()
-                            # time.sleep(step)
                         print "Fastest Path to unexplored area!"
 
                         self.robot.center = neighbour
                         self.robot.head = fsp.robot.head
                         self.robot.direction = fsp.robot.direction
 
-                        # print fsp.movement
                         return fsp.movement, False, self.robot.center, self.robot.direction
-                    else:
-                        return current, False
             else:
                 self.visited[currentPos] = 1
 
-                if (current[1]):
-                    print "Exploration completed"
+                return current, False, self.robot.center, self.robot.direction
 
-                return current
+            return current, False, self.robot.center, self.robot.direction
 
-            if (np.array_equal(self.robot.center, self.startPos)):
-                numCycle += 1
-                if (numCycle > 1 and steps > 4 and self.exploredArea < 100):
-                    neighbour = self.getExploredNeighbour()
-                    if (neighbour):
-                        neighbour = np.asarray(neighbour)
-                        fsp = FastestPath(self.currentMap, self.robot.center,
-                                          neighbour, self.robot.direction, None)
-
-                        fsp.getFastestPath()
-                        while (fsp.robot.center.tolist() != neighbour.tolist()):
-                            fsp.moveStep()
-                            # time.sleep(step)
-                        print "Fastest Path to unexplored area!"
-
-                        self.robot.center = neighbour
-                        self.robot.head = fsp.robot.head
-                        self.robot.direction = fsp.robot.direction
-                        self.robot.getSensors()
-
-                        # print fsp.movement
-                        return fsp.movement, False, self.robot.center, self.robot.direction
-                    else:
-                        return current, False
-            # time.sleep(float(step))
         elif (time.time() > self.endTime):
             print "Time limit reached!"
 
         if (self.exploredArea == 100):
-            fsp = FastestPath(self.currentMap, self.robot.center, self.startPos, self.robot.direction, None)
-            print "Exploration completed. Back to starting position!"
+            if (np.array_equal(self.robot.center, self.startPos)):
+                print "Exploration completed."
 
-            fsp.getFastestPath()
-            while (fsp.robot.center.tolist() != self.startPos.tolist()):
-                fsp.moveStep()
-                # time.sleep(step)
-            print "Starting position reached!"
+                return [], True, self.robot.center, self.robot.direction
+            else:
+                fsp = FastestPath(self.currentMap, self.robot.center, self.startPos, self.robot.direction, None)
+                print "Exploration completed. Back to starting position!"
 
-            # print fsp.movement
-            return fsp.movement, True, self.robot.center, self.robot.direction
+                fsp.getFastestPath()
+                while (fsp.robot.center.tolist() != self.startPos.tolist()):
+                    fsp.moveStep()
+                print "Starting position reached!"
 
-        return current, False
+                return fsp.movement, True, fsp.robot.center, self.robot.direction
 
     def moveStep(self, sensor_vals=None):
         """Move the robot one step for exploration.
@@ -202,10 +201,7 @@ class Exploration:
         move = self.nextMove()
         self.getExploredArea()
 
-        if (self.exploredArea == 100):
-            return move, True, self.robot.center, self.robot.direction
-        else:
-            return move, False, self.robot.center, self.robot.direction
+        return move
 
     def nextMove(self):
         """Decide which direction is free to command robot the next action."""
@@ -446,24 +442,20 @@ class Exploration:
         flag = True
         inds = []
         distanceSuperShort = 2
-        #distanceShort = 3
+        # distanceShort = 3
         distanceLong = 5
 
         if self.robot.direction == NORTH:
             inds.append(zip([r-1]*distanceSuperShort, range(c+2, c+distanceSuperShort+2)))
-            # inds.append(zip([r+1]*distanceLong, range(c+2, c+distanceLong+2)))
             inds.append(zip([r-1]*distanceLong, range(c-distanceLong-1, c-1))[::-1])
         elif self.robot.direction == EAST:
             inds.append(zip(range(r+2, r+distanceSuperShort+2), [c+1]*distanceSuperShort))
-            # inds.append(zip(range(r+2, r+distanceLong+2), [c-1]*distanceLong))
             inds.append(zip(range(r-distanceLong-1, r-1), [c+1]*distanceLong)[::-1])
         elif self.robot.direction == WEST:
             inds.append(zip(range(r-distanceSuperShort-1, r-1), [c-1]*distanceSuperShort)[::-1])
-            # inds.append(zip(range(r-distanceLong-1, r-1), [c+1]*distanceLong)[::-1])
             inds.append(zip(range(r+2, r+distanceLong+2), [c-1]*distanceLong))
         else:
             inds.append(zip([r+1]*distanceSuperShort, range(c-distanceSuperShort-1, c-1))[::-1])
-            # inds.append(zip([r-1]*distanceLong, range(c-distanceLong-1, c-1))[::-1])
             inds.append(zip([r+1]*distanceLong, range(c+2, c+distanceLong+2)))
 
         for sensor in inds:
