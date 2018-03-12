@@ -64,7 +64,7 @@ class Algorithm(threading.Thread):
         # dispatcher.send(message=(instruction, ), signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
         return instruction
 
-    def run_fatest_path_on(instruction):
+    def run_fastest_path_on(self, instruction):
         dispatcher.send(message=(instruction, ), signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
 
     def test_message_received(self, message):

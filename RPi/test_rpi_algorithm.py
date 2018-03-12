@@ -9,7 +9,7 @@ from robot.algorithm import Algorithm
 from rpi import RPI
 import global_settings as gs
 
-# python test_rpi_algorithm.py --rr=18 --rc=1 --wr=5 --wc=9 --gr=1 --gc=13 --mode=0 --dir=2
+# python test_rpi_algorithm.py --rr=18 --rc=1 --wr=18 --wc=5 --gr=1 --gc=13 --mode=0 --dir=2
 
 
 def initialise_robot_options(argv):
@@ -83,7 +83,7 @@ if __name__ == "__main__":
     """
 
     """RUN MAIN.PY TO TEST ALGORITHM & RPI INTERFACE"""
-    # python test_rpi_algorithm.py --rr=18 --rc=1 --wr=5 --wc=9 --gr=1 --gc=13 --mode=0 --dir=2
+    # python test_rpi_algorithm.py --rr=18 --rc=1 --wr=18 --wc=5 --gr=1 --gc=13 --mode=0 --dir=2
     rr, rc, wr, wc, gr, gc, m, d = initialise_robot_options(sys.argv[1:])
 
     start_robot_exploration(rr, rc, wr, wc, gr, gc, m, d)

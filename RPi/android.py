@@ -79,7 +79,7 @@ class Android(threading.Thread):
             self.algo_thread.start()
         if mode == FASTEST_PATH:
             if len(self.fastestPathInstruction) > 0:
-                self.algo_thread.run_fatest_path_on(self.fastestPathInstruction)
+                self.algo_thread.run_fastest_path_on(self.fastestPathInstruction)
                 self.fastestPathInstruction = []
                 del self.algo_thread
             else:
