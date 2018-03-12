@@ -103,7 +103,7 @@ class Android(threading.Thread):
                 logging.info("Requesting to calculate fastest path")
                 self.stopAlgorithm()
                 robot_row, robot_col, direction = message[3:].split('L')[:-2]
-                robot_row = abs(robot_row - 19)     # flip row
+                robot_row = abs(int(robot_row) - 19)     # flip row
                 self.algo_thread = Algorithm(robot_row, robot_col, self.waypoint_row, self.waypoint_col, FP_GOAL_ROW, FP_GOAL_COL, FASTEST_PATH, direction)
                 self.fastestPathInstruction = self.algo_thread.determine_fastest_path()
                 logging.info("Finished calculating fastest path")
