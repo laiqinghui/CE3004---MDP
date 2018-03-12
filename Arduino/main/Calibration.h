@@ -164,6 +164,10 @@ void fastCalibration(int choice){
   distanceFromWall(fromWall);
   delay(wait);
 
+  //Quick calibration against wall
+  straighten();
+  delay(wait);
+
   //Fine tune the calibration
   straightenTune();
   delay(wait);
@@ -357,8 +361,8 @@ void straightenTune(){
     { 
       while(frontRightReading > frontLeftReading)
       {
-        md.setSpeeds(130, 0);
-		    delay(50);//Change from 10 to make it faster
+        md.setSpeeds(180, 0);
+		    delay(10);//Change from 10 to make it faster
 		    md.setBrakes(400, 400);
         getFrontCalibrationReading(false);
       }
