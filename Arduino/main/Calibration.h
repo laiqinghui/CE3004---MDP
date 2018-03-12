@@ -270,11 +270,11 @@ double* getFrontCalibrationReading(boolean quick){
   
   //FrontRight
   //y = 5401x - 0.1758
-  frontSensorsCalibrationCM[1] = 5401*(1/calibrationFrontSensorRaw[1])-0.1758;
+  frontSensorsCalibrationCM[1] = 5345.4*(1/calibrationFrontSensorRaw[1])-0.0814;
     
   //Front Left
   //y = 5288.6x + 0.0799
-  frontSensorsCalibrationCM[0] = 5288.6*(1/calibrationFrontSensorRaw[0])+ 0.0799;
+  frontSensorsCalibrationCM[0] = 5247*(1/calibrationFrontSensorRaw[0])+ 0.0295;
 
   return frontSensorsCalibrationCM;
 }	
