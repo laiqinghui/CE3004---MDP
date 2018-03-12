@@ -38,13 +38,13 @@ class Algorithm(threading.Thread):
             self.algorithmClass = Exploration.Exploration(timeLimit=5, direction=self.direction, sim=False)
             dispatcher.connect(self.determine_exploration_path, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
             dispatcher.send(message=([], False, self.algorithmClass.robot.center, self.algorithmClass.robot.direction), signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
-        # elif self.mode == FASTEST_PATH:
-        #     self.algorithmClass = FastestPath.FastestPath(exploredMap=gs.MAZEMAP,
-        #                                                   start=[self.r_row, self.r_col],
-        #                                                   goal=[self.g_row, self.g_col],
-        #                                                   direction=self.direction,
-        #                                                   waypoint=[self.w_row, self.w_col],
-        #                                                   sim=False)
+        elif self.mode == FASTEST_PATH:
+            self.algorithmClass = FastestPath.FastestPath(exploredMap=gs.MAZEMAP,
+                                                          start=[self.r_row, self.r_col],
+                                                          goal=[self.g_row, self.g_col],
+                                                          direction=self.direction,
+                                                          waypoint=[self.w_row, self.w_col],
+                                                          sim=False)
             # self.determine_fastest_path()
             # dispatcher.connect(self.determine_fastest_path, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
         else:
