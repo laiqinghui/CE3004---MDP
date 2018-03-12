@@ -267,7 +267,7 @@ double getTurnAmount(int dir, int turnDegree) {
   if (dir == 1)
   {
     double degree90Offset = 1.02; //cir is 51.8
-    double degree180Offset = 0.97; //cir is 52.9
+    double degree180Offset = 1.01; //cir is 52.9
     if (turnDegree <= 90)
     {
       return abs(49 * 0.25 * ticksPerCM) * degree90Offset;
@@ -288,7 +288,7 @@ double getTurnAmount(int dir, int turnDegree) {
 }
 
 //-1 is left turn and 1 is right turn
-void turnPID(int dir, int turnDegree) {
+void turnTest(int dir, int turnDegree) {
   //1 is right, -1 is left
   int amount = getTurnAmount(dir, turnDegree);
   int ticks = 0;
@@ -346,25 +346,27 @@ double getTurnTest(int dir, int turnDegree) {
   //Right Turn
   if (dir == 1)
   {
+    //180
     if (turnDegree == 180)
     {
-	  return abs(49.7 * 0.5 * ticksPerCM);
+	  return abs(47 * 0.5 * ticksPerCM);
       
     }
+    //90
     else
     {
-		return abs(49 * (turnDegree / 360.0) * ticksPerCM);
+		return abs(45 * (turnDegree / 360.0) * ticksPerCM);
       
     }
   }
   //Left Turn
   else
   {
-    return abs(48.6 * (turnDegree / 360.0) * ticksPerCM);
+    return abs(44 * (turnDegree / 360.0) * ticksPerCM);
   }
 }
 
-void turnTest(int dir, int degree){
+void turnPID(int dir, int degree){
 	sideWall[0] = 0;
 	sideWall[1] = 0;
 	sideWall[2] = 0;
@@ -374,44 +376,46 @@ void turnTest(int dir, int degree){
 	int total = 0;
 	int currentTicksM1 = 0;
 	int currentTicksM2 = 0;
+  int difference = 0;
 	
 	if(dir == 1)
 	{
-		int m1Speed = -269;
-		int m2Speed = 314;
+		int m1Speed = -302;
+		int m2Speed = 330;
 
 		enableInterrupt( e1a, risingM1Ticks, RISING);
 		enableInterrupt( e2b, risingM2Ticks, RISING);
-		setTicks(0, 0);
 		md.setSpeeds(m1Speed, m2Speed);
+   setTicks(0, 0);
 
 		while(currentTicksM1 < amount)
 		{
+      
 			noInterrupts();
 			currentTicksM1 = M1ticks;
 			currentTicksM2 = M2ticks;
 			interrupts();
-		
+     
 			if(currentTicksM1 < currentTicksM2)
 			{
+
 			  m2Speed = m2Speed - 1;
 			  OCR1B = m2Speed;
 			}
 			else if(currentTicksM1 > currentTicksM2)
 			{
-			  m2Speed = m2Speed + 1;
+        m2Speed = m2Speed + 1;
 			  OCR1B = m2Speed;
 			}
 		}
 	}
 	else
 	{
-		int m1Speed = 269;
-		int m2Speed = -314;
+		int m1Speed = 302;
+		int m2Speed = -330;
 
 		enableInterrupt( e1a, risingM1Ticks, RISING);
 		enableInterrupt( e2b, risingM2Ticks, RISING);
-		setTicks(0, 0);
 		md.setSpeeds(m1Speed, m2Speed);
 
 		while(currentTicksM1 < amount)

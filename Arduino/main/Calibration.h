@@ -164,6 +164,10 @@ void fastCalibration(int choice){
   distanceFromWall(fromWall);
   delay(wait);
 
+  //Quick calibration against wall
+  straighten();
+  delay(wait);
+
   //Fine tune the calibration
   straightenTune();
   delay(wait);
@@ -270,11 +274,11 @@ double* getFrontCalibrationReading(boolean quick){
   
   //FrontRight
   //y = 5401x - 0.1758
-  frontSensorsCalibrationCM[1] = 5401*(1/calibrationFrontSensorRaw[1])-0.1758;
+  frontSensorsCalibrationCM[1] = 5345.4*(1/calibrationFrontSensorRaw[1])-0.0814;
     
   //Front Left
   //y = 5288.6x + 0.0799
-  frontSensorsCalibrationCM[0] = 5288.6*(1/calibrationFrontSensorRaw[0])+ 0.0799;
+  frontSensorsCalibrationCM[0] = 5247*(1/calibrationFrontSensorRaw[0])+ 0.0295;
 
   return frontSensorsCalibrationCM;
 }	
@@ -357,8 +361,8 @@ void straightenTune(){
     { 
       while(frontRightReading > frontLeftReading)
       {
-        md.setSpeeds(130, 0);
-		    delay(50);//Change from 10 to make it faster
+        md.setSpeeds(180, 0);
+		    delay(10);//Change from 10 to make it faster
 		    md.setBrakes(400, 400);
         getFrontCalibrationReading(false);
       }
@@ -368,7 +372,7 @@ void straightenTune(){
       while(frontRightReading < frontLeftReading)
       {
         md.setSpeeds(-130, 0);
-		    delay(50);//10
+		    delay(40);//10
 		    md.setBrakes(400, 400);
         getFrontCalibrationReading(false);
       }

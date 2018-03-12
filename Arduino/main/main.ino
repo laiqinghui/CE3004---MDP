@@ -23,7 +23,7 @@ void processInst(){
   int index = 1;//Start with 1 as first character is sensor flag which is checked after moving
   char num[1] = {0};// For checklist
   int moveCount = 0;
-  int delayAmount = 300;
+  int delayAmount = 400;
   
   while(instBuff[index] != ';'){ 
     delay(delayAmount);
@@ -38,6 +38,7 @@ void processInst(){
       case 'A': Serial.println('A');
                 moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
+                  delay(delayAmount);
                   turnPID(-1, 90);
                     delay(delayAmount);
                 }
@@ -46,6 +47,7 @@ void processInst(){
                 break;
       case 'D': moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
+                  delay(delayAmount);
                   turnPID(1, 90);
                   delay(delayAmount);
                 }
@@ -54,6 +56,7 @@ void processInst(){
                 break;
       case 'O': moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
+                  delay(delayAmount);  
                   turnPID(1, 180);
                   delay(delayAmount);  
                 }
@@ -111,7 +114,7 @@ void setup() {
   md.init();
   initI2C();
 
-  benTestSequence();
+  //benTestSequence();
 }
 
 void loop() 
