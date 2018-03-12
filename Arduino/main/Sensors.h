@@ -83,14 +83,16 @@ char* getSensorReadingInCM(){
   }
   
   //Keep track of side wall
-  if(sensorsValuesArray[3] <14)
+  if(int(sensorsValuesArray[3]) <14 && int(sensorsValuesArray[3]) > 0)
   {
+  Serial.print("sensorsValuesArray[3]: ");Serial.println(sensorsValuesArray[3]); 
 	sideWall[2] = sideWall[1];
 	sideWall[1] = sideWall[0];
 	sideWall[0] = 1;
   }
   else
   {
+  Serial.print("sensorsValuesArray[3]: ");Serial.println(int(sensorsValuesArray[3]));  
 	sideWall[2] = sideWall[1];
 	sideWall[1] = sideWall[0];
 	sideWall[0] = 0;
@@ -186,7 +188,9 @@ double* getIRSensorReading()
 
 boolean canSideCalibrate()
 {
-	if(sideWall[0] = 1 && sideWall[2] == 1)
+	Serial.print("sideWall[0]: ");Serial.println(sideWall[0]);
+  Serial.print("sideWall[2]: ");Serial.println(sideWall[2]);   
+	if(sideWall[0] == 1 && sideWall[2] == 1)
 	{
 		return true;
 	}		

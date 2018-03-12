@@ -368,7 +368,7 @@ void straightenTune(){
       while(frontRightReading < frontLeftReading)
       {
         md.setSpeeds(-130, 0);
-		    delay(50);//10
+		    delay(40);//10
 		    md.setBrakes(400, 400);
         getFrontCalibrationReading(false);
       }

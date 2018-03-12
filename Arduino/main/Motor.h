@@ -267,7 +267,7 @@ double getTurnAmount(int dir, int turnDegree) {
   if (dir == 1)
   {
     double degree90Offset = 1.02; //cir is 51.8
-    double degree180Offset = 0.97; //cir is 52.9
+    double degree180Offset = 1.01; //cir is 52.9
     if (turnDegree <= 90)
     {
       return abs(49 * 0.25 * ticksPerCM) * degree90Offset;

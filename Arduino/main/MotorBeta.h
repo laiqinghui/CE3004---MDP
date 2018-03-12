@@ -156,7 +156,7 @@ void moveForwardBeta(int rpm, double distance){
    int m2setSpeed = 100;
  
    MotorPID M1pid = {m1setSpeed, 0, 0, 0.110};//0.1=>50
-   MotorPID M2pid = {m2setSpeed , 0, 0, 0.138};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms
+   MotorPID M2pid = {m2setSpeed , 0, 0, 0.125};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms
 
    enableInterrupt( e1a, risingM1, RISING);
    enableInterrupt( e2b, risingM2, RISING);
