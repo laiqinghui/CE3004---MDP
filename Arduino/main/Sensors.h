@@ -108,7 +108,7 @@ char* getSensorReadingInCM(){
   }
   else
   {
-    sensorsValuesArray[4] = (12256/leftValue) - 0.948;
+    sensorsValuesArray[4] = (12256/leftValue) + 0.948;
   }
   if(sensorsValuesArray[4] <= 25)
   {

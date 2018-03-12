@@ -262,7 +262,7 @@ void moveForward(int rpm, double distance, boolean pidOn) {
 }
 
 //-1 is left turn and 1 is right turn
-double getTurnAmount(int dir, int turnDegree) {
+double getTurnAmount1(int dir, int turnDegree) {
   //Right Turn
   if (dir == 1)
   {
@@ -290,7 +290,7 @@ double getTurnAmount(int dir, int turnDegree) {
 //-1 is left turn and 1 is right turn
 void turnTest(int dir, int turnDegree) {
   //1 is right, -1 is left
-  int amount = getTurnAmount(dir, turnDegree);
+  int amount = getTurnAmount1(dir, turnDegree);
   int ticks = 0;
   int previousRead = 0;
   int currentValue = 0;
@@ -342,6 +342,63 @@ void turnTest(int dir, int turnDegree) {
   
 }
 
+double turnRight90 = 44.52;
+double turnRight180 = 47.7;
+double turnLeft90 = 43.25;
+
+double getTurnAmount(int dir, int turnDegree) {
+  //Right Turn
+  if (dir == 1)
+  {
+    //180
+    if (turnDegree == 180)
+    {
+	  return turnRight180;
+      
+    }
+    //90
+    else
+    {
+		return turnRight90;
+      
+    }
+  }
+  //Left Turn
+  else
+  {
+    return turnLeft90;
+  }
+}
+
+void setTurnAmount(int dir, int turnDegree, double newValue)
+{
+	Serial.println("Set");
+	Serial.println(getTurnAmount(dir,turnDegree));
+  //Right Turn
+  if (dir == 1)
+  {
+    //180
+    if (turnDegree == 180)
+    {
+	  turnRight180 = newValue;
+      
+    }
+    //90
+    else
+    {
+		turnRight90 = newValue;
+      
+    }
+  }
+  //Left Turn
+  else
+  {
+     turnLeft90 = newValue;
+  }
+  Serial.println(newValue);
+}
+
+
 double getTurnTest(int dir, int turnDegree) {
   //Right Turn
   if (dir == 1)
@@ -349,20 +406,20 @@ double getTurnTest(int dir, int turnDegree) {
     //180
     if (turnDegree == 180)
     {
-	  return abs(47 * 0.5 * ticksPerCM);
+	  return abs(turnRight180 * 0.5 * ticksPerCM);
       
     }
     //90
     else
     {
-		return abs(45 * (turnDegree / 360.0) * ticksPerCM);
+		return abs(turnRight90 * (turnDegree / 360.0) * ticksPerCM);
       
     }
   }
   //Left Turn
   else
   {
-    return abs(44 * (turnDegree / 360.0) * ticksPerCM);
+    return abs(turnLeft90 * (turnDegree / 360.0) * ticksPerCM);
   }
 }
 
@@ -437,7 +494,7 @@ void turnPID(int dir, int degree){
 			}
 		}
 	}
-	md.setBrakes(400, 400);
+  md.setBrakes(400, 400);
 
 	disableInterrupt(e1a);
 	disableInterrupt(e2b);
