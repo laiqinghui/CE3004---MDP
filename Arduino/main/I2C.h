@@ -33,8 +33,8 @@ void interruptPi(){
 void setOutBuffer(char opcode, char * data, int len){
 
   outBuffer[0] = opcode;
-  Serial.print("Outbuffer set to op: ");
-  Serial.println(opcode);
+  //Serial.print("Outbuffer set to op: ");
+  //Serial.println(opcode);
   for(int i = 0; i < len ; i++){
         outBuffer[i+1] = data[i]; 
   }
@@ -56,9 +56,9 @@ void receiveData(int byteCount) {
   int len = Wire.available();
  
   
-  Serial.print("Incoming: ");
-  Serial.print(len);
-  Serial.println(" bytes");
+  //Serial.print("Incoming: ");
+  //Serial.print(len);
+  //Serial.println(" bytes");
 
   if(len > 1){
     
@@ -69,10 +69,13 @@ void receiveData(int byteCount) {
       i++;
   
     }
+   /*
    Serial.print("\n\nInstruction ");
    Serial.print(++instCount);
    Serial.println(":"); 
    printArray(inBuffer, len -1);
+   */
+   
    //acknowledgeRPI(len-1);
  
       

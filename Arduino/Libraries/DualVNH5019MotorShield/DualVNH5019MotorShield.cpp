@@ -78,9 +78,6 @@ void DualVNH5019MotorShield::setM1Speed(int speed)
   {
 	PORTD = PORTD & B11101011;  
 	  
-
-    digitalWrite(_INA1,LOW);   // Make the motor coast no
-    digitalWrite(_INB1,LOW);   // matter which direction it is spinning.
   }
   else if (reverse)
   {
@@ -154,26 +151,16 @@ void DualVNH5019MotorShield::setSpeeds(int m1Speed, int m2Speed)
   if (m2Speed > 400)  // Max PWM dutycycle
     m2Speed = 400;
 
-  #if defined(__AVR_ATmega168__)|| defined(__AVR_ATmega328P__) || defined(__AVR_ATmega32U4__)
+  noInterrupts();
   OCR1A = m1Speed;
   OCR1B = m2Speed;
-  #else
-  analogWrite(_PWM1,speed * 51 / 80); // default to using analogWrite, mapping 400 to 255
-  analogWrite(_PWM2,speed * 51 / 80); // default to using analogWrite, mapping 400 to 255
-  #endif
-
+  interrupts();
   
   if (m1Speed == 0 && m2Speed == 0)
   {
 	PORTD = PORTD & B01101011;
 	
 	PORTB = PORTB & B11111110;
-	
-	//Make the motor coast no matter which direction it is spinning.
-    //digitalWrite(_INA1,LOW);
-    //digitalWrite(_INB1,LOW);
-	//digitalWrite(_INA2,LOW);
-    //digitalWrite(_INB2,LOW);
   }
   //both speed are positive
   else if (reverse == 0)
@@ -247,6 +234,7 @@ void DualVNH5019MotorShield::setM2Brake(int brake)
 // Brake motor 1 and 2, brake is a number between 0 and 400
 void DualVNH5019MotorShield::setBrakes(int m1Brake, int m2Brake)
 {	
+  noInterrupts();
   PORTD = PORTD & B01101011;
 	
   PORTB = PORTB & B11111110;
@@ -258,6 +246,7 @@ void DualVNH5019MotorShield::setBrakes(int m1Brake, int m2Brake)
 
   OCR1A = 400;
   OCR1B = 400;
+  interrupts();
 }
 
 // Return motor 1 current value in milliamps.

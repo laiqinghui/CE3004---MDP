@@ -1,6 +1,5 @@
-#include "I2C.h"
-#include "Calibration.h"
-#include "MotorBeta.h"
+ #include "I2C.h"
+#include "Forward.h"
 
 
 void benTestSequence()
@@ -9,10 +8,10 @@ void benTestSequence()
   //moveForward(80, 30, true);  
   //turnPID(-1, 90);
   //md.setSpeeds(124, 170);
-  while(true)
-  {
-   fastCalibration(2);
-  }
+  //while(true)
+  //{
+   //fastCalibration(2);
+  //}
   //delay(1000);
   //moveForward(80, 9.5, true);
   //benForward(80, 9.5, true);
@@ -77,8 +76,6 @@ void processInst(){
                 break;          
       case '|': calibration();
                 break;                     
-      case 'M': moveForward(50, atoi(instBuff+2), true);  
-                break;
       case 'T': turnPID(-1, atoi(instBuff+2));
                 break;
       case 'S': setOutBuffer('S', getSensorReadingInCM(), 5);
@@ -119,7 +116,7 @@ void setup() {
   md.init();
   initI2C();
 
-  //benTestSequence();
+  benTestSequence();
 }
 
 void loop() 
