@@ -54,7 +54,7 @@ class Algorithm(threading.Thread):
     def determine_exploration_path(self, message):
 
         sensor_vals = message
-        instruction, completed, robot_loc, robot_dir = self.algorithmClass.moveStep(sensor_vals)
+        instruction, completed, robot_loc, robot_dir = self.algorithmClass.explore(sensor_vals)
         dispatcher.send(message=(instruction, completed, robot_loc, robot_dir), signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
 
     def determine_fastest_path(self):
