@@ -20,6 +20,7 @@ void straighten();
 void straightenTune();
 void distanceFromWall(double distance);
 void calibration();
+void turnCheck(int dir, int amount);
 
 //Front Calibration
 double frontSensorsCalibrationCM[2];
@@ -38,9 +39,16 @@ double* calibrationSideSensorReading();
 //Calibration
 void calibration(){
   double threshold = 0.1;
-  double startWall = 13.65;
-  double leftWall = 13.;
+  double startWall = 11.5;
+  double leftWall = 11.5;
   int wait = 200;
+
+  for(int a = 0; a<4; a++)
+  {
+    //fastCalibration(2);
+  }
+  turnPID(1, 90);
+  delay(100);
   
   //Quick calibration against wall
   straighten();
@@ -147,7 +155,7 @@ void sideCalibration()
 //If choice = 2 then it will calibrate front and right
 void fastCalibration(int choice){
   double threshold = 0.05;
-  double fromWall = 14;//13
+  double fromWall = 11.5;//13
   int wait = 100;
 
   if(choice == 1)
@@ -183,11 +191,12 @@ void fastCalibration(int choice){
   else if (choice == 2)
   {
     turnPID(1, 90);
+	turnCheck(1, 90);
     delay(wait);
 
     //Move to the distance from wall
-    distanceFromWall(fromWall);
-    delay(wait);
+    //distanceFromWall(fromWall);
+    //delay(wait);
 
     //Fine tune the calibration
     straightenTune();
@@ -197,6 +206,7 @@ void fastCalibration(int choice){
 	delay(wait);
 
     turnPID(-1, 90);
+	turnCheck(-1, 90);
   }  
 }
 
@@ -362,7 +372,7 @@ void straightenTune(){
       while(frontRightReading > frontLeftReading)
       {
         md.setSpeeds(180, 0);
-		    delay(10);//Change from 10 to make it faster
+		    delay(30);//Change from 10 to make it faster
 		    md.setBrakes(400, 400);
         getFrontCalibrationReading(false);
       }
@@ -371,11 +381,45 @@ void straightenTune(){
     {
       while(frontRightReading < frontLeftReading)
       {
-        md.setSpeeds(-130, 0);
-		    delay(40);//10
+        md.setSpeeds(-180, 0);
+		    delay(30);//10
 		    md.setBrakes(400, 400);
         getFrontCalibrationReading(false);
       }
     }
     md.setBrakes(400, 400);
+}
+
+void turnCheck(int dir, int amount)
+{
+	//Turn Right
+	if(dir == 1)
+	{
+		getFrontCalibrationReading(false);
+		if(frontRightReading > frontLeftReading)
+		{ 
+			double oldValue = getTurnAmount(dir, amount);
+			setTurnAmount(dir, amount, oldValue - abs(frontRightReading-frontLeftReading)/3);
+		}
+		else if(frontRightReading < frontLeftReading)
+		{
+			double oldValue = getTurnAmount(dir, amount);
+			setTurnAmount(dir, amount, oldValue + abs(frontRightReading-frontLeftReading)/3);
+		}
+	}
+	//Turn Left
+	else
+	{
+		getFrontCalibrationReading(false);
+		if(frontRightReading < frontLeftReading)
+		{ 
+			double oldValue = getTurnAmount(dir, amount);
+			setTurnAmount(dir, amount, oldValue - abs(frontRightReading-frontLeftReading)/3);
+		}
+		else if(frontRightReading > frontLeftReading)
+		{
+			double oldValue = getTurnAmount(dir, amount);
+			setTurnAmount(dir, amount, oldValue + abs(frontRightReading-frontLeftReading)/3);
+		}
+	}
 }

@@ -9,7 +9,10 @@ void benTestSequence()
   //moveForward(80, 30, true);  
   //turnPID(-1, 90);
   //md.setSpeeds(124, 170);
-  //fastCalibration(2);
+  while(true)
+  {
+   fastCalibration(2);
+  }
   //delay(1000);
   //moveForward(80, 9.5, true);
   //benForward(80, 9.5, true);
@@ -23,24 +26,24 @@ void processInst(){
   int index = 1;//Start with 1 as first character is sensor flag which is checked after moving
   char num[1] = {0};// For checklist
   int moveCount = 0;
-  int delayAmount = 400;
+  int delayAmount = 200;
   
   while(instBuff[index] != ';'){ 
-    delay(delayAmount);
     switch(instBuff[index]){
       
       case 'W': moveCount = instBuff[index+1] - 48;
+                //delay(delayAmount);
                 if(moveCount == 1)
-                 moveForwardOneGrid(80);
+                 moveForwardOneGrid(90);
                 else //moveForward(90, 9.5*moveCount, true);
-                     moveForwardBeta(90, 9.5*moveCount);
+                     moveForwardBeta(90, 9.7*moveCount);
                 break;
       case 'A': Serial.println('A');
                 moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
                   delay(delayAmount);
                   turnPID(-1, 90);
-                    delay(delayAmount);
+                  delay(delayAmount);
                 }
                 //Reset side wall reading
                 resetSideWall();
@@ -57,8 +60,10 @@ void processInst(){
       case 'O': moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
                   delay(delayAmount);  
-                  turnPID(1, 180);
-                  delay(delayAmount);  
+                  turnPID(1, 90);
+                  delay(delayAmount);
+                  turnPID(1, 90);  
+                  delay(delayAmount);
                 }
                 //Reset side wall reading
                 resetSideWall();
@@ -94,8 +99,8 @@ void processInst(){
       //delay(200);
     
     }
-    Serial.print("No. of move inst: ");
-    Serial.println(index-1);
+    //Serial.print("No. of move inst: ");
+    //Serial.println(index-1);
     if(instBuff[0] == 'S'){
   
       setOutBuffer('S', getSensorReadingInCM(), 5);
@@ -123,7 +128,6 @@ void loop()
   //getUltraSound2Reading();
   //Serial.println("Set");
   //Serial.println(getCalibrationReading(false)[0]);
-
   
   if(dataExist()){
     //delay(100);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations 

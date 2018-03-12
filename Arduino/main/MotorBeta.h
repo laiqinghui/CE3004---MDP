@@ -30,7 +30,7 @@ void moveForwardOneGrid(int rpm){
    unsigned long tuneExitTime = 0;
    unsigned long interval = 0;
 
-   double distanceTicks = 0.95 * 9.5 * ticksPerCM;
+   double distanceTicks = 0.96 * 9.5 * ticksPerCM;
    
    Serial.print("Target Ticks: ");
    Serial.println(distanceTicks);
@@ -148,7 +148,7 @@ void moveForwardBeta(int rpm, double distance){
    unsigned long tuneExitTime = 0;
    unsigned long interval = 0;
 
-   double distanceTicks = 1 * distance * ticksPerCM;
+   double distanceTicks = 0.98 * distance * ticksPerCM;
    unsigned long currentTicksM1 = 0;
    unsigned long currentTicksM2 = 0;
    
@@ -194,7 +194,9 @@ void moveForwardBeta(int rpm, double distance){
       tuneEntryTime = micros();
         interval = tuneEntryTime - tuneExitTime;
         if(interval >= 5000){
-        
+
+      tuneMotors(rpm, &M1pid, &M2pid);
+      /*
 			if(currentTicksM1 < 0.7*distanceTicks){
 			  //tuneM1(rpm, &M1pid);
 			  //tuneM2(rpm, &M2pid);
@@ -208,6 +210,7 @@ void moveForwardBeta(int rpm, double distance){
 			  //tuneM2(rpm*0.4, &M2pid);
 			  tuneMotors(rpm*0.4, &M1pid, &M2pid);
 			}
+     */
           tuneExitTime = micros();
         }
 
