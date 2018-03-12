@@ -1,4 +1,4 @@
- #include "I2C.h"
+#include "I2C.h"
 #include "Forward.h"
 
 
@@ -40,7 +40,6 @@ void processInst(){
       case 'A': Serial.println('A');
                 moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
-                  delay(delayAmount);
                   turnPID(-1, 90);
                   delay(delayAmount);
                 }
@@ -49,7 +48,6 @@ void processInst(){
                 break;
       case 'D': moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
-                  delay(delayAmount);
                   turnPID(1, 90);
                   delay(delayAmount);
                 }
@@ -58,7 +56,6 @@ void processInst(){
                 break;
       case 'O': moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
-                  delay(delayAmount);  
                   turnPID(1, 90);
                   delay(delayAmount);
                   turnPID(1, 90);  
@@ -67,8 +64,7 @@ void processInst(){
                 //Reset side wall reading
                 resetSideWall();
                 break;
-      case ']': //PWM_Mode_Setup();
-                fastCalibration(2);
+      case ']': fastCalibration(2);
                 break;
       case 'R': fastCalibration(1);
                 break;
