@@ -57,12 +57,11 @@ class Android(threading.Thread):
             self.client_sock, self.client_info = self.server_socket.accept()
             logging.info("Accepted connection from" + str(self.client_info))
             client_MAC = self.client_info[0]
-            # if True:
-            # # if client_MAC != self.target_client:
-            #     logging.info("There was a connection attempt by an unauthorized device. Attempting to rebroadcast..")
-            #     self.client_sock.close()
-            #     self.connect()
-            #     return 0
+            if client_MAC != self.target_client:
+                logging.info("There was a connection attempt by an unauthorized device. Attempting to rebroadcast..")
+                self.client_sock.close()
+                self.connect()
+                return 0
 
             self.connected = True
             self.sendAndroid("Connection Secured")
@@ -79,7 +78,7 @@ class Android(threading.Thread):
             self.algo_thread.start()
         if mode == FASTEST_PATH:
             if len(self.fastestPathInstruction) > 0:
-                self.algo_thread.run_fatest_path_on(self.fastestPathInstruction)
+                self.algo_thread.run_fastest_path_on(self.fastestPathInstruction)
                 self.fastestPathInstruction = []
                 del self.algo_thread
             else:
@@ -104,6 +103,8 @@ class Android(threading.Thread):
                 self.stopAlgorithm()
                 robot_row, robot_col, direction = message[3:].split('L')[:-2]
                 robot_row = abs(int(robot_row) - 19)     # flip row
+                robot_col = int(robot_col)
+                direction = int(direction)
                 self.algo_thread = Algorithm(robot_row, robot_col, self.waypoint_row, self.waypoint_col, FP_GOAL_ROW, FP_GOAL_COL, FASTEST_PATH, direction)
                 self.fastestPathInstruction = self.algo_thread.determine_fastest_path()
                 logging.info("Finished calculating fastest path")
