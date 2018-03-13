@@ -292,17 +292,17 @@ void straightenTune(){
 void turnAdjust(int dir, int amount){
 	getFrontCalibrationReading(false);
 	double oldValue = getTurnValueOffset(dir, amount); 
-	double difference = (abs(frontRightReading-frontLeftReading)/3.5);
+	double difference = (abs(frontRightReading-frontLeftReading)/2);
 	//Turn Right
   if(dir == 1)
   {
     if(frontRightReading > frontLeftReading)
     { 
-      setTurnValueOffset(dir, amount, oldValue - difference);
+      setTurnValueOffset(dir, amount, oldValue + difference);
     }
     else if(frontRightReading < frontLeftReading)
     {
-      setTurnValueOffset(dir, amount, oldValue + difference);
+      setTurnValueOffset(dir, amount, oldValue - difference);
     }
   }
   //Turn Left
@@ -310,11 +310,11 @@ void turnAdjust(int dir, int amount){
   {
     if(frontRightReading < frontLeftReading)
     { 
-      setTurnValueOffset(dir, amount, oldValue - difference);
+      setTurnValueOffset(dir, amount, oldValue + difference);
     }
     else if(frontRightReading > frontLeftReading)
     {
-      setTurnValueOffset(dir, amount, oldValue + difference);
+      setTurnValueOffset(dir, amount, oldValue - difference);
     }
   }
 }

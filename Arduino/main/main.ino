@@ -112,14 +112,25 @@ void setup() {
   Serial.println("Program Started!!!!");
   md.init();
   initI2C();
+
   /*
   EEPROM.write(0, 0);
   EEPROM.write(1, 0);
   EEPROM.write(2, 0);
-  
   */
-  Serial.println(EEPROM.read(1));
+  
+  turnRight90Offset = EEPROM.read(1);
+  turnLeft90Offset = EEPROM.read(2);
 
+  if(turnRight90Offset > 127)
+  {
+    turnRight90Offset = (turnRight90Offset - 256);
+  }
+  if(turnLeft90Offset > 127)
+  {
+    turnLeft90Offset = (turnLeft90Offset - 256);
+  }
+  
   //benTestSequence();
 }
 

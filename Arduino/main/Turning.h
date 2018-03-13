@@ -7,9 +7,9 @@ void setTurnValueOffset(int dir, int turnDegree, double newValue);
 double getTurnAmount(int dir, int turnDegree);
 void turnPID(int dir, int degree);
 
-double turnRight90Offset = EEPROM.read(1)/100.0;
-double turnRight180Offset = EEPROM.read(0)/100.0;
-double turnLeft90Offset = EEPROM.read(2)/100.0;
+double turnRight90Offset = EEPROM.read(1)/10.0;
+double turnRight180Offset = EEPROM.read(0)/10.0;
+double turnLeft90Offset = EEPROM.read(2)/10.0;
 
 double getTurnValueOffset(int dir, int turnDegree) {
   //Right Turn
