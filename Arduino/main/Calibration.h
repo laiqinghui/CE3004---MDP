@@ -292,7 +292,7 @@ void straightenTune(){
 void turnAdjust(int dir, int amount){
 	getFrontCalibrationReading(false);
 	double oldValue = getTurnValueOffset(dir, amount); 
-	double difference = (abs(frontRightReading-frontLeftReading)/3);
+	double difference = (abs(frontRightReading-frontLeftReading)/3.5);
 	//Turn Right
   if(dir == 1)
   {
