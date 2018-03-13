@@ -65,6 +65,8 @@ double getTurnAmount(int dir, int turnDegree) {
 
 int m1CurrentWidthPositive = 955;
 int m1CurrentWidthNegative = 975;
+int m2TurnSpeedPostive = 330;
+int m2TurnSpeedNegative = -320;
 
 void turnPID(int dir, int degree){
 	sideWall[0] = 0;

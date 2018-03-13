@@ -24,41 +24,19 @@ double fromFrontWall = 12.5;
 double fromSideWall = 12;
 //Calibration
 void calibration(){
-  double threshold = 0.1;
-  int wait = 200;
+	double threshold = 0.2;
+	int wait = 100;
   
-	//Check positive
-    setSqWidth(0,0);
-	enableInterrupt( e1a, risingM1, RISING);
-	md.setSpeeds(310, 0);
-	delay(wait/2);
   
-	noInterrupts();
-	m1CurrentWidthPositive = squareWidth_M1;
-	interrupts();
-	md.setBrakes(400, 400);
-    setSqWidth(0,0);
+	tuneM2TurnSpeed();
 	delay(wait);
-	
-	
-	md.setSpeeds(-310, 0);
-	delay(wait/2);
-  
-	noInterrupts();
-	m1CurrentWidthNegative = squareWidth_M1;
-	interrupts();
-	md.setBrakes(400, 400);
-    setSqWidth(0,0);
-	delay(wait);
-	
-	disableInterrupt(e1a);
 
-  for(int a = 0; a<4; a++)
-  {
-    fastCalibration(2);
-  }
-  turnPID(1, 90);
-  delay(wait);
+	for(int a = 0; a<2; a++)
+	{
+		fastCalibration(2);
+	}
+	turnPID(1, 90);
+	delay(wait);
   
   for(int a = 0; a<2; a++)
   {
@@ -69,9 +47,9 @@ void calibration(){
 	  }
 	  else
 	  {
-		distancefromFrontWall(fromSideWall);
-		delay(wait);
+			distancefromFrontWall(fromSideWall);
 	  }
+	  delay(wait);
 
 	  //Fine tune the calibration
 	  int count = 0;
@@ -81,7 +59,7 @@ void calibration(){
 		straightenTune();
 		getFrontCalibrationReading(false);
 		count++;
-		if(count > 10)
+		if(count > 5)
 		{
 			break;
 		}
@@ -95,8 +73,8 @@ void calibration(){
 	  else
 	  {
 		distancefromFrontWall(fromSideWall);
-		delay(wait);
 	  }
+	  delay(wait);
 
 	  //Turn to the left by 90
 	  turnPID(-1, 90);
@@ -324,5 +302,83 @@ void turnAdjust(int dir, int amount){
 
 void tuneM2TurnSpeed()
 {
+	int delay = 100;
 	
+	//Check length of squarewidth for M1
+    setSqWidth(0,0);
+	enableInterrupt( e1a, risingM1, RISING);
+	
+	//Check positive
+	md.setSpeeds(310, 0);
+	delay(wait/2);
+	noInterrupts();
+	m1CurrentWidthPositive = squareWidth_M1;
+	interrupts();
+	md.setBrakes(400, 400);
+    setSqWidth(0,0);
+	delay(wait);
+	
+	//Check negative
+	md.setSpeeds(-310, 0);
+	delay(wait/2);
+	noInterrupts();
+	m1CurrentWidthNegative = squareWidth_M1;
+	interrupts();
+	md.setBrakes(400, 400);
+	disableInterrupt(e1a);
+    setSqWidth(0,0);
+	delay(wait);
+	
+	//Tune M2 to match M1 squarewidth
+	setSqWidth(0,0);
+	enableInterrupt( e2b, risingM2, RISING);
+	int m2CurrentWidth = 0;
+	
+	//Postive
+	while(abs(m1CurrentWidthNegative - m2CurrentWidth) > 200)
+	{
+		md.setSpeeds(0, m2TurnSpeedPostive);
+		delay(wait/2);
+		noInterrupts();
+		m2CurrentWidth = squareWidth_M2;
+		interrupts();
+		md.setBrakes(400, 400);
+		setSqWidth(0,0);
+		delay(wait);
+		
+		if(m1CurrentWidthNegative > m2CurrentWidth)
+		{
+			m2TurnSpeedPostive = m2TurnSpeedPostive - 1;
+		}
+		else if(m1CurrentWidthNegative < m2CurrentWidth)
+		{
+			m2TurnSpeedPostive = m2TurnSpeedPostive + 1;
+		}
+	}
+	
+	//Negative
+	m2CurrentWidth = 0;
+	while(abs(m1CurrentWidthNegative - m2CurrentWidth) > 200)
+	{
+		md.setSpeeds(0, m2TurnSpeedNegative);
+		delay(wait/2);
+		noInterrupts();
+		m2CurrentWidth = squareWidth_M2;
+		interrupts();
+		md.setBrakes(400, 400);
+		setSqWidth(0,0);
+		delay(wait);
+		
+		if(m1CurrentWidthPositive > m2CurrentWidth)
+		{
+			m2TurnSpeedNegative = m2TurnSpeedNegative + 1;
+		}
+		else if(m1CurrentWidthPositive < m2CurrentWidth)
+		{
+			m2TurnSpeedNegative = m2TurnSpeedNegative + 1;
+		}
+	}
+	
+	disableInterrupt(e1a);
+    setSqWidth(0,0);
 }

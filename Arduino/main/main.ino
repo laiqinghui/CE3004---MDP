@@ -117,20 +117,17 @@ void setup() {
   EEPROM.write(0, 0);
   EEPROM.write(1, 0);
   EEPROM.write(2, 0);
-  */
-
-  int a = -200;
-
-   
+  EEPROM.write(3, 0);
+  */   
+  
   //Load in the offset for turn
   unsigned int turnRight90Offset1 = EEPROM.read(0);
   unsigned int turnRight90Offset2 = EEPROM.read(1);
-  turnRight90Offset = ((signed int)((turnRight90Offset1 << 8) | turnRight90Offset2))100.0;
+  turnRight90Offset = ((signed int)((turnRight90Offset1 << 8) | turnRight90Offset2))/100.0;
 
   unsigned int turnLeft90Offset1 = EEPROM.read(2);
   unsigned int turnLeft90Offset2 = EEPROM.read(3);
   turnLeft90Offset = ((signed int)((turnLeft90Offset1 << 8) | turnLeft90Offset2))/100.0;  
-  
   
   //benTestSequence();
 }
