@@ -386,7 +386,7 @@ void turnPID(int dir, int degree){
 		enableInterrupt( e1a, risingM1Ticks, RISING);
 		enableInterrupt( e2b, risingM2Ticks, RISING);
 		md.setSpeeds(m1Speed, m2Speed);
-   setTicks(0, 0);
+    setTicks(0, 0);
 
 		while(currentTicksM1 < amount)
 		{
