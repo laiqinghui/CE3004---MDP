@@ -8,7 +8,7 @@ from pydispatch import dispatcher
 
 from robot.algorithm import Algorithm
 # from android import Android
-# from arduino import Arduino
+from arduino import Arduino
 from rpi import RPI
 import global_settings as gs
 import numpy as np
@@ -67,14 +67,14 @@ def start_robot_exploration(rr, rc, wr, wc, gr, gc, m, d, keep_alive=False):
     This function will need to move to the android.py file as a method.
     """
     rpi_thread = RPI()
-    # arduino_thread = Arduino()
+    arduino_thread = Arduino()
     algo_thread = Algorithm(rr, rc, wr, wc, gr, gc, m, d)
 
     rpi_thread.daemon = True
-    # arduino_thread.daemon = True
+    arduino_thread.daemon = True
 
     rpi_thread.start()
-    # arduino_thread.start()
+    arduino_thread.start()
     fastestPathInstruction = algo_thread.determine_fastest_path()
     logging.info("Fastest path calculated!")
     algo_thread.run_fastest_path_on(fastestPathInstruction)
