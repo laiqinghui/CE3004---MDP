@@ -12,7 +12,7 @@ void straightenTune();
 void distancefromFrontWall(double distance);
 void calibration();
 void fastCalibration(int choice);
-void turnAdjust(int dir, int amount);
+void turnAdjust(int dir);
 void tuneM2TurnSpeed();
 
 //Calibration
@@ -141,7 +141,7 @@ void fastCalibration(int choice) {
     if (choice == 2)
     {
       turnPID(1, 90);
-      turnAdjust(1, 90);
+      turnAdjust(1);
       delay(wait);
 
       //Fine tune the calibration
@@ -152,7 +152,7 @@ void fastCalibration(int choice) {
       delay(wait);
 
       turnPID(-1, 90);
-      turnAdjust(-1, 90);
+      turnAdjust(-1);
     }
   }
 }
@@ -271,20 +271,20 @@ void straightenTune() {
   }
 }
 
-void turnAdjust(int dir, int amount) {
+void turnAdjust(int dir) {
   getFrontCalibrationReading(false);
-  double oldValue = getTurnValueOffset(dir, amount);
+  double oldValue = getTurnValueOffset(dir);
   double difference = abs(frontRightReading - frontLeftReading) / 3;
   //Turn Right
   if (dir == 1)
   {
     if (frontRightReading > frontLeftReading)
     {
-      setTurnValueOffset(dir, amount, oldValue + difference);
+      setTurnValueOffset(dir, oldValue + difference);
     }
     else if (frontRightReading < frontLeftReading)
     {
-      setTurnValueOffset(dir, amount, oldValue - difference);
+      setTurnValueOffset(dir, oldValue - difference);
     }
   }
   //Turn Left
@@ -292,17 +292,16 @@ void turnAdjust(int dir, int amount) {
   {
     if (frontRightReading < frontLeftReading)
     {
-      setTurnValueOffset(dir, amount, oldValue + difference);
+      setTurnValueOffset(dir, oldValue + difference);
     }
     else if (frontRightReading > frontLeftReading)
     {
-      setTurnValueOffset(dir, amount, oldValue - difference);
+      setTurnValueOffset(dir, oldValue - difference);
     }
   }
 }
 
-void tuneM2TurnSpeed()
-{
+void tuneM2TurnSpeed(){
   int wait = 100;
 
   //Check length of squarewidth for M1
@@ -379,8 +378,6 @@ void tuneM2TurnSpeed()
       m2TurnSpeedNegative = m2TurnSpeedNegative - 1;
     }
   }
-  Serial.println(m2TurnSpeedNegative);
-  Serial.println(m2TurnSpeedPositive);
 
   disableInterrupt(e1a);
   setSqWidth(0, 0);

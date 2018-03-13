@@ -1,25 +1,6 @@
 #include "I2C.h"
 #include "Forward.h"
 
-
-void benTestSequence()
-{
-  //straightenTune();
-  //moveForward(80, 30, true);
-  //turnPID(-1, 90);
-  //md.setSpeeds(124, 170);
-  //while(true)
-  //{
-  //fastCalibration(2);
-  //}
-  //delay(1000);
-  //moveForward(80, 9.5, true);
-  //benForward(80, 9.5, true);
-  //moveForwardOneGrid(90);
-  //turnTest(-1, 90);
-  //test();
-}
-
 void processInst() {
 
   char *instBuff = getinBuffer();//inBuffer can be accessed directly but not a nice practice i think
@@ -132,7 +113,6 @@ void setup() {
   turnLeft90Offset = ((signed int)((turnLeft90Offset1 << 8) | turnLeft90Offset2)) / 100.0;
   Serial.println(turnLeft90Offset);
 
-  //benTestSequence();
 }
 
 void loop()
@@ -141,7 +121,6 @@ void loop()
     //delay(100);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations
     processInst();
   }
-
 }
 
 

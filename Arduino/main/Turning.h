@@ -2,15 +2,15 @@
 #include "PID.h"
 #include <EEPROM.h>
 //----------------------------------------------------------------TURNING----------------------------------------------------------------
-double getTurnValueOffset(int dir, int turnDegree);
-void setTurnValueOffset(int dir, int turnDegree, double newValue);
+double getTurnValueOffset(int dir);
+void setTurnValueOffset(int dir, double newValue);
 double getTurnAmount(int dir, int turnDegree);
 void turnPID(int dir, int degree);
 
 double turnRight90Offset = 0;
 double turnLeft90Offset = 0;
 
-double getTurnValueOffset(int dir, int turnDegree) {
+double getTurnValueOffset(int dir) {
   //Right Turn
   if (dir == 1)
   {
@@ -23,7 +23,7 @@ double getTurnValueOffset(int dir, int turnDegree) {
   }
 }
 
-void setTurnValueOffset(int dir, int turnDegree, double newValue) {
+void setTurnValueOffset(int dir, double newValue) {
   //Right Turn
   if (dir == 1)
   {
@@ -75,10 +75,8 @@ void turnPID(int dir, int degree) {
 
   int amount = getTurnAmount(dir, degree);
 
-  int total = 0;
   int currentTicksM1 = 0;
   int currentM2Width = 0;
-  int difference = 0;
 
   enableInterrupt( e1a, risingM1Ticks, RISING);
   enableInterrupt( e2b, risingM2, RISING);

@@ -59,7 +59,7 @@ char getUltraSoundDistance() {
 
       }
       else {
-        while (Serial.available())  byte bufferClear = Serial.read();
+        while (Serial.available()) Serial.read();
         break;
       }
     }
@@ -71,10 +71,7 @@ unsigned long getPWMReading()
 {
   OCR1A = 0;
   digitalWrite(URTRIG, HIGH);
-  Serial.println("Set");
-  Serial.println(PIND, BIN);
   digitalWrite(URTRIG, LOW);
-  Serial.println(PIND, BIN);
   digitalWrite(URTRIG, HIGH);               // reading Pin PWM will output pulses
 
   unsigned long value = pulseIn(URPWM, LOW);
@@ -90,6 +87,5 @@ unsigned int getUltraSound2Reading()
   {
     DistanceMeasured = getPWMReading();
   }
-  Serial.println(PIND, BIN);
   return DistanceMeasured / 50;         // every 50us low level stands for 1cm
 }

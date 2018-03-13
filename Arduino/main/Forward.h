@@ -66,7 +66,6 @@ void moveForwardOneGrid(int rpm) {
 
 void moveForwardBeta(int rpm, double distance) {
 
-  double rightFrontSensor = 0;
   unsigned long tuneEntryTime = 0;
   unsigned long tuneExitTime = 0;
   unsigned long interval = 0;
@@ -128,8 +127,6 @@ void moveForwardBeta(int rpm, double distance) {
     }
 
   }//end of while
-  Serial.println(M1pid.prevTuneSpeed);
-  Serial.println(M2pid.prevTuneSpeed);
 
   disableInterrupt(e1a);
   disableInterrupt(e2b);
