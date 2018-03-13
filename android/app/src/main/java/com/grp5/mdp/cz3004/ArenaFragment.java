@@ -46,7 +46,7 @@ public class ArenaFragment extends Fragment {
     private static BluetoothChatService mChatService;
     private static String btStatus;
 
-    ArrayList<GridImage> gridList = new ArrayList<GridImage>();
+    //static ArrayList<GridImage> gridList = new ArrayList<GridImage>();
 
     private static String exploredBin;
     private static String obstacleBin;
@@ -145,56 +145,49 @@ public class ArenaFragment extends Fragment {
 
         btS.setText(btStatus);
 
-        for(int y = 0; y < 20; y++){
-            for(int x = 0; x < 15; x++){
-                GridImage image = new GridImage(R.drawable.blue_square, x, y, Constants.UNEXPLORED);
-                gridList.add(image);
-            }
-        }
-
-        gridview.setAdapter( new ImageAdapter(getContext(), gridList));
+        gridview.setAdapter( new MainActivity.ImageAdapter(getContext(), MainActivity.gridList));
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                if(ImageAdapter.getGridItem(position) != null){
+                if(MainActivity.ImageAdapter.getGridItem(position) != null){
                     GridView gridview = getActivity().findViewById(R.id.map_grid);
 
                     if(setWayPointFlag){
                         if(wayRow!=null && wayCol!=null){
                             int index = Integer.valueOf(wayRow)*15 + Integer.valueOf(wayCol);
-                            gridList.get(index).setStatus(Constants.UNEXPLORED);
+                            MainActivity.gridList.get(index).setStatus(Constants.UNEXPLORED);
                         }
 
-                        ImageAdapter.getGridItem(position).setStatus(Constants.WAYPOINT);
+                        MainActivity.ImageAdapter.getGridItem(position).setStatus(Constants.WAYPOINT);
 
-                        wayRow = String.valueOf(ImageAdapter.calcRow(position));
-                        wayCol = String.valueOf(ImageAdapter.calcCol(position));
+                        wayRow = String.valueOf(MainActivity.ImageAdapter.calcRow(position));
+                        wayCol = String.valueOf(MainActivity.ImageAdapter.calcCol(position));
                         wayPos = String.valueOf(position);
 
-                        Toast.makeText(getContext(), "Waypoint of row: " + ImageAdapter.calcRow(position)
-                                        + " and col: " + ImageAdapter.calcCol(position) + " set!",
+                        Toast.makeText(getContext(), "Waypoint of row: " + MainActivity.ImageAdapter.calcRow(position)
+                                        + " and col: " + MainActivity.ImageAdapter.calcCol(position) + " set!",
                                 Toast.LENGTH_SHORT).show();
                         setWayPointFlag = false;
                         btSetWayPoint.setChecked(false);
-                        gridview.setAdapter( new ImageAdapter(getContext(), gridList));
+                        gridview.setAdapter( new MainActivity.ImageAdapter(getContext(), MainActivity.gridList));
                     } else if(setStartPointFlag){
                         if(startRow!=null && startCol!=null && startPos!=null){
                             int index = Integer.valueOf(startRow)*15 + Integer.valueOf(startCol);
-                            gridList.get(index).setStatus(Constants.UNEXPLORED);
+                            MainActivity.gridList.get(index).setStatus(Constants.UNEXPLORED);
                         }
 
-                        ImageAdapter.getGridItem(position).setStatus(Constants.START);
+                        MainActivity.ImageAdapter.getGridItem(position).setStatus(Constants.START);
 
-                        startRow = String.valueOf(ImageAdapter.calcRow(position));
-                        startCol = String.valueOf(ImageAdapter.calcCol(position));
+                        startRow = String.valueOf(MainActivity.ImageAdapter.calcRow(position));
+                        startCol = String.valueOf(MainActivity.ImageAdapter.calcCol(position));
                         startPos = String.valueOf(position);
 
-                        Toast.makeText(getContext(), "Startpoint of row: " + ImageAdapter.calcRow(position)
-                                        + " and col: " + ImageAdapter.calcCol(position) + " set!",
+                        Toast.makeText(getContext(), "Startpoint of row: " + MainActivity.ImageAdapter.calcRow(position)
+                                        + " and col: " + MainActivity.ImageAdapter.calcCol(position) + " set!",
                                 Toast.LENGTH_SHORT).show();
                         setStartPointFlag = false;
                         btSetStartPoint.setChecked(false);
-                        gridview.setAdapter( new ImageAdapter(getContext(), gridList));
+                        gridview.setAdapter( new MainActivity.ImageAdapter(getContext(), MainActivity.gridList));
                     } else if(setStartDirFlag){
                         if(startRow==null || startCol==null || startPos==null){
                             Toast.makeText(getContext(), "Please set START POINT first!",
@@ -206,20 +199,20 @@ public class ArenaFragment extends Fragment {
                                 switch(Integer.valueOf(startDir)){
                                    case Constants.NORTH:
                                        index = startP-15;
-                                       gridList.get(index).setStatus(Constants.UNEXPLORED);
+                                       MainActivity.gridList.get(index).setStatus(Constants.UNEXPLORED);
                                    case Constants.SOUTH:
                                        index = startP+15;
-                                       gridList.get(index).setStatus(Constants.UNEXPLORED);
+                                       MainActivity.gridList.get(index).setStatus(Constants.UNEXPLORED);
                                    case Constants.EAST:
                                        index = startP+1;
-                                       gridList.get(index).setStatus(Constants.UNEXPLORED);
+                                       MainActivity.gridList.get(index).setStatus(Constants.UNEXPLORED);
                                    case Constants.WEST:
                                        index = startP-1;
-                                       gridList.get(index).setStatus(Constants.UNEXPLORED);
+                                       MainActivity.gridList.get(index).setStatus(Constants.UNEXPLORED);
                                 }
                             }
 
-                            ImageAdapter.getGridItem(position).setStatus(Constants.STARTDIR);
+                            MainActivity.ImageAdapter.getGridItem(position).setStatus(Constants.STARTDIR);
 
                             int startP = Integer.valueOf(startPos);
 
@@ -246,8 +239,8 @@ public class ArenaFragment extends Fragment {
                                 return;
                             }
 
-                            Toast.makeText(getContext(), "Startdir "+ result + " of row: " + ImageAdapter.calcRow(position)
-                                            + " and col: " + ImageAdapter.calcCol(position) + " set!",
+                            Toast.makeText(getContext(), "Startdir "+ result + " of row: " + MainActivity.ImageAdapter.calcRow(position)
+                                            + " and col: " + MainActivity.ImageAdapter.calcCol(position) + " set!",
                                     Toast.LENGTH_SHORT).show();
                         }
                         setStartDirFlag = false;
@@ -256,14 +249,14 @@ public class ArenaFragment extends Fragment {
                         dirCol=startCol;
                         dirDir=startDir;
                         Log.d("COORD_DEBUG", startRow + " " + startCol + " " + startDir);
-                        updateMap(exploredBin, obstacleBin, true);
-                        updateRobot(dirRow, dirCol, dirDir, "1", true);
+                        ((MainActivity)getActivity()).update(null, null,
+                                dirRow, dirCol, dirDir, "1", true);
                     } else {
                         Toast.makeText(getContext(), "array_index: "
-                                        + gridList.indexOf(ImageAdapter.getGridItem(position))
+                                        + MainActivity.gridList.indexOf(MainActivity.ImageAdapter.getGridItem(position))
                                         + " position: " + position
-                                        + " row: " + ImageAdapter.calcRow(position)
-                                        + " col: " + ImageAdapter.calcCol(position),
+                                        + " row: " + MainActivity.ImageAdapter.calcRow(position)
+                                        + " col: " + MainActivity.ImageAdapter.calcCol(position),
                                 Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -341,8 +334,8 @@ public class ArenaFragment extends Fragment {
                             calibrate += " ";
                             calibrate += wayCol;
                             ((MainActivity)getActivity()).sendMessage(calibrate);
-                            updateMap(exploredBin, obstacleBin, true);
-                            updateRobot(dirRow, dirCol, dirDir, "1", true);
+                            ((MainActivity)getActivity()).update(null, null,
+                                    null, null, dirDir, null, true);
                             calibrateFlag = true;
                         } else {
                             Toast.makeText(getActivity(), "WAYPOINT not set!", Toast.LENGTH_SHORT).show();
@@ -354,6 +347,7 @@ public class ArenaFragment extends Fragment {
         btUpdateToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     manualUpdateFlag = isChecked;
+                    ((MainActivity)getActivity()).toggleManualUpdateFlag(isChecked);
                 }
             }
         );
@@ -362,8 +356,8 @@ public class ArenaFragment extends Fragment {
                     public void onClick(View view) {
                         if(manualUpdateFlag){
                             //implement  method to refresh grid map
-                            updateMap(exploredBin, obstacleBin, true);
-                            updateRobot(dirRow, dirCol, dirDir, dirMoveOrStop, true);
+                            ((MainActivity)getActivity()).update(null, null,
+                                    null, null, null, null, true);
                         }
                     }
                 }
@@ -446,7 +440,25 @@ public class ArenaFragment extends Fragment {
         return view;
     }
 
-    private void resetMap() {
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnMapUpdateListener) {
+            mListener = (OnMapUpdateListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnMapUpdateListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+
+    void resetMap() {
         exploredBin = "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
         obstacleBin = "0";
 
@@ -470,139 +482,27 @@ public class ArenaFragment extends Fragment {
 
         calibrateFlag=false;
 
-        updateMap(exploredBin, obstacleBin, true);
-        updateRobot(dirRow, dirCol, dirDir, dirMoveOrStop, true);
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnMapUpdateListener) {
-            mListener = (OnMapUpdateListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnMapUpdateListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    public void updateMap(String exploredBin, String obstacleBin, boolean force) {
-        Log.d("EXPLORED_BIN", exploredBin);
-        Log.d("OBSTACEL_BIN", obstacleBin);
-
-        ArenaFragment.exploredBin = exploredBin;
-        ArenaFragment.obstacleBin = obstacleBin;
-
-        if(!manualUpdateFlag || force){
-            int obsCount = 0;
-
-            for (int i = 0; i < exploredBin.length(); i++){
-                char c = exploredBin.charAt(i);
-                //Log.d("EXP", String.valueOf(Integer.parseInt(String.valueOf(c))));
-                if(Integer.parseInt(String.valueOf(c)) == 1){
-                    GridImage grid = gridList.get(i);
-                    if (grid != null) {
-                        char x = obstacleBin.charAt(obsCount);
-                        //Log.d("OBS", String.valueOf(Integer.parseInt(String.valueOf(x))));
-                        if(Integer.parseInt(String.valueOf(x)) == 1){
-                            grid.setStatus(Constants.OBSTACLE);
-                        } else {
-                            grid.setStatus(Constants.EXPLORED);
-                        }
-                        obsCount++;
-                    }
-                } else {
-                    GridImage grid = gridList.get(i);
-                    if (grid != null) {
-                        grid.setStatus(Constants.UNEXPLORED);
-                    }
-                }
-            }
-            GridView gridview = getActivity().findViewById(R.id.map_grid);
-            gridview.setAdapter( new ImageAdapter(getContext(), gridList));
-        }
-    }
-
-    public void updateRobot(String dirRow, String dirCol, String dirDir,
-                            String dirMoveOrStop, boolean force) {
-        ArenaFragment.dirRow = dirRow;
-        ArenaFragment.dirCol = dirCol;
-        ArenaFragment.dirDir = dirDir;
-        ArenaFragment.dirMoveOrStop = dirMoveOrStop;
-
-        if(!manualUpdateFlag || force){
-
-            int index = Integer.valueOf(dirRow)*15 + Integer.valueOf(dirCol);
-            GridImage image1 = gridList.get(index);
-            image1.setStatus(Constants.ROBOT_BODY);
-            GridImage image2 = gridList.get(index+1);
-            image2.setStatus(Constants.ROBOT_BODY);
-            GridImage image3 = gridList.get(index-1);
-            image3.setStatus(Constants.ROBOT_BODY);
-            GridImage image4 = gridList.get(index-15);
-            image4.setStatus(Constants.ROBOT_BODY);
-            GridImage image5 = gridList.get(index+15);
-            image5.setStatus(Constants.ROBOT_BODY);
-            GridImage image6 = gridList.get(index-14);
-            image6.setStatus(Constants.ROBOT_BODY);
-            GridImage image7 = gridList.get(index+14);
-            image7.setStatus(Constants.ROBOT_BODY);
-            GridImage image8 = gridList.get(index-16);
-            image8.setStatus(Constants.ROBOT_BODY);
-            GridImage image9 = gridList.get(index+16);
-            image9.setStatus(Constants.ROBOT_BODY);
-
-            Log.d("HEADDIR", dirDir);
-
-            switch(Integer.valueOf(dirDir)){
-                case Constants.NORTH:
-                    image5.setStatus(Constants.ROBOT_HEAD);
-                    break;
-                case Constants.SOUTH:
-                    image4.setStatus(Constants.ROBOT_HEAD);
-                    break;
-                case Constants.EAST:
-                    image2.setStatus(Constants.ROBOT_HEAD);
-                    break;
-                case Constants.WEST:
-                    image3.setStatus(Constants.ROBOT_HEAD);
-                    break;
-            }
-
-            TextView move_or_stop = getActivity().findViewById(R.id.robotStatus);
-            if(Integer.valueOf(dirMoveOrStop) == 1){
-                move_or_stop.setText(R.string.robot_stopped);
-            } else {
-                move_or_stop.setText(R.string.robot_moving);
-            }
-
-            GridView gridview = getActivity().findViewById(R.id.map_grid);
-            gridview.setAdapter( new ImageAdapter(getContext(), gridList));
-        }
+        ((MainActivity)getActivity()).update(exploredBin, obstacleBin,
+                dirRow, dirCol, dirDir, dirMoveOrStop, true);
     }
 
     void animateForward(){
         switch(Integer.valueOf(dirDir)){
             case Constants.NORTH:
-                updateMap(exploredBin, obstacleBin, true);
-                updateRobot(String.valueOf((Integer.valueOf(dirRow)+1)), dirCol, String.valueOf(Constants.NORTH), "1", true);
+                ((MainActivity)getActivity()).update(null, null,
+                        String.valueOf((Integer.valueOf(dirRow)+1)), dirCol, String.valueOf(Constants.NORTH), "1", true);
                 break;
             case Constants.SOUTH:
-                updateMap(exploredBin, obstacleBin, true);
-                updateRobot(String.valueOf((Integer.valueOf(dirRow)-1)), dirCol, String.valueOf(Constants.SOUTH), "1", true);
+                ((MainActivity)getActivity()).update(null, null,
+                        String.valueOf((Integer.valueOf(dirRow)-1)), dirCol, String.valueOf(Constants.SOUTH), "1", true);
                 break;
             case Constants.EAST:
-                updateMap(exploredBin, obstacleBin, true);
-                updateRobot(dirRow, String.valueOf((Integer.valueOf(dirCol)+1)), String.valueOf(Constants.EAST), "1", true);
+                ((MainActivity)getActivity()).update(null, null,
+                        dirRow, String.valueOf((Integer.valueOf(dirCol)+1)), String.valueOf(Constants.EAST), "1", true);
                 break;
             case Constants.WEST:
-                updateMap(exploredBin, obstacleBin, true);
-                updateRobot(dirRow, String.valueOf((Integer.valueOf(dirCol)-1)), String.valueOf(Constants.WEST), "1", true);
+                ((MainActivity)getActivity()).update(null, null,
+                        dirRow, String.valueOf((Integer.valueOf(dirCol)-1)), String.valueOf(Constants.WEST), "1", true);
                 break;
         }
     }
@@ -610,16 +510,20 @@ public class ArenaFragment extends Fragment {
     void animateTurnRight(){
         switch(Integer.valueOf(dirDir)){
             case Constants.NORTH:
-                updateRobot(dirRow, dirCol, String.valueOf(Constants.EAST), "1", true);
+                ((MainActivity)getActivity()).update(null, null,
+                        dirRow, dirCol, String.valueOf(Constants.EAST), "1", true);
                 break;
             case Constants.SOUTH:
-                updateRobot(dirRow, dirCol, String.valueOf(Constants.WEST), "1", true);
+                ((MainActivity)getActivity()).update(null, null,
+                        dirRow, dirCol, String.valueOf(Constants.WEST), "1", true);
                 break;
             case Constants.EAST:
-                updateRobot(dirRow, dirCol, String.valueOf(Constants.SOUTH), "1", true);
+                ((MainActivity)getActivity()).update(null, null,
+                        dirRow, dirCol, String.valueOf(Constants.SOUTH), "1", true);
                 break;
             case Constants.WEST:
-                updateRobot(dirRow, dirCol, String.valueOf(Constants.NORTH), "1", true);
+                ((MainActivity)getActivity()).update(null, null,
+                        dirRow, dirCol, String.valueOf(Constants.NORTH), "1", true);
                 break;
         }
     }
@@ -627,16 +531,20 @@ public class ArenaFragment extends Fragment {
     void animateTurnLeft(){
         switch(Integer.valueOf(dirDir)){
             case Constants.NORTH:
-                updateRobot(dirRow, dirCol, String.valueOf(Constants.WEST), "1", true);
+                ((MainActivity)getActivity()).update(null, null,
+                        dirRow, dirCol, String.valueOf(Constants.WEST), "1", true);
                 break;
             case Constants.SOUTH:
-                updateRobot(dirRow, dirCol, String.valueOf(Constants.EAST), "1", true);
+                ((MainActivity)getActivity()).update(null, null,
+                        dirRow, dirCol, String.valueOf(Constants.EAST), "1", true);
                 break;
             case Constants.EAST:
-                updateRobot(dirRow, dirCol, String.valueOf(Constants.NORTH), "1", true);
+                ((MainActivity)getActivity()).update(null, null,
+                        dirRow, dirCol, String.valueOf(Constants.NORTH), "1", true);
                 break;
             case Constants.WEST:
-                updateRobot(dirRow, dirCol, String.valueOf(Constants.SOUTH), "1", true);
+                ((MainActivity)getActivity()).update(null, null,
+                        dirRow, dirCol, String.valueOf(Constants.SOUTH), "1", true);
                 break;
         }
     }
@@ -676,7 +584,6 @@ public class ArenaFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnMapUpdateListener {
-        void onMapUpdateReceived(String message);
         void onBluetoothStateChange(String btStatus);
         void onVoiceCommand(String command);
         void onOrientationChanged(float x, float y, float z);
@@ -740,157 +647,5 @@ public class ArenaFragment extends Fragment {
         };
 
         mTimer1.schedule(mTt1, 1000);
-    }
-
-    private static class ImageAdapter extends BaseAdapter {
-        private Context mContext;
-        private static ArrayList<GridImage> gridList;
-
-        public ImageAdapter(Context c, ArrayList<GridImage> glist) {
-            mContext = c;
-            gridList = glist;
-        }
-
-        public static int calcCol(int position) {
-            return getGridItem(position).getCol();
-        }
-
-        public static int calcRow(int position) {
-            return getGridItem(position).getRow();
-        }
-
-        public int getCount() {
-            return 336;
-        }
-
-        public static GridImage getGridItem(int position) {
-            int y = 19-(position/16);
-            int x = position%16 - 1;
-            int index = y*15 + x;
-            if(index >= 0 && gridList.size() > index){
-                return gridList.get(index);
-            } else {
-                return null;
-            }
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return null;
-        }
-
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        // create a new ImageView for each item referenced by the Adapter
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ImageView imageView;
-            TextView textView;
-            if (position == 320){
-                if (convertView == null) {
-                    textView = new TextView(mContext);
-                    textView.setText("");
-                } else {
-                    return convertView;
-                }
-                return textView;
-            } else if(position%16 == 0){
-                if (convertView == null) {
-                    textView = new TextView(mContext);
-                    textView.setText(String.valueOf(19-(position/16)));
-                } else {
-                    return convertView;
-                }
-                return textView;
-            } else if(position > 320){
-                if (convertView == null) {
-                    textView = new TextView(mContext);
-                    textView.setText(String.valueOf(position-321));
-                } else {
-                    return convertView;
-                }
-                return textView;
-            } else{
-                if (convertView == null) {
-                    // if it's not recycled, initialize some attributes
-                    imageView = new ImageView(mContext);
-                    imageView.setLayoutParams(new GridView.LayoutParams(30, 30));
-                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                    imageView.setPadding(1,1,1,1);
-                } else {
-                    return convertView;
-                }
-                imageView.setImageResource(getGridItem(position).getImageId());
-                return imageView;
-            }
-        }
-    }
-
-    private class GridImage {
-        int imageId;
-        int row;
-        int col;
-        int status;
-
-        GridImage(int imageId, int col, int row, int status){
-            this.imageId = imageId;
-            this.row = row;
-            this.col = col;
-            this.status = status;
-        }
-
-        public int getRow(){
-            return this.row;
-        }
-
-        public int getCol(){
-            return this.col;
-        }
-
-        public int getImageId(){
-            return this.imageId;
-        }
-
-        public void setImageId(int imageId){
-            this.imageId = imageId;
-        }
-
-        public int getStatus(){
-            return this.status;
-        }
-
-        public void setStatus(int status){
-            this.status = status;
-            switch(status){
-                case Constants.EXPLORED:
-                    this.setImageId(R.drawable.green_square);
-                    break;
-                case Constants.UNEXPLORED:
-                    this.setImageId(R.drawable.blue_square);
-                    break;
-                case Constants.OBSTACLE:
-                    this.setImageId(R.drawable.red_square);
-                    break;
-                case Constants.ROBOT_BODY:
-                    this.setImageId(R.drawable.yellow_square);
-                    break;
-                case Constants.ROBOT_HEAD:
-                    this.setImageId(R.drawable.black_square);
-                    break;
-                case Constants.START:
-                    this.setImageId(R.drawable.orange_square);
-                    break;
-                case Constants.GOAL:
-                    this.setImageId(R.drawable.orange_square);
-                    break;
-                case Constants.WAYPOINT:
-                    this.setImageId(R.drawable.orange_square);
-                    break;
-                case Constants.STARTDIR:
-                    this.setImageId(R.drawable.black_square);
-                    break;
-            }
-        }
     }
 }
