@@ -41,7 +41,7 @@ class RPI(threading.Thread):
             instruction = message[0]
             raw_instruction = ''.join(instruction)
             aggregated_instruction_list = gs.aggregate_instruction(raw_instruction)
-            formatted_instruction = 'C' + ','.join(aggregated_instruction_list) + ';'
+            formatted_instruction = 'C' + ''.join(aggregated_instruction_list) + ';'
         # if exploration
         if len(message) > 1:
 
