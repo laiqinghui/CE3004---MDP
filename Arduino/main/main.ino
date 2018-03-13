@@ -26,30 +26,31 @@ void processInst() {
   int index = 1;//Start with 1 as first character is sensor flag which is checked after moving
   char num[1] = {0};// For checklist
   int moveCount = 0;
-  int delayAmount = 200;
+  int delayAmount = 100;
 
   while (instBuff[index] != ';') {
     switch (instBuff[index]) {
 
       case 'W': moveCount = instBuff[index + 1] - 48;
-        //delay(delayAmount);
-        if (moveCount == 1)
-          moveForwardOneGrid(90);
-        else //moveForward(90, 9.5*moveCount, true);
-          moveForwardBeta(90, 9.7 * moveCount);
-        break;
-      case 'A': Serial.println('A');
-        moveCount = instBuff[index + 1] - 48;
-        for (int a = 0; a < moveCount; a++) {
-          turnPID(-1, 90);
-          delay(delayAmount);
-        }
-        //Reset side wall reading
-        resetSideWall();
-        break;
+				//delay(delayAmount);
+				if (moveCount == 1)
+				  moveForwardOneGrid(90);
+				else //moveForward(90, 9.5*moveCount, true);
+				  moveForwardBeta(90, 9.7 * moveCount);
+				break;
+      case 'A': moveCount = instBuff[index + 1] - 48;
+				for (int a = 0; a < moveCount; a++) {
+				  delay(delayAmount);
+				  turnPID(-1, 90);
+				  delay(delayAmount);
+				}
+				//Reset side wall reading
+				resetSideWall();
+				break;
       case 'D': moveCount = instBuff[index + 1] - 48;
         for (int a = 0; a < moveCount; a++) {
-          turnPID(1, 90);
+          delay(delayAmount);
+		  turnPID(1, 90);
           delay(delayAmount);
         }
         //Reset side wall reading
@@ -136,11 +137,6 @@ void setup() {
 
 void loop()
 {
-  //PWM_Mode_Setup();
-  //getUltraSound2Reading();
-  //Serial.println("Set");
-  //Serial.println(getIRSensorReading()[1]);
-
   if (dataExist()) {
     //delay(100);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations
     processInst();

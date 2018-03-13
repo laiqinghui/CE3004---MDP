@@ -10,19 +10,6 @@ double* getIRSensorReading();
 char* getSensorReadingInCM();
 double sortAndAverage(int* listOfReadings, int size, int amount);
 
-/*
-  sensorValues[0] Front Left Sensor
-  sensorValues[1] Front Right Sensor
-  sensorValues[2] Left Sensor
-  sensorValues[3] Right Sensor
-
-  sensorsValuesArray[0] Front Left Sensor
-  sensorsValuesArray[1] Front Center Sensor (UltraSound)
-  sensorsValuesArray[2] Front Right Sensor
-  sensorsValuesArray[3] Right Sensor
-  sensorsValuesArray[4] Left Sensor
-*/
-
 //These arrays need to be outside if not the values will be weird
 double sensorValues[4];
 char sensorsValuesArray[5];
@@ -43,6 +30,7 @@ char* getSensorReadingInCM() {
   */
   getIRSensorReading();
 
+  //------------------------------------FRONT LEFT-----------------------------------------------------
   //PS4 y = 5546.9x - 0.7029
   //Limit is 50cm
   double frontLeftValue = sensorValues[0];
@@ -58,6 +46,7 @@ char* getSensorReadingInCM() {
   //Ultrasound reading
   sensorsValuesArray[1] = getUltraSoundDistance();        //getUltraSoundDistance(); //Center
 
+  //------------------------------------FRONT RIGHT-----------------------------------------------------
   //PS2 y = 5738x - 1.1941
   //Limit is 45cm
   double frontRightValue = sensorValues[1];
@@ -70,6 +59,7 @@ char* getSensorReadingInCM() {
     sensorsValuesArray[2] = (5738 / frontRightValue) - 1.1941;
   }
 
+  //------------------------------------RIGHT-----------------------------------------------------
   //PS3 y = 5260x - 0.3915 //add 3 to offset
   //Limit is 50cm
   double rightValue = sensorValues[3];
@@ -96,7 +86,7 @@ char* getSensorReadingInCM() {
     sideWall[0] = 0;
   }
 
-
+  //------------------------------------LEFT-----------------------------------------------------
   //PS1 y = 12256x - 1.948 //if value is above 70, subtract 1; //minus 2 to offset //if value is below 25, subtract 1
   //Limit is 60cm
   double leftValue = sensorValues[2];

@@ -74,8 +74,8 @@ void moveForwardBeta(int rpm, double distance) {
   unsigned long currentTicksM1 = 0;
   unsigned long currentTicksM2 = 0;
 
-  int m1setSpeed = 100;
-  int m2setSpeed = 100;
+  int m1setSpeed = 245;
+  int m2setSpeed = 267;
 
   //Check using right side sensor if need to calibrate
   calibrateBeforeMoveForward();
@@ -128,6 +128,8 @@ void moveForwardBeta(int rpm, double distance) {
     }
 
   }//end of while
+  Serial.println(M1pid.prevTuneSpeed);
+  Serial.println(M2pid.prevTuneSpeed);
 
   disableInterrupt(e1a);
   disableInterrupt(e2b);
