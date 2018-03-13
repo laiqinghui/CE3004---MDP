@@ -15,8 +15,9 @@ void benTestSequence()
   //delay(1000);
   //moveForward(80, 9.5, true);
   //benForward(80, 9.5, true);
-  //moveForwardOneGrid(80);
+  //moveForwardOneGrid(90);
   //turnTest(-1, 90);
+  //test();
 }
 
 void processInst(){
@@ -111,8 +112,13 @@ void setup() {
   Serial.println("Program Started!!!!");
   md.init();
   initI2C();
+  /*
+  EEPROM.write(0, 0);
+  EEPROM.write(1, 0);
+  EEPROM.write(2, 0);
+  */
 
-  benTestSequence();
+  //benTestSequence();
 }
 
 void loop() 
@@ -120,12 +126,12 @@ void loop()
   //PWM_Mode_Setup();
   //getUltraSound2Reading();
   //Serial.println("Set");
-  //Serial.println(getCalibrationReading(false)[0]);
-  
+  //Serial.println(getIRSensorReading()[1]);
+    
   if(dataExist()){
     //delay(100);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations 
     processInst();
-    }
+  }
     
 }
 

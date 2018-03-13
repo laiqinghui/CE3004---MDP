@@ -1,60 +1,60 @@
 #include "Constants.h"
 #include "PID.h"
+#include <EEPROM.h>
 //----------------------------------------------------------------TURNING----------------------------------------------------------------
-double getDiameterValue(int dir, int turnDegree);
-void setDiameterValue(int dir, int turnDegree, double newValue);
+double getTurnValueOffset(int dir, int turnDegree);
+void setTurnValueOffset(int dir, int turnDegree, double newValue);
 double getTurnAmount(int dir, int turnDegree);
 void turnPID(int dir, int degree);
 
-double turnRight90 = 44.52;
-double turnRight180 = 47.7;
-double turnLeft90 = 43.25;
+double turnRight90Offset = EEPROM.read(1)/100.0;
+double turnRight180Offset = EEPROM.read(0)/100.0;
+double turnLeft90Offset = EEPROM.read(2)/100.0;
 
-double getDiameterValue(int dir, int turnDegree) {
+double getTurnValueOffset(int dir, int turnDegree) {
   //Right Turn
   if (dir == 1)
   {
     if (turnDegree == 180)
     {
-		return turnRight180;
+		return turnRight180Offset;
     }
     else
     {
-		return turnRight90;
+		return turnRight90Offset;
     }
   }
   //Left Turn
   else
   {
-    return turnLeft90;
+    return turnLeft90Offset;
   }
 }
 
-void setDiameterValue(int dir, int turnDegree, double newValue){
-	Serial.println("Set");
-	Serial.println(getTurnAmount(dir,turnDegree));
+void setTurnValueOffset(int dir, int turnDegree, double newValue){
   //Right Turn
   if (dir == 1)
   {
     //180
     if (turnDegree == 180)
     {
-	  turnRight180 = newValue;
+	  turnRight180Offset = newValue;
+	  EEPROM.write(0, newValue*100);
       
     }
     //90
     else
     {
-		turnRight90 = newValue;
-      
+		turnRight90Offset = newValue;
+		EEPROM.write(1, newValue*100);
     }
   }
   //Left Turn
   else
   {
-     turnLeft90 = newValue;
+     turnLeft90Offset = newValue;
+	 EEPROM.write(2, newValue*100);
   }
-  Serial.println(newValue);
 }
 
 double getTurnAmount(int dir, int turnDegree) {
@@ -64,22 +64,25 @@ double getTurnAmount(int dir, int turnDegree) {
     //180
     if (turnDegree == 180)
     {
-	  return abs(turnRight180 * 0.5 * ticksPerCM);
+	  return abs(47.7 * 0.5 * ticksPerCM) - turnRight180Offset;
       
     }
     //90
     else
     {
-		return abs(turnRight90 * (turnDegree / 360.0) * ticksPerCM);
+		return abs(44.52 * (turnDegree / 360.0) * ticksPerCM) - turnRight90Offset;
       
     }
   }
   //Left Turn
   else
   {
-    return abs(turnLeft90 * (turnDegree / 360.0) * ticksPerCM);
+    return abs(43.25 * (turnDegree / 360.0) * ticksPerCM) - turnLeft90Offset;
   }
 }
+
+int m1CurrentWidthPositive = 955;
+int m1CurrentWidthNegative = 975;
 
 void turnPID(int dir, int degree){
 	sideWall[0] = 0;
@@ -90,16 +93,16 @@ void turnPID(int dir, int degree){
 	
 	int total = 0;
 	int currentTicksM1 = 0;
-	int currentTicksM2 = 0;
+	int currentM2Width = 0;
 	int difference = 0;
 	
 	enableInterrupt( e1a, risingM1Ticks, RISING);
-	enableInterrupt( e2b, risingM2Ticks, RISING);
+	enableInterrupt( e2b, risingM2, RISING);
 	setTicks(0, 0);
 	
 	if(dir == 1)
 	{
-		int m1Speed = -302;
+		int m1Speed = -310;
 		int m2Speed = 330;
 		md.setSpeeds(m1Speed, m2Speed);
 		
@@ -108,15 +111,15 @@ void turnPID(int dir, int degree){
 			
 			noInterrupts();
 			currentTicksM1 = M1ticks;
-			difference = M1ticks - M2ticks;
+			currentM2Width = squareWidth_M2;
 			interrupts();
      
-			if(difference < 0)
+			if(currentM2Width > m1CurrentWidthNegative)
 			{
 				m2Speed = m2Speed - 1;
 				OCR1B = m2Speed;
 			}
-			else if(difference > 0)
+			else if(currentM2Width < m1CurrentWidthNegative)
 			{
 				m2Speed = m2Speed + 1;
 				OCR1B = m2Speed;
@@ -125,25 +128,25 @@ void turnPID(int dir, int degree){
 	}
 	else
 	{
-		int m1Speed = 302;
-		int m2Speed = -330;
+		int m1Speed = 310;
+		int m2Speed = -320;
 		md.setSpeeds(m1Speed, m2Speed);
 
 		while(currentTicksM1 < amount)
 		{
 			noInterrupts();
 			currentTicksM1 = M1ticks;
-			difference = M1ticks - M2ticks;
+			currentM2Width = squareWidth_M2;
 			interrupts();
      
-			if(difference < 0)
-			{
-				m2Speed = m2Speed + 1;
-				OCR1B = m2Speed;
-			}
-			else if(difference > 0)
+			if(currentM2Width < m1CurrentWidthPositive)
 			{
 				m2Speed = m2Speed - 1;
+				OCR1B = m2Speed;
+			}
+			else if(currentM2Width > m1CurrentWidthPositive)
+			{
+				m2Speed = m2Speed + 1;
 				OCR1B = m2Speed;
 			}
 		}
@@ -153,4 +156,15 @@ void turnPID(int dir, int degree){
 	disableInterrupt(e1a);
 	disableInterrupt(e2b);
 	setTicks(0, 0);
+	setSqWidth(0,0);
+}
+
+void test()
+{
+	enableInterrupt( e1a, risingM1, RISING);
+	md.setSpeeds(-310, 0);
+	while(true)
+	{
+		Serial.println(squareWidth_M1);
+	}
 }

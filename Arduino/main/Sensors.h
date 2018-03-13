@@ -26,7 +26,7 @@ double sortAndAverage(int* listOfReadings, int size, int amount);
 //These arrays need to be outside if not the values will be weird
 double sensorValues[4];
 char sensorsValuesArray[5];
-int sideWall[3] = {1, 1, 1};
+int sideWall[3] = {0, 1, 1};
 
 void resetSideWall(){
    sideWall[0] = 0;
@@ -58,16 +58,16 @@ char* getSensorReadingInCM(){
   //Ultrasound reading
   sensorsValuesArray[1] = getUltraSoundDistance();        //getUltraSoundDistance(); //Center
 
-  //PS2 y = 6290.4x - 1.6964 //subtract another 2 to offset
+  //PS2 y = 5738x - 1.1941
   //Limit is 45cm
   double frontRightValue = sensorValues[1];
-  if(frontRightValue < 134)
+  if(frontRightValue < 120)
   {
     sensorsValuesArray[2] = -1;
   }
   else
   {
-    sensorsValuesArray[2] = (6290.4/frontRightValue) - 2.6964;
+    sensorsValuesArray[2] = (5738/frontRightValue) - 1.1941;
   }
 
   //PS3 y = 5260x - 0.3915 //add 3 to offset
@@ -97,7 +97,7 @@ char* getSensorReadingInCM(){
   }
 	  
   
-  //PS1 y = 12256x - 1.948 //if value is above 70, subtract 1; //add 2 to offset //if value is below 25, subtract 1
+  //PS1 y = 12256x - 1.948 //if value is above 70, subtract 1; //minus 2 to offset //if value is below 25, subtract 1
   //Limit is 60cm
   double leftValue = sensorValues[2];
   if(leftValue < 170)
@@ -106,11 +106,11 @@ char* getSensorReadingInCM(){
   }
   else
   {
-    sensorsValuesArray[4] = (12256/leftValue) + 0.948;
+    sensorsValuesArray[4] = (12256/leftValue) - 1.948;
   }
   if(sensorsValuesArray[4] <= 25)
   {
-    sensorsValuesArray[4] = sensorsValuesArray[4] - 1;
+    sensorsValuesArray[4] = sensorsValuesArray[4] - 3;
   }
   
   if(sensorsValuesArray[4] > 70)
@@ -158,7 +158,7 @@ double sortAndAverage(int* listOfReadings, int size, int amount)
 //Get average reading over a number of samples
 double* getIRSensorReading()
 {
-  int size = 50;
+  int size = 70;
   
   int listOfReadingsFL[size];
   int listOfReadingsFR[size];
