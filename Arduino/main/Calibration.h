@@ -1,13 +1,4 @@
-#include "DualVNH5019MotorShield.h"
-#include "Motor.h"
-
-//------------Wheel Encoders constants------------
-#define e1a 3
-#define e1b 5
-#define e2a 11
-#define e2b 13
-
-#define rightBack A4 // Right PS5
+#include "Turning.h"
 
 #define frontLeftReading frontSensorsCalibrationCM[0]
 #define frontRightReading frontSensorsCalibrationCM[1]
@@ -18,246 +9,171 @@
 //Function Declaration
 void straighten();
 void straightenTune();
-void distanceFromWall(double distance);
+void distancefromFrontWall(double distance);
 void calibration();
+void fastCalibration(int choice);
+void turnAdjust(int dir, int amount);
 
-//Front Calibration
+//Calibration
 double frontSensorsCalibrationCM[2];
 double calibrationFrontSensorRaw[2];
 double* getFrontCalibrationReading(boolean quick);
 double* calibrationFrontSensorReading();
 
-//Side Calibration
-double sideSensorsCalibrationCM[2];
-double calibrationSideSensorRaw[2];
-double* getSideCalibrationReading(boolean quick);
-double* calibrationSideSensorReading();
-
-
-
+double fromFrontWall = 12.5;
+double fromSideWall = 12;
 //Calibration
 void calibration(){
   double threshold = 0.1;
-  double startWall = 13.65;
-  double leftWall = 13.;
   int wait = 200;
   
-  //Quick calibration against wall
-  straighten();
-  delay(wait);
+    setSqWidth(0,0);
+  enableInterrupt( e1a, risingM1, RISING);
+  md.setSpeeds(310, 0);
+  delay(wait/2);
+  
+  noInterrupts();
+	m1CurrentWidthPositive = squareWidth_M1;
+	interrupts();
+  md.setBrakes(400, 400);
+    setSqWidth(0,0);
+	delay(wait);
+	
+	
+	  md.setSpeeds(-310, 0);
+  delay(wait/2);
+  
+  noInterrupts();
+	m1CurrentWidthNegative = squareWidth_M1;
+	interrupts();
+  md.setBrakes(400, 400);
+      setSqWidth(0,0);
+	delay(wait);
 
-  //Move to the distance from wall
-  distanceFromWall(startWall);
-  delay(wait);
-
-  //Fine tune the calibration
-  int count = 0;
-  getFrontCalibrationReading(false);
-  while(abs(frontRightReading - frontLeftReading) > threshold)
+  for(int a = 0; a<4; a++)
   {
-    if(count == 4)
-    {
-      md.setSpeeds(75, 0);
-      delay(300);
-      md.setBrakes(400, 400);
-      count = 0;
-    }
-    straightenTune();
-    count++;
-    
-    delay(100);
-    getFrontCalibrationReading(false);
+    fastCalibration(2);
   }
-  delay(wait);
-
-  //Fine tune distance from wall
-  distanceFromWall(startWall);
-  delay(wait);
-
-  //Turn to the left by 90
-  turnTest(-1, 90);
+  turnPID(1, 90);
   delay(wait);
   
-  //Move to the distance from wall
-  distanceFromWall(leftWall);
-  delay(wait);
-
-  //Fine tune the calibrationu
-  count = 0;
-  getFrontCalibrationReading(false);
-  while(abs(frontRightReading - frontLeftReading) > threshold)
+  for(int a = 0; a<2; a++)
   {
-    if(count == 4)
-    {
-      md.setSpeeds(75, 0);
-      delay(300);
-      md.setBrakes(400, 400);
-      count = 0;
-    }
-    straightenTune();
-    count++;
-    
-    delay(100);
-    getFrontCalibrationReading(false);
-  }
-  delay(wait);
+	  if(a == 0)
+	  {
+		  //Move to the distance from wall
+			distancefromFrontWall(fromFrontWall);
+	  }
+	  else
+	  {
+		distancefromFrontWall(fromSideWall);
+		delay(wait);
+	  }
 
-  //Fine tune the distance from wall
-  distanceFromWall(leftWall);
-  delay(wait);
-
-  //Turn to the left by 90
-  turnTest(-1, 90);
-  delay(wait);
-}
-
-
-void sideCalibration()
-{
-	if(canSideCalibrate())
-	{
-		double threshold = 0.2;
-		
-		getSideCalibrationReading(false);
-		if(abs(rightFrontReading - rightBackReading) > threshold)
+	  //Fine tune the calibration
+	  int count = 0;
+	  getFrontCalibrationReading(false);
+	  while(abs(frontRightReading - frontLeftReading) > threshold)
+	  {
+		straightenTune();
+		getFrontCalibrationReading(false);
+		count++;
+		if(count > 10)
 		{
-			if(rightFrontReading > rightBackReading)
-			{
-				md.setSpeeds(-69, 120);
-				while(frontRightReading > frontLeftReading)
-				{
-					getSideCalibrationReading(true);
-				}
-			}
-			else if(rightFrontReading < rightBackReading)
-			{
-				md.setSpeeds(75, -120);
-				while(frontRightReading < frontLeftReading)
-				{
-					getSideCalibrationReading(true);
-				}
-			}
+			break;
 		}
-		md.setBrakes(400, 400);
-	}
+	  }
+
+	  if(a == 0)
+	  {
+		  //Move to the distance from wall
+			distancefromFrontWall(fromFrontWall);
+	  }
+	  else
+	  {
+		distancefromFrontWall(fromSideWall);
+		delay(wait);
+	  }
+
+	  //Turn to the left by 90
+	  turnPID(-1, 90);
+	  delay(wait);
+  }
 }
+
 
 //If choice = 0 then it will only calibrate front
 //If choice = 1 then it will calibrate against right wall
 //If choice = 2 then it will calibrate front and right
 void fastCalibration(int choice){
-  double threshold = 0.05;
-  double fromWall = 14;//13
+  
   int wait = 100;
-
-  if(choice == 1)
+  //Calibrate against right wall only
+  if(choice == 0)
   {
-    turnPID(1, 90);
-    delay(wait);
+	  
   }
   
-  //Quick calibration against wall
-  straighten();
-  delay(wait);
-
-  //Move to the distance from wall
-  distanceFromWall(fromWall);
-  delay(wait);
-
-  //Quick calibration against wall
-  straighten();
-  delay(wait);
-
-  //Fine tune the calibration
-  straightenTune();
-  delay(wait);
-
-  distanceFromWall(fromWall);
-  delay(wait);
-
-  if(choice == 1)
-  {
-    turnPID(-1, 90);
-    delay(wait);
-  }
-  else if (choice == 2)
+  else if(choice == 1)
   {
     turnPID(1, 90);
     delay(wait);
+	
+	  //Quick calibration against wall
+	  straighten();
+	  delay(wait);
 
-    //Move to the distance from wall
-    distanceFromWall(fromWall);
-    delay(wait);
+	  //Move to the distance from wall
+	  distancefromFrontWall(fromSideWall);
+	  delay(wait);
 
-    //Fine tune the calibration
-    straightenTune();
-    delay(wait);
+	  //Fine tune the calibration
+	  straightenTune();
+	  delay(wait);
 
-	distanceFromWall(fromWall);
-	delay(wait);
-
-    turnPID(-1, 90);
-  }  
-}
-
-void calibrateBeforeMoveForward(){
-    double rightFrontSensor = 0;
-    rightFrontSensor = getSideCalibrationReading(true)[0];
-      Serial.println("rightFrontSensor: ");
-      Serial.println(rightFrontSensor);
-      if(rightFrontSensor < 10 || (rightFrontSensor > 13)){
-        Serial.println("Need to calibrate");
-          if(canSideCalibrate()){
-            fastCalibration(1);
-          } else Serial.println("No walls to calibrate");
-        }
-    
-    }
-
-//Side Sensor Values
-double* getSideCalibrationReading(boolean quick){
-  if(quick)
-  {  
-    calibrationSideSensorRaw[0] = analogRead(right);
-    //calibrationSideSensorRaw[1] = analogRead(rightBack);
+	  distancefromFrontWall(fromSideWall);
+	  delay(wait);
+	  
+	   turnPID(-1, 90);
+		delay(wait);
   }
+  //Calibrate against front wall
   else
   {
-    calibrationSideSensorReading();
+	  //Quick calibration against wall
+	  straighten();
+	  delay(wait);
+
+	  //Move to the distance from wall
+	  distancefromFrontWall(fromFrontWall);
+	  delay(wait);
+
+	  //Fine tune the calibration
+	  straightenTune();
+	  delay(wait);
+
+	  distancefromFrontWall(fromFrontWall);
+	  delay(wait);
+	  
+	//Calibrate against right wall if there is one
+	if (choice == 2)
+	  {
+		turnPID(1, 90);
+		turnAdjust(1, 90);
+		delay(wait);
+
+		//Fine tune the calibration
+		straightenTune();
+		delay(wait);
+
+		distancefromFrontWall(fromSideWall);
+		delay(wait);
+
+		turnPID(-1, 90);
+		turnAdjust(-1, 90);
+	  }  
   }
-  
-  //FrontRight
-  //y = 5401x - 0.1758
-  sideSensorsCalibrationCM[1] = 5401*(1/calibrationSideSensorRaw[1])-0.1758;
-    
-  //Front Left
-  //y = 5288.6x + 0.0799
-  sideSensorsCalibrationCM[0] = 5288.6*(1/calibrationSideSensorRaw[0])+ 0.0799;
-
-  return sideSensorsCalibrationCM;
-}	
-
-double* calibrationSideSensorReading(){
-  int size = 200;
-  
-  int listOfReadingsRF[size];
-  int listOfReadingsRB[size];
-
-  //Get Reading from Sensor
-  for(int a = 0; a<size; a++)
-  {
-    listOfReadingsRF[a] = analogRead(right);
-    listOfReadingsRB[a] = analogRead(rightBack);
-    delay(1);
-  }
-  
-  //Get median averaged from list
-  calibrationSideSensorRaw[0] = sortAndAverage(listOfReadingsRF, size, 3);
-  calibrationSideSensorRaw[1] = sortAndAverage(listOfReadingsRB, size, 3);
-
-  return calibrationSideSensorRaw;
 }
-
 
 //Front Sensor Values
 //Get average reading over a number of samples for front
@@ -273,18 +189,18 @@ double* getFrontCalibrationReading(boolean quick){
   }
   
   //FrontRight
-  //y = 5401x - 0.1758
+  //y = 5345.4x - 0.0814
   frontSensorsCalibrationCM[1] = 5345.4*(1/calibrationFrontSensorRaw[1])-0.0814;
     
   //Front Left
-  //y = 5288.6x + 0.0799
+  //y = 5247x + 0.0295
   frontSensorsCalibrationCM[0] = 5247*(1/calibrationFrontSensorRaw[0])+ 0.0295;
 
   return frontSensorsCalibrationCM;
 }	
 
 double* calibrationFrontSensorReading(){
-  int size = 200;
+  int size = 100;
   
   int listOfReadingsFL[size];
   int listOfReadingsFR[size];
@@ -304,27 +220,23 @@ double* calibrationFrontSensorReading(){
   return calibrationFrontSensorRaw;
 }
 
-void distanceFromWall(double distance){ 
-  
+void distancefromFrontWall(double distance){ 
   //Fine tune the distance from wall
   getFrontCalibrationReading(false);
   if(frontRightReading > distance)
   { 
-      
+	md.setSpeeds(108, 140);  
     while(frontRightReading > distance)
     {
-      
-      md.setSpeeds(108, 140);
       getFrontCalibrationReading(true);
     }
   }
   else if(frontRightReading < distance)
   {  
-     
+	md.setSpeeds(-108, -135);
     while(frontRightReading < distance)
     {
       
-      md.setSpeeds(-108, -135);
       getFrontCalibrationReading(true);
       
     }
@@ -333,7 +245,6 @@ void distanceFromWall(double distance){
 }
 
 void straighten(){
-     
     getFrontCalibrationReading(false);
     if(frontRightReading > frontLeftReading)
     {
@@ -355,15 +266,14 @@ void straighten(){
 }
 
 void straightenTune(){
-    
     getFrontCalibrationReading(false);
     if(frontRightReading > frontLeftReading)
     { 
       while(frontRightReading > frontLeftReading)
       {
-        md.setSpeeds(180, 0);
-		    delay(10);//Change from 10 to make it faster
-		    md.setBrakes(400, 400);
+        md.setSpeeds(130, 0);
+    		delay(30);//Change from 10 to make it faster
+    		md.setBrakes(400, 400);
         getFrontCalibrationReading(false);
       }
     }
@@ -372,10 +282,39 @@ void straightenTune(){
       while(frontRightReading < frontLeftReading)
       {
         md.setSpeeds(-130, 0);
-		    delay(40);//10
-		    md.setBrakes(400, 400);
+    		delay(30);//10
+    		md.setBrakes(400, 400);
         getFrontCalibrationReading(false);
       }
     }
-    md.setBrakes(400, 400);
+}
+
+void turnAdjust(int dir, int amount){
+	getFrontCalibrationReading(false);
+	double oldValue = getTurnValueOffset(dir, amount); 
+	double difference = (abs(frontRightReading-frontLeftReading)/3);
+	//Turn Right
+  if(dir == 1)
+  {
+    if(frontRightReading > frontLeftReading)
+    { 
+      setTurnValueOffset(dir, amount, oldValue - difference);
+    }
+    else if(frontRightReading < frontLeftReading)
+    {
+      setTurnValueOffset(dir, amount, oldValue + difference);
+    }
+  }
+  //Turn Left
+  else
+  {
+    if(frontRightReading < frontLeftReading)
+    { 
+      setTurnValueOffset(dir, amount, oldValue - difference);
+    }
+    else if(frontRightReading > frontLeftReading)
+    {
+      setTurnValueOffset(dir, amount, oldValue + difference);
+    }
+  }
 }
