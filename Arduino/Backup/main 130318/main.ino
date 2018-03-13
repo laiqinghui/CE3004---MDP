@@ -41,7 +41,8 @@ void processInst(){
       case 'A': Serial.println('A');
                 moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
-                  turnPID(-1, 90);
+                  //turnPID(-1, 90);
+                  turn90PIDBeta(-1);
                   delay(delayAmount);
                 }
                 //Reset side wall reading
@@ -49,7 +50,8 @@ void processInst(){
                 break;
       case 'D': moveCount = instBuff[index+1] - 48;
                 for(int a = 0; a < moveCount; a++){
-                  turnPID(1, 90);
+                  //turnPID(1, 90);
+                  turn90PIDBeta(1);
                   delay(delayAmount);
                 }
                 //Reset side wall reading
