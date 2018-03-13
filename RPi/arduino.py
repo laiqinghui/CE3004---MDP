@@ -61,7 +61,13 @@ class Arduino(threading.Thread):
         return [ord(x) for x in src]
 
     def writeData(self, message):
+
+        print "fastest path debug message: " + message
+
         data = self.ConvertStringToBytes(message)
+
+        print "fastest path debug data: " + data
+
         self.bus.write_i2c_block_data(self.address, 0, data)
         # arduino_write_thread = threading.Thread(target=self.write_and_wait_acknowledgement, args=(data,))
         # arduino_write_thread.daemon = True
