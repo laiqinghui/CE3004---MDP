@@ -375,7 +375,7 @@ void tuneM2TurnSpeed()
 		}
 		else if(m1CurrentWidthPositive < m2CurrentWidth)
 		{
-			m2TurnSpeedNegative = m2TurnSpeedNegative + 1;
+			m2TurnSpeedNegative = m2TurnSpeedNegative - 1;
 		}
 	}
 	
