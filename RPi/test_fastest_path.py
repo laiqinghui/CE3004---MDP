@@ -27,6 +27,7 @@ def initialise_robot_options(argv):
     goal_row = 0
     goal_col = 0
     mode = 0
+    direction = 2
 
     try:
         opts, remainders = getopt.getopt(argv, "m:", ["rr=", "rc=", "wr=", "wc=", "gr=", "gc=", "mode=", "dir="])
