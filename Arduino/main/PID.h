@@ -102,30 +102,30 @@ void tuneM2(int desiredRPM, MotorPID *M2) {
 
 }
 
-void tuneMotors(int desiredRPM, MotorPID *M1, MotorPID *M2){
-  
+void tuneMotors(int desiredRPM, MotorPID *M1, MotorPID *M2) {
+
   noInterrupts();
   double currentM1RPM = sqWidthToRPM(squareWidth_M1);
   double currentM2RPM = sqWidthToRPM(squareWidth_M2);
   interrupts();
-  
+
   int tuneSpeedM1 = 0;
   int tuneSpeedM2 = 0;
-  
+
   M1->currentErr =  desiredRPM - currentM1RPM;
-  tuneSpeedM1 = M1->prevTuneSpeed + M1->gain*M1->currentErr + (M1->gain/0.05)*(M1->currentErr - M1->prevErr1);
+  tuneSpeedM1 = M1->prevTuneSpeed + M1->gain * M1->currentErr + (M1->gain / 0.05) * (M1->currentErr - M1->prevErr1);
   M2->currentErr =  desiredRPM - currentM2RPM;
-  tuneSpeedM2 = M2->prevTuneSpeed + M2->gain*M2->currentErr + (M2->gain/0.05)*(M2->currentErr - M2->prevErr1);
+  tuneSpeedM2 = M2->prevTuneSpeed + M2->gain * M2->currentErr + (M2->gain / 0.05) * (M2->currentErr - M2->prevErr1);
 
   noInterrupts();
   OCR1A = tuneSpeedM1;
   OCR1B = tuneSpeedM2;
   interrupts();
-  
+
   M1->prevTuneSpeed = tuneSpeedM1;
   M1->prevErr1 = M1->currentErr;
   M2->prevTuneSpeed = tuneSpeedM2;
   M2->prevErr1 = M2->currentErr;
 
- 
-  }
+
+}
