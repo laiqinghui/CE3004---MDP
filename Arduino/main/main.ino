@@ -130,6 +130,7 @@ void setup() {
   turnLeft90Offset = ((signed int)((turnLeft90Offset1 << 8) | turnLeft90Offset2))/100.0;  
   
   //benTestSequence();
+  tuneM2TurnSpeed();
 }
 
 void loop() 

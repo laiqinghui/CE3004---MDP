@@ -13,6 +13,7 @@ void distancefromFrontWall(double distance);
 void calibration();
 void fastCalibration(int choice);
 void turnAdjust(int dir, int amount);
+void tuneM2TurnSpeed();
 
 //Calibration
 double frontSensorsCalibrationCM[2];
@@ -302,7 +303,7 @@ void turnAdjust(int dir, int amount){
 
 void tuneM2TurnSpeed()
 {
-	int delay = 100;
+	int wait = 100;
 	
 	//Check length of squarewidth for M1
     setSqWidth(0,0);
@@ -337,7 +338,7 @@ void tuneM2TurnSpeed()
 	//Postive
 	while(abs(m1CurrentWidthNegative - m2CurrentWidth) > 200)
 	{
-		md.setSpeeds(0, m2TurnSpeedPostive);
+		md.setSpeeds(0, m2TurnSpeedPositive);
 		delay(wait/2);
 		noInterrupts();
 		m2CurrentWidth = squareWidth_M2;
@@ -348,11 +349,11 @@ void tuneM2TurnSpeed()
 		
 		if(m1CurrentWidthNegative > m2CurrentWidth)
 		{
-			m2TurnSpeedPostive = m2TurnSpeedPostive - 1;
+			m2TurnSpeedPositive = m2TurnSpeedPositive - 1;
 		}
 		else if(m1CurrentWidthNegative < m2CurrentWidth)
 		{
-			m2TurnSpeedPostive = m2TurnSpeedPostive + 1;
+			m2TurnSpeedPositive = m2TurnSpeedPositive + 1;
 		}
 	}
 	
@@ -378,6 +379,8 @@ void tuneM2TurnSpeed()
 			m2TurnSpeedNegative = m2TurnSpeedNegative - 1;
 		}
 	}
+ Serial.println(m2TurnSpeedNegative);
+ Serial.println(m2TurnSpeedPositive);
 	
 	disableInterrupt(e1a);
     setSqWidth(0,0);

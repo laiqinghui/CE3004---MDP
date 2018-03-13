@@ -28,15 +28,15 @@ void setTurnValueOffset(int dir, int turnDegree, double newValue){
   if (dir == 1)
   {
 		turnRight90Offset = newValue;
-    EEPROM.write(0, (newValue*100)>>8);
-    EEPROM.write(1, (newValue*100)&0xFF);
+     EEPROM.write(0, ((int)(newValue*100))>>8);
+     EEPROM.write(1, ((int)(newValue*100))&0xFF);
   }
   //Left Turn
   else
   {
      turnLeft90Offset = newValue;
-     EEPROM.write(2, (newValue*100)>>8);
-     EEPROM.write(3, (newValue*100)&0xFF);
+     EEPROM.write(2, ((int)(newValue*100))>>8);
+     EEPROM.write(3, ((int)(newValue*100))&0xFF);
   }
 }
 
@@ -65,7 +65,7 @@ double getTurnAmount(int dir, int turnDegree) {
 
 int m1CurrentWidthPositive = 955;
 int m1CurrentWidthNegative = 975;
-int m2TurnSpeedPostive = 330;
+int m2TurnSpeedPositive = 330;
 int m2TurnSpeedNegative = -320;
 
 void turnPID(int dir, int degree){
@@ -87,8 +87,7 @@ void turnPID(int dir, int degree){
 	if(dir == 1)
 	{
 		int m1Speed = -310;
-		int m2Speed = 330;
-		md.setSpeeds(m1Speed, m2Speed);
+		md.setSpeeds(m1Speed, m2TurnSpeedPositive);
 		
 		while(currentTicksM1 < amount)
 		{
@@ -100,21 +99,20 @@ void turnPID(int dir, int degree){
      
 			if(currentM2Width > m1CurrentWidthNegative)
 			{
-				m2Speed = m2Speed - 1;
-				OCR1B = m2Speed;
+				m2TurnSpeedPositive = m2TurnSpeedPositive - 1;
+				OCR1B = m2TurnSpeedPositive;
 			}
 			else if(currentM2Width < m1CurrentWidthNegative)
 			{
-				m2Speed = m2Speed + 1;
-				OCR1B = m2Speed;
+				m2TurnSpeedPositive = m2TurnSpeedPositive + 1;
+				OCR1B = m2TurnSpeedPositive;
 			}
 		}
 	}
 	else
 	{
 		int m1Speed = 310;
-		int m2Speed = -320;
-		md.setSpeeds(m1Speed, m2Speed);
+		md.setSpeeds(m1Speed, m2TurnSpeedNegative);
 
 		while(currentTicksM1 < amount)
 		{
@@ -125,13 +123,13 @@ void turnPID(int dir, int degree){
      
 			if(currentM2Width < m1CurrentWidthPositive)
 			{
-				m2Speed = m2Speed - 1;
-				OCR1B = m2Speed;
+				m2TurnSpeedNegative = m2TurnSpeedNegative - 1;
+				OCR1B = m2TurnSpeedNegative;
 			}
 			else if(currentM2Width > m1CurrentWidthPositive)
 			{
-				m2Speed = m2Speed + 1;
-				OCR1B = m2Speed;
+				m2TurnSpeedNegative = m2TurnSpeedNegative + 1;
+				OCR1B = m2TurnSpeedNegative;
 			}
 		}
 	}

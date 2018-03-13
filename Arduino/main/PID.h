@@ -6,10 +6,6 @@ struct MotorPID {
   float gain;
 };
 
-
-
-
-
 //------------Interrupt declarations------------
 volatile int squareWidth_M1 = 0;
 volatile signed long prev_time_M1 = 0;
