@@ -10,6 +10,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,6 +25,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.style.UpdateLayout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -33,13 +35,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -80,6 +86,10 @@ public class MainActivity extends AppCompatActivity
     private SensorManager mSensorManager;
     private final float[] mAccelerometerReading = new float[3];
 
+    static ArrayList<GridImage> gridList = new ArrayList<GridImage>();
+
+    private static boolean manualUpdateFlag = false;
+
     @SuppressLint("HandlerLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,9 +98,16 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+//        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         BTAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        for(int y = 0; y < 20; y++){
+            for(int x = 0; x < 15; x++){
+                GridImage image = new GridImage(R.drawable.blue_square, x, y, Constants.UNEXPLORED);
+                gridList.add(image);
+            }
+        }
 
         // Phone does not support Bluetooth so let the user know and exit.
         if (BTAdapter == null) {
@@ -106,14 +123,6 @@ public class MainActivity extends AppCompatActivity
                     .show();
         }
 
-        if (!BTAdapter.isEnabled()) {
-            Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBT, REQUEST_BLUETOOTH);
-        }
-
-        // Initialize the BluetoothChatService to perform bluetooth connections
-        mChatService = new BluetoothChatService(MainActivity.this, readHandler);
-
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
 
@@ -126,6 +135,49 @@ public class MainActivity extends AppCompatActivity
             // we could end up with overlapping fragments.
             if (savedInstanceState != null) {
                 return;
+            }
+        }
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        mLayout = drawer;
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+    }
+
+    void toggleManualUpdateFlag(boolean isChecked){
+        manualUpdateFlag=isChecked;
+    }
+
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // Do something here if sensor accuracy changes.
+        // You must implement this callback in your code.
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (!BTAdapter.isEnabled()) {
+            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableIntent, REQUEST_BLUETOOTH);
+        } else {
+            if(mChatService == null){
+                // Initialize the BluetoothChatService to perform bluetooth connections
+                mChatService = new BluetoothChatService(MainActivity.this, readHandler);
+            } else {
+                // Only if the state is STATE_NONE, do we know that we haven't started already
+                if (mChatService.getState() == BluetoothChatService.STATE_NONE) {
+                    // Start the Bluetooth chat services
+                    mChatService.start();
+                }
             }
 
             // Create a new Fragment to be placed in the activity layout
@@ -142,28 +194,6 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         }
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        mLayout = drawer;
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // Do something here if sensor accuracy changes.
-        // You must implement this callback in your code.
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
         // Get updates from the accelerometer and magnetometer at a constant rate.
         // To make batch operations more efficient and reduce power consumption,
         // provide support for delaying updates to the application.
@@ -171,29 +201,37 @@ public class MainActivity extends AppCompatActivity
         // In this example, the sensor reporting delay is small enough such that
         // the application receives an update before the system checks the sensor
         // readings again.
-        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_NORMAL);
+//        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+//                SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        // Don't receive any more updates from either sensor.
-        mSensorManager.unregisterListener(this);
+//        // Don't receive any more updates from either sensor.
+//        mSensorManager.unregisterListener(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mChatService != null) {
+            mChatService.stop();
+        }
     }
 
     // Get readings from accelerometer and magnetometer. To simplify calculations,
     // consider storing these readings as unit vectors.
     @Override
     public void onSensorChanged(SensorEvent event) {
-        System.arraycopy(event.values, 0, mAccelerometerReading,
-                0, mAccelerometerReading.length);
-        onOrientationChanged(
-                mAccelerometerReading[0],
-                mAccelerometerReading[1],
-                mAccelerometerReading[2]
-        );
+//        System.arraycopy(event.values, 0, mAccelerometerReading,
+//                0, mAccelerometerReading.length);
+//        onOrientationChanged(
+//                mAccelerometerReading[0],
+//                mAccelerometerReading[1],
+//                mAccelerometerReading[2]
+//        );
     }
 
     @Override
@@ -505,8 +543,8 @@ public class MainActivity extends AppCompatActivity
 
                 this.exploredBin = exploredBin.substring(2, 302);
                 this.obstacleBin = obstacleBin;
-                arenaFrag.updateMap(exploredBin.substring(2, 302), obstacleBin, false);
-                arenaFrag.updateRobot(dirRow, dirCol, dirDir, dirMoveOrStop, false);
+                update(exploredBin.substring(2, 302), obstacleBin,
+                        dirRow, dirCol, dirDir, dirMoveOrStop, false);
 
             } else if (message.startsWith("DIR")) {
                 String dirStr = message.substring(3);
@@ -518,11 +556,71 @@ public class MainActivity extends AppCompatActivity
                 this.dirCol = dirCol;
                 this.dirDir = dirDir;
                 this.dirMoveOrStop = dirMoveOrStop;
-                arenaFrag.updateMap(exploredBin, obstacleBin, false);
-                arenaFrag.updateRobot(dirRow, dirCol, dirDir, dirMoveOrStop, false);
+                update(exploredBin, obstacleBin,
+                        dirRow, dirCol, dirDir, dirMoveOrStop, false);
             }
         }
     }
+
+    public void update(String exploredBin, String obstacleBin, String dirRow, String dirCol,
+                       String dirDir, String dirMoveOrStop, boolean force){
+
+        exploredBin = exploredBin == null ? this.exploredBin : exploredBin;
+        obstacleBin = obstacleBin == null ? this.obstacleBin : obstacleBin;
+        dirRow = dirRow == null ? this.dirRow : dirRow;
+        dirCol = dirCol == null ? this.dirCol : dirCol;
+        dirDir = dirDir == null ? this.dirDir : dirDir;
+        dirMoveOrStop = dirMoveOrStop == null ? this.dirMoveOrStop : dirMoveOrStop;
+        Log.d("EXPLORED_BIN", exploredBin);
+        Log.d("OBSTACEL_BIN", obstacleBin);
+
+        GridView gridview = findViewById(R.id.map_grid);
+
+        if(!manualUpdateFlag || force){
+            new UpdateTask(this, gridview).execute(exploredBin, obstacleBin, dirRow, dirCol, dirDir);
+            TextView move_or_stop = findViewById(R.id.robotStatus);
+            if(Integer.valueOf(dirMoveOrStop) == 1){
+                move_or_stop.setText(R.string.robot_stopped);
+            } else {
+                move_or_stop.setText(R.string.robot_moving);
+            }
+        }
+    }
+
+//    public void updateMap(String exploredBin, String obstacleBin, boolean force) {
+//        exploredBin = exploredBin == null ? this.exploredBin : exploredBin;
+//        obstacleBin = obstacleBin == null ? this.obstacleBin : obstacleBin;
+//        Log.d("EXPLORED_BIN", exploredBin);
+//        Log.d("OBSTACEL_BIN", obstacleBin);
+//
+//        if(!manualUpdateFlag || force){
+//            new UpdateMapTask().execute(exploredBin, obstacleBin);
+//            GridView gridview = findViewById(R.id.map_grid);
+//            gridview.setAdapter( new ImageAdapter(this, gridList));
+//        }
+//    }
+//
+//    public void updateRobot(String dirRow, String dirCol, String dirDir,
+//                            String dirMoveOrStop, boolean force) {
+//
+//        dirRow = dirRow == null ? this.dirRow : dirRow;
+//        dirCol = dirCol == null ? this.dirCol : dirCol;
+//        dirDir = dirDir == null ? this.dirDir : dirDir;
+//        dirMoveOrStop = dirMoveOrStop == null ? this.dirMoveOrStop : dirMoveOrStop;
+//
+//        if(!manualUpdateFlag || force){
+//            new UpdateRobotTask().execute(dirRow, dirCol, dirDir);
+//            TextView move_or_stop = findViewById(R.id.robotStatus);
+//            if(Integer.valueOf(dirMoveOrStop) == 1){
+//                move_or_stop.setText(R.string.robot_stopped);
+//            } else {
+//                move_or_stop.setText(R.string.robot_moving);
+//            }
+//
+//            GridView gridview = findViewById(R.id.map_grid);
+//            gridview.setAdapter( new ImageAdapter(this, gridList));
+//        }
+//    }
 
     public void startSpeechRecognizer() {
         Intent intent = new Intent
@@ -547,6 +645,240 @@ public class MainActivity extends AppCompatActivity
                 onVoiceCommand(mVoiceCommand);
 
             }
+        }
+    }
+
+    static class ImageAdapter extends BaseAdapter {
+        private Context mContext;
+        private static ArrayList<GridImage> gridList;
+
+        public ImageAdapter(Context c, ArrayList<GridImage> glist) {
+            mContext = c;
+            gridList = glist;
+        }
+
+        public static int calcCol(int position) {
+            return getGridItem(position).getCol();
+        }
+
+        public static int calcRow(int position) {
+            return getGridItem(position).getRow();
+        }
+
+        public int getCount() {
+            return 336;
+        }
+
+        public static GridImage getGridItem(int position) {
+            int y = 19-(position/16);
+            int x = position%16 - 1;
+            int index = y*15 + x;
+            if(index >= 0 && gridList.size() > index){
+                return gridList.get(index);
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        // create a new ImageView for each item referenced by the Adapter
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ImageView imageView;
+            TextView textView;
+            if (position == 320){
+                if (convertView == null) {
+                    textView = new TextView(mContext);
+                    textView.setText("");
+                } else {
+                    return convertView;
+                }
+                return textView;
+            } else if(position%16 == 0){
+                if (convertView == null) {
+                    textView = new TextView(mContext);
+                    textView.setText(String.valueOf(19-(position/16)));
+                } else {
+                    return convertView;
+                }
+                return textView;
+            } else if(position > 320){
+                if (convertView == null) {
+                    textView = new TextView(mContext);
+                    textView.setText(String.valueOf(position-321));
+                } else {
+                    return convertView;
+                }
+                return textView;
+            } else{
+                if (convertView == null) {
+                    // if it's not recycled, initialize some attributes
+                    imageView = new ImageView(mContext);
+                    imageView.setLayoutParams(new GridView.LayoutParams(30, 30));
+                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    imageView.setPadding(1,1,1,1);
+                } else {
+                    return convertView;
+                }
+                imageView.setImageResource(getGridItem(position).getImageId());
+                return imageView;
+            }
+        }
+    }
+
+    class GridImage {
+        int imageId;
+        int row;
+        int col;
+        int status;
+
+        GridImage(int imageId, int col, int row, int status){
+            this.imageId = imageId;
+            this.row = row;
+            this.col = col;
+            this.status = status;
+        }
+
+        public int getRow(){
+            return this.row;
+        }
+
+        public int getCol(){
+            return this.col;
+        }
+
+        public int getImageId(){
+            return this.imageId;
+        }
+
+        public void setImageId(int imageId){
+            this.imageId = imageId;
+        }
+
+        public int getStatus(){
+            return this.status;
+        }
+
+        public void setStatus(int status){
+            this.status = status;
+            switch(status){
+                case Constants.EXPLORED:
+                    this.setImageId(R.drawable.green_square);
+                    break;
+                case Constants.UNEXPLORED:
+                    this.setImageId(R.drawable.blue_square);
+                    break;
+                case Constants.OBSTACLE:
+                    this.setImageId(R.drawable.red_square);
+                    break;
+                case Constants.ROBOT_BODY:
+                    this.setImageId(R.drawable.yellow_square);
+                    break;
+                case Constants.ROBOT_HEAD:
+                    this.setImageId(R.drawable.black_square);
+                    break;
+                case Constants.START:
+                    this.setImageId(R.drawable.orange_square);
+                    break;
+                case Constants.GOAL:
+                    this.setImageId(R.drawable.orange_square);
+                    break;
+                case Constants.WAYPOINT:
+                    this.setImageId(R.drawable.orange_square);
+                    break;
+                case Constants.STARTDIR:
+                    this.setImageId(R.drawable.black_square);
+                    break;
+            }
+        }
+    }
+
+    private class UpdateTask extends AsyncTask<String, Void, Void> {
+
+        private Context mContext;
+        private GridView mGridView;
+
+        UpdateTask(Context context, GridView gridView){
+            mContext = context;
+            mGridView = gridView;
+        }
+
+        protected Void doInBackground(String... params) {
+            int obsCount = 0;
+
+            for (int i = 0; i < params[0].length(); i++) {
+                char c = params[0].charAt(i);
+                //Log.d("EXP", String.valueOf(Integer.parseInt(String.valueOf(c))));
+                if (Integer.parseInt(String.valueOf(c)) == 1) {
+                    GridImage grid = gridList.get(i);
+                    if (grid != null) {
+                        char x = params[1].charAt(obsCount);
+                        //Log.d("OBS", String.valueOf(Integer.parseInt(String.valueOf(x))));
+                        if (Integer.parseInt(String.valueOf(x)) == 1) {
+                            grid.setStatus(Constants.OBSTACLE);
+                        } else {
+                            grid.setStatus(Constants.EXPLORED);
+                        }
+                        obsCount++;
+                    }
+                } else {
+                    GridImage grid = gridList.get(i);
+                    if (grid != null) {
+                        grid.setStatus(Constants.UNEXPLORED);
+                    }
+                }
+            }
+
+            int index = Integer.valueOf(params[2]) * 15 + Integer.valueOf(params[3]);
+            GridImage image1 = gridList.get(index);
+            image1.setStatus(Constants.ROBOT_BODY);
+            GridImage image2 = gridList.get(index + 1);
+            image2.setStatus(Constants.ROBOT_BODY);
+            GridImage image3 = gridList.get(index - 1);
+            image3.setStatus(Constants.ROBOT_BODY);
+            GridImage image4 = gridList.get(index - 15);
+            image4.setStatus(Constants.ROBOT_BODY);
+            GridImage image5 = gridList.get(index + 15);
+            image5.setStatus(Constants.ROBOT_BODY);
+            GridImage image6 = gridList.get(index - 14);
+            image6.setStatus(Constants.ROBOT_BODY);
+            GridImage image7 = gridList.get(index + 14);
+            image7.setStatus(Constants.ROBOT_BODY);
+            GridImage image8 = gridList.get(index - 16);
+            image8.setStatus(Constants.ROBOT_BODY);
+            GridImage image9 = gridList.get(index + 16);
+            image9.setStatus(Constants.ROBOT_BODY);
+
+            Log.d("HEADDIR", params[4]);
+
+            switch (Integer.valueOf(params[4])) {
+                case Constants.NORTH:
+                    image5.setStatus(Constants.ROBOT_HEAD);
+                    break;
+                case Constants.SOUTH:
+                    image4.setStatus(Constants.ROBOT_HEAD);
+                    break;
+                case Constants.EAST:
+                    image2.setStatus(Constants.ROBOT_HEAD);
+                    break;
+                case Constants.WEST:
+                    image3.setStatus(Constants.ROBOT_HEAD);
+                    break;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            mGridView.setAdapter( new ImageAdapter(mContext, gridList));
         }
     }
 }
