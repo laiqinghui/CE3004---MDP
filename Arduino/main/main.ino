@@ -95,12 +95,12 @@ void setup() {
   md.init();
   initI2C();
 
-  /*
+  
     EEPROM.write(0, 0);
     EEPROM.write(1, 0);
     EEPROM.write(2, 0);
     EEPROM.write(3, 0);
-  */
+  
 
   //Load in the offset for turn
   unsigned int turnRight90Offset1 = EEPROM.read(0);
