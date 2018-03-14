@@ -151,6 +151,10 @@ class Android(threading.Thread):
                 elif(command == "reset"):
                     logging.info("reset robot")
                 elif(command == "return"):
+                    self.stopAlgorithm()
+                    robot_row, robot_col, direction = 18, 1, 4
+                    self.algo_thread = Algorithm(robot_row, robot_col, self.waypoint_row, self.waypoint_col, FP_GOAL_ROW, FP_GOAL_COL, FASTEST_PATH, direction)
+                    self.fastestPathInstruction = self.algo_thread.determine_fastest_path()
                     logging.info("trigger return")
                 else:
                     logging.info("Invalid message")
