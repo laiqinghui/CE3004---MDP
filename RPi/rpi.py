@@ -1,4 +1,5 @@
 import logging
+import textwrap
 import time
 import threading
 import sys
@@ -84,10 +85,28 @@ class RPI(threading.Thread):
 
             gs.print_modified_mazemap(gs.MAZEMAP, robot_row, robot_col, robot_dir)
 
-        dispatcher.send(message=formatted_instruction, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
-
-        logging.info("rpi received message from algorithm and write message to arduino: " + str(formatted_instruction))
+        self.send_arduino_movement(formatted_instruction)
         print "==============================================================="
+
+    def send_arduino_movement(self, instruction):
+        if len(instruction) <= 30:
+            dispatcher.send(message=instruction, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
+            logging.info("rpi received message from algorithm and write message to arduino: " + str(instruction))
+        else:
+            packeted_instr = self.split_str(instruction[1:-1], 28)
+            for i in range(len(packeted_instr[:-1])):
+                packeted_instr[i] = 'C' + packeted_instr[i] + ';'
+            if instruction[0] == 'S':
+                packeted_instr[-1] = 'S' + packeted_instr[-1] + ';'
+            if instruction[0] == 'C':
+                packeted_instr[-1] = 'C' + packeted_instr[-1] + ';'
+
+            for instr in packeted_instr:
+                dispatcher.send(message=instr, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
+            logging.info("rpi received message from algorithm and write message to arduino: " + str(packeted_instr))
+
+    def split_str(self, seq, chunk):
+        return textwrap.wrap(seq, chunk)
 
     def manage_arduino_signal(self, message):
         """
