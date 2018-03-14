@@ -443,12 +443,13 @@ public class MainActivity extends AppCompatActivity
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
+                    Log.d("READ_MSG", readMessage);
                     TextView rf = findViewById(R.id.readField);
                     if(rf != null){
                         rf.setText(readMessage);
                     }
                     if(readMessage.startsWith("MDF") || readMessage.startsWith("DIR")){
-                        Log.d("MDFFF", readMessage);
+                        Log.d("READ_MSG_MDF", readMessage);
                         if(readMessage.startsWith("MDF")){MainActivity.readMessage = readMessage;}
                         onMapUpdateReceived(readMessage);
                     }
@@ -530,7 +531,7 @@ public class MainActivity extends AppCompatActivity
     public void onMapUpdateReceived(String message){
         //pass the strings to arena fragment to be parsed
         ArenaFragment arenaFrag = (ArenaFragment) getSupportFragmentManager().findFragmentByTag("ArenaFragment");
-        Log.d("MDF_OR_DIR", message);
+//        Log.d("MDF_OR_DIR", message);
         if(arenaFrag != null){
             if(message.startsWith("MDF")){
                 String mdfStr = message.substring(3);
