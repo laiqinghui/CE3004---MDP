@@ -29,7 +29,7 @@ void calibration() {
   int wait = 100;
 
 
-  tuneM2TurnSpeed();
+  //tuneM2TurnSpeed();
   delay(wait);
 
   for (int a = 0; a < 2; a++)
@@ -275,6 +275,10 @@ void turnAdjust(int dir) {
   getFrontCalibrationReading(false);
   double oldValue = getTurnValueOffset(dir);
   double difference = abs(frontRightReading - frontLeftReading) / 3;
+  if(difference > 4)
+  {
+	  return;
+  }
   //Turn Right
   if (dir == 1)
   {
@@ -310,7 +314,7 @@ void tuneM2TurnSpeed(){
 
   //Check positive
   md.setSpeeds(310, 0);
-  delay(wait / 2);
+  delay(wait);
   noInterrupts();
   m1CurrentWidthPositive = squareWidth_M1;
   interrupts();
@@ -320,7 +324,7 @@ void tuneM2TurnSpeed(){
 
   //Check negative
   md.setSpeeds(-310, 0);
-  delay(wait / 2);
+  delay(wait);
   noInterrupts();
   m1CurrentWidthNegative = squareWidth_M1;
   interrupts();
@@ -338,13 +342,13 @@ void tuneM2TurnSpeed(){
   while (abs(m1CurrentWidthNegative - m2CurrentWidth) > 200)
   {
     md.setSpeeds(0, m2TurnSpeedPositive);
-    delay(wait / 2);
+    delay(wait*2);
     noInterrupts();
     m2CurrentWidth = squareWidth_M2;
     interrupts();
     md.setBrakes(400, 400);
     setSqWidth(0, 0);
-    delay(wait);
+    delay(wait/2);
 
     if (m1CurrentWidthNegative > m2CurrentWidth)
     {
@@ -361,13 +365,13 @@ void tuneM2TurnSpeed(){
   while (abs(m1CurrentWidthNegative - m2CurrentWidth) > 200)
   {
     md.setSpeeds(0, m2TurnSpeedNegative);
-    delay(wait / 2);
+    delay(wait*2);
     noInterrupts();
     m2CurrentWidth = squareWidth_M2;
     interrupts();
     md.setBrakes(400, 400);
     setSqWidth(0, 0);
-    delay(wait);
+    delay(wait/2);
 
     if (m1CurrentWidthPositive > m2CurrentWidth)
     {
@@ -378,7 +382,8 @@ void tuneM2TurnSpeed(){
       m2TurnSpeedNegative = m2TurnSpeedNegative - 1;
     }
   }
-
+  Serial.println(m2TurnSpeedPositive);
+  Serial.println(m2TurnSpeedNegative);
   disableInterrupt(e1a);
   setSqWidth(0, 0);
 }
