@@ -14,7 +14,10 @@ class RPI(threading.Thread):
 
         super(RPI, self).__init__()
         self.running = False
-        self.ws = create_connection("ws://192.168.5.18:8888/ws")
+        try:
+            self.ws = create_connection("ws://192.168.5.18:8888/ws")
+        except:
+            pass
 
         dispatcher.connect(self.command_rpi, signal=ts.ANDROID_SIGNAL, sender=ts.ANDROID_SENDER)
         dispatcher.connect(self.command_arduino, signal=ts.ALGORITHM_SIGNAL, sender=ts.ALGORITHM_SENDER)
@@ -41,7 +44,10 @@ class RPI(threading.Thread):
         dispatcher.send(message=message, signal=ts.RPI_ALGORITHM_SIGNAL, sender=ts.RPI_SENDER)
         logging.info("rpi received message from arduino and write message to algorithm: " + str(message))
 
-        self.ws.send(str(message))
+        try:
+            self.ws.send(str(message))
+        except:
+            pass
         logging.info("rpi received message from arduino and write message to pc: " + str(message))
 
     def start(self):

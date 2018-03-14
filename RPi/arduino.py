@@ -34,7 +34,6 @@ class Arduino(threading.Thread):
         time.sleep(0.15)
         byte = self.readData()
         # if acknowledgement byte
-        logging.info("checking if A: " + chr(byte[0]))
         if chr(byte[0]) == "A":
             logging.info("arduino acknowledged stop moving")
             # self.mutex_w.acquire()

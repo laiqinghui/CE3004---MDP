@@ -1,7 +1,7 @@
 """
-Test that the RPI and Algorithm logic on hardcoded test sensor data
+Test that the robot can run exploration
 
-# python test_rpi_algorithm.py --rr=18 --rc=1 --wr=18 --wc=5 --gr=1 --gc=13 --mode=0 --dir=2
+# python test_exploration.py --rr=18 --rc=1 --wr=5 --wc=9 --gr=1 --gc=13 --mode=0 --dir=2
 """
 
 import getopt
@@ -12,10 +12,9 @@ import threading
 from pydispatch import dispatcher
 
 from robot.algorithm import Algorithm
+from arduino import Arduino
 from rpi import RPI
 import global_settings as gs
-
-# python test_rpi_algorithm.py --rr=18 --rc=1 --wr=18 --wc=5 --gr=1 --gc=13 --mode=0 --dir=2
 
 
 def initialise_robot_options(argv):
@@ -59,7 +58,6 @@ def initialise_robot_options(argv):
     return robot_row, robot_col, waypoint_row, waypoint_col, goal_row, goal_col, mode, direction
 
 
-# TODO: Convert to method in android.py bluetooth connection file
 def start_robot_exploration(rr, rc, wr, wc, gr, gc, m, d, keep_alive=False):
     """
     Function to start the robot exploration. This should be executed as a non-daemon
@@ -68,12 +66,15 @@ def start_robot_exploration(rr, rc, wr, wc, gr, gc, m, d, keep_alive=False):
     This function will need to move to the android.py file as a method.
     """
     rpi_thread = RPI()
+    arduino_thread = Arduino()
     algo_thread = Algorithm(rr, rc, wr, wc, gr, gc, m, d)
 
     rpi_thread.daemon = True
+    arduino_thread.daemon = True
     algo_thread.daemon = True
 
     rpi_thread.start()
+    arduino_thread.start()
     algo_thread.start()
 
     if keep_alive:
@@ -87,17 +88,13 @@ if __name__ == "__main__":
     RPI, Algorithm and Arduino thread will only be initialized when command
     received from Android thread.
     """
+    if gs.DEV_DEBUG:
+        with open("sensor.txt", "w") as sensor_log:
+            pass
 
-    """RUN MAIN.PY TO TEST ALGORITHM & RPI INTERFACE"""
-    # python test_rpi_algorithm.py --rr=18 --rc=1 --wr=18 --wc=5 --gr=1 --gc=13 --mode=0 --dir=2
     rr, rc, wr, wc, gr, gc, m, d = initialise_robot_options(sys.argv[1:])
 
     start_robot_exploration(rr, rc, wr, wc, gr, gc, m, d)
 
-    with open("test_sensor.txt", "r") as sensor_log:
-        for line in sensor_log:
-            sensor_values = [int(x) for x in line[1:-2].split(',')]
-            raw_input("Enter the data to be sent to algorithm: " + str(sensor_values))
-            dispatcher.send(message=sensor_values, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
-
-    raw_input("End of debug")
+    while 1:
+        time.sleep(1)
