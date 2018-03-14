@@ -23,8 +23,10 @@ elif(choice1 == 4):
     map_name = 'sample_arena_4.txt'
 elif(choice1 == 5):
     map_name = 'sample_arena_5.txt'
+elif(choice1 == 9):
+    map_name = 'sample_arena_9.txt'
 else:
-    map_name = 'sample_arena_6.txt'
+    map_name = 'sample_arena_10.txt'
 
 exp = Exploration(realMap=map_name, timeLimit=5)
 

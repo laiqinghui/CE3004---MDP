@@ -123,8 +123,8 @@ class Exploration:
                             fsp.getFastestPath()
 
                             i = 0
-                            while i < len(current[0]):
-                                fsp.movement.append(current[0][i])
+                            while i < len(current):
+                                fsp.movement.append(current[i])
                                 i += 1
 
                             while (fsp.robot.center.tolist() != neighbour.tolist()):
@@ -137,7 +137,29 @@ class Exploration:
                             # self.robot.getSensors()
 
                             return fsp.movement, False, self.robot.center, self.robot.direction
+                        else:
+                            fsp = FastestPath(self.currentMap, self.robot.center,
+                                          self.startPos, self.robot.direction, None)
+
+                            fsp.getFastestPath()
+
+                            i = 0
+                            while i < len(current):
+                                fsp.movement.append(current[i])
+                                i += 1
+
+                            while (fsp.robot.center.tolist() != self.startPos.tolist()):
+                                fsp.moveStep()
+                            print "Couldnt find a path to unexplored area, returning home..."
+
+                            self.robot.center = self.startPos
+                            self.robot.head = fsp.robot.head
+                            self.robot.direction = fsp.robot.direction
+
+
+                            return fsp.movement, True, self.robot.center, self.robot.direction
                 elif (self.visited[currentPos] > 3):
+
                     neighbour = self.getExploredNeighbour()
                     if (neighbour):
                         neighbour = np.asarray(neighbour)
@@ -147,19 +169,40 @@ class Exploration:
                         fsp.getFastestPath()
 
                         i = 0
-                        while i < len(current[0]):
-                            fsp.movement.append(current[0][i])
+                        while i < len(current):
+                            fsp.movement.append(current[i])
                             i += 1
 
                         while (fsp.robot.center.tolist() != neighbour.tolist()):
                             fsp.moveStep()
-                        print "Fastest Path to unexplored area!"
+                        print "Couldnt find a path to unexplored area, returning home..."
+                            
 
                         self.robot.center = neighbour
                         self.robot.head = fsp.robot.head
                         self.robot.direction = fsp.robot.direction
 
                         return fsp.movement, False, self.robot.center, self.robot.direction
+                    else:
+                        fsp = FastestPath(self.currentMap, self.robot.center,
+                                          self.startPos, self.robot.direction, None)
+
+                        fsp.getFastestPath()
+
+                        i = 0
+                        while i < len(current):
+                            fsp.movement.append(current[i])
+                            i += 1
+
+                        while (fsp.robot.center.tolist() != self.startPos.tolist()):
+                            fsp.moveStep()
+                        print "Fastest Path to home"
+
+                        self.robot.center = self.startPos
+                        self.robot.head = fsp.robot.head
+                        self.robot.direction = fsp.robot.direction
+
+                        return fsp.movement, True, self.robot.center, self.robot.direction
             else:
                 self.visited[currentPos] = 1
 
