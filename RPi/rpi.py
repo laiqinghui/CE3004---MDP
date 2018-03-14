@@ -4,7 +4,6 @@ import threading
 import sys
 
 from pydispatch import dispatcher
-from websocket import create_connection
 
 import global_settings as gs
 
@@ -17,10 +16,12 @@ class RPI(threading.Thread):
         self.autoupdate = True
         self.pc_ws = None
 
-        try:
-            self.pc_ws = create_connection("ws://192.168.5.18:8888/ws")
-        except:
-            pass
+        if gs.DEV_DEBUG:
+            from websocket import create_connection
+            try:
+                self.pc_ws = create_connection("ws://192.168.5.18:8888/ws")
+            except:
+                pass
 
         dispatcher.connect(self.command_rpi, signal=gs.ANDROID_SIGNAL, sender=gs.ANDROID_SENDER)
         dispatcher.connect(self.manage_algorithm_signal, signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
@@ -65,8 +66,8 @@ class RPI(threading.Thread):
             explore_mdf_string_update = gs.get_mdf_bitstring(gs.MAZEMAP, 1, 0)
             obstacle_mdf_string_update = gs.get_mdf_bitstring(gs.MAZEMAP, 1, 1)
 
-            print "MAP EXPLORE STATUS MDF: " + explore_mdf_string_update
-            print "OBSTACLE STATUS MDF: " + obstacle_mdf_string_update
+            logging.info("EXPLORATION MDF: " + explore_mdf_string_update)
+            logging.info("OBSTACLE MDF: " + obstacle_mdf_string_update)
 
             map_mdf_update_string = "MDF" + explore_mdf_string_update + 'L' + obstacle_mdf_string_update + 'L'
             dir_update_string = "DIR" + str(abs(robot_row - 19)) + 'L' + str(robot_col) + 'L' + str(robot_dir) + 'L' + robot_moving_stop_string_update
@@ -74,11 +75,12 @@ class RPI(threading.Thread):
             self.feedback_android(map_mdf_update_string)
             self.feedback_android(dir_update_string)
 
-            try:
-                self.pc_ws.send(map_mdf_update_string)
-                self.pc_ws.send(dir_update_string)
-            except:
-                pass
+            if gs.DEV_DEBUG:
+                try:
+                    self.pc_ws.send(map_mdf_update_string)
+                    self.pc_ws.send(dir_update_string)
+                except:
+                    pass
 
             gs.print_modified_mazemap(gs.MAZEMAP, robot_row, robot_col, robot_dir)
 
@@ -99,8 +101,9 @@ class RPI(threading.Thread):
         message[3] = message[3] - 12
         message[4] = message[4] - 20
 
-        with open("sensor.txt", "a") as sensor_log:
-            sensor_log.write(str(message) + "\n")
+        if gs.DEV_DEBUG:
+            with open("sensor.txt", "a") as sensor_log:
+                sensor_log.write(str(message) + "\n")
 
         # raw_input("---------press enter to continue-------")
 

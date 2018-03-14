@@ -134,7 +134,7 @@ class Exploration:
                             self.robot.center = neighbour
                             self.robot.head = fsp.robot.head
                             self.robot.direction = fsp.robot.direction
-                            self.robot.getSensors()
+                            # self.robot.getSensors()
 
                             return fsp.movement, False, self.robot.center, self.robot.direction
                 elif (self.visited[currentPos] > 3):
@@ -209,7 +209,6 @@ class Exploration:
         front = self.frontFree()
         num_calibration_move = 0
 
-        logging.info("newBaseStep: " + str(self.moveNumber // CALIBRATE_N_STEPS) + ", baseStep: " + str(self.baseStep))
         if not (self.sim):
             calibrate_front = self.robot.can_calibrate_front()
             calibrate_right = self.robot.can_calibrate_right()

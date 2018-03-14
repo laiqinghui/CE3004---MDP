@@ -1,6 +1,8 @@
 import logging
 import numpy as np
 
+DEV_DEBUG = True
+
 
 def init():
 
@@ -40,6 +42,9 @@ def init():
     logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
                         datefmt='%d-%m-%Y:%H:%M:%S',
                         level=logging.INFO)
+
+    if not DEV_DEBUG:
+        logging.disable(logging.INFO)
 
 
 def print_modified_mazemap(mmap, robot_row, robot_col, direction):
@@ -94,7 +99,6 @@ def get_mdf_bitstring(mmap, format=0, exploreOrObstacle=0):
         mdf_string = mdf_string.replace("2", "1")
         mdf_string = mdf_string + '0' * (8 - (len(mdf_string) % 8))
 
-    # bitstring = '11' + ''.join(str(grid) for mazerow in mmap for grid in mazerow) + '11'
     if format == 0:     # binary
         return mdf_string
     if format == 1:     # hexadecimal
@@ -113,6 +117,5 @@ def aggregate_instruction(instruction):
         if (ch[0] != updatedInstruction[-1][0]):
             updatedInstruction.append(ch)
         else:
-            # updatedInstruction[-1] = updatedInstruction[-1][0] + str(int(updatedInstruction[-1][1:]) + 1)
             updatedInstruction[-1] = updatedInstruction[-1][0] + chr(ord(updatedInstruction[-1][1:]) + 1)
     return updatedInstruction

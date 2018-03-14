@@ -6,7 +6,6 @@ import threading
 from pydispatch import dispatcher
 
 from robot.algorithm import Algorithm
-# from android import Android
 from arduino import Arduino
 from rpi import RPI
 import global_settings as gs
@@ -53,7 +52,6 @@ def initialise_robot_options(argv):
     return robot_row, robot_col, waypoint_row, waypoint_col, goal_row, goal_col, mode, direction
 
 
-# TODO: Convert to method in android.py bluetooth connection file
 def start_robot_exploration(rr, rc, wr, wc, gr, gc, m, d, keep_alive=False):
     """
     Function to start the robot exploration. This should be executed as a non-daemon
@@ -84,17 +82,15 @@ if __name__ == "__main__":
     RPI, Algorithm and Arduino thread will only be initialized when command
     received from Android thread.
     """
-    with open("sensor.txt", "w") as sensor_log:
-        pass
+    if gs.DEV_DEBUG:
+        with open("sensor.txt", "w") as sensor_log:
+            pass
 
     """RUN MAIN.PY TO TEST ALGORITHM & RPI INTERFACE"""
     # python main.py --rr=18 --rc=1 --wr=5 --wc=9 --gr=1 --gc=13 --mode=0 --dir=2
-    # sys.argv[1:] = ['--rr=1', '--rc=1', '--wr=5', '--wc=9', '--gr=19', '--gc=14', '-m', '0']
     rr, rc, wr, wc, gr, gc, m, d = initialise_robot_options(sys.argv[1:])
 
     start_robot_exploration(rr, rc, wr, wc, gr, gc, m, d)
 
     while 1:
         time.sleep(1)
-        # data = raw_input("Enter the data to be sent to algorithm: ")
-        # dispatcher.send(message=[16.0, 16.0, 16.0, 0, 5.0], signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)

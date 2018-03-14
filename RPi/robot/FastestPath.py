@@ -289,7 +289,8 @@ class FastestPath:
         """
         print "Fastest Path Mode started!"
         self.getFastestPath()
-        while (self.robot.center.tolist() != self.goal):
+
+        while (self.robot.center.tolist() != self.goal.tolist()):
             self.moveStep()
         print "Fastest Path completed!"
         return self.movement

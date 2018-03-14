@@ -88,12 +88,10 @@ if __name__ == "__main__":
 
     start_robot_exploration(rr, rc, wr, wc, gr, gc, m, d)
 
-    while 1:
-        with open("test_sensor.txt", "r") as sensor_log:
-            for line in sensor_log:
-                sensor_values = [int(x) for x in line[1:-2].split(',')]
-                raw_input("Enter the data to be sent to algorithm: " + str(sensor_values))
-                dispatcher.send(message=sensor_values, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
+    with open("test_sensor.txt", "r") as sensor_log:
+        for line in sensor_log:
+            sensor_values = [int(x) for x in line[1:-2].split(',')]
+            raw_input("Enter the data to be sent to algorithm: " + str(sensor_values))
+            dispatcher.send(message=sensor_values, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
 
-        raw_input("End of debug")
-        time.sleep(1)
+    raw_input("End of debug")
