@@ -1,3 +1,9 @@
+"""
+Test that the RPI and Algorithm logic on hardcoded test sensor data
+
+# python test_rpi_algorithm.py --rr=18 --rc=1 --wr=18 --wc=5 --gr=1 --gc=13 --mode=0 --dir=2
+"""
+
 import getopt
 import sys
 import time

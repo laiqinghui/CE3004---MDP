@@ -1,3 +1,9 @@
+"""
+Test that the robot can run exploration
+
+# python test_exploration.py --rr=18 --rc=1 --wr=5 --wc=9 --gr=1 --gc=13 --mode=0 --dir=2
+"""
+
 import getopt
 import sys
 import time
@@ -86,8 +92,6 @@ if __name__ == "__main__":
         with open("sensor.txt", "w") as sensor_log:
             pass
 
-    """RUN MAIN.PY TO TEST ALGORITHM & RPI INTERFACE"""
-    # python main.py --rr=18 --rc=1 --wr=5 --wc=9 --gr=1 --gc=13 --mode=0 --dir=2
     rr, rc, wr, wc, gr, gc, m, d = initialise_robot_options(sys.argv[1:])
 
     start_robot_exploration(rr, rc, wr, wc, gr, gc, m, d)

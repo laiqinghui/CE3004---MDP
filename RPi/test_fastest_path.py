@@ -1,3 +1,9 @@
+"""
+Test that the robot can run fastest path on a defined map
+
+# python test_fastest_path.py --rr=18 --rc=1 --wr=5 --wc=9 --gr=1 --gc=13 --mode=1 --dir=2
+"""
+
 import getopt
 import logging
 import sys
@@ -12,8 +18,6 @@ from arduino import Arduino
 from rpi import RPI
 import global_settings as gs
 import numpy as np
-
-# python test_fastest_path.py --rr=18 --rc=1 --wr=5 --wc=9 --gr=1 --gc=13 --mode=1 --dir=2
 
 
 def initialise_robot_options(argv):
