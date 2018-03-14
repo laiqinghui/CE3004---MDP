@@ -10,7 +10,7 @@ char outBuffer[32] = {0};
 boolean newData = false;
 int instCount = 0;
 
-
+/*
 void printArray(char arr[], int len) {
 
   for (int i = 0; i < len ; i++) {
@@ -22,6 +22,7 @@ void printArray(char arr[], int len) {
   Serial.println();
 
 }
+*/
 
 void interruptPi() {
   digitalWrite(PI_PIN, HIGH);
