@@ -82,7 +82,7 @@ if __name__ == "__main__":
     RPI, Algorithm and Arduino thread will only be initialized when command
     received from Android thread.
     """
-    if DEV_DEBUG:
+    if gs.DEV_DEBUG:
         with open("sensor.txt", "w") as sensor_log:
             pass
 

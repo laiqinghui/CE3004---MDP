@@ -16,7 +16,7 @@ class RPI(threading.Thread):
         self.autoupdate = True
         self.pc_ws = None
 
-        if DEV_DEBUG:
+        if gs.DEV_DEBUG:
             from websocket import create_connection
             try:
                 self.pc_ws = create_connection("ws://192.168.5.18:8888/ws")
@@ -66,8 +66,8 @@ class RPI(threading.Thread):
             explore_mdf_string_update = gs.get_mdf_bitstring(gs.MAZEMAP, 1, 0)
             obstacle_mdf_string_update = gs.get_mdf_bitstring(gs.MAZEMAP, 1, 1)
 
-            logging.info("MAP EXPLORE STATUS MDF: " + explore_mdf_string_update)
-            logging.info("OBSTACLE STATUS MDF: " + obstacle_mdf_string_update)
+            logging.info("EXPLORATION MDF: " + explore_mdf_string_update)
+            logging.info("OBSTACLE MDF: " + obstacle_mdf_string_update)
 
             map_mdf_update_string = "MDF" + explore_mdf_string_update + 'L' + obstacle_mdf_string_update + 'L'
             dir_update_string = "DIR" + str(abs(robot_row - 19)) + 'L' + str(robot_col) + 'L' + str(robot_dir) + 'L' + robot_moving_stop_string_update
@@ -75,7 +75,7 @@ class RPI(threading.Thread):
             self.feedback_android(map_mdf_update_string)
             self.feedback_android(dir_update_string)
 
-            if DEV_DEBUG:
+            if gs.DEV_DEBUG:
                 try:
                     self.pc_ws.send(map_mdf_update_string)
                     self.pc_ws.send(dir_update_string)
@@ -101,7 +101,7 @@ class RPI(threading.Thread):
         message[3] = message[3] - 12
         message[4] = message[4] - 20
 
-        if DEV_DEBUG:
+        if gs.DEV_DEBUG:
             with open("sensor.txt", "a") as sensor_log:
                 sensor_log.write(str(message) + "\n")
 

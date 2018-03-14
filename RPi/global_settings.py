@@ -43,6 +43,9 @@ def init():
                         datefmt='%d-%m-%Y:%H:%M:%S',
                         level=logging.INFO)
 
+    if not DEV_DEBUG:
+        logging.disable(logging.INFO)
+
 
 def print_modified_mazemap(mmap, robot_row, robot_col, direction):
     robot_symbol = ""
