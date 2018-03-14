@@ -93,9 +93,9 @@ class Android(threading.Thread):
         Send a message to Android device
         """
         try:
-            logging.info("Starting to send android this message: %s" % str(message))
+            # logging.info("Starting to send android this message: %s" % str(message))
             self.client_sock.send(str(message))
-            logging.info("Finished sending android message")
+            # logging.info("Finished sending android message")
 
             # start calculating fastest path once robot finish exploration
             if len(message) > 3 and message[0:3] == "DIR" and message[-2] == '1':
