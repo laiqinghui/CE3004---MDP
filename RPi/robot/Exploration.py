@@ -134,6 +134,7 @@ class Exploration:
                             self.robot.center = neighbour
                             self.robot.head = fsp.robot.head
                             self.robot.direction = fsp.robot.direction
+                            # self.robot.getSensors()
 
                             return fsp.movement, False, self.robot.center, self.robot.direction
                 elif (self.visited[currentPos] > 3):
