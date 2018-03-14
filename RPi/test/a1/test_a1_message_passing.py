@@ -32,7 +32,6 @@ if __name__ == "__main__":
     rpi_thread = RPI()
     algo_thread = Algorithm()
     arduino_thread = Arduino()
-    # android_thread = Android()
     android_thread = threading.Thread(target=Android)
 
     rpi_thread.daemon = True

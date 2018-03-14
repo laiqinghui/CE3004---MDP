@@ -11,10 +11,10 @@ from arduino import Arduino
 from rpi import RPI
 from robot.algorithm import Algorithm
 
-START_ROW = 1
-START_COL = 18
-FP_GOAL_ROW = 13
-FP_GOAL_COL = 1
+START_ROW = 18
+START_COL = 1
+FP_GOAL_ROW = 1
+FP_GOAL_COL = 13
 EXPLORATION = 0
 FASTEST_PATH = 1
 EAST = 2
@@ -93,9 +93,9 @@ class Android(threading.Thread):
         Send a message to Android device
         """
         try:
-            logging.info("Starting to send android this message: %s" % str(message))
+            # logging.info("Starting to send android this message: %s" % str(message))
             self.client_sock.send(str(message))
-            logging.info("Finished sending android message")
+            # logging.info("Finished sending android message")
 
             # start calculating fastest path once robot finish exploration
             if len(message) > 3 and message[0:3] == "DIR" and message[-2] == '1':
@@ -107,6 +107,7 @@ class Android(threading.Thread):
                 direction = int(direction)
                 self.algo_thread = Algorithm(robot_row, robot_col, self.waypoint_row, self.waypoint_col, FP_GOAL_ROW, FP_GOAL_COL, FASTEST_PATH, direction)
                 self.fastestPathInstruction = self.algo_thread.determine_fastest_path()
+                print "fastestpath" + str(self.fastestPathInstruction)
                 logging.info("Finished calculating fastest path")
 
         except BluetoothError as e:
@@ -127,7 +128,7 @@ class Android(threading.Thread):
                     self.waypoint_row = int(msg.split()[1])
                     self.waypoint_row = -(self.waypoint_row - 19)   # flipping coords for algo
                     self.waypoint_col = int(msg.split()[2])
-                    dispatcher.send(message="C|", signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
+                    dispatcher.send(message="C|1;", signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
                 elif(command == "ex"):
                     self.startAlgorithm(START_ROW, START_COL, self.waypoint_row, self.waypoint_col, FP_GOAL_ROW, FP_GOAL_COL, EXPLORATION, EAST)
                 elif(command == "fp"):
@@ -151,6 +152,13 @@ class Android(threading.Thread):
                 elif(command == "reset"):
                     logging.info("reset robot")
                 elif(command == "return"):
+                    self.stopAlgorithm()
+                    robot_row, robot_col, direction = 18, 1, 4
+                    self.algo_thread = Algorithm(robot_row, robot_col, self.waypoint_row, self.waypoint_col, FP_GOAL_ROW, FP_GOAL_COL, FASTEST_PATH, direction)
+                    self.fastestPathInstruction = self.algo_thread.determine_fastest_path()
+
+                    print "fastestpath" + str(self.fastestPathInstruction)
+
                     logging.info("trigger return")
                 else:
                     logging.info("Invalid message")
