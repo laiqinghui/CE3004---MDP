@@ -128,7 +128,7 @@ class Android(threading.Thread):
                     self.waypoint_row = int(msg.split()[1])
                     self.waypoint_row = -(self.waypoint_row - 19)   # flipping coords for algo
                     self.waypoint_col = int(msg.split()[2])
-                    dispatcher.send(message="C|;", signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
+                    dispatcher.send(message="C|1;", signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
                 elif(command == "ex"):
                     self.startAlgorithm(START_ROW, START_COL, self.waypoint_row, self.waypoint_col, FP_GOAL_ROW, FP_GOAL_COL, EXPLORATION, EAST)
                 elif(command == "fp"):
