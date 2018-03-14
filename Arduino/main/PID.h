@@ -1,8 +1,8 @@
 //------------PID Structs------------
 struct MotorPID {
   int prevTuneSpeed;
-  float currentErr;
-  float prevErr1;
+  signed long currentErr;
+  signed long prevErr1;
   float gain;
 };
 

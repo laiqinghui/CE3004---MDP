@@ -284,11 +284,11 @@ void turnAdjust(int dir) {
   {
     if (frontRightReading > frontLeftReading)
     {
-      setTurnValueOffset(dir, oldValue + difference);
+      setTurnValueOffset(dir, difference);
     }
     else if (frontRightReading < frontLeftReading)
     {
-      setTurnValueOffset(dir, oldValue - difference);
+      setTurnValueOffset(dir, difference);
     }
   }
   //Turn Left
@@ -296,11 +296,11 @@ void turnAdjust(int dir) {
   {
     if (frontRightReading < frontLeftReading)
     {
-      setTurnValueOffset(dir, oldValue + difference);
+      setTurnValueOffset(dir, difference);
     }
     else if (frontRightReading > frontLeftReading)
     {
-      setTurnValueOffset(dir, oldValue - difference);
+      setTurnValueOffset(dir, difference);
     }
   }
 }

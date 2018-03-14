@@ -23,6 +23,7 @@ void processInst() {
 				for (int a = 0; a < moveCount; a++) {
 				  delay(delayAmount);
 				  turnPID(-1, 90);
+          //turn90PIDBeta(-1);
 				  delay(delayAmount);
 				}
 				//Reset side wall reading
@@ -31,7 +32,8 @@ void processInst() {
       case 'D': moveCount = instBuff[index + 1] - 48;
         for (int a = 0; a < moveCount; a++) {
           delay(delayAmount);
-		  turnPID(1, 90);
+		      turnPID(1, 90);
+          //turn90PIDBeta(1);
           delay(delayAmount);
         }
         //Reset side wall reading
@@ -40,8 +42,10 @@ void processInst() {
       case 'O': moveCount = instBuff[index + 1] - 48;
         for (int a = 0; a < moveCount; a++) {
           turnPID(1, 90);
+          //turn90PIDBeta(1);
           delay(delayAmount);
           turnPID(1, 90);
+          //turn90PIDBeta(1);
           delay(delayAmount);
         }
         //Reset side wall reading
@@ -95,12 +99,12 @@ void setup() {
   md.init();
   initI2C();
 
-  
+  /*
     EEPROM.write(0, 0);
     EEPROM.write(1, 0);
     EEPROM.write(2, 0);
     EEPROM.write(3, 0);
-  
+  */
 
   //Load in the offset for turn
   unsigned int turnRight90Offset1 = EEPROM.read(0);

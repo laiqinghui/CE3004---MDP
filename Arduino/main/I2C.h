@@ -69,12 +69,12 @@ void receiveData(int byteCount) {
       i++;
 
     }
-    /*
-      Serial.print("\n\nInstruction ");
-      Serial.print(++instCount);
-      Serial.println(":");
-      printArray(inBuffer, len -1);
-    */
+    
+      //Serial.print("\n\nInstruction ");
+      //Serial.print(++instCount);
+      //Serial.println(":");
+      //printArray(inBuffer, len -1);
+    
 
     //acknowledgeRPI(len-1);
 
