@@ -591,7 +591,7 @@ public class ArenaFragment extends Fragment {
 
     public void updateBTStatus(String btStatus){
         TextView tv = getActivity().findViewById(R.id.bluetoothStatus);
-        tv.setText(btStatus);
+        if(tv!=null){tv.setText(btStatus);}
     }
 
     public synchronized void tiltSteer(float x, float y, float z) {
