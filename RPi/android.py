@@ -11,10 +11,10 @@ from arduino import Arduino
 from rpi import RPI
 from robot.algorithm import Algorithm
 
-START_ROW = 1
-START_COL = 18
-FP_GOAL_ROW = 13
-FP_GOAL_COL = 1
+START_ROW = 18
+START_COL = 1
+FP_GOAL_ROW = 1
+FP_GOAL_COL = 13
 EXPLORATION = 0
 FASTEST_PATH = 1
 EAST = 2
