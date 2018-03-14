@@ -209,7 +209,6 @@ class Exploration:
         front = self.frontFree()
         num_calibration_move = 0
 
-        logging.info("newBaseStep: " + str(self.moveNumber // CALIBRATE_N_STEPS) + ", baseStep: " + str(self.baseStep))
         if not (self.sim):
             calibrate_front = self.robot.can_calibrate_front()
             calibrate_right = self.robot.can_calibrate_right()
