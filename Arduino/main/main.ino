@@ -7,7 +7,7 @@ void processInst() {
   int index = 1;//Start with 1 as first character is sensor flag which is checked after moving
   char num[1] = {0};// For checklist
   int moveCount = 0;
-  int delayAmount = 100;
+  int delayAmount = 250;
 
   while (instBuff[index] != ';') {
     switch (instBuff[index]) {
@@ -65,10 +65,10 @@ void processInst() {
         interruptPi();//Interrupt RPI to notify data is ready
         break;
       case 'I': num[0] = atoi(instBuff + 2) + 1;
-        Serial.print("num = ");
-        Serial.println(num[0]);
-        setOutBuffer('S', num, 1);
-        interruptPi();
+        //Serial.print("num = ");
+        //Serial.println(num[0]);
+        //setOutBuffer('S', num, 1);
+        //interruptPi();
         break;
       default:  ;//do nothing
 
@@ -98,20 +98,29 @@ void setup() {
   Serial.println("Program Started!!!!");
   md.init();
   initI2C();
+  
+
+  
 
   /*
-    EEPROM.write(0, 0);
-    EEPROM.write(1, 0);
-    EEPROM.write(2, 0);
-    EEPROM.write(3, 0);
-
-  //Load in the offset for turn
-  unsigned int turnRight90Offset1 = EEPROM.read(0);
-  unsigned int turnRight90Offset2 = EEPROM.read(1);
-  turnRight90Offset = ((signed int)((turnRight90Offset1 << 8) | turnRight90Offset2)) / 100.0;
-  Serial.println(turnRight90Offset);
+    EEPROM.write(4, ((int)(0.8975 * 10000)) >> 8);
+	EEPROM.write(5, ((int)(0.8975 * 10000)) & 0xFF);
+  
+	EEPROM.write(6, ((int)(0.8975 * 10000)) >> 8);
+	EEPROM.write(7, ((int)(0.8975 * 10000)) & 0xFF);
   */
 
+
+  //Load in the offset for turn
+  unsigned int turnRight90Offset1 = EEPROM.read(4);
+  unsigned int turnRight90Offset2 = EEPROM.read(5);
+  offsetRight = ((signed int)((turnRight90Offset1 << 8) | turnRight90Offset2)) / 10000.0;
+  Serial.println(offsetRight,6);
+  
+  unsigned int turnLeft90Offset1 = EEPROM.read(6);
+  unsigned int turnLeft90Offset2 = EEPROM.read(7);
+  offsetLeft = ((signed int)((turnLeft90Offset1 << 8) | turnLeft90Offset2)) / 10000.0;
+  Serial.println(offsetLeft,6);
 }
 
 void loop()
