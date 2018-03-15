@@ -57,9 +57,9 @@ void receiveData(int byteCount) {
   int len = Wire.available();
 
 
-  //Serial.print("Incoming: ");
-  //Serial.print(len);
-  //Serial.println(" bytes");
+  Serial.print("Incoming: ");
+  Serial.print(len);
+  Serial.println(" bytes");
 
   if (len > 1) {
 

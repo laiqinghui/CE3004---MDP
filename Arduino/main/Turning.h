@@ -47,7 +47,6 @@ void setTurnValueOffset(int dir, double newValue) {
   
   EEPROM.write(6, ((int)(offsetLeft * 10000)) >> 8);
   EEPROM.write(7, ((int)(offsetLeft * 10000)) & 0xFF);
-  Serial.println(offsetLeft);
   
   
   if (dir == 1)
