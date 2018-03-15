@@ -91,27 +91,30 @@ class RPI(threading.Thread):
 
     def send_arduino_movement(self, instruction):
         if len(instruction) <= 30:
+            if instruction[0] == "C":
+                instruction = "f" + instruction[1:]
             dispatcher.send(message=instruction, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
             logging.info("rpi received message from algorithm and write message to arduino: " + str(instruction))
         else:
             logging.info("fp instr: " + str(instruction))
             packeted_instr = self.split_str(instruction[1:-1], 28)
+
             for i in range(len(packeted_instr[:-1])):
                 packeted_instr[i] = 'C' + packeted_instr[i] + ';'
             if instruction[0] == 'S':
                 packeted_instr[-1] = 'S' + packeted_instr[-1] + ';'
             if instruction[0] == 'C':
-                packeted_instr[-1] = 'C' + packeted_instr[-1] + ';'
+                packeted_instr[-1] = 'f' + packeted_instr[-1] + ';'
 
-            logging.info("Number of packets" + str(len(packeted_instr)))
-            check = 0
-            loopcount = 0
-            dispatcher.send(message=packeted_instr[0], signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
-            while(GPIO.input(17) == 0):
-                pass
-            dispatcher.send(message=packeted_instr[1], signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
-
-            logging.info("rpi received message from algorithm and write message to arduino: " + str(packeted_instr))
+            logging.info("rpi will be sending the packets to arduino: " + str(packeted_instr))
+            logging.info("rpi started sending first packet")
+            for send_instr in packeted_instr[:-1]:
+                dispatcher.send(message=send_instr, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
+                while(GPIO.input(17) == 0):
+                    pass
+                logging.info("rpi started sending next packet")
+            dispatcher.send(message=packeted_instr[-1], signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
+            logging.info("rpi has finished sending all packets")
 
     def split_str(self, seq, chunk):
         return textwrap.wrap(seq, chunk)
