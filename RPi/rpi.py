@@ -108,9 +108,9 @@ class RPI(threading.Thread):
             loopcount = 0
             dispatcher.send(message=packeted_instr[0], signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
             while(GPIO.input(17) == 0):
-                 pass
+                pass
             dispatcher.send(message=packeted_instr[1], signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
-            
+
             logging.info("rpi received message from algorithm and write message to arduino: " + str(packeted_instr))
 
     def split_str(self, seq, chunk):
