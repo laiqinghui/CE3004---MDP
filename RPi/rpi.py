@@ -3,6 +3,7 @@ import textwrap
 import time
 import threading
 import sys
+import RPi.GPIO as GPIO
 
 from pydispatch import dispatcher
 
@@ -93,6 +94,7 @@ class RPI(threading.Thread):
             dispatcher.send(message=instruction, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
             logging.info("rpi received message from algorithm and write message to arduino: " + str(instruction))
         else:
+            logging.info("fp instr: " + str(instruction))
             packeted_instr = self.split_str(instruction[1:-1], 28)
             for i in range(len(packeted_instr[:-1])):
                 packeted_instr[i] = 'C' + packeted_instr[i] + ';'
@@ -101,8 +103,14 @@ class RPI(threading.Thread):
             if instruction[0] == 'C':
                 packeted_instr[-1] = 'C' + packeted_instr[-1] + ';'
 
-            for instr in packeted_instr:
-                dispatcher.send(message=instr, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
+            logging.info("Number of packets" + str(len(packeted_instr)))
+            check = 0
+            loopcount = 0
+            dispatcher.send(message=packeted_instr[0], signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
+            while(GPIO.input(17) == 0):
+                 pass
+            dispatcher.send(message=packeted_instr[1], signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
+            
             logging.info("rpi received message from algorithm and write message to arduino: " + str(packeted_instr))
 
     def split_str(self, seq, chunk):
@@ -117,8 +125,8 @@ class RPI(threading.Thread):
         message[0] = message[0] - 13
         message[1] = message[1] - 8
         message[2] = message[2] - 13
-        message[3] = message[3] - 12
-        message[4] = message[4] - 20
+        message[3] = message[3] - 11
+        message[4] = message[4] - 18
 
         if gs.DEV_DEBUG:
             with open("sensor.txt", "a") as sensor_log:
