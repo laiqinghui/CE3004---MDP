@@ -110,8 +110,8 @@ class Android(threading.Thread):
                 print "fastestpath" + str(self.fastestPathInstruction)
                 logging.info("Finished calculating fastest path")
 
-                time.sleep(5)
-                self.commandRobotCalibrate()
+                # time.sleep(5)
+                # self.commandRobotCalibrate()
 
         except BluetoothError as e:
             logging.info("Bluetooth Error - encountered when attempting to send data to Android device -- %s" % str(e))

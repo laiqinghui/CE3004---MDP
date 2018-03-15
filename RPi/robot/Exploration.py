@@ -99,8 +99,10 @@ class Exploration:
         """
         self.endTime = time.time() + self.timeLimit
         numCycle = 1
+        steps = 0
 
         if (time.time() <= self.endTime and self.exploredArea < 100):
+            steps += 1
             if (sensor_vals):
                 current = self.moveStep(sensor_vals)
             else:
@@ -113,7 +115,7 @@ class Exploration:
 
                 if (np.array_equal(self.robot.center, self.startPos)):
                     numCycle += 1
-                    if (numCycle > 1 and self.exploredArea < 100):
+                    if (numCycle > 1 and steps > 4 and self.exploredArea < 100):
                         neighbour = self.getExploredNeighbour()
                         if (neighbour):
                             neighbour = np.asarray(neighbour)
@@ -156,6 +158,29 @@ class Exploration:
                             self.robot.head = fsp.robot.head
                             self.robot.direction = fsp.robot.direction
 
+                            # if self.robot.direction == NORTH:
+                            #     fsp.movement.append('O')
+                            #     fsp.movement.append(']')
+                            #     fsp.movement.append('O')
+                            # elif self.robot.direction == SOUTH:
+                            #     fsp.movement.append(']')
+                            # elif self.robot.direction == EAST:
+                            #     fsp.movement.append('D')
+                            #     fsp.movement.append(']')
+                            #     fsp.movement.append('A')
+                            # else:
+                            #     fsp.movement.append('A')
+                            #     fsp.movement.append(']')
+                            #     fsp.movement.append('D')
+
+                            if self.robot.can_calibrate_front and self.robot.can_calibrate_right:
+                                fsp.movement.append(']')
+                            else:
+                                fsp.movement.append('A')
+                                fsp.movement.append(']')
+
+                            logging.info(fsp.movement)    
+                            logging.info(self.robot.direction)
 
                             return fsp.movement, True, self.robot.center, self.robot.direction
                 elif (self.visited[currentPos] > 3):
@@ -202,6 +227,30 @@ class Exploration:
                         self.robot.head = fsp.robot.head
                         self.robot.direction = fsp.robot.direction
 
+                        # if self.robot.direction == NORTH:
+                        #     fsp.movement.append('O')
+                        #     fsp.movement.append(']')
+                        #     fsp.movement.append('O')
+                        # elif self.robot.direction == SOUTH:
+                        #     fsp.movement.append(']')
+                        # elif self.robot.direction == EAST:
+                        #     fsp.movement.append('D')
+                        #     fsp.movement.append(']')
+                        #     fsp.movement.append('A')
+                        # else:
+                        #     fsp.movement.append('A')
+                        #     fsp.movement.append(']')
+                        #     fsp.movement.append('D')
+
+                        if self.robot.can_calibrate_front and self.robot.can_calibrate_right:
+                            fsp.movement.append(']')
+                        else:
+                            fsp.movement.append('A')
+                            fsp.movement.append(']')
+                        
+                        logging.info(fsp.movement)
+                        logging.info(self.robot.direction)
+
                         return fsp.movement, True, self.robot.center, self.robot.direction
             else:
                 self.visited[currentPos] = 1
@@ -217,7 +266,31 @@ class Exploration:
             if (np.array_equal(self.robot.center, self.startPos)):
                 print "Exploration completed."
 
-                return [], True, self.robot.center, self.robot.direction
+                calibrateMove = []
+                # if self.robot.direction == NORTH:
+                #     calibrateMove.append('O')
+                #     calibrateMove.append(']')
+                #     calibrateMove.append('O')
+                # elif self.robot.direction == SOUTH:
+                #     calibrateMove.append(']')
+                # elif self.robot.direction == EAST:
+                #     calibrateMove.append('D')
+                #     calibrateMove.append(']')
+                #     calibrateMove.append('A')
+                # else:
+                #     calibrateMove.append('A')
+                #     calibrateMove.append(']')
+                #     calibrateMove.append('D')
+
+                if self.robot.can_calibrate_front and self.robot.can_calibrate_right:
+                    fsp.movement.append(']')
+                else:
+                    fsp.movement.append('A')
+                    fsp.movement.append(']')
+
+                logging.info(calibrateMove)
+                logging.info(self.robot.direction)
+                return calibrateMove, True, self.robot.center, self.robot.direction
             else:
                 fsp = FastestPath(self.currentMap, self.robot.center, self.startPos, self.robot.direction, None)
                 print "Exploration completed. Back to starting position!"
@@ -227,6 +300,29 @@ class Exploration:
                     fsp.moveStep()
                 print "Starting position reached!"
 
+                # if self.robot.direction == NORTH:
+                #     fsp.movement.append('O')
+                #     fsp.movement.append(']')
+                #     fsp.movement.append('O')
+                # elif self.robot.direction == SOUTH:
+                #     fsp.movement.append(']')
+                # elif self.robot.direction == EAST:
+                #     fsp.movement.append('D')
+                #     fsp.movement.append(']')
+                #     fsp.movement.append('A')
+                # else:
+                #     fsp.movement.append('A')
+                #     fsp.movement.append(']')
+                #     fsp.movement.append('D')
+
+                if self.robot.can_calibrate_front and self.robot.can_calibrate_right:
+                    fsp.movement.append(']')
+                else:
+                    fsp.movement.append('A')
+                    fsp.movement.append(']')
+
+                logging.info(fsp.movement)
+                logging.info(self.robot.direction)
                 return fsp.movement, True, fsp.robot.center, self.robot.direction
 
     def moveStep(self, sensor_vals=None):
@@ -300,9 +396,9 @@ class Exploration:
                 self.robot.moveBot(FORWARD)
             move.extend([FORWARD]*front)
         else:
-            self.robot.moveBot(RIGHT)
-            self.robot.moveBot(RIGHT)
-            move.extend(('O'))
+            self.robot.moveBot(LEFT)
+            # self.robot.moveBot(RIGHT)
+            move.extend(('A'))
 
         # single step
         # if (self.checkFree([1, 2, 3, 0], self.robot.center)):
@@ -469,9 +565,9 @@ class Exploration:
                     (self.virtualWall[1] <= c < self.virtualWall[3])):
                 return False
 
-        return (self.currentMap[inds[0][0], inds[0][1]] == 1 and
-                self.currentMap[inds[1][0], inds[1][1]] == 1 and
-                self.currentMap[inds[2][0], inds[2][1]] == 1)
+        return (self.currentMap[inds[0][0], inds[0][1]] != 2 and
+                self.currentMap[inds[1][0], inds[1][1]] != 2 and
+                self.currentMap[inds[2][0], inds[2][1]] != 2)
 
     def checkExplored(self, center):
         """Check if the cells within sensor range are explored.
