@@ -22,7 +22,7 @@ double* getFrontCalibrationReading(boolean quick);
 double* calibrationFrontSensorReading();
 
 double fromFrontWall = 12.5;
-double fromSideWall = 12;
+double fromSideWall = 13;
 //Calibration
 void calibration() {
   double threshold = 0.2;
@@ -93,7 +93,17 @@ void fastCalibration(int choice) {
   //Calibrate against right wall only
   if (choice == 0)
   {
-
+	//Fine tune the calibration
+	straightenTune();
+	delay(wait);
+	
+	//Move to the distance from wall
+    distancefromFrontWall(fromFrontWall + 0.5);
+    delay(wait);
+	
+	//Fine tune the calibration
+	straightenTune();
+	delay(wait);
   }
 
   else if (choice == 1)
@@ -127,14 +137,14 @@ void fastCalibration(int choice) {
     delay(wait);
 
     //Move to the distance from wall
-    distancefromFrontWall(fromFrontWall);
+    distancefromFrontWall(fromFrontWall + 0.5);
     delay(wait);
 
     //Fine tune the calibration
     straightenTune();
     delay(wait);
 
-    distancefromFrontWall(fromFrontWall);
+    distancefromFrontWall(fromFrontWall + 0.5);
     delay(wait);
 
     //Calibrate against right wall if there is one
@@ -153,6 +163,10 @@ void fastCalibration(int choice) {
 
       turnPID(-1, 90);
       turnAdjust(-1);
+	  
+	        //Fine tune the calibration
+      straightenTune();
+      delay(wait);
     }
   }
 }
@@ -182,7 +196,7 @@ double* getFrontCalibrationReading(boolean quick) {
 }
 
 double* calibrationFrontSensorReading() {
-  int size = 100;
+  int size = 120;
 
   int listOfReadingsFL[size];
   int listOfReadingsFR[size];
@@ -254,7 +268,7 @@ void straightenTune() {
     while (frontRightReading > frontLeftReading)
     {
       md.setSpeeds(130, 0);
-      delay(30);//Change from 10 to make it faster
+      delay(20);//Change from 10 to make it faster
       md.setBrakes(400, 400);
       getFrontCalibrationReading(false);
     }
@@ -264,7 +278,7 @@ void straightenTune() {
     while (frontRightReading < frontLeftReading)
     {
       md.setSpeeds(-130, 0);
-      delay(30);//10
+      delay(20);//10
       md.setBrakes(400, 400);
       getFrontCalibrationReading(false);
     }
@@ -273,8 +287,8 @@ void straightenTune() {
 
 void turnAdjust(int dir) {
   getFrontCalibrationReading(false);
-  double oldValue = getTurnValueOffset(dir);
-  double difference = abs(frontRightReading - frontLeftReading) / 3;
+  //double oldValue = getTurnValueOffset(dir);
+  double difference = abs(frontRightReading - frontLeftReading);
   if(difference > 4)
   {
 	  return;

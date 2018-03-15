@@ -10,34 +10,44 @@ void turnPID(int dir, int degree);
 double turnRight90Offset = 0;
 double turnLeft90Offset = 0;
 
-double offset = 0.8975;
+double offsetRight = 0.8975;
+double offsetLeft = 0.8975;
 void setTurnValueOffset(int dir, double newValue) {
   //Right Turn
-  int errorChange = 0.0005;
+  double errorChange = 0.0001;
+  if(abs(newValue) < 0.2)
+  {
+	  return;
+  }
+  
   if(dir == 1)
   {
     if(newValue > 0)
     {
-      offset = offset - errorChange;
+      offsetRight = offsetRight - errorChange;
     }
     else if(newValue < 0)
     {
-      offset = offset + errorChange;
+      offsetRight = offsetRight + errorChange;
     }
   }
   else
   {
     if(newValue < 0)
     {
-      offset = offset - errorChange;
+      offsetLeft = offsetLeft - errorChange;
     }
     else if(newValue > 0)
     {
-      offset = offset + errorChange;
+      offsetLeft = offsetLeft + errorChange;
     }
   }
-  EEPROM.write(0, ((int)(newValue * 1000)) >> 8);
-  EEPROM.write(1, ((int)(newValue * 1000)) & 0xFF);
+  EEPROM.write(4, ((int)(offsetRight * 10000)) >> 8);
+  EEPROM.write(5, ((int)(offsetRight * 10000)) & 0xFF);
+  
+  EEPROM.write(6, ((int)(offsetLeft * 10000)) >> 8);
+  EEPROM.write(7, ((int)(offsetLeft * 10000)) & 0xFF);
+  Serial.println(offsetLeft);
   
   
   if (dir == 1)
@@ -78,111 +88,25 @@ double getTurnAmount(int dir, int turnDegree) {
   }
 }
 
-int m2TurnSpeedPositive = 230;
-int m2TurnSpeedNegative = -220;
-
-void turnPID2(int dir, int degree) {
-  
-  sideWall[0] = 0;
-  sideWall[1] = 0;
-  sideWall[2] = 0;
-  
-  //Serial.println("Set");
-  //Serial.println(m2TurnSpeedNegative);
-  //Serial.println(m2TurnSpeedPositive);
-  
-  int amount = getTurnAmount(dir, degree);
-
-  int currentTicksM1 = 0;
-  int currentM1Width =0;
-  int currentM2Width = 0;
-  int currentTime = 0;
-  int prevTime = 0;
-  int prevM2Width = 0;
-
-  enableInterrupt( e1a, risingM1, RISING);
-  enableInterrupt( e2b, risingM2, RISING);
-  setTicks(0, 0);
-  
-  if (dir == 1)
-  {
-    md.setSpeeds(-210, m2TurnSpeedPositive);
-	
-    while (currentTicksM1 < amount)
-    {
-      noInterrupts();
-      currentTicksM1 = M1ticks;
-	  currentM1Width = squareWidth_M1;
-	  currentM2Width = squareWidth_M2;
-      interrupts();
-	  
-	  currentTime = micros();
-	  if(currentTime-prevTime == 1000)
-	  {
-		  if (currentM2Width > currentM1Width)
-		  {
-			m2TurnSpeedPositive = m2TurnSpeedPositive + 1;
-			OCR1B = m2TurnSpeedPositive;
-		  }
-		  else if (currentM2Width < currentM1Width)
-		  {
-			m2TurnSpeedPositive = m2TurnSpeedPositive - 1;
-			OCR1B = m2TurnSpeedPositive;
-		  }
-		  prevTime = currentTime;
-	  }
-    }
-  }
-  else
-  {
-    md.setSpeeds(210, m2TurnSpeedNegative);
-
-    while (currentTicksM1 < amount)
-    {
-      noInterrupts();
-      currentTicksM1 = M1ticks;
-	  currentM1Width = squareWidth_M1;
-	  currentM2Width = squareWidth_M2;
-      interrupts();
-	  
-	  currentTime = micros();
-	  if(currentTime-prevTime == 1000)
-	  {
-		  //Serial.println(m2TurnSpeedNegative);
-		  //Serial.println(currentM2Width);
-		  //Serial.println(m1CurrentWidthNegative);
-		  if (currentM2Width > currentM1Width)
-		  {
-			m2TurnSpeedNegative = m2TurnSpeedNegative - 1;
-			OCR1B = m2TurnSpeedNegative;
-		  }
-		  else if (currentM2Width < currentM1Width)
-		  {
-			m2TurnSpeedNegative = m2TurnSpeedNegative + 1;
-			OCR1B = m2TurnSpeedNegative;
-		  }
-		  prevTime = currentTime;
-	  }
-	  
-    }
-  }
-  md.setBrakes(400, 400);
-
-  disableInterrupt(e1a);
-  disableInterrupt(e2b);
-  setTicks(0, 0);
-  setSqWidth(0, 0);
-  
-  Serial.println(m2TurnSpeedPositive);
-  Serial.println(m2TurnSpeedNegative);
-}
-
-
 void turnPID(int dir, int rpm){
 
     double cir = 3.141 * 17.6; //circumfrence of circle drawn when turning in cm, current diameter used is 17.6
     double cmToCounts = ticksPerCM; //cm to counts for wheel
-    double amount = cir * 0.25 * cmToCounts * offset;//int to ignored decimal value
+	
+	double amount = 0;
+	
+	if(dir == 1)
+	{
+		amount = cir * 0.25 * cmToCounts * offsetRight;//int to ignored decimal value
+	}
+	else
+	{
+		amount = cir * 0.25 * cmToCounts * offsetLeft;
+	
+	}
+	
+	//amount = cir * 0.25 * cmToCounts * 0.8975;
+	
     unsigned long currentTicksM1 = 0;
     unsigned long currentTicksM2 = 0;
     int tuneSpeedM1 = 0;
@@ -275,5 +199,6 @@ void turnPID(int dir, int rpm){
       disableInterrupt(e2b);
       setTicks(0,0);
       setSqWidth(0,0);
+	  
       
   }// end of function
