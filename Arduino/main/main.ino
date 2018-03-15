@@ -4,10 +4,16 @@
 void processInst() {
 
   char *instBuff = getinBuffer();//inBuffer can be accessed directly but not a nice practice i think
+  boolean fastestPath = false;
   int index = 1;//Start with 1 as first character is sensor flag which is checked after moving
   char num[1] = {0};// For checklist
   int moveCount = 0;
   int delayAmount = 250;
+  
+  if(instBuff[0] == 'C')
+  {
+	  fastestPath = true;
+  }
 
   while (instBuff[index] != ';') {
     switch (instBuff[index]) {
@@ -72,13 +78,18 @@ void processInst() {
         break;
       default:  ;//do nothing
 
-    }
+    }	
 
     index += 2;
     //if(instBuff[index] != ';')
     //delay(200);
 
   }
+  	if(fastestPath)
+	{
+		interruptPi();
+	}
+  
   //Serial.print("No. of move inst: ");
   //Serial.println(index-1);
   if (instBuff[0] == 'S') {
