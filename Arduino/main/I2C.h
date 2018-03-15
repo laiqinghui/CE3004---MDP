@@ -10,7 +10,7 @@ char outBuffer[32] = {0};
 boolean newData = false;
 int instCount = 0;
 
-/*
+
 void printArray(char arr[], int len) {
 
   for (int i = 0; i < len ; i++) {
@@ -22,7 +22,7 @@ void printArray(char arr[], int len) {
   Serial.println();
 
 }
-*/
+
 
 void interruptPi() {
   digitalWrite(PI_PIN, HIGH);
@@ -71,10 +71,10 @@ void receiveData(int byteCount) {
 
     }
     
-      //Serial.print("\n\nInstruction ");
-      //Serial.print(++instCount);
-      //Serial.println(":");
-      //printArray(inBuffer, len -1);
+      Serial.print("\n\nInstruction ");
+      Serial.print(++instCount);
+      Serial.println(":");
+      printArray(inBuffer, len -1);
     
 
     //acknowledgeRPI(len-1);

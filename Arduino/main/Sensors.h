@@ -43,8 +43,18 @@ char* getSensorReadingInCM() {
     sensorsValuesArray[0] = (5546.9 / frontLeftValue) - 0.7029;
   }
 
-  //Ultrasound reading
-  sensorsValuesArray[1] = getUltraSoundDistance();        //getUltraSoundDistance(); //Center
+  //------------------------------------UtraSound-----------------------------------------------------
+  int count = 0;
+  sensorsValuesArray[1] = -1;
+  while(sensorsValuesArray[1] == -1)
+  {
+	sensorsValuesArray[1] = getUltraSoundDistance();        //getUltraSoundDistance(); //Center
+	if(count > 20)
+	{
+		break;
+	}
+	count++;
+  }
 
   //------------------------------------FRONT RIGHT-----------------------------------------------------
   //PS2 y = 5738x - 1.1941
