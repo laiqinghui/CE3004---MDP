@@ -565,9 +565,9 @@ class Exploration:
                     (self.virtualWall[1] <= c < self.virtualWall[3])):
                 return False
 
-        return (self.currentMap[inds[0][0], inds[0][1]] != 2 and
-                self.currentMap[inds[1][0], inds[1][1]] != 2 and
-                self.currentMap[inds[2][0], inds[2][1]] != 2)
+        return (self.currentMap[inds[0][0], inds[0][1]] == 1 and
+                self.currentMap[inds[1][0], inds[1][1]] == 1 and
+                self.currentMap[inds[2][0], inds[2][1]] == 1)
 
     def checkExplored(self, center):
         """Check if the cells within sensor range are explored.
