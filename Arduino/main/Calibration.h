@@ -221,7 +221,7 @@ void distancefromFrontWall(double distance) {
   getFrontCalibrationReading(false);
   if (frontRightReading > distance)
   {
-    md.setSpeeds(108, 140);
+    md.setSpeeds(142, 140);
     while (frontRightReading > distance)
     {
       getFrontCalibrationReading(true);
@@ -229,7 +229,7 @@ void distancefromFrontWall(double distance) {
   }
   else if (frontRightReading < distance)
   {
-    md.setSpeeds(-108, -135);
+    md.setSpeeds(-142, -140);
     while (frontRightReading < distance)
     {
 

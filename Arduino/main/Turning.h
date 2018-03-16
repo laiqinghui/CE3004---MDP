@@ -104,14 +104,14 @@ void turnPID(int dir, int rpm){
 	
 	}
 	
-	//amount = cir * 0.25 * cmToCounts * 0.8975;
+	amount = cir * 0.25 * cmToCounts * 0.855;
 	
     unsigned long currentTicksM1 = 0;
     unsigned long currentTicksM2 = 0;
     int tuneSpeedM1 = 0;
     int tuneSpeedM2 = 0;
-    int m1Speed = dir * -214;
-    int m2Speed = dir * 255;
+    int m1Speed = dir * -300;
+    int m2Speed = dir * 300;
 
     unsigned long tuneEntryTime = 0;
     unsigned long tuneExitTime = 0;
@@ -127,7 +127,7 @@ void turnPID(int dir, int rpm){
       enableInterrupt( e2b, risingM2Ticks, RISING);
       md.setSpeeds(m1Speed, m2Speed);
      
-      while(currentTicksM2 < amount)//currentTicksM1 < amount
+      while(currentTicksM2 < amount || currentTicksM1 < amount)//currentTicksM1 < amount
         {
           tuneEntryTime = micros();
           interval = tuneEntryTime - tuneExitTime;
@@ -160,7 +160,7 @@ void turnPID(int dir, int rpm){
       enableInterrupt( e2b, risingM2Ticks, RISING);
       md.setSpeeds(m1Speed, m2Speed);
      
-      while(currentTicksM2 < amount)
+      while(currentTicksM2 < amount || currentTicksM1 < amount)
         {
           tuneEntryTime = micros();
           interval = tuneEntryTime - tuneExitTime;
@@ -171,7 +171,7 @@ void turnPID(int dir, int rpm){
             currentTicksM2 = M2ticks;
             interrupts();
       
-            M1.currentErr = currentTicksM2 - currentTicksM1; //Positive means M1 is faster
+            M1.currentErr = currentTicksM2 - currentTicksM1; //Positive means M2 is faster
             tuneSpeedM1 = M1.prevTuneSpeed + M1.gain*M1.currentErr + (M1.gain/0.07)*(M1.currentErr - M1.prevErr1);
             md.setSpeeds(tuneSpeedM1, m2Speed);
             
@@ -179,11 +179,15 @@ void turnPID(int dir, int rpm){
             M1.prevErr1 = M1.currentErr;
       
             tuneExitTime = micros();
-            //Serial.print("currentTicksM1: ");
-            //Serial.println(currentTicksM1);
-            //Serial.print("currentTicksM2: ");
-            //Serial.println(currentTicksM2);
-      
+            /*
+            Serial.print("currentTicksM1: ");
+            Serial.println(currentTicksM1);
+            Serial.print("currentTicksM2: ");
+            Serial.println(currentTicksM2);
+
+            Serial.print("M1.currentErr: ");
+            Serial.println(M1.currentErr);
+            */
             //Serial.print("tuneSpeedM1: ");
             //Serial.println(tuneSpeedM1);
             //Serial.print("M1.currentErr: ");
