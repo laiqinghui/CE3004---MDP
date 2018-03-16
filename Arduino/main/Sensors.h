@@ -157,7 +157,7 @@ double sortAndAverage(int* listOfReadings, int size, int amount)
 //Get average reading over a number of samples
 double* getIRSensorReading()
 {
-  int size = 70;
+  int size = 100;
 
   int listOfReadingsFL[size];
   int listOfReadingsFR[size];
