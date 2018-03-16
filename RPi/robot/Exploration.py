@@ -178,8 +178,9 @@ class Exploration:
                             else:
                                 fsp.movement.append('A')
                                 fsp.movement.append(']')
+                                fsp.movement.append('D')
 
-                            logging.info(fsp.movement)    
+                            logging.info(fsp.movement)
                             logging.info(self.robot.direction)
 
                             return fsp.movement, True, self.robot.center, self.robot.direction
@@ -201,7 +202,7 @@ class Exploration:
                         while (fsp.robot.center.tolist() != neighbour.tolist()):
                             fsp.moveStep()
                         print "Couldnt find a path to unexplored area, returning home..."
-                            
+
 
                         self.robot.center = neighbour
                         self.robot.head = fsp.robot.head
@@ -247,7 +248,8 @@ class Exploration:
                         else:
                             fsp.movement.append('A')
                             fsp.movement.append(']')
-                        
+                            fsp.movement.append('D')
+
                         logging.info(fsp.movement)
                         logging.info(self.robot.direction)
 
@@ -287,6 +289,7 @@ class Exploration:
                 else:
                     fsp.movement.append('A')
                     fsp.movement.append(']')
+                    fsp.movement.append('D')
 
                 logging.info(calibrateMove)
                 logging.info(self.robot.direction)
@@ -320,6 +323,7 @@ class Exploration:
                 else:
                     fsp.movement.append('A')
                     fsp.movement.append(']')
+                    fsp.movement.append('D')
 
                 logging.info(fsp.movement)
                 logging.info(self.robot.direction)

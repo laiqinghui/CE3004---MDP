@@ -79,8 +79,6 @@ class Android(threading.Thread):
         if mode == FASTEST_PATH:
             if len(self.fastestPathInstruction) > 0:
                 self.algo_thread.run_fastest_path_on(self.fastestPathInstruction)
-                self.fastestPathInstruction = []
-                del self.algo_thread
             else:
                 logging.info("Fastest path instruction not calculated yet.")
 

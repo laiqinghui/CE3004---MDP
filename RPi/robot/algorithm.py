@@ -60,8 +60,11 @@ class Algorithm(threading.Thread):
 
     def determine_fastest_path(self):
 
-        instruction = self.algorithmClass.fastestPathRun()
-        # dispatcher.send(message=(instruction, ), signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
+        instruction = []
+        try:
+            instruction = self.algorithmClass.fastestPathRun()
+        except:
+            logging.info("Fastest path no path found")
         return instruction
 
     def run_fastest_path_on(self, instruction):
