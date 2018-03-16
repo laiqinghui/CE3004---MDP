@@ -79,7 +79,7 @@ void moveForwardBeta(int rpm, double distance) {
   //Check using right side sensor if need to calibrate
   calibrateBeforeMoveForward();
 
-  MotorPID M1pid = {m1setSpeed, 0, 0, 0.110};//0.1=>50
+  MotorPID M1pid = {m1setSpeed, 0, 0, 0.108};//0.1=>50
   MotorPID M2pid = {m2setSpeed , 0, 0, 0.122};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms //was 0.125
 
   enableInterrupt( e1a, risingM1, RISING);

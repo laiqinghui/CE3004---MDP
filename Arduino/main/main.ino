@@ -113,13 +113,11 @@ void setup() {
 
   
 
-  /*
     EEPROM.write(4, ((int)(0.8975 * 10000)) >> 8);
 	EEPROM.write(5, ((int)(0.8975 * 10000)) & 0xFF);
   
 	EEPROM.write(6, ((int)(0.8975 * 10000)) >> 8);
 	EEPROM.write(7, ((int)(0.8975 * 10000)) & 0xFF);
-  */
 
 
   //Load in the offset for turn
