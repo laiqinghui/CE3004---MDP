@@ -13,15 +13,15 @@ void moveForwardOneGrid(int rpm) {
   unsigned long tuneEntryTime = 0;
   unsigned long tuneExitTime = 0;
   unsigned long interval = 0;
-  double distanceTicks = 0.965 * 9.5 * ticksPerCM;
+  double distanceTicks = 0.93 * 9.5 * ticksPerCM;
   unsigned long currentTicksM1 = 0;
   unsigned long currentTicksM2 = 0;
 
-  int m1setSpeed = 245;
-  int m2setSpeed = 281;
+  int m1setSpeed = 100;
+  int m2setSpeed = 100;
 
   MotorPID M1pid = {m1setSpeed, 0, 0, 0.110};//LOUNGE: 0.110=>50/ LAB: 0.115=>50 || LAB: 0.110=>90/ LAB: 0.115=>50
-  MotorPID M2pid = {m2setSpeed , 0, 0, 0.138};//LOUNGE: 0.150->50/LAB: 0.150->50 || LAB: 0.135=>90/ LAB:
+  MotorPID M2pid = {m2setSpeed , 0, 0, 0.109};//LOUNGE: 0.150->50/LAB: 0.150->50 || LAB: 0.135=>90/ LAB:
 
   //Check using right side sensor if need to calibrate
   calibrateBeforeMoveForward();
@@ -73,14 +73,14 @@ void moveForwardBeta(int rpm, double distance) {
   unsigned long currentTicksM1 = 0;
   unsigned long currentTicksM2 = 0;
 
-  int m1setSpeed = 245;
-  int m2setSpeed = 267;
+  int m1setSpeed = 100;
+  int m2setSpeed = 100;
 
   //Check using right side sensor if need to calibrate
   calibrateBeforeMoveForward();
 
   MotorPID M1pid = {m1setSpeed, 0, 0, 0.108};//0.1=>50
-  MotorPID M2pid = {m2setSpeed , 0, 0, 0.122};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms //was 0.125
+  MotorPID M2pid = {m2setSpeed, 0, 0, 0.119};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms //was 0.125
 
   enableInterrupt( e1a, risingM1, RISING);
   enableInterrupt( e2b, risingM2, RISING);
@@ -127,6 +127,8 @@ void moveForwardBeta(int rpm, double distance) {
     }
 
   }//end of while
+  Serial.println(M1pid.prevTuneSpeed);
+  Serial.println(M2pid.prevTuneSpeed);
 
   disableInterrupt(e1a);
   disableInterrupt(e2b);
