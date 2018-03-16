@@ -126,11 +126,10 @@ class Arduino(threading.Thread):
             packeted_instr = self.split_str(instruction[1:-1], 28)
 
             # Special char C needs acknowledgement from arduino
-            logging.info("total packets: " + str(packeted_instr))
             for i in range(len(packeted_instr[:-1])):
                 packeted_instr[i] = 'C' + packeted_instr[i] + ';'
-
             packeted_instr[-1] = instruction[0] + packeted_instr[-1] + ';'
+            logging.info("total packets: " + str(packeted_instr))
 
             return packeted_instr
 
