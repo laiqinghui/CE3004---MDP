@@ -20,6 +20,7 @@ double frontSensorsCalibrationCM[2];
 double calibrationFrontSensorRaw[2];
 double* getFrontCalibrationReading(boolean quick);
 double* calibrationFrontSensorReading();
+int isSideFull[4] = {0, 0, 0, 0};
 
 double fromFrontWall = 12.5;
 double fromSideWall = 13;
@@ -79,7 +80,12 @@ void calibration() {
 
     //Turn to the left by 90
     turnPID(-1, 90);
-    delay(wait);
+    getSensorReadingInCM();
+	if(sensorsValuesArray[0] < 30 && sensorsValuesArray[1] < 25 && sensorsValuesArray[2] < 30)
+	{
+		isSideFull[0] = 1;
+	}
+	
   }
 }
 
@@ -317,4 +323,61 @@ void turnAdjust(int dir) {
       setTurnValueOffset(dir, difference);
     }
   }
+}
+
+void faceNorthCalibration()
+{
+	//Scan all sides
+	for(int a = 1; a<4; a++)
+	{
+		turnPID(1, 90);
+		getSensorReadingInCM();
+		if(sensorsValuesArray[0] < 30 && sensorsValuesArray[1] < 25 && sensorsValuesArray[2] < 30)
+		{
+			isSideFull[a] = 1;
+		}
+		
+	}
+	if(isSideFull[0] == 1)
+	{
+		if(isSideFull[0] == 1)
+		{
+			turnPID(-1, 90);
+		}
+		else
+		{
+			turnPID(-1, 90);
+			delay(150);
+			turnPID(-1, 90);
+		}
+	}
+	else
+	{
+		if(isSideFull[1] == 0)
+		{
+			turnPID(-1, 90);
+			delay(150);
+			turnPID(-1, 90);
+		}
+		else
+		{
+			if(isSideFull[2] == 1)
+			{
+				turnPID(-1, 90);
+			}
+			else
+			{
+				if(isSideFull[3] == 0)
+				{
+					turnPID(-1, 90);
+				}
+				else
+				{
+					turnPID(-1, 90);
+					delay(150);
+					turnPID(-1, 90);
+				}
+			}
+		}
+	}
 }
