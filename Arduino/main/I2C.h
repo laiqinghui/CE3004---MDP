@@ -50,7 +50,7 @@ void acknowledgeRPI(int len) {
 }
 
 // callback for received data
-void receiveData(int byteLength) {
+void receiveData(int byteCount) {
 
 
   int i = 0;
