@@ -70,6 +70,9 @@ void processInst() {
       case 'S': setOutBuffer('S', getSensorReadingInCM(), 5);
         interruptPi();//Interrupt RPI to notify data is ready
         break;
+		
+	  case 'H': faceNorthCalibration();
+				break;
       case 'I': num[0] = atoi(instBuff + 2) + 1;
         //Serial.print("num = ");
         //Serial.println(num[0]);

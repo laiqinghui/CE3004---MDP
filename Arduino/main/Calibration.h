@@ -380,4 +380,27 @@ void faceNorthCalibration()
 			}
 		}
 	}
+	calibration();
+	delay(150);
+	turnPID(-1, 90);
+	delay(150);
+	turnPID(-1, 90);
 }
+/*
+facing south
+	either 	west empty {0, 1, 1, 0} west = 0
+			north empty {1, 1, 0, 1} west = 1
+			west and north empty {0, 1, 0, 0} west = 0 
+			
+	ending will be facing east
+	
+	so turn right
+			
+facing east
+	either 	west empty {0, 1, 0, 1} west = 0
+			north empty {1, 0, 1, 1} west = 1
+			west and north empty {0, 0, 0, 1} west = 0
+			
+	ending will be facing south
+	so dont move
+*/
