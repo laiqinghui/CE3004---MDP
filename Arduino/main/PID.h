@@ -26,6 +26,33 @@ void risingM1() {
   M1ticks++;
 }
 
+void risingM1Test(){
+  //Check e2b D13
+  int M2Status = PINB >> 5;
+  entry_time_M1 = micros();
+  squareWidth_M1 = entry_time_M1 - prev_time_M1;
+  prev_time_M1 = entry_time_M1;
+  M1ticks++;
+  if(M2Status == 0 && PINB >> 5 == 1)
+  {
+	  M2ticks++;
+  }
+}
+
+void risingM2Test() {
+  //Check e1a D3
+  int M1Status = (PIND >> 3) % 2;	
+  entry_time_M2 = micros();
+  squareWidth_M2 = entry_time_M2 - prev_time_M2;
+  prev_time_M2 = entry_time_M2;
+  M2ticks++;
+    if(M1Status == 0 && (PIND >> 3) % 2 == 1)
+  {
+	  M1ticks++;
+  }
+  
+}
+
 void risingM1Ticks() {
   M1ticks++;
 }
