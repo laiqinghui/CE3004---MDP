@@ -173,15 +173,15 @@ class Exploration:
                             #     fsp.movement.append(']')
                             #     fsp.movement.append('D')
 
-                            if self.robot.can_calibrate_front and self.robot.can_calibrate_right:
-                                fsp.movement.append(']')
-                            else:
-                                fsp.movement.append('A')
-                                fsp.movement.append(']')
-                                fsp.movement.append('D')
+                            # if self.robot.can_calibrate_front and self.robot.can_calibrate_right:
+                            #     fsp.movement.append(']')
+                            # else:
+                            #     fsp.movement.append('A')
+                            #     fsp.movement.append(']')
+                            #     fsp.movement.append('D')
 
-                            logging.info(fsp.movement)
-                            logging.info(self.robot.direction)
+                            # logging.info(fsp.movement)
+                            # logging.info(self.robot.direction)
 
                             return fsp.movement, True, self.robot.center, self.robot.direction
                 elif (self.visited[currentPos] > 3):
@@ -243,15 +243,15 @@ class Exploration:
                         #     fsp.movement.append(']')
                         #     fsp.movement.append('D')
 
-                        if self.robot.can_calibrate_front and self.robot.can_calibrate_right:
-                            fsp.movement.append(']')
-                        else:
-                            fsp.movement.append('A')
-                            fsp.movement.append(']')
-                            fsp.movement.append('D')
-
-                        logging.info(fsp.movement)
-                        logging.info(self.robot.direction)
+                        # if self.robot.can_calibrate_front and self.robot.can_calibrate_right:
+                        #     fsp.movement.append(']')
+                        # else:
+                        #     fsp.movement.append('A')
+                        #     fsp.movement.append(']')
+                        #     fsp.movement.append('D')
+                        #
+                        # logging.info(fsp.movement)
+                        # logging.info(self.robot.direction)
 
                         return fsp.movement, True, self.robot.center, self.robot.direction
             else:
@@ -284,15 +284,16 @@ class Exploration:
                 #     calibrateMove.append(']')
                 #     calibrateMove.append('D')
 
-                if self.robot.can_calibrate_front and self.robot.can_calibrate_right:
-                    fsp.movement.append(']')
-                else:
-                    fsp.movement.append('A')
-                    fsp.movement.append(']')
-                    fsp.movement.append('D')
+                # if self.robot.can_calibrate_front and self.robot.can_calibrate_right:
+                #     calibrateMove.append(']')
+                # else:
+                #     calibrateMove.append('A')
+                #     calibrateMove.append(']')
+                #     calibrateMove.append('D')
+                #
+                # logging.info(calibrateMove)
+                # logging.info(self.robot.direction)
 
-                logging.info(calibrateMove)
-                logging.info(self.robot.direction)
                 return calibrateMove, True, self.robot.center, self.robot.direction
             else:
                 fsp = FastestPath(self.currentMap, self.robot.center, self.startPos, self.robot.direction, None)
@@ -318,15 +319,16 @@ class Exploration:
                 #     fsp.movement.append(']')
                 #     fsp.movement.append('D')
 
-                if self.robot.can_calibrate_front and self.robot.can_calibrate_right:
-                    fsp.movement.append(']')
-                else:
-                    fsp.movement.append('A')
-                    fsp.movement.append(']')
-                    fsp.movement.append('D')
+                # if self.robot.can_calibrate_front and self.robot.can_calibrate_right:
+                #     fsp.movement.append(']')
+                # else:
+                #     fsp.movement.append('A')
+                #     fsp.movement.append(']')
+                #     fsp.movement.append('D')
+                #
+                # logging.info(fsp.movement)
+                # logging.info(self.robot.direction)
 
-                logging.info(fsp.movement)
-                logging.info(self.robot.direction)
                 return fsp.movement, True, fsp.robot.center, self.robot.direction
 
     def moveStep(self, sensor_vals=None):

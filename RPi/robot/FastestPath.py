@@ -257,10 +257,9 @@ class FastestPath:
                 return 1
         else:
             if current_pos[0] == next_pos[0]:
-                return 0
-            else:
                 return 1
-
+            else:
+                return 0
         return 1
 
     def __setDirection(self, prev_pos, current_pos):
@@ -290,7 +289,7 @@ class FastestPath:
         print "Fastest Path Mode started!"
         self.getFastestPath()
 
-        while (self.robot.center.tolist() != self.goal):
+        while (self.robot.center.tolist() != self.goal.tolist()):
             self.moveStep()
         print "Fastest Path completed!"
         return self.movement

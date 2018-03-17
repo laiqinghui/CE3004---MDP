@@ -26,7 +26,7 @@ elif(choice1 == 5):
 elif(choice1 == 9):
     map_name = 'sample_arena_9.txt'
 else:
-    map_name = 'sample_arena_10.txt'
+    map_name = 'sample_arena_12.txt'
 
 exp = Exploration(realMap=map_name, timeLimit=5)
 
@@ -55,6 +55,8 @@ if (choice2 == "Y" or choice2 == "y"):
     elif(choice1 == 3):
         waypoint = [1, 1]
     elif(choice1 == 4):
+        waypoint = [18, 13]
+    elif(choice1 == 12):
         waypoint = [18, 13]
     else:
         waypoint = [18, 11]
