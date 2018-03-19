@@ -31,7 +31,7 @@ char* getSensorReadingInCM() {
   getIRSensorReading();
 
   //------------------------------------FRONT LEFT-----------------------------------------------------
-  //PS4 y = 5546.9x - 0.7029
+  //PS4 y = 5668.4x - 0.8187
   //Limit is 50cm
   double frontLeftValue = sensorValues[0];
   if (frontLeftValue < 108)
@@ -40,7 +40,7 @@ char* getSensorReadingInCM() {
   }
   else
   {
-    sensorsValuesArray[0] = (5546.9 / frontLeftValue) - 0.7029;
+    sensorsValuesArray[0] = (5668.4 / frontLeftValue) - 0.8187;
   }
 
   //------------------------------------UtraSound-----------------------------------------------------
@@ -57,7 +57,7 @@ char* getSensorReadingInCM() {
   }
 
   //------------------------------------FRONT RIGHT-----------------------------------------------------
-  //PS2 y = 5738x - 1.1941
+  //PS2 y = 5894.1x - 2.0988
   //Limit is 45cm
   double frontRightValue = sensorValues[1];
   if (frontRightValue < 120)
@@ -66,11 +66,11 @@ char* getSensorReadingInCM() {
   }
   else
   {
-    sensorsValuesArray[2] = (5738 / frontRightValue) - 1.1941;
+    sensorsValuesArray[2] = (5894.1 / frontRightValue) - 2.0988;
   }
 
   //------------------------------------RIGHT-----------------------------------------------------
-  //PS3 y = 5260x - 0.3915 //add 3 to offset
+  //PS3 y = 5413x + 1.0261
   //Limit is 50cm
   double rightValue = sensorValues[3];
   if (rightValue < 100)
@@ -79,7 +79,7 @@ char* getSensorReadingInCM() {
   }
   else
   {
-    sensorsValuesArray[3] = (5260 / rightValue) + 1.3915;
+    sensorsValuesArray[3] = (5413 / rightValue) + 1.0261;
   }
 
   //Keep track of side wall

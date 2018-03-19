@@ -133,12 +133,12 @@ void setup() {
   unsigned int turnLeft90Offset2 = EEPROM.read(7);
   offsetLeft = ((signed int)((turnLeft90Offset1 << 8) | turnLeft90Offset2)) / 10000.0;
   Serial.println(offsetLeft,6);
-  
+  //turnPID(-1, 90);
 }
 
 void loop()
 {
-	//Serial.println(getIRSensorReading()[0]);
+	
   if (dataExist()) {
     //delay(100);//Delay for ack packet to be sent out. To allow RPI to request and recieve data before we start moving which will affect interrupt operations
     processInst();
