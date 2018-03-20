@@ -183,6 +183,9 @@ class Exploration:
                             # logging.info(fsp.movement)
                             # logging.info(self.robot.direction)
 
+                            fsp.movement.append('H')
+                            self.robot.direction = NORTH
+
                             return fsp.movement, True, self.robot.center, self.robot.direction
                 elif (self.visited[currentPos] > 3):
 
@@ -253,6 +256,9 @@ class Exploration:
                         # logging.info(fsp.movement)
                         # logging.info(self.robot.direction)
 
+                        fsp.movement.append('H')
+                        self.robot.direction = NORTH
+
                         return fsp.movement, True, self.robot.center, self.robot.direction
             else:
                 self.visited[currentPos] = 1
@@ -294,6 +300,9 @@ class Exploration:
                 # logging.info(calibrateMove)
                 # logging.info(self.robot.direction)
 
+                calibrateMove.append('H')
+                self.robot.direction = NORTH
+
                 return calibrateMove, True, self.robot.center, self.robot.direction
             else:
                 fsp = FastestPath(self.currentMap, self.robot.center, self.startPos, self.robot.direction, None)
@@ -329,6 +338,9 @@ class Exploration:
                 # logging.info(fsp.movement)
                 # logging.info(self.robot.direction)
 
+                fsp.movement.append('H')
+                self.robot.direction = NORTH
+
                 return fsp.movement, True, fsp.robot.center, self.robot.direction
 
     def moveStep(self, sensor_vals=None):
@@ -352,11 +364,11 @@ class Exploration:
         """Decide which direction is free to command robot the next action."""
         move = []
         front = self.frontFree()
-        num_calibration_move = 0
+        # num_calibration_move = 0
 
         if not (self.sim):
             calibrate_front = self.robot.can_calibrate_front()
-            calibrate_right = self.robot.can_calibrate_right()
+            # calibrate_right = self.robot.can_calibrate_right()
             if self.robot.is_corner():
                 move.append(']')
                 # if self.robot.direction == NORTH:
@@ -374,13 +386,13 @@ class Exploration:
             elif (calibrate_front[0]):
                 move.append(calibrate_front[1])
             # calibrate right every n steps if able to
-            elif (self.moveNumber // CALIBRATE_N_STEPS) > self.baseStep:
-                calibrate_right = self.robot.can_calibrate_right()
-                if calibrate_right[0]:
-                    move.append(calibrate_right[1])
-                    self.baseStep = (self.moveNumber // CALIBRATE_N_STEPS)
+            # elif (self.moveNumber // CALIBRATE_N_STEPS) > self.baseStep:
+                # calibrate_right = self.robot.can_calibrate_right()
+                # if calibrate_right[0]:
+                    # move.append(calibrate_right[1])
+                    # self.baseStep = (self.moveNumber // CALIBRATE_N_STEPS)
 
-        num_calibration_move = len(move)
+        # num_calibration_move = len(move)
 
         # multi step
         if (self.checkFree([1, 2, 3, 0], self.robot.center)):
@@ -427,7 +439,7 @@ class Exploration:
         #     self.robot.moveBot(RIGHT)
         #     move.extend(('O'))
 
-        self.moveNumber += (len(move) - num_calibration_move)
+        # self.moveNumber += (len(move) - num_calibration_move)
 
         return move
 
