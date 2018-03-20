@@ -127,8 +127,6 @@ void moveForwardBeta(int rpm, double distance) {
     }
 
   }//end of while
-  Serial.println(M1pid.prevTuneSpeed);
-  Serial.println(M2pid.prevTuneSpeed);
 
   disableInterrupt(e1a);
   disableInterrupt(e2b);
@@ -136,14 +134,4 @@ void moveForwardBeta(int rpm, double distance) {
   setSqWidth(0, 0);
 }
 
-void calibrateBeforeMoveForward() {
-  double rightSideReading = analogRead(right);
-  rightSideReading = (5260 / rightSideReading) + 1.3915;
-  if (rightSideReading < 10 || (rightSideReading > 12))
-  {
-    if (canSideCalibrate())
-    {
-      fastCalibration(1);
-    }
-  }
-}
+

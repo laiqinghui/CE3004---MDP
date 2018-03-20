@@ -57,9 +57,9 @@ void receiveData(int byteCount) {
   int len = Wire.available();
 
 
-  Serial.print("Incoming: ");
-  Serial.print(len);
-  Serial.println(" bytes");
+  //Serial.print("Incoming: ");
+  //Serial.print(len);
+  //Serial.println(" bytes");
 
   if (len > 1) {
 
@@ -71,10 +71,10 @@ void receiveData(int byteCount) {
 
     }
     
-      Serial.print("\n\nInstruction ");
-      Serial.print(++instCount);
-      Serial.println(":");
-      printArray(inBuffer, len -1);
+      //Serial.print("\n\nInstruction ");
+      //Serial.print(++instCount);
+      //Serial.println(":");
+      //printArray(inBuffer, len -1);
     
 
     //acknowledgeRPI(len-1);

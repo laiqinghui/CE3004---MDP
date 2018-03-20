@@ -23,7 +23,6 @@ void printArray(char arr[], int len) {
 
 }
 
-
 void interruptPi() {
   digitalWrite(PI_PIN, HIGH);
   delay(100);
@@ -42,15 +41,10 @@ void setOutBuffer(char opcode, char * data, int len) {
 
 }
 
-void acknowledgeRPI(int len) {
-
-  setOutBuffer('A', inBuffer, 0);//Not ecohing inst back anymore
-  interruptPi();
-
-}
 
 // callback for received data
-void receiveData(int byteCount) {
+void receiveData(int byteCount) 
+{
 
 
   int i = 0;
@@ -70,11 +64,6 @@ void receiveData(int byteCount) {
       i++;
 
     }
-    
-      Serial.print("\n\nInstruction ");
-      Serial.print(++instCount);
-      Serial.println(":");
-      printArray(inBuffer, len -1);
     
 
     //acknowledgeRPI(len-1);

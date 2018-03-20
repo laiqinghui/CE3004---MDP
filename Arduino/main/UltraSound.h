@@ -67,8 +67,7 @@ char getUltraSoundDistance() {
   return USValue;
 }
 
-unsigned long getPWMReading()
-{
+unsigned long getPWMReading(){
   OCR1A = 0;
   digitalWrite(URTRIG, HIGH);
   digitalWrite(URTRIG, LOW);
@@ -80,8 +79,8 @@ unsigned long getPWMReading()
 
 //Use motor 1 input A, digital pin 2 as trigger for sensor reading
 //Use motor 1 E1B to read sensor output which is digital pin 5
-unsigned int getUltraSound2Reading()
-{
+unsigned int getUltraSound2Reading(){
+  
   unsigned long DistanceMeasured = 0;
   while (DistanceMeasured == 0 || DistanceMeasured >= 10200)
   {
