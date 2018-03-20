@@ -21,7 +21,7 @@ void processInst() {
       case 'W': moveCount = instBuff[index + 1] - 48;
 				//delay(delayAmount);
 				if (moveCount == 1)
-				  moveForwardOneGrid(110);
+				  moveForwardOneGrid(80);
 				else //moveForward(90, 9.5*moveCount, true);
 				  moveForwardBeta(110, 9.7 * moveCount);
 				break;

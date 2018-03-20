@@ -18,10 +18,10 @@ void moveForwardOneGrid(int rpm) {
   unsigned long currentTicksM2 = 0;
 
   int m1setSpeed = 100;
-  int m2setSpeed = 100;
+  int m2setSpeed = 96;
 
-  MotorPID M1pid = {m1setSpeed, 0, 0, 0.110};//LOUNGE: 0.110=>50/ LAB: 0.115=>50 || LAB: 0.110=>90/ LAB: 0.115=>50
-  MotorPID M2pid = {m2setSpeed , 0, 0, 0.109};//LOUNGE: 0.150->50/LAB: 0.150->50 || LAB: 0.135=>90/ LAB:
+  MotorPID M1pid = {m1setSpeed, 0, 0, 0.111};//0.110
+  MotorPID M2pid = {m2setSpeed , 0, 0, 0.1085};//0.109
 
   //Check using right side sensor if need to calibrate
   calibrateBeforeMoveForward();
@@ -73,14 +73,14 @@ void moveForwardBeta(int rpm, double distance) {
   unsigned long currentTicksM1 = 0;
   unsigned long currentTicksM2 = 0;
 
-  int m1setSpeed = 100;
-  int m2setSpeed = 100;
+  int m1setSpeed = 101;
+  int m2setSpeed = 90;
 
   //Check using right side sensor if need to calibrate
   calibrateBeforeMoveForward();
 
-  MotorPID M1pid = {m1setSpeed, 0, 0, 0.108};//0.1=>50
-  MotorPID M2pid = {m2setSpeed, 0, 0, 0.119};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms //was 0.125
+  MotorPID M1pid = {m1setSpeed, 0, 0, 0.109};//0.1=>50
+  MotorPID M2pid = {m2setSpeed, 0, 0, 0.115};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms //was 0.125
 
   enableInterrupt( e1a, risingM1, RISING);
   enableInterrupt( e2b, risingM2, RISING);

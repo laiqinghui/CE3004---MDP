@@ -10,8 +10,8 @@ void turnPID(int dir, int degree);
 double turnRight90Offset = 0;
 double turnLeft90Offset = 0;
 
-double offsetRight = 0.8975;
-double offsetLeft = 0.8975;
+double offsetRight = 0.8974;
+double offsetLeft = 0.8974;
 void setTurnValueOffset(int dir, double newValue) {
   //Right Turn
   double errorChange = 0.0001;
@@ -104,21 +104,21 @@ void turnPID(int dir, int rpm){
 	
 	}
 	
-	amount = cir * 0.25 * cmToCounts * 0.855;
+	amount = cir * 0.25 * cmToCounts * 0.88;//0.858
 	
     unsigned long currentTicksM1 = 0;
     unsigned long currentTicksM2 = 0;
     int tuneSpeedM1 = 0;
     int tuneSpeedM2 = 0;
-    int m1Speed = dir * -300;
-    int m2Speed = dir * 300;
+    int m1Speed = dir * -200;
+    int m2Speed = dir * 200;
 
     unsigned long tuneEntryTime = 0;
     unsigned long tuneExitTime = 0;
     unsigned long interval = 0;
 
-    //Serial.print("AMOUNT");
-    //Serial.println(amount);
+    Serial.print("AMOUNT");
+    Serial.println(amount);
     
    if(dir == 1){//Turn right(left motor(M2) forward). Tune M2 to match M1.
 
@@ -151,11 +151,16 @@ void turnPID(int dir, int rpm){
           }//end of if
           
         }// end of while
+      Serial.print("breakTicksM2");
+      Serial.println(currentTicksM2);
+      Serial.print("breakTicksM1");
+      Serial.println(currentTicksM1);      
+        
     }//end of if
     else //turn left(right motor(M1) forward). Tune M1 to match M2. 
     {
       
-      MotorPID M1 = {m1Speed , 0, 0, 0.3}; 
+      MotorPID M1 = {m1Speed , 0, 0, 0.3};//0.3 
       enableInterrupt( e1a, risingM1Ticks, RISING);
       enableInterrupt( e2b, risingM2Ticks, RISING);
       md.setSpeeds(m1Speed, m2Speed);
@@ -196,6 +201,10 @@ void turnPID(int dir, int rpm){
           }
           
         }// end of while
+      Serial.print("breakTicksM2");
+      Serial.println(currentTicksM2);
+      Serial.print("breakTicksM1");
+      Serial.println(currentTicksM1); 
   }
     md.setBrakes(400, 400); 
       disableInterrupt(e1a);
