@@ -9,7 +9,7 @@ import global_settings as gs
 from Constants import NORTH, SOUTH, EAST, WEST, FORWARD, LEFT, RIGHT, START, MAX_ROWS, MAX_COLS
 from FastestPath import FastestPath
 
-CALIBRATE_N_STEPS = 5
+# CALIBRATE_N_STEPS = 5
 
 
 class Exploration:
