@@ -85,6 +85,7 @@ class RPI(threading.Thread):
 
             gs.print_modified_mazemap(gs.MAZEMAP, robot_row, robot_col, robot_dir)
 
+        logging.info("instructions to run: " + formatted_instruction)
         dispatcher.send(message=formatted_instruction, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
         print "==============================================================="
 

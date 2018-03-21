@@ -63,8 +63,8 @@ class Algorithm(threading.Thread):
         instruction = []
         try:
             instruction = self.algorithmClass.fastestPathRun()
-        except:
-            logging.info("Fastest path no path found")
+        except ValueError as e:
+            logging.info(e)
         return instruction
 
     def run_fastest_path_on(self, instruction):
