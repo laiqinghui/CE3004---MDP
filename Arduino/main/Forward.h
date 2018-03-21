@@ -134,4 +134,65 @@ void moveForwardBeta(int rpm, double distance) {
   setSqWidth(0, 0);
 }
 
+void moveForwardOneGridBeta() {
 
+  unsigned long tuneEntryTime = 0;
+  unsigned long tuneExitTime = 0;
+  unsigned long interval = 0;
+  unsigned long currentTicksM1 = 0;
+  unsigned long currentTicksM2 = 0;
+
+  
+  int m1setSpeed = 310;
+  int m2setSpeed = 300;
+  int tuneSpeedM1 = 0;
+  int tuneSpeedM2 = 0;
+
+  breakTicks = 0.97 * 9.5 * ticksPerCM;
+  
+  //Check using right side sensor if need to calibrate
+  calibrateBeforeMoveForward();
+
+  MotorPID M2 = {m2setSpeed , 0, 0, 0.5}; 
+  enableInterrupt( e1a, risingM1Ticks, RISING);
+  enableInterrupt( e2b, risingM2Ticks, RISING);
+  md.setSpeeds(m1setSpeed, m2setSpeed);
+     
+      while(!movementDone)
+        {
+          tuneEntryTime = micros();
+          interval = tuneEntryTime - tuneExitTime;
+          
+          if(interval >= 5000){ 
+
+            noInterrupts();
+            currentTicksM1 = M1ticks;
+            currentTicksM2 = M2ticks;
+            interrupts();
+      
+            M2.currentErr =  currentTicksM1 - currentTicksM2; //Positive means M1 is faster
+            tuneSpeedM2 = M2.prevTuneSpeed + M2.gain*M2.currentErr + (M2.gain/0.07)*(M2.currentErr - M2.prevErr1);
+            if(!movementDone)
+              OCR1B = tuneSpeedM2;
+            
+            M2.prevTuneSpeed = tuneSpeedM2;
+            M2.prevErr1 = M2.currentErr;
+            tuneExitTime = micros();
+      
+            //Serial.print("M2.currentErr");
+            //Serial.println(M2.currentErr);
+          }//end of if
+          
+        }// end of while   
+      Serial.print("breakTicksM2: ");
+      Serial.println(M2ticks);
+      Serial.print("breakTicksM1: ");
+      Serial.println(M1ticks);
+
+  disableInterrupt(e1a);
+  disableInterrupt(e2b);
+  breakTicks = 0;
+  movementDone = false;
+  setTicks(0, 0);
+  setSqWidth(0, 0);
+}
