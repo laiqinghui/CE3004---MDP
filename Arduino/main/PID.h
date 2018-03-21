@@ -4,7 +4,7 @@ struct MotorPID {
   int prevTuneSpeed;
   signed long currentErr;
   signed long prevErr1;
-  float gain;
+  double gain;
 };
 
 //------------Interrupt declarations------------
@@ -12,6 +12,8 @@ volatile int squareWidth_M1 = 0;
 volatile signed long prev_time_M1 = 0;
 volatile signed long entry_time_M1 = 0;
 volatile unsigned long M1ticks = 0;
+volatile unsigned long breakTicks = 0;
+volatile boolean movementDone = false;
 
 volatile int squareWidth_M2 = 0;
 volatile signed long prev_time_M2 = 0;
@@ -56,10 +58,18 @@ void risingM2Test() {
 
 void risingM1Ticks() {
   M1ticks++;
+  if(M1ticks >= breakTicks){
+    md.setBrakes(400,400);
+    movementDone = true;
+    }
 }
 
 void risingM2Ticks() {
   M2ticks++;
+  if(M2ticks >= breakTicks){
+    md.setBrakes(400,400);
+    movementDone = true;
+    }
 }
 
 //ISR for Motor2(Left) encoder

@@ -70,7 +70,7 @@ char* getSensorReadingInCM() {
   }
 
   //------------------------------------RIGHT-----------------------------------------------------
-  //PS3 y = 5413x + 1.0261
+  //PS3 y = 5413x + 1.0261 //add 3 to offset
   //Limit is 50cm
   double rightValue = sensorValues[3];
   if (rightValue < 100)
@@ -79,7 +79,7 @@ char* getSensorReadingInCM() {
   }
   else
   {
-    sensorsValuesArray[3] = (5413 / rightValue) + 1.0261;
+    sensorsValuesArray[3] = (5413 / rightValue) + 3.5261;
   }
 
   //Keep track of side wall

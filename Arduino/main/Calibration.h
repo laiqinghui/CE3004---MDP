@@ -32,12 +32,12 @@ void calibration() {
 
   //tuneM2TurnSpeed();
   delay(wait);
-
+  /*
   for (int a = 0; a < 2; a++)
   {
     fastCalibration(2);
   }
-
+  */
   
   turnPID(1, 90);
   delay(wait);
@@ -229,18 +229,18 @@ void distancefromFrontWall(double distance) {
   getFrontCalibrationReading(false);
   if (frontRightReading > distance)
   {
-    md.setSpeeds(142, 140);
+    
     while (frontRightReading > distance)
     {
+      md.setSpeeds(142, 140);
       getFrontCalibrationReading(true);
     }
   }
   else if (frontRightReading < distance)
   {
-    md.setSpeeds(-142, -140);
     while (frontRightReading < distance)
     {
-
+      md.setSpeeds(-142, -140);
       getFrontCalibrationReading(true);
 
     }
@@ -276,26 +276,26 @@ void straightenTune() {
     while (frontRightReading > frontLeftReading)
     {
 	  //Try proportional delay up to 20
-	  int delayAmount = abs(frontRightReading - frontLeftReading)*50;
+	  int delayAmount = abs(frontRightReading - frontLeftReading)*100;
 	  if(delayAmount > 20)
 	  {
 		  delayAmount = 20;
 	  }
 	  
-      md.setSpeeds(100, 0);
+      md.setSpeeds(130, 0);
 	  delay(delayAmount);
       md.setBrakes(400, 400);
       getFrontCalibrationReading(false);
     }
 	while (frontRightReading < frontLeftReading)
     {
-	  int delayAmount = abs(frontRightReading - frontLeftReading)*50;
+	  int delayAmount = abs(frontRightReading - frontLeftReading)*100;
 	  if(delayAmount > 20)
 	  {
 		  delayAmount = 20;
 	  }
 		
-      md.setSpeeds(-100, 0);
+      md.setSpeeds(-130, 0);
       delay(delayAmount);
       md.setBrakes(400, 400);
       getFrontCalibrationReading(false);
@@ -305,26 +305,26 @@ void straightenTune() {
   {
     while (frontRightReading < frontLeftReading)
     {
-	  int delayAmount = abs(frontRightReading - frontLeftReading)*50;
+	  int delayAmount = abs(frontRightReading - frontLeftReading)*100;
 	  if(delayAmount > 20)
 	  {
 		  delayAmount = 20;
 	  }
 		
-      md.setSpeeds(-100, 0);
+      md.setSpeeds(-130, 0);
       delay(delayAmount);
       md.setBrakes(400, 400);
       getFrontCalibrationReading(false);
     }
 	while (frontRightReading > frontLeftReading)
     {
-	  int delayAmount = abs(frontRightReading - frontLeftReading)*50;
+	  int delayAmount = abs(frontRightReading - frontLeftReading)*100;
 	  if(delayAmount > 20)
 	  {
 		  delayAmount = 20;
 	  }
 		
-      md.setSpeeds(100, 0);
+      md.setSpeeds(130, 0);
       delay(delayAmount);
       md.setBrakes(400, 400);
       getFrontCalibrationReading(false);

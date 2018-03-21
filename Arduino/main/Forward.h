@@ -13,7 +13,7 @@ void moveForwardOneGrid(int rpm) {
   unsigned long tuneEntryTime = 0;
   unsigned long tuneExitTime = 0;
   unsigned long interval = 0;
-  double distanceTicks = 0.93 * 9.5 * ticksPerCM;
+  double distanceTicks = 0.95 * 9.5 * ticksPerCM;
   unsigned long currentTicksM1 = 0;
   unsigned long currentTicksM2 = 0;
 
@@ -21,7 +21,7 @@ void moveForwardOneGrid(int rpm) {
   int m2setSpeed = 96;
 
   MotorPID M1pid = {m1setSpeed, 0, 0, 0.111};//0.110
-  MotorPID M2pid = {m2setSpeed , 0, 0, 0.1085};//0.109
+  MotorPID M2pid = {m2setSpeed , 0, 0, 0.1084};//0.109
 
   //Check using right side sensor if need to calibrate
   calibrateBeforeMoveForward();
@@ -69,18 +69,18 @@ void moveForwardBeta(int rpm, double distance) {
   unsigned long tuneEntryTime = 0;
   unsigned long tuneExitTime = 0;
   unsigned long interval = 0;
-  double distanceTicks = 0.975 * distance * ticksPerCM;
+  double distanceTicks = 1.05 * distance * ticksPerCM;
   unsigned long currentTicksM1 = 0;
   unsigned long currentTicksM2 = 0;
 
-  int m1setSpeed = 101;
-  int m2setSpeed = 90;
+  int m1setSpeed = 108;
+  int m2setSpeed = 92;
 
   //Check using right side sensor if need to calibrate
   calibrateBeforeMoveForward();
 
   MotorPID M1pid = {m1setSpeed, 0, 0, 0.109};//0.1=>50
-  MotorPID M2pid = {m2setSpeed, 0, 0, 0.115};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms //was 0.125
+  MotorPID M2pid = {m2setSpeed, 0, 0, 0.1165};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms //was 0.125
 
   enableInterrupt( e1a, risingM1, RISING);
   enableInterrupt( e2b, risingM2, RISING);
