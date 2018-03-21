@@ -41,7 +41,7 @@ void turnPID(int dir, int degree){
    if(dir == 1){//Turn right(left motor(M2) forward). Tune M2 to match M1.
 
       m2Speed= m2Speed + 2;
-      MotorPID M2 = {m2Speed , 0, 0, 0.1}; 
+      MotorPID M2 = {m2Speed , 0, 0, 0.35}; 
       enableInterrupt( e1a, risingM1Ticks, RISING);
       enableInterrupt( e2b, risingM2Ticks, RISING);
       md.setSpeeds(m1Speed, m2Speed);
@@ -60,6 +60,7 @@ void turnPID(int dir, int degree){
       
             M2.currentErr =  currentTicksM1 - currentTicksM2; //Positive means M1 is faster
             tuneSpeedM2 = M2.prevTuneSpeed + M2.gain*M2.currentErr + (M2.gain/0.07)*(M2.currentErr - M2.prevErr1);
+            
 			      if(!movementDone)
 			        OCR1B = tuneSpeedM2;
             

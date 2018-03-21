@@ -83,7 +83,7 @@ void calibration() {
     //Turn to the left by 90
     turnPID(-1, 90);
     getSensorReadingInCM();
-		if(sensorsValuesArray[0] < 20 || sensorsValuesArray[1] < 15 || sensorsValuesArray[2] < 20)
+		if((double(sensorsValuesArray[0]) < 17 && double(sensorsValuesArray[0]) > 0) || (double(sensorsValuesArray[1]) < 13 && double(sensorsValuesArray[1]) > 0) || (double(sensorsValuesArray[2]) < 17 && double(sensorsValuesArray[2]) > 0))
 		{
 			isSideFull[a] = 1;
 		}
@@ -372,12 +372,20 @@ void faceNorthCalibration(){
 	{
 		turnPID(1, 90);
 		getSensorReadingInCM();
-		if(sensorsValuesArray[0] < 20 || sensorsValuesArray[1] < 15 || sensorsValuesArray[2] < 20)
+		if((double(sensorsValuesArray[0]) < 17 && double(sensorsValuesArray[0]) > 0) || (double(sensorsValuesArray[1]) < 13 && double(sensorsValuesArray[1]) > 0) || (double(sensorsValuesArray[2]) < 17 && double(sensorsValuesArray[2]) > 0))
 		{
 			isSideFull[a] = 1;
+      //Serial.println(double(sensorsValuesArray[0]));
+      //Serial.println(double(sensorsValuesArray[1]));
+      //Serial.println(double(sensorsValuesArray[2]));
+      
 		}
 		delay(200);
 	}	
+  Serial.println(isSideFull[0]);
+  Serial.println(isSideFull[1]);
+  Serial.println(isSideFull[2]);
+  Serial.println(isSideFull[3]);
 	
 	if(isSideFull[0] == 1)
 	{

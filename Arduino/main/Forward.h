@@ -28,7 +28,7 @@ void moveForwardOneGrid(int rpm) {
 
   enableInterrupt( e1a, risingM1, RISING);
   enableInterrupt( e2b, risingM2, RISING);
-  setTicks(0, 0);
+  setTicks(0,0);
 
   md.setSpeeds(m1setSpeed, m2setSpeed);
   while (1)
@@ -148,11 +148,11 @@ void moveForwardOneGridBeta() {
   int tuneSpeedM1 = 0;
   int tuneSpeedM2 = 0;
 
-  breakTicks = 0.97 * 9.5 * ticksPerCM;
+  
   
   //Check using right side sensor if need to calibrate
   calibrateBeforeMoveForward();
-
+  breakTicks = 0.97 * 9.5 * ticksPerCM;
   MotorPID M2 = {m2setSpeed , 0, 0, 0.5}; 
   enableInterrupt( e1a, risingM1Ticks, RISING);
   enableInterrupt( e2b, risingM2Ticks, RISING);
