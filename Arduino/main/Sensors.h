@@ -70,7 +70,7 @@ char* getSensorReadingInCM() {
   }
 
   //------------------------------------RIGHT-----------------------------------------------------
-  //PS3 y = 5413x + 1.0261 //add 3 to offset
+  //PS3 y = 5413x + 1.0261 /
   //Limit is 50cm
   double rightValue = sensorValues[3];
   if (rightValue < 100)
@@ -79,7 +79,7 @@ char* getSensorReadingInCM() {
   }
   else
   {
-    sensorsValuesArray[3] = (5413 / rightValue) + 3.5261;
+    sensorsValuesArray[3] = (5413 / rightValue) + 1.0261;
   }
 
   //Keep track of side wall
@@ -97,22 +97,18 @@ char* getSensorReadingInCM() {
   }
 
   //------------------------------------LEFT-----------------------------------------------------
-  //PS1 y = 12256x - 1.948 //if value is above 70, subtract 1; //minus 2 to offset //if value is below 25, subtract 1
+  //PS1 y = 12046x + 0.1764
   //Limit is 60cm
   double leftValue = sensorValues[2];
-  if (leftValue < 170)
+  if (leftValue < 155)
   {
     sensorsValuesArray[4] = -1;
   }
   else
   {
-    sensorsValuesArray[4] = (12256 / leftValue) - 1.948;
+    sensorsValuesArray[4] = (12046 / leftValue) + 0.1764;
   }
-  if (sensorsValuesArray[4] <= 25)
-  {
-    sensorsValuesArray[4] = sensorsValuesArray[4] - 3;
-  }
-  if (sensorsValuesArray[4] > 70)
+  if (sensorsValuesArray[4] <= 23)
   {
     sensorsValuesArray[4] = sensorsValuesArray[4] - 1;
   }
@@ -161,7 +157,7 @@ double* getIRSensorReading()
 
   int listOfReadingsFL[size];
   int listOfReadingsFR[size];
-  int listOfReadingsL[size];
+  int listOfReadingsL[size*2];
   int listOfReadingsR[size];
 
   //Get Reading from Sensor
@@ -173,11 +169,16 @@ double* getIRSensorReading()
     listOfReadingsR[a] = analogRead(right);
     delay(1);
   }
+  for (int a = 0; a < size; a++)
+  {
+    listOfReadingsL[a+size] = analogRead(left);
+    delay(1);
+  }
 
   //Get median averaged from list
   sensorValues[0] = sortAndAverage(listOfReadingsFL, size, 3);
   sensorValues[1] = sortAndAverage(listOfReadingsFR, size, 3);
-  sensorValues[2] = sortAndAverage(listOfReadingsL, size, 3);
+  sensorValues[2] = sortAndAverage(listOfReadingsL, size*2, 3);
   sensorValues[3] = sortAndAverage(listOfReadingsR, size, 3);
 
   return sensorValues;
