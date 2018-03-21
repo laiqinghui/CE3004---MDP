@@ -70,7 +70,7 @@ char* getSensorReadingInCM() {
   }
 
   //------------------------------------RIGHT-----------------------------------------------------
-  //PS3 y = 5413x + 1.0261 /
+  //PS3 y = 5413x + 1.0261
   //Limit is 50cm
   double rightValue = sensorValues[3];
   if (rightValue < 100)

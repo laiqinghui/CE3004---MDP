@@ -43,48 +43,35 @@ void setOutBuffer(char opcode, char * data, int len) {
 
 
 // callback for received data
-void receiveData(int byteCount) 
-{
+void receiveData(int byteCount) {
 
 
-  int i = 0;
-  int len = Wire.available();
+	int i = 0;
+	int len = Serial.available()
 
-
-  Serial.print("Incoming: ");
-  Serial.print(len);
-  Serial.println(" bytes");
-
-  if (len > 1) {
-
-    Wire.read();//Clear 1st garbage byte
-    while (i < len) {
-
-      inBuffer[i] = Wire.read();
-      i++;
-
-    }
-    
-
-    //acknowledgeRPI(len-1);
-
-
+	if (len > 1) 
+	{
+		Serial.read();//Clear 1st garbage byte	
+		while (i < len) 
+		{
+			// read the incoming byte:
+			inBuffer[i] = Serial.read();
+			i++;
+		}
+	}
     newData = true;//Set flag for main program to process data
-
-  } else {
-
-    //Single ack byte return from the Pi after Arduino sent a string over
-    //Wire.read() here is required to clear off the the ack byte from the Wire inBuffer in order to accept more new bytes
-    Wire.read();
-  }
-}  // end while
+	else 
+	{
+		Serial.read();//Clear 1st garbage byte	
+	}
+}
 
 
 
 // callback for sending data
 void sendData() {
 
-  Wire.write(outBuffer);
+  Serial.write(outBuffer);
 
 }
 

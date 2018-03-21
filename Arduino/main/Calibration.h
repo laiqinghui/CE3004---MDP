@@ -14,15 +14,9 @@ void calibration();
 void fastCalibration(int choice);
 void turnAdjust(int dir);
 void tuneM2TurnSpeed();
-
-//Calibration
-double frontSensorsCalibrationCM[2];
-double calibrationFrontSensorRaw[2];
-double* getFrontCalibrationReading(boolean quick);
-double* calibrationFrontSensorReading();
 int isSideFull[4] = {0, 0, 0, 0};
 
-double fromFrontWall = 12;
+double fromFrontWall = 13;
 double fromSideWall = 13;
 
 //Calibration
@@ -30,8 +24,6 @@ void calibration() {
   double threshold = 0.1;
   int wait = 100;
 
-  //tuneM2TurnSpeed();
-  delay(wait);
   /*
   for (int a = 0; a < 2; a++)
   {
@@ -83,11 +75,11 @@ void calibration() {
     //Turn to the left by 90
     turnPID(-1, 90);
     getSensorReadingInCM();
-		if((double(sensorsValuesArray[0]) < 17 && double(sensorsValuesArray[0]) > 0) || (double(sensorsValuesArray[1]) < 13 && double(sensorsValuesArray[1]) > 0) || (double(sensorsValuesArray[2]) < 17 && double(sensorsValuesArray[2]) > 0))
-		{
-			isSideFull[a] = 1;
-		}
 	
+	if((double(sensorsValuesArray[0]) < 17 && double(sensorsValuesArray[0]) > 0) || (double(sensorsValuesArray[1]) < 13 && double(sensorsValuesArray[1]) > 0) || (double(sensorsValuesArray[2]) < 17 && double(sensorsValuesArray[2]) > 0))
+	{
+		isSideFull[a] = 1;
+	}
   }
 }
 
@@ -99,22 +91,7 @@ void fastCalibration(int choice) {
 
   int wait = 100;
   //Calibrate against right wall only
-  if (choice == 0)
-  {
-	//Fine tune the calibration
-	straightenTune();
-	delay(wait);
-	
-	//Move to the distance from wall
-    distancefromFrontWall(fromFrontWall + 0.5);
-    delay(wait);
-	
-	//Fine tune the calibration
-	straightenTune();
-	delay(wait);
-  }
-
-  else if (choice == 1)
+  if (choice == 1)
   {
     turnPID(1, 90);
     delay(wait);
@@ -145,21 +122,20 @@ void fastCalibration(int choice) {
     delay(wait);
 
     //Move to the distance from wall
-    distancefromFrontWall(fromFrontWall + 0.5);
+    distancefromFrontWall(fromFrontWall);
     delay(wait);
 
     //Fine tune the calibration
     straightenTune();
     delay(wait);
 
-    distancefromFrontWall(fromFrontWall + 0.5);
+    distancefromFrontWall(fromFrontWall);
     delay(wait);
 
     //Calibrate against right wall if there is one
     if (choice == 2)
     {
       turnPID(1, 90);
-      turnAdjust(1);
       delay(wait);
 
       //Fine tune the calibration
@@ -170,58 +146,12 @@ void fastCalibration(int choice) {
       delay(wait);
 
       turnPID(-1, 90);
-      turnAdjust(-1);
 	  
-	        //Fine tune the calibration
+	  //Fine tune the calibration
       straightenTune();
       delay(wait);
     }
   }
-}
-
-//Front Sensor Values
-//Get average reading over a number of samples for front
-double* getFrontCalibrationReading(boolean quick) {
-  if (quick)
-  {
-    calibrationFrontSensorRaw[0] = analogRead(frontLeft);
-    calibrationFrontSensorRaw[1] = analogRead(frontRight);
-  }
-  else
-  {
-    calibrationFrontSensorReading();
-  }
-
-  //FrontRight
-  //y = 5488.9x - 0.4385
-  frontSensorsCalibrationCM[1] = 5488.9 * (1 / calibrationFrontSensorRaw[1]) - 0.4385;
-
-  //Front Left
-  //y = 5410x + 0.3186
-  frontSensorsCalibrationCM[0] = 5410 * (1 / calibrationFrontSensorRaw[0]) + 0.3186;
-
-  return frontSensorsCalibrationCM;
-}
-
-double* calibrationFrontSensorReading() {
-  int size = 50;
-
-  int listOfReadingsFL[size];
-  int listOfReadingsFR[size];
-
-  //Get Reading from Sensor
-  for (int a = 0; a < size; a++)
-  {
-    listOfReadingsFL[a] = analogRead(frontLeft);
-    listOfReadingsFR[a] = analogRead(frontRight);
-    delay(1);
-  }
-
-  //Get median averaged from list
-  calibrationFrontSensorRaw[0] = sortAndAverage(listOfReadingsFL, size, 3);
-  calibrationFrontSensorRaw[1] = sortAndAverage(listOfReadingsFR, size, 3);
-
-  return calibrationFrontSensorRaw;
 }
 
 void distancefromFrontWall(double distance) {
@@ -332,40 +262,6 @@ void straightenTune() {
   }
 }
 
-void turnAdjust(int dir) {
-  getFrontCalibrationReading(false);
-  //double oldValue = getTurnValueOffset(dir);
-  double difference = abs(frontRightReading - frontLeftReading);
-  if(difference > 4)
-  {
-	  return;
-  }
-  //Turn Right
-  if (dir == 1)
-  {
-    if (frontRightReading > frontLeftReading)
-    {
-      setTurnValueOffset(dir, difference);
-    }
-    else if (frontRightReading < frontLeftReading)
-    {
-      setTurnValueOffset(dir, difference);
-    }
-  }
-  //Turn Left
-  else
-  {
-    if (frontRightReading < frontLeftReading)
-    {
-      setTurnValueOffset(dir, difference);
-    }
-    else if (frontRightReading > frontLeftReading)
-    {
-      setTurnValueOffset(dir, difference);
-    }
-  }
-}
-
 void faceNorthCalibration(){
 	//Scan all sides
 	for(int a = 1; a<4; a++)
@@ -374,18 +270,10 @@ void faceNorthCalibration(){
 		getSensorReadingInCM();
 		if((double(sensorsValuesArray[0]) < 17 && double(sensorsValuesArray[0]) > 0) || (double(sensorsValuesArray[1]) < 13 && double(sensorsValuesArray[1]) > 0) || (double(sensorsValuesArray[2]) < 17 && double(sensorsValuesArray[2]) > 0))
 		{
-			isSideFull[a] = 1;
-      //Serial.println(double(sensorsValuesArray[0]));
-      //Serial.println(double(sensorsValuesArray[1]));
-      //Serial.println(double(sensorsValuesArray[2]));
-      
+			isSideFull[a] = 1;      
 		}
-		delay(200);
+		delay(500);
 	}	
-  Serial.println(isSideFull[0]);
-  Serial.println(isSideFull[1]);
-  Serial.println(isSideFull[2]);
-  Serial.println(isSideFull[3]);
 	
 	if(isSideFull[0] == 1)
 	{
@@ -419,15 +307,12 @@ void faceNorthCalibration(){
 }
 
 void calibrateBeforeMoveForward() {
-  double rightSideReading = analogRead(right);
-  
-  //y = 5236.7x - 0.032
-  rightSideReading = (5236.7 / rightSideReading) - 0.032;
-  if (rightSideReading < fromSideWall-0.5 || (rightSideReading > fromSideWall+1))
-  {
-    if (canSideCalibrate())
-    {
-      fastCalibration(1);
-    }
-  }
+	double rightSideReading = getRightSensorReading();
+	if (rightSideReading < fromSideWall-0.5 || (rightSideReading > fromSideWall+1))
+	{
+		if (canSideCalibrate())
+		{
+			fastCalibration(1);
+		}
+	}
 }
