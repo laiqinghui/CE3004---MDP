@@ -412,7 +412,9 @@ void faceNorthCalibration(){
 
 void calibrateBeforeMoveForward() {
   double rightSideReading = analogRead(right);
-  rightSideReading = (5260 / rightSideReading) + 1.3915;
+  
+  //y = 5236.7x - 0.032
+  rightSideReading = (5236.7 / rightSideReading) - 0.032;
   if (rightSideReading < fromSideWall-0.5 || (rightSideReading > fromSideWall+1))
   {
     if (canSideCalibrate())
