@@ -1,4 +1,5 @@
 #include "Turning.h"
+#include "Calibration Sensors.h"
 
 #define frontLeftReading frontSensorsCalibrationCM[0]
 #define frontRightReading frontSensorsCalibrationCM[1]
@@ -78,7 +79,11 @@ void calibration() {
 	
 	if((double(sensorsValuesArray[0]) < 17 && double(sensorsValuesArray[0]) > 0) || (double(sensorsValuesArray[1]) < 13 && double(sensorsValuesArray[1]) > 0) || (double(sensorsValuesArray[2]) < 17 && double(sensorsValuesArray[2]) > 0))
 	{
-		isSideFull[a] = 1;
+		isSideFull[0] = 1;
+	}
+	else
+	{
+		isSideFull[0] = 0;
 	}
   }
 }
@@ -206,7 +211,7 @@ void straightenTune() {
     while (frontRightReading > frontLeftReading)
     {
 	  //Try proportional delay up to 20
-	  int delayAmount = abs(frontRightReading - frontLeftReading)*100;
+	  int delayAmount = abs(frontRightReading - frontLeftReading)*80;
 	  if(delayAmount > 20)
 	  {
 		  delayAmount = 20;
@@ -219,7 +224,7 @@ void straightenTune() {
     }
 	while (frontRightReading < frontLeftReading)
     {
-	  int delayAmount = abs(frontRightReading - frontLeftReading)*100;
+	  int delayAmount = abs(frontRightReading - frontLeftReading)*80;
 	  if(delayAmount > 20)
 	  {
 		  delayAmount = 20;
@@ -235,7 +240,7 @@ void straightenTune() {
   {
     while (frontRightReading < frontLeftReading)
     {
-	  int delayAmount = abs(frontRightReading - frontLeftReading)*100;
+	  int delayAmount = abs(frontRightReading - frontLeftReading)*80;
 	  if(delayAmount > 20)
 	  {
 		  delayAmount = 20;
@@ -248,7 +253,7 @@ void straightenTune() {
     }
 	while (frontRightReading > frontLeftReading)
     {
-	  int delayAmount = abs(frontRightReading - frontLeftReading)*100;
+	  int delayAmount = abs(frontRightReading - frontLeftReading)*80;
 	  if(delayAmount > 20)
 	  {
 		  delayAmount = 20;
@@ -264,15 +269,20 @@ void straightenTune() {
 
 void faceNorthCalibration(){
 	//Scan all sides
+	straightenTune();
 	for(int a = 1; a<4; a++)
 	{
 		turnPID(1, 90);
 		getSensorReadingInCM();
 		if((double(sensorsValuesArray[0]) < 17 && double(sensorsValuesArray[0]) > 0) || (double(sensorsValuesArray[1]) < 13 && double(sensorsValuesArray[1]) > 0) || (double(sensorsValuesArray[2]) < 17 && double(sensorsValuesArray[2]) > 0))
 		{
-			isSideFull[a] = 1;      
+			isSideFull[a] = 1;   
 		}
-		delay(500);
+		else
+		{
+			isSideFull[a] = 0;
+		}
+		delay(200);
 	}	
 	
 	if(isSideFull[0] == 1)
@@ -282,6 +292,7 @@ void faceNorthCalibration(){
 			turnPID(1, 90);
 		}
 	}
+	//isSideFull[0] == 0
 	else
 	{
 		if(isSideFull[1] == 1)
@@ -290,6 +301,7 @@ void faceNorthCalibration(){
 			{
 				turnPID(1, 90);
 			}
+			//isSideFull[2] == 0
 			else
 			{
 				if(isSideFull[3] == 0)
@@ -298,6 +310,7 @@ void faceNorthCalibration(){
 				}
 			}
 		}
+		//isSideFull[1] == 0 do nothing
 	}
 	fastCalibration(2);
 	delay(150);

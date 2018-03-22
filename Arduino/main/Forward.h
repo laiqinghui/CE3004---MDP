@@ -144,7 +144,7 @@ void moveForwardOneGridBeta() {
 
   
 	int m1setSpeed = 310;
-	int m2setSpeed = 300;
+	int m2setSpeed = 301;
 	int tuneSpeedM1 = 0;
 	int tuneSpeedM2 = 0;
 
@@ -186,6 +186,7 @@ void moveForwardOneGridBeta() {
       //Serial.println(M2ticks);
       //Serial.print("breakTicksM1: ");
       //Serial.println(M1ticks);
+	  Serial.println(M2.prevTuneSpeed);
 
 	disableInterrupt(e1a);
 	disableInterrupt(e2b);

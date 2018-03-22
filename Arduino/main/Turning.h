@@ -71,7 +71,7 @@ void turnPID(int dir, int degree){
 			if(interval >= 5000)
 			{ 
 				noInterrupts();
-				error = M1ticks - M2ticks;
+				error = M2ticks - M1ticks;
 				interrupts();
 		  
 				M1.currentErr =  error;

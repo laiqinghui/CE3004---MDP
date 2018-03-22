@@ -20,7 +20,7 @@ void processInst() {
       case 'W': moveCount = instBuff[index + 1] - 48;
 				if (moveCount == 1)
 				  //moveForwardOneGrid(110);
-          moveForwardOneGridBeta();
+					moveForwardOneGridBeta();
 				else
 				  moveForwardBeta(110, 9.7 * moveCount);
 				break;
