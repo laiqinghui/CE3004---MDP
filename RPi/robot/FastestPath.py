@@ -215,12 +215,12 @@ class FastestPath:
         # temp1 = np.square(rows - goal[0])
         # temp2 = np.square(cols - goal[1])
         # cost = np.sqrt(temp1 + temp2)
-        
+
         temp1 = abs(rows - goal[0])
         temp2 = abs(cols - goal[1])
         cost = temp1 + temp2
-        
-        cost /= np.max(cost)
+
+        # cost /= np.max(cost)
 
         return cost
 
@@ -259,12 +259,12 @@ class FastestPath:
             if current_pos[1] == next_pos[1]:
                 return 0
             else:
-                return 1
+                return 3
         else:
             if current_pos[0] == next_pos[0]:
                 return 0
             else:
-                return 1
+                return 3
         return 1
 
     def __setDirection(self, prev_pos, current_pos):
@@ -294,7 +294,7 @@ class FastestPath:
         print "Fastest Path Mode started!"
         self.getFastestPath()
 
-        while (self.robot.center.tolist() != self.goal):
+        while (self.robot.center.tolist() != self.goal.tolist()):
             self.moveStep()
         print "Fastest Path completed!"
         return self.movement

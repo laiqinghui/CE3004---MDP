@@ -141,7 +141,7 @@ class Exploration:
                             return fsp.movement, False, self.robot.center, self.robot.direction
                         else:
                             fsp = FastestPath(self.currentMap, self.robot.center,
-                                          self.startPos, self.robot.direction, None)
+                                              self.startPos, self.robot.direction, None)
 
                             fsp.getFastestPath()
 
@@ -317,7 +317,7 @@ class Exploration:
                         fsp.movement.append(calibrate_front[1])
                     elif (calibrate_right[0]):
                         fsp.movement.append(calibrate_right[1])
-                    
+
                 fsp.getFastestPath()
                 while (fsp.robot.center.tolist() != self.startPos.tolist()):
                     fsp.moveStep()

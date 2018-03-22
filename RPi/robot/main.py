@@ -13,6 +13,8 @@ from Constants import START, NORTH, GOAL, EAST
 print "Enter sample arena choice: "
 choice1 = int(raw_input())
 
+print "Exploration Mode Started"
+
 if(choice1 == 1):
     map_name = 'sample_arena_1.txt'
 elif(choice1 == 2):
@@ -25,27 +27,33 @@ elif(choice1 == 5):
     map_name = 'sample_arena_5.txt'
 elif(choice1 == 9):
     map_name = 'sample_arena_9.txt'
-else:
+elif(choice1 == 12):
     map_name = 'sample_arena_12.txt'
+else:
+    map_name = 'sample_arena_13.txt'
 
 exp = Exploration(realMap=map_name, timeLimit=5)
 
 step = float(0.1)
 
 temp = exp.explore()
-print temp
-print exp.robot.exploredMap
+# print temp
+# print exp.robot.exploredMap
 
 while not temp[1]:
     temp = exp.explore()
-    print temp
-    print exp.robot.exploredMap
+    # print temp
+    # print exp.robot.exploredMap
+
+print exp.robot.exploredMap
 
 print "Map Descriptor 1  -->  "+str(exp.robot.descriptor_1())
 print "Map Descriptor 2  -->  "+str(exp.robot.descriptor_2())
 
 print "Do you wan to enter fastest path mode (Y/N)?"
 choice2 = str(raw_input())
+
+print "Fastest Mode Started"
 
 if (choice2 == "Y" or choice2 == "y"):
     if(choice1 == 1):
@@ -59,11 +67,11 @@ if (choice2 == "Y" or choice2 == "y"):
     elif(choice1 == 12):
         waypoint = [18, 13]
     else:
-        waypoint = [18, 11]
+        waypoint = [16, 13]
 
     print "Waypoint is " +str(waypoint)
 
-    fsp = FastestPath(exp.currentMap, START, GOAL, EAST, waypoint)
+    fsp = FastestPath(exp.currentMap, START, GOAL, NORTH, waypoint)
     print fsp.fastestPathRun()
 else:
     print "Program Terminated"
