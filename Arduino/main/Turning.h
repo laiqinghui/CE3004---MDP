@@ -27,7 +27,7 @@ void turnPID(int dir, int degree){
 	if(dir == 1){//Turn right(left motor(M2) forward). Tune M2 to match M1.
 
 		m2Speed= m2Speed + 2;
-		MotorPID M2 = {m2Speed , 0, 0, 0.35}; 
+		MotorPID M2 = {m2Speed , 0, 0, 0.36}; // Changed from 0.35 
 		enableInterrupt( e1a, risingM1Ticks, RISING);
 		enableInterrupt( e2b, risingM2Ticks, RISING);
 		md.setSpeeds(m1Speed, m2Speed);
@@ -58,7 +58,7 @@ void turnPID(int dir, int degree){
     else //turn left(right motor(M1) forward). Tune M1 to match M2. 
     {
 		m1Speed = m1Speed;
-		MotorPID M1 = {m1Speed , 0, 0, 0.8};//0.3 
+		MotorPID M1 = {m1Speed , 0, 0, 0.79};//0.3 
 		enableInterrupt( e1a, risingM1Ticks, RISING);
 		enableInterrupt( e2b, risingM2Ticks, RISING);
 		md.setSpeeds(m1Speed, m2Speed);

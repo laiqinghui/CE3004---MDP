@@ -101,6 +101,11 @@ void setup() {
   Serial.println("Program Started!!!!");
   md.init();
   initI2C();
+  
+  delay(2000);
+  md.setSpeeds(300, 300);
+  delay(1000);
+  md.setBrakes(400, 400);
 }
 
 void loop(){

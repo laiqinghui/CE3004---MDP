@@ -211,7 +211,7 @@ void straightenTune() {
     while (frontRightReading > frontLeftReading)
     {
 	  //Try proportional delay up to 20
-	  int delayAmount = abs(frontRightReading - frontLeftReading)*80;
+	  int delayAmount = abs(frontRightReading - frontLeftReading)*100;
 	  if(delayAmount > 20)
 	  {
 		  delayAmount = 20;
@@ -224,7 +224,7 @@ void straightenTune() {
     }
 	while (frontRightReading < frontLeftReading)
     {
-	  int delayAmount = abs(frontRightReading - frontLeftReading)*80;
+	  int delayAmount = abs(frontRightReading - frontLeftReading)*100;
 	  if(delayAmount > 20)
 	  {
 		  delayAmount = 20;
@@ -240,7 +240,7 @@ void straightenTune() {
   {
     while (frontRightReading < frontLeftReading)
     {
-	  int delayAmount = abs(frontRightReading - frontLeftReading)*80;
+	  int delayAmount = abs(frontRightReading - frontLeftReading)*100;
 	  if(delayAmount > 20)
 	  {
 		  delayAmount = 20;
@@ -253,7 +253,7 @@ void straightenTune() {
     }
 	while (frontRightReading > frontLeftReading)
     {
-	  int delayAmount = abs(frontRightReading - frontLeftReading)*80;
+	  int delayAmount = abs(frontRightReading - frontLeftReading)*100;
 	  if(delayAmount > 20)
 	  {
 		  delayAmount = 20;
@@ -321,7 +321,7 @@ void faceNorthCalibration(){
 
 void calibrateBeforeMoveForward() {
 	double rightSideReading = getRightSensorReading();
-	if (rightSideReading < fromSideWall-0.5 || (rightSideReading > fromSideWall+1))
+	if (rightSideReading < fromSideWall-2.5 || (rightSideReading > fromSideWall-1))
 	{
 		if (canSideCalibrate())
 		{
