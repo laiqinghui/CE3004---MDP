@@ -10,7 +10,7 @@ void turnPID(int dir, int degree){
 	
 	double amount = 0;
 	
-	breakTicks = cir * 0.25 * cmToCounts * 0.9405;      
+	breakTicks = cir * 0.25 * cmToCounts * 0.939;      
 	
     unsigned long currentTicksM1 = 0;
     unsigned long currentTicksM2 = 0;
@@ -53,7 +53,11 @@ void turnPID(int dir, int degree){
 				M2.prevErr1 = M2.currentErr;
 				tuneExitTime = micros();
 			}//end of if
-        }// end of while   	
+        }// end of while
+	    Serial.print("breakTicksM2: ");
+      Serial.println(M2ticks);
+      Serial.print("breakTicksM1: ");
+      Serial.println(M1ticks);
     }//end of if
     else //turn left(right motor(M1) forward). Tune M1 to match M2. 
     {
@@ -85,6 +89,10 @@ void turnPID(int dir, int degree){
 				tuneExitTime = micros();    
 			}
         }// end of while
+		Serial.print("breakTicksM2: ");
+      Serial.println(M2ticks);
+      Serial.print("breakTicksM1: ");
+      Serial.println(M1ticks);
 	}
     
     disableInterrupt(e1a);

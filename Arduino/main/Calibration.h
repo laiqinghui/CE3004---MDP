@@ -164,18 +164,19 @@ void distancefromFrontWall(double distance) {
   getFrontCalibrationReading(false);
   if (frontRightReading > distance)
   {
-    
+    md.setSpeeds(142, 140);
     while (frontRightReading > distance)
     {
-      md.setSpeeds(142, 140);
+      
       getFrontCalibrationReading(true);
     }
   }
   else if (frontRightReading < distance)
   {
+	  md.setSpeeds(-142, -140);
     while (frontRightReading < distance)
     {
-      md.setSpeeds(-142, -140);
+      
       getFrontCalibrationReading(true);
 
     }
