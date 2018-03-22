@@ -24,7 +24,9 @@ void processInst() {
 				else
 				  moveForwardBeta(110, 9.7 * moveCount);
 				break;
-      case 'A': moveCount = instBuff[index + 1] - 48;
+      case 'A': acceptTony = true;
+      
+      moveCount = instBuff[index + 1] - 48;
 				for (int a = 0; a < moveCount; a++) {
 				  delay(delayAmount);
 				  turnPID(-1, 90);
@@ -33,7 +35,9 @@ void processInst() {
 				//Reset side wall reading
 				resetSideWall();
 				break;
-      case 'D': moveCount = instBuff[index + 1] - 48;
+      case 'D': 
+      acceptTony = true;
+      moveCount = instBuff[index + 1] - 48;
 				for (int a = 0; a < moveCount; a++) {
 					delay(delayAmount);
 					turnPID(1, 90);
@@ -42,7 +46,9 @@ void processInst() {
 				//Reset side wall reading
 				resetSideWall();
 				break;
-      case 'O': moveCount = instBuff[index + 1] - 48;
+      case 'O': 
+      acceptTony = true;
+      moveCount = instBuff[index + 1] - 48;
 				for (int a = 0; a < moveCount; a++) {
 					turnPID(1, 90);
 					delay(150);
@@ -54,7 +60,8 @@ void processInst() {
 				break;
       case ']': fastCalibration(2);
 				break;
-      case 'R': fastCalibration(1);
+      case 'R': if(acceptTony)
+                  fastCalibration(1);
 				break;
       case 'F': fastCalibration(0);
 				break;

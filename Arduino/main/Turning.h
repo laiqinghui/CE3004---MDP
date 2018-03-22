@@ -10,7 +10,7 @@ void turnPID(int dir, int degree){
 	
 	double amount = 0;
 	
-	breakTicks = cir * 0.25 * cmToCounts * 0.939;      
+	breakTicks = cir * 0.25 * cmToCounts * 0.921;      
 	
     unsigned long currentTicksM1 = 0;
     unsigned long currentTicksM2 = 0;

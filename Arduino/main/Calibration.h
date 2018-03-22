@@ -16,9 +16,10 @@ void fastCalibration(int choice);
 void turnAdjust(int dir);
 void tuneM2TurnSpeed();
 int isSideFull[4] = {0, 0, 0, 0};
+boolean acceptTony = true;
 
 double fromFrontWall = 13;
-double fromSideWall = 13;
+double fromSideWall = 12.5;
 
 //Calibration
 void calibration() {
@@ -321,8 +322,9 @@ void faceNorthCalibration(){
 }
 
 void calibrateBeforeMoveForward() {
+  acceptTony = false;
 	double rightSideReading = getRightSensorReading();
-	if (rightSideReading < fromSideWall-2.5 || (rightSideReading > fromSideWall-1))
+	if (rightSideReading < fromSideWall-3 || (rightSideReading > fromSideWall-1))
 	{
 		if (canSideCalibrate())
 		{

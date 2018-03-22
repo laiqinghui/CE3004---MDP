@@ -74,13 +74,13 @@ void moveForwardBeta(int rpm, double distance) {
   unsigned long currentTicksM2 = 0;
 
   int m1setSpeed = 108;
-  int m2setSpeed = 92;
+  int m2setSpeed = 88;
 
   //Check using right side sensor if need to calibrate
   calibrateBeforeMoveForward();
 
   MotorPID M1pid = {m1setSpeed, 0, 0, 0.109};//0.1=>50
-  MotorPID M2pid = {m2setSpeed, 0, 0, 0.1165};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms //was 0.125
+  MotorPID M2pid = {m2setSpeed, 0, 0, 0.1147};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms //was 0.125
 
   enableInterrupt( e1a, risingM1, RISING);
   enableInterrupt( e2b, risingM2, RISING);
@@ -128,6 +128,11 @@ void moveForwardBeta(int rpm, double distance) {
 
   }//end of while
 
+  Serial.print("M1 final RPM: ");
+  Serial.println(sqWidthToRPM(squareWidth_M1));
+  Serial.print("M2 final RPM: ");
+  Serial.println(sqWidthToRPM(squareWidth_M2));
+
   disableInterrupt(e1a);
   disableInterrupt(e2b);
   setTicks(0, 0);
@@ -144,7 +149,7 @@ void moveForwardOneGridBeta() {
 
   
 	int m1setSpeed = 250;//SETPOINT TARGET
-	int m2setSpeed = 264;
+	int m2setSpeed = 265;
 	int tuneSpeedM1 = 0;
 	int tuneSpeedM2 = 0;
 
