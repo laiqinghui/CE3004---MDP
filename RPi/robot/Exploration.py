@@ -308,6 +308,16 @@ class Exploration:
                 fsp = FastestPath(self.currentMap, self.robot.center, self.startPos, self.robot.direction, None)
                 print "Exploration completed. Back to starting position!"
 
+                if not (self.sim):
+                    calibrate_front = self.robot.can_calibrate_front()
+                    calibrate_right = self.robot.can_calibrate_right()
+                    if self.robot.is_corner():
+                        fsp.movement.append(']')
+                    elif (calibrate_front[0]):
+                        fsp.movement.append(calibrate_front[1])
+                    elif (calibrate_right[0]):
+                        fsp.movement.append(calibrate_right[1])
+                    
                 fsp.getFastestPath()
                 while (fsp.robot.center.tolist() != self.startPos.tolist()):
                     fsp.moveStep()
@@ -368,29 +378,13 @@ class Exploration:
 
         if not (self.sim):
             calibrate_front = self.robot.can_calibrate_front()
-            # calibrate_right = self.robot.can_calibrate_right()
+            calibrate_right = self.robot.can_calibrate_right()
             if self.robot.is_corner():
                 move.append(']')
-                # if self.robot.direction == NORTH:
-                #     self.robot.direction = EAST
-                #     self.robot.setHead()
-                # elif self.robot.direction == SOUTH:
-                #     self.robot.direction = WEST
-                #     self.robot.setHead()
-                # elif self.robot.direction == EAST:
-                #     self.robot.direction = SOUTH
-                #     self.robot.setHead()
-                # else:
-                #     self.robot.direction = NORTH
-                #     self.robot.setHead()
             elif (calibrate_front[0]):
                 move.append(calibrate_front[1])
-            # calibrate right every n steps if able to
-            # elif (self.moveNumber // CALIBRATE_N_STEPS) > self.baseStep:
-                # calibrate_right = self.robot.can_calibrate_right()
-                # if calibrate_right[0]:
-                    # move.append(calibrate_right[1])
-                    # self.baseStep = (self.moveNumber // CALIBRATE_N_STEPS)
+            elif (calibrate_right[0]):
+                move.append(calibrate_right[1])
 
         # num_calibration_move = len(move)
 

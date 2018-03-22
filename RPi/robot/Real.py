@@ -347,50 +347,50 @@ class Robot:
                     break
         return flag
 
-    # def can_calibrate_right(self):
+    def can_calibrate_right(self):
         """To calibrate the robot according to the right wall.
 
         Returns:
             flag (bool): Specify the direction to calibrate
 
         """
-        # r, c = self.center
-        # flag = [False, None]
+        r, c = self.center
+        flag = [False, None]
 
-        # if self.direction == NORTH:
-            # for i in range(2, 3):
-                # if ((c + i) == MAX_COLS):
-                    # flag = [True, 'R']
-                    # break
-                # elif ((c + i) < MAX_COLS and (self.exploredMap[r-1, c+i] == 2
-                      # and self.exploredMap[r+1, c+i] == 2)):
-                    # flag = [True, 'R']
-                    # break
-        # elif self.direction == WEST:
-            # for i in range(2, 3):
-                # if ((r - i) < 0):
-                    # flag = [True, 'R']
-                    # break
-                # elif ((r - i) >= 0 and (self.exploredMap[r-i, c-1] == 2 and
-                      # self.exploredMap[r-i, c+1] == 2)):
-                    # flag = [True, 'R']
-                    # break
-        # elif self.direction == EAST:
-            # for i in range(2, 3):
-                # if ((r + i) == MAX_ROWS):
-                    # flag = [True, 'R']
-                    # break
-                # elif ((r + i) < MAX_ROWS and (self.exploredMap[r+i, c-1] == 2
-                      # and self.exploredMap[r+i, c+1] == 2)):
-                    # flag = [True, 'R']
-                    # break
-        # else:
-            # for i in range(2, 3):
-                # if ((c - i) < 0):
-                    # flag = [True, 'R']
-                    # break
-                # elif ((c - i) >= 0 and (self.exploredMap[r-1, c-i] == 2 and
-                      # self.exploredMap[r+1, c-i] == 2)):
-                    # flag = [True, 'R']
-                    # break
-        # return flag
+        if self.direction == NORTH:
+            for i in range(2, 3):
+                if ((c + i) == MAX_COLS):
+                    flag = [True, 'R']
+                    break
+                elif ((c + i) < MAX_COLS and (self.exploredMap[r-1, c+i] == 2
+                      and self.exploredMap[r+1, c+i] == 2)):
+                    flag = [True, 'R']
+                    break
+        elif self.direction == WEST:
+            for i in range(2, 3):
+                if ((r - i) < 0):
+                    flag = [True, 'R']
+                    break
+                elif ((r - i) >= 0 and (self.exploredMap[r-i, c-1] == 2 and
+                      self.exploredMap[r-i, c+1] == 2)):
+                    flag = [True, 'R']
+                    break
+        elif self.direction == EAST:
+            for i in range(2, 3):
+                if ((r + i) == MAX_ROWS):
+                    flag = [True, 'R']
+                    break
+                elif ((r + i) < MAX_ROWS and (self.exploredMap[r+i, c-1] == 2
+                      and self.exploredMap[r+i, c+1] == 2)):
+                    flag = [True, 'R']
+                    break
+        else:
+            for i in range(2, 3):
+                if ((c - i) < 0):
+                    flag = [True, 'R']
+                    break
+                elif ((c - i) >= 0 and (self.exploredMap[r-1, c-i] == 2 and
+                      self.exploredMap[r+1, c-i] == 2)):
+                    flag = [True, 'R']
+                    break
+        return flag
