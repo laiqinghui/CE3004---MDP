@@ -28,12 +28,12 @@ void calibration() {
   
   int wait = 100;
 
-  /*
+  
   for (int a = 0; a < 2; a++)
   {
     fastCalibration(2);
   }
-  */
+  
   
   turnPID(1, 90);
   delay(wait);
@@ -247,6 +247,7 @@ void straighten() {
 }
 
 void straightenTune() {
+	int min = 7;
   getFrontCalibrationReading(false);
   if (frontRightReading > frontLeftReading)
   {
@@ -258,9 +259,9 @@ void straightenTune() {
 	  {
 		  delayAmount = 20;
 	  }
-	  else if(delayAmount < 5)
+	  else if(delayAmount < min)
 	  {
-		  delayAmount = 5;
+		  delayAmount = min;
 	  }
 	  
       md.setSpeeds(130, 0);
@@ -275,9 +276,9 @@ void straightenTune() {
 	  {
 		  delayAmount = 20;
 	  }
-	  else if(delayAmount < 5)
+	  else if(delayAmount < min)
 	  {
-		  delayAmount = 5;
+		  delayAmount = min;
 	  }
 		
       md.setSpeeds(-130, 0);
@@ -295,9 +296,9 @@ void straightenTune() {
 	  {
 		  delayAmount = 20;
 	  }
-	  else if(delayAmount < 5)
+	  else if(delayAmount < min)
 	  {
-		  delayAmount = 5;
+		  delayAmount = min;
 	  }
 		
       md.setSpeeds(-130, 0);
@@ -312,9 +313,9 @@ void straightenTune() {
 	  {
 		  delayAmount = 20;
 	  }
-	  else if(delayAmount < 5)
+	  else if(delayAmount < min)
 	  {
-		  delayAmount = 5;
+		  delayAmount = min;
 	  }
 		
       md.setSpeeds(130, 0);
@@ -388,10 +389,9 @@ void faceNorthCalibration(){
 }
 
 void calibrateBeforeMoveForward() {
-  acceptTony = false;
+	acceptTony = false;
 	double rightSideReading = getRightSensorReading();
-	Serial.println(rightSideReading);
-	if (rightSideReading < checkSideWallValue-1 || (rightSideReading > checkSideWallValue+1))
+	if (rightSideReading < checkSideWallValue-1.5 || (rightSideReading > checkSideWallValue+1.5))
 	{
 		if (canSideCalibrate())
 		{

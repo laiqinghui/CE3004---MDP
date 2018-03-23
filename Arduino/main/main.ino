@@ -62,6 +62,7 @@ void processInst() {
 				break;
       case ']': delay(delayAmount);
 				fastCalibration(2);
+				acceptTony = false;
 				break;
       case 'R': if(acceptTony)
 					delay(delayAmount);
@@ -122,6 +123,11 @@ void loop(){
   if (dataExist()) {
     //delay(100);//Delay for ack packet to be sent out. To allow RPI to request and receive data before we start moving which will affect interrupt operations
     processInst();
+  }
+  
+  if(Serial.available())
+  {
+	  receiveData();
   }
 }
 
