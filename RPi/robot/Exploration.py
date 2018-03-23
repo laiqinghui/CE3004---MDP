@@ -41,12 +41,14 @@ class Exploration:
         self.startPos = startPos
         self.timeLimit = timeLimit
         self.exploredArea = 0
-        self.currentMap = gs.MAZEMAP
+
         if sim:
+            self.currentMap = np.zeros((20, 15))
             from Simulator import Robot
             self.robot = Robot(self.currentMap, direction, self.startPos, realMap)
             self.sensors = self.robot.getSensors()
         else:
+            self.currentMap = gs.MAZEMAP
             from Real import Robot
             self.robot = Robot(self.currentMap, direction, startPos)
         self.exploredNeighbours = dict()
