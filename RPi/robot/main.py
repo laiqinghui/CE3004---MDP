@@ -5,6 +5,7 @@ from Exploration import Exploration
 from FastestPath import FastestPath
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from matplotlib import colors
 
 from Constants import START, NORTH, GOAL, EAST
 
@@ -59,19 +60,19 @@ while not temp[1]:
     mod_map[exp.robot.head[0]][exp.robot.head[1]] = 4
     exploremaps.append(mod_map)
 
+# Unexplored, Explored, Obstacle, Robot Body, Robot Head
+cmap = colors.ListedColormap(['#b0bf9d','#daf5ce','#311e08','#313956','#d6b71d'])
 fig = plt.figure()
-im = plt.imshow(exploremaps[0], animated=True)
+im = plt.imshow(exploremaps[0], animated=True, cmap= cmap)
 
 def updatefig(j):
     im.set_array(exploremaps[j])
     return im
 
-ani = animation.FuncAnimation(fig, updatefig, frames=range(len(exploremaps)), interval=150)
+ani = animation.FuncAnimation(fig, updatefig, frames=range(len(exploremaps)), interval=300)
 plt.show()
 
 print exp.robot.exploredMap
-
-
 
 print "Map Descriptor 1  -->  "+str(exp.robot.descriptor_1())
 print "Map Descriptor 2  -->  "+str(exp.robot.descriptor_2())
@@ -103,6 +104,7 @@ if (choice2 == "Y" or choice2 == "y"):
     while (fsp.robot.center.tolist() != fsp.goal.tolist()):
         fsp.moveStep()
         mod_map = copy.deepcopy(exp.robot.exploredMap)
+        mod_map[fsp.waypoint[0]][fsp.waypoint[1]] = 5
         mod_map[fsp.robot.center[0]][fsp.robot.center[1]] = 3
         mod_map[fsp.robot.center[0]][fsp.robot.center[1]+1] = 3
         mod_map[fsp.robot.center[0]][fsp.robot.center[1]-1] = 3
@@ -114,11 +116,15 @@ if (choice2 == "Y" or choice2 == "y"):
         mod_map[fsp.robot.center[0]-1][fsp.robot.center[1]-1] = 3
         mod_map[fsp.robot.head[0]][fsp.robot.head[1]] = 4
         exploremaps.append(mod_map)
-
+    print fsp.waypoint
+    print exploremaps[0]
     fig = plt.figure()
-    im = plt.imshow(exploremaps[0], animated=True)
-
-    ani = animation.FuncAnimation(fig, updatefig, frames=range(len(exploremaps)), interval=150)
+    
+    # Explored, Obstacle, Robot Body, Robot Head, Waypoint, FPath
+    cmap = colors.ListedColormap(['#daf5ce','#311e08','#313956','#d6b71d', '#5c0909','#77a0a6' ])
+    #cmap = colors.ListedColormap(['b','y','g','r', 'm', 'k'])
+    im = plt.imshow(exploremaps[0], animated=True, cmap=cmap)
+    ani = animation.FuncAnimation(fig, updatefig, frames=range(len(exploremaps)), interval=300)
     plt.show()
 
     print fsp.fastestPathRun()
