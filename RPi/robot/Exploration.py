@@ -4,7 +4,10 @@ import numpy as np
 import time
 import logging
 
-import global_settings as gs
+try:
+    import global_settings as gs
+except ImportError:
+    print "Global settings not found, not imported"
 
 from Constants import NORTH, SOUTH, EAST, WEST, FORWARD, LEFT, RIGHT, START, MAX_ROWS, MAX_COLS
 from FastestPath import FastestPath

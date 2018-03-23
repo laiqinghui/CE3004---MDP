@@ -121,7 +121,8 @@ if (choice2 == "Y" or choice2 == "y"):
     ani = animation.FuncAnimation(fig, updatefig, frames=range(len(exploremaps)), interval=150)
     plt.show()
 
-    print fsp.fastestPathRun()
+
+    # print fsp.fastestPathRun()
 else:
     print "Program Terminated"
 
