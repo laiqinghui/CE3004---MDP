@@ -257,14 +257,14 @@ class FastestPath:
         """
         if self.direction in [NORTH, SOUTH]:
             if current_pos[1] == next_pos[1]:
-                return 0
+                return 1
             else:
-                return 3
+                return 2
         else:
             if current_pos[0] == next_pos[0]:
-                return 0
+                return 1
             else:
-                return 3
+                return 2
         return 1
 
     def __setDirection(self, prev_pos, current_pos):

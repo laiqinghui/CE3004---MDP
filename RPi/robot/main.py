@@ -29,6 +29,10 @@ elif(choice1 == 9):
     map_name = 'sample_arena_9.txt'
 elif(choice1 == 12):
     map_name = 'sample_arena_12.txt'
+elif(choice1 == 13):
+    map_name = 'sample_arena_13.txt'
+elif(choice1 == 0):
+    map_name = 'arena_week_9.txt'
 else:
     map_name = 'sample_arena_13.txt'
 
@@ -66,8 +70,12 @@ if (choice2 == "Y" or choice2 == "y"):
         waypoint = [18, 13]
     elif(choice1 == 12):
         waypoint = [18, 13]
+    elif(choice1 == 13):
+        waypoint = [18, 13]
+    elif(choice1 == 0):
+        waypoint = [2, 6]
     else:
-        waypoint = [16, 13]
+        waypoint = [2, 6]
 
     print "Waypoint is " +str(waypoint)
 
