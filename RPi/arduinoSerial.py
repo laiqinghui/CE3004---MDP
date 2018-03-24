@@ -14,8 +14,7 @@ class Arduino(threading.Thread):
 
         super(Arduino, self).__init__()
         self.running = False
-        self.serialConnection = serial.Serial('/dev/ttyUSB0')
-
+        self.serialConnection = serial.Serial(port='/dev/ttyACM0', baudrate=9600)
         dispatcher.connect(self.writeData, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
         logging.info("arduino initialized")
 
