@@ -44,7 +44,7 @@ class Arduino(threading.Thread):
 
     def listenSerialData(self):
         if(self.serialConnection.inWaiting() > 0):
-            byte = self.serialConnection.read(ser.inWaiting()).decode('ascii')
+            byte = self.serialConnection.read(10)
             if chr(byte[0]) == "S":
                 logging.info("byte[0]) == S")
                 message = self.interpret_sensor_values(byte[1:])
