@@ -3,7 +3,8 @@
 import numpy as np
 import time
 import logging
-
+import Queue
+import copy
 try:
     import global_settings as gs
 except ImportError:
@@ -392,19 +393,61 @@ class Exploration:
                 move.append(calibrate_right[1])
 
         # num_calibration_move = len(move)
-
         # multi step
         if (self.checkFree([1, 2, 3, 0], self.robot.center)):
+            # if right is already explored,
+            # if(self.checkRightExplored(self.robot.center)):
+            #     print ("clear -- front: " +str(front) + " currently at : "+ str(self.robot.center[0]) + ", " +str(self.robot.center[1]) + " dir: " + str(self.robot.direction))
+            #     # turn left if front is not clear
+            #     if(not front):
+            #         self.robot.moveBot(LEFT)
+            #         move.append(LEFT)
+            #     # else move up to 3 steps
+            #     elif front >= 3:
+            #         for i in range(3):
+            #             self.robot.moveBot(FORWARD)
+            #         move.extend([FORWARD]*front)
+            #     else:
+            #         for i in range(front):
+            #             self.robot.moveBot(FORWARD)
+            #         move.extend([FORWARD]*front)
+            # else:
             self.robot.moveBot(RIGHT)
             move.append(RIGHT)
             front = self.frontFree()
-            for i in range(front):
-                self.robot.moveBot(FORWARD)
-            move.extend([FORWARD]*front)
+            if self.checkDeadZone(self.robot.center):
+                self.robot.moveBot(LEFT)
+                move.append(LEFT)
+                
+                front = self.frontFree()
+                if not front:
+                    self.robot.moveBot(LEFT)
+                    move.append(LEFT)
+                else:
+                    for i in range(front):
+                        self.robot.moveBot(FORWARD)
+                        move.extend([FORWARD]*front)    
+            else:
+                for i in range(front):
+                    self.robot.moveBot(FORWARD)
+                move.extend([FORWARD]*front)
         elif (front):
-            for i in range(front):
-                self.robot.moveBot(FORWARD)
-            move.extend([FORWARD]*front)
+            if self.checkDeadZone(self.robot.center):
+                self.robot.moveBot(LEFT)
+                move.append(LEFT)
+                
+                front = self.frontFree()
+                if not front:
+                    self.robot.moveBot(LEFT)
+                    move.append(LEFT)
+                else:
+                    for i in range(front):
+                        self.robot.moveBot(FORWARD)
+                        move.extend([FORWARD]*front)    
+            else:
+                for i in range(front):
+                    self.robot.moveBot(FORWARD)
+                move.extend([FORWARD]*front)
         elif (self.checkFree([3, 0, 1, 2], self.robot.center)):
             self.robot.moveBot(LEFT)
             move.append(LEFT)
@@ -441,6 +484,128 @@ class Exploration:
         # self.moveNumber += (len(move) - num_calibration_move)
 
         return move
+    
+    def checkDeadZone(self, center):
+        robotrow, robotcol = center
+        temp_map = copy.deepcopy(self.currentMap)
+
+        # assume the 3 x 3 space of robot are walls
+        temp_map[robotrow][robotcol] = 2
+        temp_map[robotrow][robotcol+1] = 2
+        temp_map[robotrow][robotcol-1] = 2
+        temp_map[robotrow+1][robotcol] = 2
+        temp_map[robotrow+1][robotcol+1] = 2
+        temp_map[robotrow+1][robotcol-1] = 2
+        temp_map[robotrow-1][robotcol] = 2
+        temp_map[robotrow-1][robotcol+1] = 2
+        temp_map[robotrow-1][robotcol-1] = 2
+
+        if self.robot.direction == NORTH:
+            ahead = [robotrow-2, robotcol]
+        elif self.robot.direction == EAST:
+            ahead = [robotrow, robotcol+2]
+        elif self.robot.direction == SOUTH:
+            ahead = [robotrow+2, robotcol]
+        else:
+            ahead = [robotrow, robotcol-2]
+        if ahead[0] < 0 | ahead[0] > 19 | ahead[1] < 0 | ahead[1] > 14:
+            return False
+        # try to fill the space ahead of the robot with walls,
+        # if it doesnt hit unexplored space, then it is enclosed
+        q = Queue.Queue()
+        q.put(ahead)
+        count = 0
+        while not q.empty():
+            spot = q.get()
+            row = spot[0]
+            col = spot[1]
+            if temp_map[row][col] == 1:
+                temp_map[row][col] = 2
+                count += 1
+                if row > 0:
+                    q.put([row-1, col])
+                if row + 1 < 20:
+                    q.put([row+1, col])
+                if col > 0:
+                    q.put([row, col-1])
+                if col + 1 < 15:
+                    q.put([row, col+1])
+            elif temp_map[row][col] == 0:
+                return False
+        # if too many instances, stop because its filling the entire map
+        # print count
+        # print center
+        # print ahead
+        # print temp_map
+        if count > 15:
+            return False
+        else:
+            return True
+        
+
+    def checkRightExplored(self, center):
+        robotrow, robotcol = center
+        count = 0
+        if self.robot.direction == NORTH:
+            for row in [-1,0,1]:
+                for col in range(2,5):
+                    # if col out of range, thats a wall
+                    if robotcol+col >= 15:
+                        count+=1
+                        break
+                    # if even 1 block is unexplored before we see a wall, return false
+                    if self.currentMap[robotrow+row][robotcol+col] == 0:
+                        return False
+                    # if we see a wall without seeing unexplored, this row is ok
+                    elif self.currentMap[robotrow+row][robotcol+col] == 2:
+                        count += 1
+                        break
+                # not explored if we didnt see a wall, meaning we still have to see more
+            firstcheck = count > 0
+
+        elif self.robot.direction == EAST:
+            for col in [-1,0,1]:
+                for row in range(2,5):
+                    if robotrow+row >= 19:
+                        count+=1
+                        break
+                    if self.currentMap[robotrow+row][robotcol+col] == 0:
+                        return False
+                    elif self.currentMap[robotrow+row][robotcol+col] == 2:
+                        count += 1
+                        break
+            firstcheck = count > 0
+        
+        elif self.robot.direction == SOUTH:
+            for row in [-1,0,1]:
+                for col in range(2,5):
+                    if robotcol-col < 0:
+                        count+=1
+                        break
+                    if self.currentMap[robotrow+row][robotcol-col] == 0:
+                        return False
+                    elif self.currentMap[robotrow+row][robotcol-col] == 2:
+                        count += 1
+                        break
+            firstcheck = count > 0
+            
+        else:
+            # WEST
+            for col in [-1,0,1]:
+                for row in range(2,5):
+                    if robotrow-row <0:
+                        count+=1
+                        break
+                    if self.currentMap[robotrow-row][robotcol+col] == 0:
+                        return False
+                    elif self.currentMap[robotrow-row][robotcol+col] == 2:
+                        count += 1
+                        break
+                # not explored if we didnt see a wall, meaning we still have to see more
+            firstcheck = count > 0
+
+        return firstcheck
+
 
     def getExploredArea(self):
         """Update the total number of cells explored at the current state."""
