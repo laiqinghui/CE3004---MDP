@@ -6,7 +6,7 @@ import threading
 import time
 
 import serial
-
+import wiringpi2 as wiringpi
 import RPi.GPIO as GPIO
 import smbus
 
@@ -21,7 +21,10 @@ class Arduino(threading.Thread):
         super(Arduino, self).__init__()
         self.running = False
 		
-		ser = serial.Serial('/dev/ttyACM0', 9600)
+		wiringpi.wiringPiSetup()
+		serial = wiringpi.serialOpen('/dev/ttyAMA0',9600)
+		wiringpi.serialPuts(serial,'hello world!')
+		
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
