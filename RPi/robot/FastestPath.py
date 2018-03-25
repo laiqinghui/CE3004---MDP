@@ -33,6 +33,14 @@ class Node:
         self.H = H
         self.G = float('inf')
 
+    def set_parent_and_G_cost(self, G, parent):
+        """improve stability due to python pointer bug"""
+        self.parent = parent
+        self.G = G
+
+        if self.G > 0 and self.parent is None:
+            print "Error!!!"
+
 
 class FastestPath:
     """Implementation of the A* algorithm to find the fastest path in a 2D maze.
@@ -137,16 +145,16 @@ class FastestPath:
             ValueError: If no path is found between the given start and goal
 
         """
+        isPathFound = False
         goal = self.graph[goal[0]][goal[1]]
 
         # set of nodes already evaluated
         closedSet = set()
-
         # set of discovered nodes that have not been evaluated yet
         openSet = set()
 
         current = self.graph[start[0]][start[1]]
-        current.G = 0
+        current.set_parent_and_G_cost(0, None)
 
         # add start node to openSet
         openSet.add(current)
@@ -162,8 +170,8 @@ class FastestPath:
 
             # if goal is reached trace back the path
             if (current == goal):
+                isPathFound = True
                 path = []
-
                 while (current.parent):
                     path.append(current.coord)
                     current = current.parent
@@ -176,6 +184,7 @@ class FastestPath:
                 closedSet.add(current)
 
                 for node in self.__getNeighbours(current):
+
                     if node in closedSet:
                         continue
 
@@ -184,20 +193,19 @@ class FastestPath:
                         tempCost = self.__getCost(current.coord, node.coord)
                         new_g = current.G + tempCost
                         if node.G > new_g:
-                            node.G = new_g
-                            node.parent = current
+                            node.set_parent_and_G_cost(G=new_g, parent=current)
+
                     else:
                         # if neither in openSet nor in closedSet
                         # cost of moving between neighbours is 1
                         tempCost2 = self.__getCost(current.coord, node.coord)
-                        node.G = current.G + tempCost2
-                        node.parent = current
+                        node.set_parent_and_G_cost(G=(current.G + tempCost2), parent=current)
                         openSet.add(node)
 
             prev = copy.deepcopy(current)
 
-        # exception is no path is found
-        raise ValueError('No Path Found')
+        if not isPathFound:
+            raise ValueError('No Path Found')
 
     def __getHeuristicCosts(self, goal):
         """Calculate the Manhattan distance between each cell and the goal cell.
@@ -309,6 +317,7 @@ class FastestPath:
         path = []
         start = copy.copy(self.start)
 
+        # do from start to goal
         if (self.waypoint):
             h_n = self.__getHeuristicCosts(self.waypoint)
             self.__initGraph(h_n)
@@ -323,6 +332,7 @@ class FastestPath:
         self.__initGraph(h_n)
         fsp = self.__astar(start, self.goal)
         path.extend(fsp)
+
         self.path = path
         self.markMap()
 
