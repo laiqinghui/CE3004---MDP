@@ -21,7 +21,7 @@ void setBrakes(){
 void enableInterrupt(uint8_t pinNumber, void (*func)(void), uint8_t mode)
 {
 	PCICR |= 0b00000101;    // turn on ISR PCINT2 and PCINT0
-	
+	mode = mode;
 	pinMode(pinNumber,INPUT);   // set Pin as Input (default)
 	digitalWrite(pinNumber,HIGH);
 	
