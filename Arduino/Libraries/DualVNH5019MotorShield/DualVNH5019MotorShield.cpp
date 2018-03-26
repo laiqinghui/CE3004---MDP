@@ -39,12 +39,12 @@ void DualVNH5019MotorShield::init()
   pinMode(_INB1,OUTPUT);
   pinMode(_PWM1,OUTPUT);
   pinMode(_EN1DIAG1,INPUT);
-  pinMode(_CS1,INPUT);
+  //pinMode(_CS1,INPUT);
   pinMode(_INA2,OUTPUT);
   pinMode(_INB2,OUTPUT);
   pinMode(_PWM2,OUTPUT);
   pinMode(_EN2DIAG2,INPUT);
-  pinMode(_CS2,INPUT);
+  //pinMode(_CS2,INPUT);
   #if defined(__AVR_ATmega168__)|| defined(__AVR_ATmega328P__) || defined(__AVR_ATmega32U4__)
   // Timer 1 configuration
   // prescaler: clockI/O / 1
@@ -151,24 +151,27 @@ void DualVNH5019MotorShield::setSpeeds(int m1Speed, int m2Speed)
   if (m2Speed > 400)  // Max PWM dutycycle
     m2Speed = 400;
 
+  PORTD = PORTD & B01101011;
+	
+  PORTB = PORTB & B11111110;	
+	
   noInterrupts();
-  OCR1A = m1Speed;
-  OCR1B = m2Speed;
-  interrupts();
-  
-  if (m1Speed == 0 && m2Speed == 0)
-  {
+  OCR1B = 400;
+  OCR1A = 400;
+      
 	PORTD = PORTD & B01101011;
 	
 	PORTB = PORTB & B11111110;
-  }
-  //both speed are positive
-  else if (reverse == 0)
-  {
-	PORTD = PORTD & B11101111; //Set to low
-	PORTD = PORTD | B10000100; //Set to high
 	
+	delay(20);
+  //both speed are positive
+  if (reverse == 0)
+  {
+	  
+	PORTD = PORTD & B11101111; //Set to low	
+	PORTD = PORTD | B10000100; //Set to high
 	PORTB = PORTB & B11111110; //Set to low
+	
 	  
 	//digitalWrite(_INA1,HIGH);
     //digitalWrite(_INB1,LOW);
@@ -214,53 +217,35 @@ void DualVNH5019MotorShield::setSpeeds(int m1Speed, int m2Speed)
 	//digitalWrite(_INA2,LOW);
     //digitalWrite(_INB2,HIGH);
   }
+  OCR1B = m2Speed;
+  OCR1A = m1Speed;
+  
+
+  interrupts();
 }
 
 // Brake motor 1, brake is a number between 0 and 400
-void DualVNH5019MotorShield::setM1Brake(int brake)
-{
+void DualVNH5019MotorShield::setM1Brake(){
 	 PORTD = PORTD & B11101011;
 	 OCR1A = 400;
 }
 
 // Brake motor 2, brake is a number between 0 and 400
-void DualVNH5019MotorShield::setM2Brake(int brake)
-{
+void DualVNH5019MotorShield::setM2Brake(){
   PORTD = PORTD & B01111111;
   PORTB = PORTB & B11111110;
   OCR1B = 400;
 }
 
 // Brake motor 1 and 2, brake is a number between 0 and 400
-void DualVNH5019MotorShield::setBrakes(int m1Brake, int m2Brake)
-{	
+void DualVNH5019MotorShield::setBrakes(){	
   noInterrupts();
+  PORTB = PORTB & B11111110;
   PORTD = PORTD & B01101011;
 	
-  PORTB = PORTB & B11111110;
-  
-  //digitalWrite(_INA1, LOW);
-  //digitalWrite(_INB1, LOW);
-  //digitalWrite(_INA2, LOW);
-  //digitalWrite(_INB2, LOW);
-
   OCR1A = 400;
   OCR1B = 400;
   interrupts();
-}
-
-// Return motor 1 current value in milliamps.
-unsigned int DualVNH5019MotorShield::getM1CurrentMilliamps()
-{
-  // 5V / 1024 ADC counts / 144 mV per A = 34 mA per count
-  return analogRead(_CS1) * 34;
-}
-
-// Return motor 2 current value in milliamps.
-unsigned int DualVNH5019MotorShield::getM2CurrentMilliamps()
-{
-  // 5V / 1024 ADC counts / 144 mV per A = 34 mA per count
-  return analogRead(_CS2) * 34;
 }
 
 // Return error status for motor 1 

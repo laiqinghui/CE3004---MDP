@@ -16,7 +16,7 @@ void fastCalibration(int choice);
 void turnAdjust(int dir);
 void tuneM2TurnSpeed();
 int isSideFull[4] = {0, 0, 0, 0};
-boolean acceptTony = true;
+boolean acceptTony = false;
 
 double fromFrontWall = 13;
 double fromSideWall = 12.5;
@@ -222,7 +222,7 @@ void distancefromFrontWall(double distance) {
 
     }
   }
-  md.setBrakes(400, 400);
+  md.setBrakes();
 }
 
 void straighten() {
@@ -243,7 +243,7 @@ void straighten() {
       getFrontCalibrationReading(true);
     }
   }
-  md.setBrakes(400, 400);
+  md.setBrakes();
 }
 
 void straightenTune() {
@@ -266,7 +266,7 @@ void straightenTune() {
 	  
       md.setSpeeds(130, 0);
 	  delay(delayAmount);
-      md.setBrakes(400, 400);
+      md.setBrakes();
       getFrontCalibrationReading(false);
     }
 	while (frontRightReading < frontLeftReading)
@@ -283,7 +283,7 @@ void straightenTune() {
 		
       md.setSpeeds(-130, 0);
       delay(delayAmount);
-      md.setBrakes(400, 400);
+      md.setBrakes();
       getFrontCalibrationReading(false);
     }
   }
@@ -303,7 +303,7 @@ void straightenTune() {
 		
       md.setSpeeds(-130, 0);
       delay(delayAmount);
-      md.setBrakes(400, 400);
+      md.setBrakes();
       getFrontCalibrationReading(false);
     }
 	while (frontRightReading > frontLeftReading)
@@ -320,7 +320,7 @@ void straightenTune() {
 		
       md.setSpeeds(130, 0);
       delay(delayAmount);
-      md.setBrakes(400, 400);
+      md.setBrakes();
       getFrontCalibrationReading(false);
     }
   }
@@ -410,7 +410,7 @@ void tooCloseToWall(){
 		{
 			md.setSpeeds(-140, -137);
 			delay(20);
-			md.setBrakes(400, 400);
+			md.setBrakes();
 		}
 	}
 	else if(frontLeftReading < 14 && frontLeftReading > 0)
@@ -422,7 +422,7 @@ void tooCloseToWall(){
 		  getFrontCalibrationReading(true);
 
 		}
-		md.setBrakes(400, 400);
+		md.setBrakes();
 	}
 	else if(frontRightReading < 14 && frontRightReading > 0)
 	{
@@ -433,7 +433,7 @@ void tooCloseToWall(){
 		  getFrontCalibrationReading(true);
 
 		}
-		md.setBrakes(400, 400);
+		md.setBrakes();
 	}
 	
 }

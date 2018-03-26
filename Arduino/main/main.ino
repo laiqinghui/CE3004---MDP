@@ -3,32 +3,31 @@
 
 void processInst() {
 
-  char *instBuff = getinBuffer();//inBuffer can be accessed directly but not a nice practice i think
-  boolean fastestPath = false;
-  int index = 1;//Start with 1 as first character is sensor flag which is checked after moving
-  int moveCount = 0;
-  int delayAmount = 200;
+	char *instBuff = getinBuffer();//inBuffer can be accessed directly but not a nice practice i think
+	boolean fastestPath = false;
+	int index = 1;//Start with 1 as first character is sensor flag which is checked after moving
+	int moveCount = 0;
+	int delayAmount = 200;
   
-  if(instBuff[0] == 'C')
-  {
-	  fastestPath = true;
-  }
-
-  while (instBuff[index] != ';') {
-    switch (instBuff[index]) {
-
-      case 'W': moveCount = instBuff[index + 1] - 48;
-				if (moveCount == 1)
-				  //moveForwardOneGrid(110);
-					moveForwardOneGridBeta();
-				else
-				  moveForwardBeta(110, 9.7 * moveCount);
-			  
-				tooCloseToWall();
-				break;
-      case 'A': acceptTony = true;
-      
-      moveCount = instBuff[index + 1] - 48;
+	if(instBuff[0] == 'C')
+	{
+		fastestPath = true;
+	}
+	
+	while (instBuff[index] != ';') 
+	{
+		switch (instBuff[index]) 
+		{
+			case 'W': 	moveCount = instBuff[index + 1] - 48;
+						if (moveCount == 1)
+							moveForwardOneGridBeta();
+						else
+							moveForwardBeta(110, 9.7 * moveCount);
+				
+						tooCloseToWall();
+						break;
+			case 'A': acceptTony = true;
+				moveCount = instBuff[index + 1] - 48;
 				for (int a = 0; a < moveCount; a++) {
 				  delay(delayAmount);
 				  turnPID(-1, 90);
@@ -37,9 +36,9 @@ void processInst() {
 				//Reset side wall reading
 				resetSideWall();
 				break;
-      case 'D': 
-      acceptTony = true;
-      moveCount = instBuff[index + 1] - 48;
+			case 'D': 
+				acceptTony = true;
+				moveCount = instBuff[index + 1] - 48;
 				for (int a = 0; a < moveCount; a++) {
 					delay(delayAmount);
 					turnPID(1, 90);
@@ -48,9 +47,9 @@ void processInst() {
 				//Reset side wall reading
 				resetSideWall();
 				break;
-      case 'O': 
-      acceptTony = true;
-      moveCount = instBuff[index + 1] - 48;
+			case 'O': 
+				acceptTony = true;
+				moveCount = instBuff[index + 1] - 48;
 				for (int a = 0; a < moveCount; a++) {
 					turnPID(1, 90);
 					delay(150);
@@ -60,28 +59,28 @@ void processInst() {
 				//Reset side wall reading
 				resetSideWall();
 				break;
-      case ']': delay(delayAmount);
+			case ']': delay(delayAmount);
 				fastCalibration(2);
 				acceptTony = false;
 				break;
-      case 'R': if(acceptTony)
+			case 'R': if(acceptTony)
 					delay(delayAmount);
 					fastCalibration(1);
 				break;
-      case 'F': delay(delayAmount);
+			case 'F': delay(delayAmount);
 				fastCalibration(0);
 				break;
-      case '|': calibration();
+			case '|': calibration();
 				break;
-      case 'T': turnPID(-1, atoi(instBuff + 2));
+			case 'T': turnPID(-1, atoi(instBuff + 2));
 				break;
-      case 'S': setOutBuffer('S', getSensorReadingInCM(), 5);
+			case 'S': setOutBuffer('S', getSensorReadingInCM(), 5);
 				interruptPi();//Interrupt RPI to notify data is ready
 				break;
-	  case 'H': delay(300);
+			case 'H': delay(300);
 				faceNorthCalibration();
 				break;
-      default:  ;//do nothing
+			default:  ;//do nothing
 
     }	
 
@@ -104,7 +103,6 @@ void processInst() {
     interruptPi();//Interrupt RPI to notify data is ready
   }
 
-
 }
 
 //---------------------------------------------------------------------------------------------
@@ -114,21 +112,19 @@ void setup() {
   Serial.println("Program Started!!!!");
   md.init();
   initI2C();
-
 }
 
 void loop(){
-	
-	
   if (dataExist()) {
     //delay(100);//Delay for ack packet to be sent out. To allow RPI to request and receive data before we start moving which will affect interrupt operations
-    processInst();
+	processInst();
   }
-  
+  /*
   if(Serial.available())
   {
 	  receiveData();
   }
+  */
 }
 
 

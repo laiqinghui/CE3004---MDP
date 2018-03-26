@@ -27,7 +27,7 @@ void interruptPi() {
   digitalWrite(PI_PIN, HIGH);
   delay(100);
   digitalWrite(PI_PIN, LOW);
-  sendData();
+  Serial.write(outBuffer);
 
 }
 
@@ -45,29 +45,20 @@ void setOutBuffer(char opcode, char * data, int len) {
 
 // callback for received data
 void receiveData() {
-
-
+	delay(200);
+	//Serial.read();//Clear 1st garbage byte		
 	int i = 0;
-	int len = Serial.available()
-
-	if (len > 1) 
+	while(Serial.available()) 
 	{
-		Serial.read();//Clear 1st garbage byte	
-		while (i < len) 
-		{
-			// read the incoming byte:
-			inBuffer[i] = Serial.read();
-			i++;
-		}
+		// read the incoming byte:
+		inBuffer[i] = Serial.read();
+		i++;
 	}
-    newData = true;//Set flag for main program to process data
-	else 
+	if(i != 0)
 	{
-		Serial.read();//Clear 1st garbage byte	
+		newData = true;//Set flag for main program to process data
 	}
 }
-
-
 
 // callback for sending data
 void sendData() {
@@ -75,20 +66,6 @@ void sendData() {
   Serial.write(outBuffer);
 
 }
-
-void initI2C() {
-
-  Wire.begin(SLAVE_ADDRESS);
-  pinMode(PI_PIN, OUTPUT);
-  digitalWrite(PI_PIN, LOW);
-
-  //define callbacks for i2c communication
-  //Wire.onReceive(receiveData);
-  //Wire.onRequest(sendData);
-
-}
-
-
 
 char* getinBuffer() {
 

@@ -4,65 +4,8 @@
 #include "Calibration.h"
 
 //----------------------------------------------------------------FORWARD----------------------------------------------------------------
-void moveForwardOneGrid(int rpm);
 void moveForwardBeta(int rpm, double distance);
 void calibrateBeforeMoveForward();
-
-void moveForwardOneGrid(int rpm) {
-
-  unsigned long tuneEntryTime = 0;
-  unsigned long tuneExitTime = 0;
-  unsigned long interval = 0;
-  double distanceTicks = 0.955 * 9.5 * ticksPerCM;
-  unsigned long currentTicksM1 = 0;
-  unsigned long currentTicksM2 = 0;
-
-  int m1setSpeed = 100;
-  int m2setSpeed = 96;
-
-  MotorPID M1pid = {m1setSpeed, 0, 0, 0.111};//0.110
-  MotorPID M2pid = {m2setSpeed , 0, 0, 0.1084};//0.109
-
-  //Check using right side sensor if need to calibrate
-  calibrateBeforeMoveForward();
-
-  enableInterrupt( e1a, risingM1, RISING);
-  enableInterrupt( e2b, risingM2, RISING);
-  setTicks(0,0);
-
-  md.setSpeeds(m1setSpeed, m2setSpeed);
-  while (1)
-  {
-    //Serial.print(sqWidthToRPM(squareWidth_M1));
-    //Serial.print(" ");
-    //Serial.println(sqWidthToRPM(squareWidth_M2));
-
-    noInterrupts();
-    currentTicksM1 = M1ticks;
-    currentTicksM2 = M2ticks;
-    interrupts();
-
-    if (currentTicksM1 >= distanceTicks || currentTicksM2 >= distanceTicks)
-    {
-      md.setBrakes(400, 400);
-      break;
-    }
-
-    tuneEntryTime = micros();//Can try removing interval for single grid movement
-    interval = tuneEntryTime - tuneExitTime;
-    if (interval >= 5000)
-    {
-      tuneMotors(rpm, &M1pid, &M2pid);
-      tuneExitTime = micros();
-    }
-
-  }//end of while
-
-  disableInterrupt(e1a);
-  disableInterrupt(e2b);
-  setTicks(0, 0);
-  setSqWidth(0, 0);
-}
 
 void moveForwardBeta(int rpm, double distance) {
 
@@ -72,34 +15,30 @@ void moveForwardBeta(int rpm, double distance) {
   double distanceTicks = 1.02 * distance * ticksPerCM;
   unsigned long currentTicksM1 = 0;
   unsigned long currentTicksM2 = 0;
+  
+  breakTicks = distanceTicks;
 
-  int m1setSpeed = 108;
-  int m2setSpeed = 88;
+  int m1setSpeed = 300;
+  int m2setSpeed = 300;
 
   //Check using right side sensor if need to calibrate
   calibrateBeforeMoveForward();
 
   MotorPID M1pid = {m1setSpeed, 0, 0, 0.109};//0.1=>50
   MotorPID M2pid = {m2setSpeed, 0, 0, 0.1137};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms //was 0.125
-
+	
   enableInterrupt( e1a, risingM1, RISING);
   enableInterrupt( e2b, risingM2, RISING);
   setTicks(0, 0);
 
-  md.setSpeeds(m1setSpeed, m2setSpeed);
+  md.setSpeeds(m1setSpeed, m2setSpeed);  
 
-  while (1)
+  while (!movementDone)
   {
     noInterrupts();
     currentTicksM1 = M1ticks;
     currentTicksM2 = M2ticks;
     interrupts();
-
-    if (currentTicksM1 >= distanceTicks || currentTicksM2 >= distanceTicks)
-    {
-      md.setBrakes(400, 400);
-      break;
-    }
 
     tuneEntryTime = micros();
     interval = tuneEntryTime - tuneExitTime;
@@ -128,13 +67,15 @@ void moveForwardBeta(int rpm, double distance) {
 
   }//end of while
 
-  Serial.print("M1 final RPM: ");
-  Serial.println(sqWidthToRPM(squareWidth_M1));
-  Serial.print("M2 final RPM: ");
-  Serial.println(sqWidthToRPM(squareWidth_M2));
+  //Serial.print("M1 final RPM: ");
+  //Serial.println(sqWidthToRPM(squareWidth_M1));
+  //Serial.print("M2 final RPM: ");
+  //Serial.println(sqWidthToRPM(squareWidth_M2));
 
   disableInterrupt(e1a);
   disableInterrupt(e2b);
+  breakTicks = 0;
+  movementDone = false;
   setTicks(0, 0);
   setSqWidth(0, 0);
 }
@@ -150,7 +91,6 @@ void moveForwardOneGridBeta() {
   
 	int m1setSpeed = 130;//SETPOINT TARGET //250
 	int m2setSpeed = 130; //265
-	int tuneSpeedM1 = 0;
 	int tuneSpeedM2 = 0;
 
   
@@ -159,13 +99,14 @@ void moveForwardOneGridBeta() {
 	calibrateBeforeMoveForward();
 	breakTicks = 0.97 * 9.5 * ticksPerCM;
 	MotorPID M2 = {m2setSpeed , 0, 0, 0.80}; //
-	enableInterrupt( e1a, risingM1Ticks, RISING);
-	enableInterrupt( e2b, risingM2Ticks, RISING);
+	enableInterrupt( e1a, dummy, RISING);
+	enableInterrupt( e2b, dummy, RISING);
 	
 	md.setSpeeds(m1setSpeed, m2setSpeed);
 	//delay(5);
 	setTicks(0,0);
      boolean brakesPending = false;
+	 int error = 0;
       while(!movementDone)
         {
 			tuneEntryTime = micros();
@@ -194,12 +135,14 @@ void moveForwardOneGridBeta() {
       
 			}//end of if
 			
+			/*
 			if(currentTicksM1 > 0.80*breakTicks && brakesPending){
 				OCR1A = 100;
 				OCR1B = 100;
 				M2.prevTuneSpeed = 100;
 				brakesPending = false;
 			}
+			*/
 			
 			
           

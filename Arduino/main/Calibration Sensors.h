@@ -5,8 +5,8 @@
 #define rightBackReading sideSensorsCalibrationCM[1]
 
 //Function Declaration
-double* calibrationFrontSensorReading();
-double* getFrontCalibrationReading(boolean quick);
+volatile double* calibrationFrontSensorReading();
+volatile double* getFrontCalibrationReading(boolean quick);
 double getRightSensorReading();
 
 //Array Declaration
@@ -15,7 +15,7 @@ volatile double calibrationFrontSensorRaw[2];
 
 //Front Sensor Values
 //Get average reading over a number of samples for front
-double* getFrontCalibrationReading(boolean quick) {
+volatile double* getFrontCalibrationReading(boolean quick) {
   if (quick)
   {
     calibrationFrontSensorRaw[0] = analogRead(frontLeft);
@@ -37,7 +37,7 @@ double* getFrontCalibrationReading(boolean quick) {
   return frontSensorsCalibrationCM;
 }
 
-double* calibrationFrontSensorReading() {
+volatile double* calibrationFrontSensorReading() {
   int size = 70;
 
   int listOfReadingsFL[size];

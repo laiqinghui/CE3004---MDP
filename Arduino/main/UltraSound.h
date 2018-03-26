@@ -45,7 +45,7 @@ char getUltraSoundDistance() {
       int header = Serial.read(); //0x22
       int highbyte = Serial.read();
       int lowbyte = Serial.read();
-      int sum = Serial.read(); //sum
+      Serial.read(); //sum
 
       if (header == 0x22) {
         if (highbyte == 255)

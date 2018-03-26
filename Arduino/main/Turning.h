@@ -4,14 +4,12 @@ void setTurnValueOffset(int dir, double newValue);
 void turnPID(int dir, int degree);
 
 
-double offsetRight = 0.919;
-double offsetLeft = 0.9165;
+double offsetRight = 1; //0.919
+double offsetLeft = 1; //0.9165
 void turnPID(int dir, int degree){
 
     double cir = 3.141 * 17.6; //circumference of circle drawn when turning in cm, current diameter used is 17.6
     double cmToCounts = ticksPerCM; //cm to counts for wheel
-	
-	double amount = 0;
 	
 	//Right Turn
 	if(dir == 1)
@@ -21,10 +19,15 @@ void turnPID(int dir, int degree){
 	else
 	{
 		breakTicks = cir * 0.25 * cmToCounts * offsetLeft; 
-	}		
+	}
+	if(degree == 180)
+	{
+		dir = 1;
+		breakTicks = cir * 0.5 * cmToCounts * offsetRight; 
+	}
 	
-    unsigned long currentTicksM1 = 0;
-    unsigned long currentTicksM2 = 0;
+    //unsigned long currentTicksM1 = 0;
+    //unsigned long currentTicksM2 = 0;
     int tuneSpeedM1 = 0;
     int tuneSpeedM2 = 0;
     int m1Speed = dir * -250;
@@ -39,8 +42,8 @@ void turnPID(int dir, int degree){
 
 		m2Speed= m2Speed + 2;
 		MotorPID M2 = {m2Speed , 0, 0, 0.36}; // Changed from 0.35 
-		enableInterrupt( e1a, risingM1Ticks, RISING);
-		enableInterrupt( e2b, risingM2Ticks, RISING);
+		enableInterrupt( e1a, dummy, RISING);
+		enableInterrupt( e2b, dummy, RISING);
 		md.setSpeeds(m1Speed, m2Speed);
      
 		while(!movementDone)//currentTicksM1 < amount
@@ -70,8 +73,8 @@ void turnPID(int dir, int degree){
     {
 		m1Speed = m1Speed;
 		MotorPID M1 = {m1Speed , 0, 0, 0.79};//0.3 
-		enableInterrupt( e1a, risingM1Ticks, RISING);
-		enableInterrupt( e2b, risingM2Ticks, RISING);
+		enableInterrupt( e1a, dummy, RISING);
+		enableInterrupt( e2b, dummy, RISING);
 		md.setSpeeds(m1Speed, m2Speed);
       
 		while(!movementDone)
@@ -87,7 +90,6 @@ void turnPID(int dir, int degree){
 		  
 				M1.currentErr =  error;
 				tuneSpeedM1 = M1.prevTuneSpeed + M1.gain*M1.currentErr + (M1.gain/0.07)*(M1.currentErr - M1.prevErr1);
-				
 				if(!movementDone)
 				  OCR1A = tuneSpeedM1;
 				
@@ -102,10 +104,10 @@ void turnPID(int dir, int degree){
     disableInterrupt(e2b);
     breakTicks = 0;
     movementDone = false;
-	//Serial.print("breakTicksM2: ");
-    //Serial.println(M2ticks);
-    //Serial.print("breakTicksM1: ");
-    //Serial.println(M1ticks);
+	Serial.print("breakTicksM2: ");
+    Serial.println(M2ticks);
+    Serial.print("breakTicksM1: ");
+    Serial.println(M1ticks);
 	
     setTicks(0,0);
     setSqWidth(0,0);
