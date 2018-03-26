@@ -14,7 +14,7 @@ void moveForwardBeta(int rpm, double distance) {
   unsigned long interval = 0;
   double distanceTicks = 1.02 * distance * ticksPerCM;
   unsigned long currentTicksM1 = 0;
-  unsigned long currentTicksM2 = 0;
+  //unsigned long currentTicksM2 = 0;
   
   breakTicks = distanceTicks;
 
@@ -37,31 +37,20 @@ void moveForwardBeta(int rpm, double distance) {
   {
     noInterrupts();
     currentTicksM1 = M1ticks;
-    currentTicksM2 = M2ticks;
     interrupts();
 
     tuneEntryTime = micros();
     interval = tuneEntryTime - tuneExitTime;
     if (interval >= 5000)
     {
-      tuneMotors(rpm, &M1pid, &M2pid);
-
       //Gradual breaking
-      /*
-        if(currentTicksM1 < 0.7*distanceTicks){
-        //tuneM1(rpm, &M1pid);
-        //tuneM2(rpm, &M2pid);
-        tuneMotors(rpm, &M1pid, &M2pid);
-        }else if(currentTicksM1 < 0.85*distanceTicks){
-        //tuneM1(rpm*0.75, &M1pid);
-        //tuneM2(rpm*0.75, &M2pid);
-        tuneMotors(rpm*0.75, &M1pid, &M2pid);
-        }else{
-        //tuneM1(rpm*0.4, &M1pid);
-        //tuneM2(rpm*0.4, &M2pid);
-        tuneMotors(rpm*0.4, &M1pid, &M2pid);
-        }
-      */
+      if(currentTicksM1 > 0.8*distanceTicks){
+		  tuneMotors(rpm*0.5, &M1pid, &M2pid);
+	  }
+	  else
+	  {
+		  tuneMotors(rpm, &M1pid, &M2pid);
+	  }
       tuneExitTime = micros();
     }
 
@@ -106,7 +95,6 @@ void moveForwardOneGridBeta() {
 	//delay(5);
 	setTicks(0,0);
      boolean brakesPending = true;
-	 int error = 0;
       while(!movementDone)
         {
 			tuneEntryTime = micros();
