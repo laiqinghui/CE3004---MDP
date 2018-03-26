@@ -23,6 +23,8 @@ void processInst() {
 					moveForwardOneGridBeta();
 				else
 				  moveForwardBeta(110, 9.7 * moveCount);
+			  
+				tooCloseToWall();
 				break;
       case 'A': acceptTony = true;
       
@@ -58,12 +60,16 @@ void processInst() {
 				//Reset side wall reading
 				resetSideWall();
 				break;
-      case ']': fastCalibration(2);
+      case ']': delay(delayAmount);
+				fastCalibration(2);
+				acceptTony = false;
 				break;
       case 'R': if(acceptTony)
-                  fastCalibration(1);
+					delay(delayAmount);
+					fastCalibration(1);
 				break;
-      case 'F': fastCalibration(0);
+      case 'F': delay(delayAmount);
+				fastCalibration(0);
 				break;
       case '|': calibration();
 				break;
@@ -108,13 +114,20 @@ void setup() {
   Serial.println("Program Started!!!!");
   md.init();
   initI2C();
-  //distancefromFrontWall(10);
+
 }
 
 void loop(){
+	
+	
   if (dataExist()) {
     //delay(100);//Delay for ack packet to be sent out. To allow RPI to request and receive data before we start moving which will affect interrupt operations
     processInst();
+  }
+  
+  if(Serial.available())
+  {
+	  receiveData();
   }
 }
 

@@ -61,6 +61,19 @@ double* calibrationFrontSensorReading() {
 double getRightSensorReading(){
 	
 	double rightSideReading = analogRead(right);
+	
+	int size = 50;
+	int listOfReadingsRight[size];
+
+	//Get Reading from Sensor
+	for (int a = 0; a < size; a++)
+	{
+		listOfReadingsRight[a] = analogRead(right);
+		delay(1);
+	}
+
+	//Get median averaged from list
+	rightSideReading = sortAndAverage(listOfReadingsRight, size, 3);
 
 	//------------------------------------RIGHT-----------------------------------------------------
 	//y = 5236.7x - 0.032

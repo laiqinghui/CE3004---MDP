@@ -27,6 +27,7 @@ void interruptPi() {
   digitalWrite(PI_PIN, HIGH);
   delay(100);
   digitalWrite(PI_PIN, LOW);
+  sendData();
 
 }
 
@@ -43,7 +44,7 @@ void setOutBuffer(char opcode, char * data, int len) {
 
 
 // callback for received data
-void receiveData(int byteCount) {
+void receiveData() {
 
 
 	int i = 0;
@@ -82,8 +83,8 @@ void initI2C() {
   digitalWrite(PI_PIN, LOW);
 
   //define callbacks for i2c communication
-  Wire.onReceive(receiveData);
-  Wire.onRequest(sendData);
+  //Wire.onReceive(receiveData);
+  //Wire.onRequest(sendData);
 
 }
 

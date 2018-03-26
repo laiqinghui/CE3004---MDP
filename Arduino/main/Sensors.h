@@ -112,6 +112,8 @@ char* getSensorReadingInCM() {
   {
     sensorsValuesArray[4] = sensorsValuesArray[4] - 1;
   }
+  if(sensorsValuesArray[4] > 71)
+	  sensorsValuesArray[4] = -1;
 
 
   return sensorsValuesArray;
