@@ -89,8 +89,8 @@ void moveForwardOneGridBeta() {
 	unsigned long currentTicksM2 = 0;
 
   
-	int m1setSpeed = 130;//SETPOINT TARGET //250
-	int m2setSpeed = 130; //265
+	int m1setSpeed = 380;//SETPOINT TARGET //250
+	int m2setSpeed = 380; //265
 	int tuneSpeedM2 = 0;
 
   
@@ -98,14 +98,14 @@ void moveForwardOneGridBeta() {
 	//Check using right side sensor if need to calibrate
 	calibrateBeforeMoveForward();
 	breakTicks = 0.97 * 9.5 * ticksPerCM;
-	MotorPID M2 = {m2setSpeed , 0, 0, 0.80}; //
+	MotorPID M2 = {m2setSpeed , 0, 0, 0.40}; //
 	enableInterrupt( e1a, dummy, RISING);
 	enableInterrupt( e2b, dummy, RISING);
 	
 	md.setSpeeds(m1setSpeed, m2setSpeed);
 	//delay(5);
 	setTicks(0,0);
-     boolean brakesPending = false;
+     boolean brakesPending = true;
 	 int error = 0;
       while(!movementDone)
         {
@@ -135,23 +135,21 @@ void moveForwardOneGridBeta() {
       
 			}//end of if
 			
-			/*
 			if(currentTicksM1 > 0.80*breakTicks && brakesPending){
-				OCR1A = 100;
-				OCR1B = 100;
-				M2.prevTuneSpeed = 100;
+				OCR1A = 150;
+				OCR1B = 150;
+				M2.prevTuneSpeed = 150;
 				brakesPending = false;
 			}
-			*/
 			
 			
           
         }// end of while   
-      Serial.print("breakTicksM2: ");
-      Serial.println(M2ticks);
-      Serial.print("breakTicksM1: ");
-      Serial.println(M1ticks);
-	  Serial.println(M2.prevTuneSpeed);
+      //Serial.print("breakTicksM2: ");
+      //Serial.println(M2ticks);
+      //Serial.print("breakTicksM1: ");
+      //Serial.println(M1ticks);
+	  //Serial.println(M2.prevTuneSpeed);
 
 	disableInterrupt(e1a);
 	disableInterrupt(e2b);

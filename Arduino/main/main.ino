@@ -1,4 +1,4 @@
-#include "I2C.h"
+#include "BenTest.h"
 #include "Forward.h"
 
 void processInst() {
@@ -111,7 +111,7 @@ void setup() {
   Serial.begin(9600);
   Serial.println("Program Started!!!!");
   md.init();
-  initI2C();
+  //initI2C();
 }
 
 void loop(){
@@ -119,12 +119,10 @@ void loop(){
     //delay(100);//Delay for ack packet to be sent out. To allow RPI to request and receive data before we start moving which will affect interrupt operations
 	processInst();
   }
-  /*
   if(Serial.available())
   {
 	  receiveData();
   }
-  */
 }
 
 
