@@ -43,16 +43,19 @@ void enableInterrupt(uint8_t pinNumber, void (*func)(void), uint8_t mode)
 }
 
 void disableInterrupt(uint8_t pinNumber){
-	PCICR &= 0b11111010;    // turn off ISR PCINT2 and PCINT0
+	//PCICR &= 0b00000010;    // turn off ISR PCINT2 and PCINT0
 	//ISR (PCINT2_vect)
 	if(pinNumber <8)
 	{
+		PCMSK2 &= 0b11110111;    // turn off pins 3
+	
 		interruptFunctions[0] = NULL;
 		pinNum[0] = -1;
 	}
 	//ISR (PCINT0_vect)
 	else
 	{
+		PCMSK0 &= 0b11011111;    // turn off pin 13
 		interruptFunctions[1] = NULL;
 		pinNum[1] = -1;
 	}
