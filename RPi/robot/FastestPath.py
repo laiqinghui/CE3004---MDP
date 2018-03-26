@@ -30,16 +30,24 @@ class Node:
         self.value = value
         self.coord = coord
         self.parent = None
+        self.direction = None
         self.H = H
         self.G = float('inf')
 
-    def set_parent_and_G_cost(self, G, parent):
-        """improve stability due to python pointer bug"""
+    def set_parent_and_G_cost(self, G, parent, direction=None):
         self.parent = parent
         self.G = G
-
-        if self.G > 0 and self.parent is None:
-            print "Error!!!"
+        if direction is not None:
+            self.direction = direction
+        else:
+            if self.parent.coord[0] < self.coord[0]:
+                self.direction = SOUTH
+            elif self.parent.coord[1] < self.coord[1]:
+                self.direction = EAST
+            elif self.parent.coord[1] > self.coord[1]:
+                self.direction = WEST
+            elif self.parent.coord[0] > self.coord[0]:
+                self.direction = NORTH
 
 
 class FastestPath:
@@ -99,7 +107,7 @@ class FastestPath:
         for row in xrange(MAX_ROWS):
             self.graph.append([])
             for col in xrange(MAX_COLS):
-                self.graph[row].append(Node(self.exploredMap[row][col], (row, col), h_n[row][col]))
+                self.graph[row].append([Node(self.exploredMap[row][col], (row, col), h_n[row][col])])
 
     def __validInds(self, inds):
         """To check if the input indices are valid or not.
@@ -146,15 +154,15 @@ class FastestPath:
 
         """
         isPathFound = False
-        goal = self.graph[goal[0]][goal[1]]
+        goal = self.graph[goal[0]][goal[1]][0]
 
         # set of nodes already evaluated
         closedSet = set()
         # set of discovered nodes that have not been evaluated yet
         openSet = set()
 
-        current = self.graph[start[0]][start[1]]
-        current.set_parent_and_G_cost(0, None)
+        current = self.graph[start[0]][start[1]][0]
+        current.set_parent_and_G_cost(G=0, parent=None, direction=self.direction)
 
         # add start node to openSet
         openSet.add(current)
@@ -183,24 +191,45 @@ class FastestPath:
                 openSet.remove(current)
                 closedSet.add(current)
 
-                for node in self.__getNeighbours(current):
+                for nodes in self.__getNeighbours(current):
+                    for node in nodes:
 
-                    if node in closedSet:
-                        continue
+                        if node in closedSet:
+                            continue
+                            # tempDirection = node.direction
+                            # tempDirection2 = self.getNewDirection(current.coord, node.coord)
+                            # tempCost = self.__getCost(current, node)
+                            # new_g = current.G + tempCost
+                            # if tempDirection != tempDirection2 and (node.G - new_g) < 1 and node.G > new_g:
+                            #     print "test==========="
+                            #     copyNode = copy.deepcopy(node)
+                            #     copyNode.set_parent_and_G_cost(G=new_g, parent=current)
+                            #     self.graph[copyNode.coord[0]][copyNode.coord[1]].append(copyNode)
+                            #     openSet.add(copyNode)
+                            #     print "d", copyNode.coord, copyNode.direction, copyNode.G
+                            #     print "d", node.coord, node.direction, node.G
+                            #     print "=============="
 
-                    if node in openSet:
-                        # calculate new G cost
-                        tempCost = self.__getCost(current.coord, node.coord)
-                        new_g = current.G + tempCost
-                        if node.G > new_g:
-                            node.set_parent_and_G_cost(G=new_g, parent=current)
-
-                    else:
-                        # if neither in openSet nor in closedSet
-                        # cost of moving between neighbours is 1
-                        tempCost2 = self.__getCost(current.coord, node.coord)
-                        node.set_parent_and_G_cost(G=(current.G + tempCost2), parent=current)
-                        openSet.add(node)
+                        if node in openSet:
+                            # calculate new G cost
+                            tempCost = self.__getCost(current, node)
+                            new_g = current.G + tempCost
+                            if node.G > new_g:
+                                node.set_parent_and_G_cost(G=new_g, parent=current)
+                            elif (new_g - node.G < 1) and (new_g - node.G > 0):
+                                tempDirection = node.direction
+                                tempDirection2 = self.getNewDirection(current.coord, node.coord)
+                                if tempDirection != tempDirection2:
+                                    copyNode = copy.deepcopy(node)
+                                    copyNode.set_parent_and_G_cost(G=new_g, parent=current)
+                                    self.graph[copyNode.coord[0]][copyNode.coord[1]].append(copyNode)
+                                    openSet.add(copyNode)
+                        else:
+                            # if neither in openSet nor in closedSet
+                            # cost of moving between neighbours is 1
+                            tempCost2 = self.__getCost(current, node)
+                            node.set_parent_and_G_cost(G=(current.G + tempCost2), parent=current)
+                            openSet.add(node)
 
             prev = copy.deepcopy(current)
 
@@ -250,9 +279,10 @@ class FastestPath:
         neighbours = [self.graph[n[0]][n[1]] for n in inds]
 
         # if its explored and not an obstacle
-        return [n for n in neighbours if n.value == 1]
+        return [[n for n in nodes if n.value == 1] for nodes in neighbours]
+        # return [n for n in neighbours if n.value == 1]
 
-    def __getCost(self, current_pos, next_pos):
+    def __getCost(self, current_node, next_node):
         """Calculate the cost to move one node.
 
         Args:
@@ -263,17 +293,25 @@ class FastestPath:
             int: Cost of the move
 
         """
-        if self.direction in [NORTH, SOUTH]:
-            if current_pos[1] == next_pos[1]:
-                return 1
-            else:
-                return 2
+        current_pos = current_node.coord
+        next_pos = next_node.coord
+
+        if current_pos[0] < next_pos[0]:
+            newDirection = SOUTH
+        elif current_pos[1] < next_pos[1]:
+            newDirection = EAST
+        elif current_pos[1] > next_pos[1]:
+            newDirection = WEST
         else:
-            if current_pos[0] == next_pos[0]:
-                return 1
-            else:
-                return 2
-        return 1
+            newDirection = NORTH
+
+        if current_node.direction == newDirection:
+            return 1.0
+        else:
+            turnPenalty = 2.0
+            if abs((newDirection % 4) - current_node.direction) == 2:
+                turnPenalty = 2.5   # turn 180 degrees incur extra 0.5 penalty
+            return turnPenalty
 
     def __setDirection(self, prev_pos, current_pos):
         """Set the direction of the robot after moving.
@@ -291,6 +329,16 @@ class FastestPath:
             self.direction = WEST
         else:
             self.direction = NORTH
+
+    def getNewDirection(self, prev_pos, current_pos):
+        if prev_pos[0] < current_pos[0]:
+            return SOUTH
+        elif prev_pos[1] < current_pos[1]:
+            return EAST
+        elif prev_pos[1] > current_pos[1]:
+            return WEST
+        else:
+            return NORTH
 
     def fastestPathRun(self):
         """To simulate the fastest path run.
@@ -340,6 +388,7 @@ class FastestPath:
         """To mark the path on the exploration map."""
         for ind in self.path:
             self.exploredMap[tuple(ind)] = 6
+        print self.exploredMap
 
     def moveStep(self):
         """To determine the next move for the robot to follow the path.

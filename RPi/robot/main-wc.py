@@ -32,20 +32,22 @@ elif(choice1 == 9):
     map_name = 'sample_arena_9.txt'
 elif(choice1 == 12):
     map_name = 'sample_arena_12.txt'
-else:
+elif(choice1 == 13):
     map_name = 'sample_arena_13.txt'
+else:
+    map_name = 'arena_week_9.txt'
 
 exp = Exploration(realMap=map_name, timeLimit=5)
 
 step = float(0.1)
 
 temp = exp.explore()
-# print temp
+print temp
 # print exp.robot.exploredMap
 exploremaps = []
 while not temp[1]:
     temp = exp.explore()
-    # print temp
+    print temp
     mod_map = copy.deepcopy(exp.robot.exploredMap)
     mod_map[exp.robot.center[0]][exp.robot.center[1]] = 3
     mod_map[exp.robot.center[0]][exp.robot.center[1]+1] = 3
@@ -92,8 +94,10 @@ if (choice2 == "Y" or choice2 == "y"):
         waypoint = [18, 13]
     elif(choice1 == 12):
         waypoint = [18, 13]
+    elif(choice1 == 13):
+        waypoint = [18, 13]
     else:
-        waypoint = [16, 13]
+        waypoint = [2, 7]
 
     print "Waypoint is " +str(waypoint)
     fsp = FastestPath(exp.currentMap, START, GOAL, NORTH, waypoint)
@@ -125,4 +129,3 @@ if (choice2 == "Y" or choice2 == "y"):
     # print fsp.fastestPathRun()
 else:
     print "Program Terminated"
-
