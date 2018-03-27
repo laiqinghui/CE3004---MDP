@@ -8,31 +8,18 @@ import matplotlib.animation as animation
 
 from Constants import START, NORTH, GOAL, EAST
 
-""" To test algorithm:
-    - Choose from sample arena 1 to 5
-    - Input map descriptor string P1 and P2 on mdpcx3004.sce.ntu.edu.sg/
-    - Check results on the website
+"""
+To test algorithm:
+- Choose from sample arena 1 to 5
+- Input map descriptor string P1 and P2 on mdpcx3004.sce.ntu.edu.sg/
+- Check results on the website
 """
 choice1 = int(raw_input("Enter sample arena choice: "))
 
 print "Exploration Mode Started"
 
-if(choice1 == 1):
-    map_name = 'sample_arena_1.txt'
-elif(choice1 == 2):
-    map_name = 'sample_arena_2.txt'
-elif(choice1 == 3):
-    map_name = 'sample_arena_3.txt'
-elif(choice1 == 4):
-    map_name = 'sample_arena_4.txt'
-elif(choice1 == 5):
-    map_name = 'sample_arena_5.txt'
-elif(choice1 == 9):
-    map_name = 'sample_arena_9.txt'
-elif(choice1 == 12):
-    map_name = 'sample_arena_12.txt'
-elif(choice1 == 13):
-    map_name = 'sample_arena_13.txt'
+if(choice1 in range(1, 14)):
+    map_name = 'sample_arena_' + str(choice1) + '.txt'
 else:
     map_name = 'arena_week_9.txt'
 
@@ -48,16 +35,18 @@ while not temp[1]:
     temp = exp.explore()
     # print temp
     mod_map = copy.deepcopy(exp.robot.exploredMap)
+
     mod_map[exp.robot.center[0]][exp.robot.center[1]] = 3
-    mod_map[exp.robot.center[0]][exp.robot.center[1]+1] = 3
-    mod_map[exp.robot.center[0]][exp.robot.center[1]-1] = 3
-    mod_map[exp.robot.center[0]+1][exp.robot.center[1]] = 3
-    mod_map[exp.robot.center[0]+1][exp.robot.center[1]+1] = 3
-    mod_map[exp.robot.center[0]+1][exp.robot.center[1]-1] = 3
-    mod_map[exp.robot.center[0]-1][exp.robot.center[1]] = 3
-    mod_map[exp.robot.center[0]-1][exp.robot.center[1]+1] = 3
-    mod_map[exp.robot.center[0]-1][exp.robot.center[1]-1] = 3
+    mod_map[exp.robot.center[0]][exp.robot.center[1] + 1] = 3
+    mod_map[exp.robot.center[0]][exp.robot.center[1] - 1] = 3
+    mod_map[exp.robot.center[0] + 1][exp.robot.center[1]] = 3
+    mod_map[exp.robot.center[0] - 1][exp.robot.center[1]] = 3
+    mod_map[exp.robot.center[0] + 1][exp.robot.center[1] + 1] = 3
+    mod_map[exp.robot.center[0] + 1][exp.robot.center[1] - 1] = 3
+    mod_map[exp.robot.center[0] - 1][exp.robot.center[1] + 1] = 3
+    mod_map[exp.robot.center[0] - 1][exp.robot.center[1] - 1] = 3
     mod_map[exp.robot.head[0]][exp.robot.head[1]] = 4
+
     exploremaps.append(mod_map)
 
 fig = plt.figure()
@@ -105,16 +94,18 @@ if (choice2 == "Y" or choice2 == "y"):
     while (fsp.robot.center.tolist() != fsp.goal.tolist()):
         fsp.moveStep()
         mod_map = copy.deepcopy(exp.robot.exploredMap)
+
         mod_map[fsp.robot.center[0]][fsp.robot.center[1]] = 3
-        mod_map[fsp.robot.center[0]][fsp.robot.center[1]+1] = 3
-        mod_map[fsp.robot.center[0]][fsp.robot.center[1]-1] = 3
-        mod_map[fsp.robot.center[0]+1][fsp.robot.center[1]] = 3
-        mod_map[fsp.robot.center[0]+1][fsp.robot.center[1]+1] = 3
-        mod_map[fsp.robot.center[0]+1][fsp.robot.center[1]-1] = 3
-        mod_map[fsp.robot.center[0]-1][fsp.robot.center[1]] = 3
-        mod_map[fsp.robot.center[0]-1][fsp.robot.center[1]+1] = 3
-        mod_map[fsp.robot.center[0]-1][fsp.robot.center[1]-1] = 3
+        mod_map[fsp.robot.center[0]][fsp.robot.center[1] + 1] = 3
+        mod_map[fsp.robot.center[0]][fsp.robot.center[1] - 1] = 3
+        mod_map[fsp.robot.center[0] + 1][fsp.robot.center[1]] = 3
+        mod_map[fsp.robot.center[0] - 1][fsp.robot.center[1]] = 3
+        mod_map[fsp.robot.center[0] + 1][fsp.robot.center[1] + 1] = 3
+        mod_map[fsp.robot.center[0] + 1][fsp.robot.center[1] - 1] = 3
+        mod_map[fsp.robot.center[0] - 1][fsp.robot.center[1] + 1] = 3
+        mod_map[fsp.robot.center[0] - 1][fsp.robot.center[1] - 1] = 3
         mod_map[fsp.robot.head[0]][fsp.robot.head[1]] = 4
+
         exploremaps.append(mod_map)
 
     fig = plt.figure()

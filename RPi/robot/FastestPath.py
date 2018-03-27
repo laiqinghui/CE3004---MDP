@@ -177,7 +177,7 @@ class FastestPath:
                 self.__setDirection(prev.coord, current.coord)
 
             # if goal is reached trace back the path
-            if (current == goal):
+            if (current.coord == goal.coord):
                 isPathFound = True
                 path = []
                 while (current.parent):
@@ -196,15 +196,6 @@ class FastestPath:
 
                         if node in closedSet:
                             continue
-                            # tempDirection = node.direction
-                            # tempDirection2 = self.getNewDirection(current.coord, node.coord)
-                            # tempCost = self.__getCost(current, node)
-                            # new_g = current.G + tempCost
-                            # if tempDirection != tempDirection2 and (new_g - node.G < 1) and (new_g - node.G > 0):
-                            #     copyNode = copy.deepcopy(node)
-                            #     copyNode.set_parent_and_G_cost(G=new_g, parent=current)
-                            #     self.graph[copyNode.coord[0]][copyNode.coord[1]].append(copyNode)
-                            #     openSet.add(copyNode)
 
                         if node in openSet:
                             # calculate new G cost
@@ -213,6 +204,10 @@ class FastestPath:
                             if node.G > new_g:
                                 node.set_parent_and_G_cost(G=new_g, parent=current)
                             elif (new_g - node.G < 1) and (new_g - node.G > 0):
+                                # Fix shortsightedness of robot in a case where
+                                #   a->y may be costlier than x->y now AND
+                                #   x->y may be in a bad facing direction for the next path vs a->y AND
+                                #   cost of a->y->z has lesser cost than x->y->z due to good facing direction
                                 tempDirection = node.direction
                                 tempDirection2 = self.getNewDirection(current.coord, node.coord)
                                 if tempDirection != tempDirection2:
@@ -222,7 +217,6 @@ class FastestPath:
                                     openSet.add(copyNode)
                         else:
                             # if neither in openSet nor in closedSet
-                            # cost of moving between neighbours is 1
                             tempCost2 = self.__getCost(current, node)
                             node.set_parent_and_G_cost(G=(current.G + tempCost2), parent=current)
                             openSet.add(node)
