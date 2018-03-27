@@ -6,6 +6,17 @@ import numpy as np
 from Constants import MAX_ROWS, MAX_COLS, NORTH, SOUTH, EAST, WEST, FORWARD, LEFT, RIGHT
 
 
+def getNewDirection(prev_pos, current_pos):
+    if prev_pos[0] < current_pos[0]:
+        return SOUTH
+    elif prev_pos[1] < current_pos[1]:
+        return EAST
+    elif prev_pos[1] > current_pos[1]:
+        return WEST
+    else:
+        return NORTH
+
+
 class Node:
     """To create nodes of a graph.
 
@@ -40,14 +51,7 @@ class Node:
         if direction is not None:
             self.direction = direction
         else:
-            if self.parent.coord[0] < self.coord[0]:
-                self.direction = SOUTH
-            elif self.parent.coord[1] < self.coord[1]:
-                self.direction = EAST
-            elif self.parent.coord[1] > self.coord[1]:
-                self.direction = WEST
-            elif self.parent.coord[0] > self.coord[0]:
-                self.direction = NORTH
+            self.direction = getNewDirection(self.parent.coord, self.coord)
 
 
 class FastestPath:
@@ -209,7 +213,7 @@ class FastestPath:
                                 #   x->y may be in a bad facing direction for the next path vs a->y AND
                                 #   cost of a->y->z has lesser cost than x->y->z due to good facing direction
                                 tempDirection = node.direction
-                                tempDirection2 = self.getNewDirection(current.coord, node.coord)
+                                tempDirection2 = getNewDirection(current.coord, node.coord)
                                 if tempDirection != tempDirection2:
                                     copyNode = copy.deepcopy(node)
                                     copyNode.set_parent_and_G_cost(G=new_g, parent=current)
@@ -247,8 +251,6 @@ class FastestPath:
         temp2 = abs(cols - goal[1])
         cost = temp1 + temp2
 
-        # cost /= np.max(cost)
-
         return cost
 
     def __getNeighbours(self, loc):
@@ -264,13 +266,12 @@ class FastestPath:
 
         """
         r, c = loc.coord
-        inds = [(r-1, c), (r+1, c), (r, c-1), (r, c+1)]
+        inds = [(r - 1, c), (r + 1, c), (r, c - 1), (r, c + 1)]
         inds = self.__validInds(inds)
         neighbours = [self.graph[n[0]][n[1]] for n in inds]
 
         # if its explored and not an obstacle
         return [[n for n in nodes if n.value == 1] for nodes in neighbours]
-        # return [n for n in neighbours if n.value == 1]
 
     def __getCost(self, current_node, next_node):
         """Calculate the cost to move one node.
@@ -285,15 +286,7 @@ class FastestPath:
         """
         current_pos = current_node.coord
         next_pos = next_node.coord
-
-        if current_pos[0] < next_pos[0]:
-            newDirection = SOUTH
-        elif current_pos[1] < next_pos[1]:
-            newDirection = EAST
-        elif current_pos[1] > next_pos[1]:
-            newDirection = WEST
-        else:
-            newDirection = NORTH
+        newDirection = getNewDirection(current_pos, next_pos)
 
         if current_node.direction == newDirection:
             return 1.0
@@ -305,30 +298,11 @@ class FastestPath:
 
     def __setDirection(self, prev_pos, current_pos):
         """Set the direction of the robot after moving.
-
         Args:
             prev_pos (list): Coordinates of the previous position
             current_pos (list): Coordinates of the current position
-
         """
-        if prev_pos[0] < current_pos[0]:
-            self.direction = SOUTH
-        elif prev_pos[1] < current_pos[1]:
-            self.direction = EAST
-        elif prev_pos[1] > current_pos[1]:
-            self.direction = WEST
-        else:
-            self.direction = NORTH
-
-    def getNewDirection(self, prev_pos, current_pos):
-        if prev_pos[0] < current_pos[0]:
-            return SOUTH
-        elif prev_pos[1] < current_pos[1]:
-            return EAST
-        elif prev_pos[1] > current_pos[1]:
-            return WEST
-        else:
-            return NORTH
+        self.direction = getNewDirection(prev_pos, current_pos)
 
     def fastestPathRun(self):
         """To simulate the fastest path run.
