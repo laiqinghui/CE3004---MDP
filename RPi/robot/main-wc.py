@@ -13,8 +13,7 @@ from Constants import START, NORTH, GOAL, EAST
     - Input map descriptor string P1 and P2 on mdpcx3004.sce.ntu.edu.sg/
     - Check results on the website
 """
-print "Enter sample arena choice: "
-choice1 = int(raw_input())
+choice1 = int(raw_input("Enter sample arena choice: "))
 
 print "Exploration Mode Started"
 
@@ -42,12 +41,12 @@ exp = Exploration(realMap=map_name, timeLimit=5)
 step = float(0.1)
 
 temp = exp.explore()
-print temp
+# print temp
 # print exp.robot.exploredMap
 exploremaps = []
 while not temp[1]:
     temp = exp.explore()
-    print temp
+    # print temp
     mod_map = copy.deepcopy(exp.robot.exploredMap)
     mod_map[exp.robot.center[0]][exp.robot.center[1]] = 3
     mod_map[exp.robot.center[0]][exp.robot.center[1]+1] = 3
@@ -64,22 +63,21 @@ while not temp[1]:
 fig = plt.figure()
 im = plt.imshow(exploremaps[0], animated=True)
 
+
 def updatefig(j):
     im.set_array(exploremaps[j])
     return im
+
 
 ani = animation.FuncAnimation(fig, updatefig, frames=range(len(exploremaps)), interval=150)
 plt.show()
 
 print exp.robot.exploredMap
 
+print "Map Descriptor 1  -->  " + str(exp.robot.descriptor_1())
+print "Map Descriptor 2  -->  " + str(exp.robot.descriptor_2())
 
-
-print "Map Descriptor 1  -->  "+str(exp.robot.descriptor_1())
-print "Map Descriptor 2  -->  "+str(exp.robot.descriptor_2())
-
-print "Do you wan to enter fastest path mode (Y/N)?"
-choice2 = str(raw_input())
+choice2 = raw_input("Do you wan to enter fastest path mode (Y/N)?: ")
 
 print "Fastest Mode Started"
 
@@ -95,11 +93,11 @@ if (choice2 == "Y" or choice2 == "y"):
     elif(choice1 == 12):
         waypoint = [18, 13]
     elif(choice1 == 13):
-        waypoint = [18, 13]
+        waypoint = [16, 13]
     else:
         waypoint = [2, 7]
 
-    print "Waypoint is " +str(waypoint)
+    print "Waypoint is " + str(waypoint)
     fsp = FastestPath(exp.currentMap, START, GOAL, NORTH, waypoint)
     exploremaps = []
 
@@ -124,8 +122,6 @@ if (choice2 == "Y" or choice2 == "y"):
 
     ani = animation.FuncAnimation(fig, updatefig, frames=range(len(exploremaps)), interval=150)
     plt.show()
-
-
     # print fsp.fastestPathRun()
 else:
     print "Program Terminated"

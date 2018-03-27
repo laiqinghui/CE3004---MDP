@@ -200,15 +200,11 @@ class FastestPath:
                             # tempDirection2 = self.getNewDirection(current.coord, node.coord)
                             # tempCost = self.__getCost(current, node)
                             # new_g = current.G + tempCost
-                            # if tempDirection != tempDirection2 and (node.G - new_g) < 1 and node.G > new_g:
-                            #     print "test==========="
+                            # if tempDirection != tempDirection2 and (new_g - node.G < 1) and (new_g - node.G > 0):
                             #     copyNode = copy.deepcopy(node)
                             #     copyNode.set_parent_and_G_cost(G=new_g, parent=current)
                             #     self.graph[copyNode.coord[0]][copyNode.coord[1]].append(copyNode)
                             #     openSet.add(copyNode)
-                            #     print "d", copyNode.coord, copyNode.direction, copyNode.G
-                            #     print "d", node.coord, node.direction, node.G
-                            #     print "=============="
 
                         if node in openSet:
                             # calculate new G cost
