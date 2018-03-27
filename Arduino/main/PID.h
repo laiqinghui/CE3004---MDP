@@ -25,8 +25,14 @@ volatile signed long entry_time_M2 = 0;
 //----------------------------------------------------------------PID----------------------------------------------------------------
 //ISR for Motor1(Right) encoder
 void risingM1() {
-  squareWidth_M1 = micros() - prev_time_M1;
-  prev_time_M1 = prev_time_M1 + squareWidth_M1;
+  
+  entry_time_M1 = micros();
+  squareWidth_M1 = entry_time_M1 - prev_time_M1;
+  //squareWidth_M1 = squareWidth_M1 + squareWidth_M1;// MULTIPLY BY TWO TO GET PULSEWIDTH 
+  prev_time_M1 = entry_time_M1;
+  
+  //squareWidth_M1 = micros() - prev_time_M1;
+  //prev_time_M1 = prev_time_M1 + squareWidth_M1;
 }
 
 void dummy()
@@ -35,8 +41,10 @@ void dummy()
 
 //ISR for Motor2(Left) encoder
 void risingM2() {
-  squareWidth_M2 = micros() - prev_time_M2;
-  prev_time_M2 = prev_time_M2 + squareWidth_M2;
+  entry_time_M2 = micros();
+  squareWidth_M2 = entry_time_M2 - prev_time_M2;
+  //squareWidth_M2 = squareWidth_M2 + squareWidth_M2;// MULTIPLY BY TWO TO GET PULSEWIDTH 
+  prev_time_M2 = entry_time_M2;
 }
 
 void setSqWidth(int M1, int M2) {
@@ -48,7 +56,7 @@ signed long sqWidthToRPM(int sqWidth) {
 
   if (sqWidth <= 0)
     return 0;
-  static double sqwavesPerRev = ticksPerCM;
+  static double sqwavesPerRev = 562.215 ;
   signed long sqwavesOneS = 1000000 / sqWidth; //1/(sqWidth/1000000)
   signed long sqwavesOneM = sqwavesOneS * 60;
   signed long revPerMin = sqwavesOneM / sqwavesPerRev;
@@ -109,13 +117,17 @@ void tuneMotors(int desiredRPM, MotorPID *M1, MotorPID *M2) {
 	
 	double currentM1RPM = sqWidthToRPM(currentSquareWidth_M1);
 	double currentM2RPM = sqWidthToRPM(currentSquareWidth_M2);
-
+  /*
+  Serial.println("currentM1RPM");
+  Serial.println(currentM1RPM);
+  Serial.println("currentM2RPM");
+  Serial.println(currentM2RPM);
+  */
 	M1->currentErr =  desiredRPM - currentM1RPM;
 	tuneSpeedM1 = M1->prevTuneSpeed + M1->gain * M1->currentErr + (M1->gain / 0.05) * (M1->currentErr - M1->prevErr1);
 	M2->currentErr =  desiredRPM - currentM2RPM;
 	tuneSpeedM2 = M2->prevTuneSpeed + M2->gain * M2->currentErr + (M2->gain / 0.05) * (M2->currentErr - M2->prevErr1);
-	Serial.println(tuneSpeedM1);
-	Serial.println(tuneSpeedM2);
+	
 	noInterrupts();
 	OCR1A = tuneSpeedM1;
 	OCR1B = tuneSpeedM2;

@@ -1,4 +1,4 @@
-#include "BenTest.h"
+#include "Serial.h"
 #include "Forward.h"
 
 void processInst() {
@@ -75,7 +75,7 @@ void processInst() {
 			case 'T': turnPID(-1, atoi(instBuff + 2));
 				break;
 			case 'S': setOutBuffer('S', getSensorReadingInCM(), 5);
-				interruptPi();//Interrupt RPI to notify data is ready
+				sendToPi();//Interrupt RPI to notify data is ready
 				break;
 			case 'H': delay(300);
 				faceNorthCalibration();
@@ -99,8 +99,7 @@ void processInst() {
   if (instBuff[0] == 'S') {
 
     setOutBuffer('S', getSensorReadingInCM(), 5);
-    //printArray(outBuffer, 6);
-    interruptPi();//Interrupt RPI to notify data is ready
+    sendToPi();//Interrupt RPI to notify data is ready
   }
 
 }
@@ -111,13 +110,14 @@ void setup() {
   Serial.begin(9600);
   Serial.println("Program Started!!!!");
   md.init();
+  pinMode(PI_PIN, OUTPUT);
+  digitalWrite(PI_PIN, LOW);
   //initI2C();
 }
 
 void loop(){
   if (dataExist()) {
-    //delay(100);//Delay for ack packet to be sent out. To allow RPI to request and receive data before we start moving which will affect interrupt operations
-	processInst();
+	  processInst();
   }
   if(Serial.available())
   {

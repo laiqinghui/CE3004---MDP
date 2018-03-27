@@ -1,11 +1,9 @@
-#include <Wire.h>
-
 #define PI_PIN 11
 
 //Slave Address for the Communication
 #define SLAVE_ADDRESS 0x04
 
-char inBuffer[32] = {0};
+char inBuffer[128] = {0};
 char outBuffer[32] = {0};
 boolean newData = false;
 int instCount = 0;
@@ -23,11 +21,19 @@ void printArray(char arr[], int len) {
 
 }
 
+void sendToPi() {
+  digitalWrite(PI_PIN, HIGH);
+  delay(50);
+  digitalWrite(PI_PIN, LOW);
+  Serial.write(outBuffer);
+  //Serial.println(outBuffer); 
+
+}
+
 void interruptPi() {
   digitalWrite(PI_PIN, HIGH);
   delay(100);
   digitalWrite(PI_PIN, LOW);
-  Serial.write(outBuffer);
 
 }
 
@@ -77,7 +83,7 @@ char* getinBuffer() {
 
 void resetInBuffer() {
 
-  for (int i = 0; i < 10; i ++ ) {
+  for (int i = 0; i < 128; i ++ ) {
     inBuffer[i] = 0;
   }
 

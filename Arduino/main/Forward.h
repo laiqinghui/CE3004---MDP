@@ -25,7 +25,7 @@ void moveForwardBeta(int rpm, double distance) {
   calibrateBeforeMoveForward();
 
   MotorPID M1pid = {m1setSpeed, 0, 0, 0.109};//0.1=>50
-  MotorPID M2pid = {m2setSpeed, 0, 0, 0.1137};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms //was 0.125
+  MotorPID M2pid = {m2setSpeed, 0, 0, 0.1};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms //was 0.125
 	
   enableInterrupt( e1a, risingM1, RISING);
   enableInterrupt( e2b, risingM2, RISING);
@@ -56,10 +56,10 @@ void moveForwardBeta(int rpm, double distance) {
 
   }//end of while
 
-  //Serial.print("M1 final RPM: ");
-  //Serial.println(sqWidthToRPM(squareWidth_M1));
-  //Serial.print("M2 final RPM: ");
-  //Serial.println(sqWidthToRPM(squareWidth_M2));
+  Serial.print("M1 final RPM: ");
+  Serial.println(sqWidthToRPM(squareWidth_M1));
+  Serial.print("M2 final RPM: ");
+  Serial.println(sqWidthToRPM(squareWidth_M2));
 
   disableInterrupt(e1a);
   disableInterrupt(e2b);
@@ -79,7 +79,7 @@ void moveForwardOneGridBeta() {
 
   
 	int m1setSpeed = 380;//SETPOINT TARGET //250
-	int m2setSpeed = 380; //265
+	int m2setSpeed = 400; //265
 	int tuneSpeedM2 = 0;
 
   
@@ -133,10 +133,10 @@ void moveForwardOneGridBeta() {
 			
           
         }// end of while   
-      //Serial.print("breakTicksM2: ");
-      //Serial.println(M2ticks);
-      //Serial.print("breakTicksM1: ");
-      //Serial.println(M1ticks);
+      Serial.print("breakTicksM2: ");
+      Serial.println(M2ticks);
+      Serial.print("breakTicksM1: ");
+      Serial.println(M1ticks);
 	  //Serial.println(M2.prevTuneSpeed);
 
 	disableInterrupt(e1a);
