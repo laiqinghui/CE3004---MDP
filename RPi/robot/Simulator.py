@@ -141,23 +141,23 @@ class Robot:
 
         # Right Top
         if self.direction == NORTH:
-            self.getValue(zip([r-1]*distanceSuperShort, range(c+2, c+distanceLong+2)))
+            self.getValue(zip([r-1]*distanceSuperShort, range(c+2, c+distanceSuperShort+2)))
         elif self.direction == EAST:
-            self.getValue(zip(range(r+2, r+distanceSuperShort+2), [c+1]*distanceLong))
+            self.getValue(zip(range(r+2, r+distanceSuperShort+2), [c+1]*distanceSuperShort))
         elif self.direction == WEST:
-            self.getValue(zip(range(r-distanceSuperShort-1, r-1), [c-1]*distanceLong)[::-1])
+            self.getValue(zip(range(r-distanceSuperShort-1, r-1), [c-1]*distanceSuperShort)[::-1])
         else:
-            self.getValue(zip([r+1]*distanceSuperShort, range(c-distanceLong-1, c-1))[::-1])
+            self.getValue(zip([r+1]*distanceSuperShort, range(c-distanceSuperShort-1, c-1))[::-1])
 
         # Right Middle
         if self.direction == NORTH:
-            self.getValue(zip([r]*distanceSuperShort, range(c+2, c+distanceLong+2)))
+            self.getValue(zip([r]*distanceSuperShort, range(c+2, c+distanceSuperShort+2)))
         elif self.direction == EAST:
-            self.getValue(zip(range(r+2, r+distanceSuperShort+2), [c]*distanceLong))
+            self.getValue(zip(range(r+2, r+distanceSuperShort+2), [c]*distanceSuperShort))
         elif self.direction == WEST:
-            self.getValue(zip(range(r-distanceSuperShort-1, r-1), [c]*distanceLong)[::-1])
+            self.getValue(zip(range(r-distanceSuperShort-1, r-1), [c]*distanceSuperShort)[::-1])
         else:
-            self.getValue(zip([r]*distanceSuperShort, range(c-distanceLong-1, c-1))[::-1])
+            self.getValue(zip([r]*distanceSuperShort, range(c-distanceSuperShort-1, c-1))[::-1])
 
         # Left Top
         if self.direction == NORTH:
