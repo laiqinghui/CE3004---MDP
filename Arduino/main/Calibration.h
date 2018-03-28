@@ -247,7 +247,7 @@ void straighten() {
 }
 
 void straightenTune() {
-	int min = 7;
+	int min = 9;
   getFrontCalibrationReading(false);
   if (frontRightReading > frontLeftReading)
   {
@@ -391,7 +391,7 @@ void faceNorthCalibration(){
 void calibrateBeforeMoveForward() {
 	acceptTony = false;
 	double rightSideReading = getRightSensorReading();
-	if (rightSideReading < checkSideWallValue-1.5 || (rightSideReading > checkSideWallValue+1.5))
+	if (rightSideReading < checkSideWallValue-1 || (rightSideReading > checkSideWallValue+1.5))
 	{
 		if (canSideCalibrate())
 		{

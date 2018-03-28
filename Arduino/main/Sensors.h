@@ -48,7 +48,7 @@ char* getSensorReadingInCM() {
   sensorsValuesArray[1] = -1;
   while(sensorsValuesArray[1] == -1)
   {
-	sensorsValuesArray[1] = getUltraSoundDistance();        //getUltraSoundDistance(); //Center
+	sensorsValuesArray[1] = (char)getUltraSound2Reading();        //getUltraSoundDistance(); //Center
 	if(count > 1)//20
 	{
 		break;

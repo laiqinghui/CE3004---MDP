@@ -63,9 +63,10 @@ void processInst() {
 				fastCalibration(2);
 				acceptTony = false;
 				break;
-			case 'R': if(acceptTony)
+			case 'R': if(acceptTony){
 					delay(delayAmount);
 					fastCalibration(1);
+			}
 				break;
 			case 'F': delay(delayAmount);
 				fastCalibration(0);
@@ -113,6 +114,10 @@ void setup() {
   pinMode(PI_PIN, OUTPUT);
   digitalWrite(PI_PIN, LOW);
   //initI2C();
+
+  
+  
+  
 }
 
 void loop(){

@@ -4,8 +4,8 @@ void setTurnValueOffset(int dir, double newValue);
 void turnPID(int dir, int degree);
 
 
-double offsetRight = 0.934; //0.919
-double offsetLeft = 0.935; //0.9165
+double offsetRight = 0.926; //0.919
+double offsetLeft = 0.926; //0.9165
 void turnPID(int dir, int degree){
 
     double cir = 3.14159265 * 17.6; //circumference of circle drawn when turning in cm, current diameter used is 17.6
@@ -32,8 +32,8 @@ void turnPID(int dir, int degree){
     int tuneSpeedM2 = 0;
     int m1Speed = dir * -350;
     int m2Speed = dir * 350;
-	unsigned int currentTicksM1 = 0;
-	unsigned int currentTicksM2 = 0;
+	  signed int currentTicksM1 = 0;
+	  signed int currentTicksM2 = 0;
 
     unsigned long tuneEntryTime = 0;
     unsigned long tuneExitTime = 0;
@@ -43,7 +43,7 @@ void turnPID(int dir, int degree){
 	if(dir == 1){//Turn right(left motor(M2) forward). Tune M2 to match M1.
 
 		m2Speed= m2Speed + 2;
-		MotorPID M2 = {m2Speed , 0, 0, 0.36}; // Changed from 0.35 
+		MotorPID M2 = {m2Speed , 0, 0, 0.47}; // Changed from 0.35 
 		enableInterrupt( e1a, dummy, RISING);
 		enableInterrupt( e2b, dummy, RISING);
 		md.setSpeeds(m1Speed, m2Speed);
@@ -82,7 +82,7 @@ void turnPID(int dir, int degree){
     else //turn left(right motor(M1) forward). Tune M1 to match M2. 
     {
 		m1Speed = m1Speed;
-		MotorPID M1 = {m1Speed , 0, 0, 0.395};//0.79
+		MotorPID M1 = {m1Speed , 0, 0, 0.21};//0.79
 		enableInterrupt( e1a, dummy, RISING);
 		enableInterrupt( e2b, dummy, RISING);
 		md.setSpeeds(m1Speed, m2Speed);
@@ -91,19 +91,21 @@ void turnPID(int dir, int degree){
         {
 			tuneEntryTime = micros();
 			interval = tuneEntryTime - tuneExitTime;
-
+  
 			if(interval >= 5000)
 			{ 
 				noInterrupts();
 				currentTicksM1 = M1ticks;
 				currentTicksM2 = M2ticks;
 				interrupts();
-		  
+
 				M1.currentErr =  currentTicksM2 - currentTicksM1;
 				tuneSpeedM1 = M1.prevTuneSpeed + M1.gain*M1.currentErr + (M1.gain/0.07)*(M1.currentErr - M1.prevErr1);
 				if(!movementDone)
 				  OCR1A = tuneSpeedM1;
-				
+
+        
+        
 				M1.prevTuneSpeed = tuneSpeedM1;
 				M1.prevErr1 = M1.currentErr;
 				tuneExitTime = micros();    
@@ -123,10 +125,10 @@ void turnPID(int dir, int degree){
     disableInterrupt(e2b);
     breakTicks = 0;
     movementDone = false;
-	//Serial.print("breakTicksM2: ");
-    //Serial.println(M2ticks);
-    //Serial.print("breakTicksM1: ");
-    //Serial.println(M1ticks);
+	  Serial.print("breakTicksM2: ");
+    Serial.println(M2ticks);
+    Serial.print("breakTicksM1: ");
+    Serial.println(M1ticks);
 	
     setTicks(0,0);
     setSqWidth(0,0);
