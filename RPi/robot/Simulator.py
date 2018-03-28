@@ -103,9 +103,11 @@ class Robot:
         Returns:
             Numpy array of Numpy arrays: Sensor values from all sensors
         """
+        distanceSuperShort = 2
         distanceShort = 3
         distanceLong = 5
         r, c = self.center
+        # sensor_vals = [FL_SR, FC_US, FR_SR, RT_SR, RM_SR, LT_LR, LM_LR]
 
         # Front Left
         if self.direction == NORTH:
@@ -139,13 +141,23 @@ class Robot:
 
         # Right Top
         if self.direction == NORTH:
-            self.getValue(zip([r-1]*distanceLong, range(c+2, c+distanceLong+2)))
+            self.getValue(zip([r-1]*distanceSuperShort, range(c+2, c+distanceLong+2)))
         elif self.direction == EAST:
-            self.getValue(zip(range(r+2, r+distanceLong+2), [c+1]*distanceLong))
+            self.getValue(zip(range(r+2, r+distanceSuperShort+2), [c+1]*distanceLong))
         elif self.direction == WEST:
-            self.getValue(zip(range(r-distanceLong-1, r-1), [c-1]*distanceLong)[::-1])
+            self.getValue(zip(range(r-distanceSuperShort-1, r-1), [c-1]*distanceLong)[::-1])
         else:
-            self.getValue(zip([r+1]*distanceLong, range(c-distanceLong-1, c-1))[::-1])
+            self.getValue(zip([r+1]*distanceSuperShort, range(c-distanceLong-1, c-1))[::-1])
+
+        # Right Middle
+        if self.direction == NORTH:
+            self.getValue(zip([r]*distanceSuperShort, range(c+2, c+distanceLong+2)))
+        elif self.direction == EAST:
+            self.getValue(zip(range(r+2, r+distanceSuperShort+2), [c]*distanceLong))
+        elif self.direction == WEST:
+            self.getValue(zip(range(r-distanceSuperShort-1, r-1), [c]*distanceLong)[::-1])
+        else:
+            self.getValue(zip([r]*distanceSuperShort, range(c-distanceLong-1, c-1))[::-1])
 
         # Left Top
         if self.direction == NORTH:
@@ -156,6 +168,16 @@ class Robot:
             self.getValue(zip(range(r+2, r+distanceLong+2), [c-1]*distanceLong))
         else:
             self.getValue(zip([r+1]*distanceLong, range(c+2, c+distanceLong+2)))
+
+        # Left Middle
+        if self.direction == NORTH:
+            self.getValue(zip([r]*distanceLong, range(c-distanceLong-1, c-1))[::-1])
+        elif self.direction == EAST:
+            self.getValue(zip(range(r-distanceLong-1, r-1), [c]*distanceLong)[::-1])
+        elif self.direction == WEST:
+            self.getValue(zip(range(r+2, r+distanceLong+2), [c]*distanceLong))
+        else:
+            self.getValue(zip([r]*distanceLong, range(c+2, c+distanceLong+2)))
 
     def moveBot(self, movement):
         """Simulates the bot movement based on current location, direction and received action

@@ -243,10 +243,6 @@ class FastestPath:
         # this will create a grid of coordinates
         cols, rows = np.meshgrid(range(0, 15), range(0, 20))
         cost = np.zeros([20, 15])
-        # temp1 = np.square(rows - goal[0])
-        # temp2 = np.square(cols - goal[1])
-        # cost = np.sqrt(temp1 + temp2)
-
         temp1 = abs(rows - goal[0])
         temp2 = abs(cols - goal[1])
         cost = temp1 + temp2

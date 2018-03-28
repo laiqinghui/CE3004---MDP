@@ -140,7 +140,6 @@ class Exploration:
                             self.robot.center = neighbour
                             self.robot.head = fsp.robot.head
                             self.robot.direction = fsp.robot.direction
-                            # self.robot.getSensors()
 
                             return fsp.movement, False, self.robot.center, self.robot.direction
                         else:
@@ -161,31 +160,6 @@ class Exploration:
                             self.robot.center = self.startPos
                             self.robot.head = fsp.robot.head
                             self.robot.direction = fsp.robot.direction
-
-                            # if self.robot.direction == NORTH:
-                            #     fsp.movement.append('O')
-                            #     fsp.movement.append(']')
-                            #     fsp.movement.append('O')
-                            # elif self.robot.direction == SOUTH:
-                            #     fsp.movement.append(']')
-                            # elif self.robot.direction == EAST:
-                            #     fsp.movement.append('D')
-                            #     fsp.movement.append(']')
-                            #     fsp.movement.append('A')
-                            # else:
-                            #     fsp.movement.append('A')
-                            #     fsp.movement.append(']')
-                            #     fsp.movement.append('D')
-
-                            # if self.robot.can_calibrate_front and self.robot.can_calibrate_right:
-                            #     fsp.movement.append(']')
-                            # else:
-                            #     fsp.movement.append('A')
-                            #     fsp.movement.append(']')
-                            #     fsp.movement.append('D')
-
-                            # logging.info(fsp.movement)
-                            # logging.info(self.robot.direction)
 
                             fsp.movement.append('H')
                             self.robot.direction = NORTH
@@ -234,31 +208,6 @@ class Exploration:
                         self.robot.head = fsp.robot.head
                         self.robot.direction = fsp.robot.direction
 
-                        # if self.robot.direction == NORTH:
-                        #     fsp.movement.append('O')
-                        #     fsp.movement.append(']')
-                        #     fsp.movement.append('O')
-                        # elif self.robot.direction == SOUTH:
-                        #     fsp.movement.append(']')
-                        # elif self.robot.direction == EAST:
-                        #     fsp.movement.append('D')
-                        #     fsp.movement.append(']')
-                        #     fsp.movement.append('A')
-                        # else:
-                        #     fsp.movement.append('A')
-                        #     fsp.movement.append(']')
-                        #     fsp.movement.append('D')
-
-                        # if self.robot.can_calibrate_front and self.robot.can_calibrate_right:
-                        #     fsp.movement.append(']')
-                        # else:
-                        #     fsp.movement.append('A')
-                        #     fsp.movement.append(']')
-                        #     fsp.movement.append('D')
-                        #
-                        # logging.info(fsp.movement)
-                        # logging.info(self.robot.direction)
-
                         fsp.movement.append('H')
                         self.robot.direction = NORTH
 
@@ -278,30 +227,6 @@ class Exploration:
                 print "Exploration completed."
 
                 calibrateMove = []
-                # if self.robot.direction == NORTH:
-                #     calibrateMove.append('O')
-                #     calibrateMove.append(']')
-                #     calibrateMove.append('O')
-                # elif self.robot.direction == SOUTH:
-                #     calibrateMove.append(']')
-                # elif self.robot.direction == EAST:
-                #     calibrateMove.append('D')
-                #     calibrateMove.append(']')
-                #     calibrateMove.append('A')
-                # else:
-                #     calibrateMove.append('A')
-                #     calibrateMove.append(']')
-                #     calibrateMove.append('D')
-
-                # if self.robot.can_calibrate_front and self.robot.can_calibrate_right:
-                #     calibrateMove.append(']')
-                # else:
-                #     calibrateMove.append('A')
-                #     calibrateMove.append(']')
-                #     calibrateMove.append('D')
-                #
-                # logging.info(calibrateMove)
-                # logging.info(self.robot.direction)
 
                 calibrateMove.append('H')
                 self.robot.direction = NORTH
@@ -325,31 +250,6 @@ class Exploration:
                 while (fsp.robot.center.tolist() != self.startPos.tolist()):
                     fsp.moveStep()
                 print "Starting position reached!"
-
-                # if self.robot.direction == NORTH:
-                #     fsp.movement.append('O')
-                #     fsp.movement.append(']')
-                #     fsp.movement.append('O')
-                # elif self.robot.direction == SOUTH:
-                #     fsp.movement.append(']')
-                # elif self.robot.direction == EAST:
-                #     fsp.movement.append('D')
-                #     fsp.movement.append(']')
-                #     fsp.movement.append('A')
-                # else:
-                #     fsp.movement.append('A')
-                #     fsp.movement.append(']')
-                #     fsp.movement.append('D')
-
-                # if self.robot.can_calibrate_front and self.robot.can_calibrate_right:
-                #     fsp.movement.append(']')
-                # else:
-                #     fsp.movement.append('A')
-                #     fsp.movement.append(']')
-                #     fsp.movement.append('D')
-                #
-                # logging.info(fsp.movement)
-                # logging.info(self.robot.direction)
 
                 fsp.movement.append('H')
                 self.robot.direction = NORTH
@@ -460,27 +360,6 @@ class Exploration:
             self.robot.moveBot(LEFT)
             # self.robot.moveBot(RIGHT)
             move.extend(('A'))
-
-        # single step
-        # if (self.checkFree([1, 2, 3, 0], self.robot.center)):
-        #     self.robot.moveBot(RIGHT)
-        #     move.append(RIGHT)
-        #     if (self.checkFree([0, 1, 2, 3], self.robot.center)):
-        #         self.robot.moveBot(FORWARD)
-        #         move.append(FORWARD)
-        # elif (self.checkFree([0, 1, 2, 3], self.robot.center)):
-        #     self.robot.moveBot(FORWARD)
-        #     move.append(FORWARD)
-        # elif (self.checkFree([3, 0, 1, 2], self.robot.center)):
-        #     self.robot.moveBot(LEFT)
-        #     move.append(LEFT)
-        #     if (self.checkFree([0, 1, 2, 3], self.robot.center)):
-        #         self.robot.moveBot(FORWARD)
-        #         move.append(FORWARD)
-        # else:
-        #     self.robot.moveBot(RIGHT)
-        #     self.robot.moveBot(RIGHT)
-        #     move.extend(('O'))
 
         return move
 
@@ -764,7 +643,6 @@ class Exploration:
         flag = True
         inds = []
         distanceSuperShort = 2
-        # distanceShort = 3
         distanceLong = 5
 
         if self.robot.direction == NORTH:

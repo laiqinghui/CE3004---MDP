@@ -58,7 +58,7 @@ def updatefig(j):
     return im
 
 
-ani = animation.FuncAnimation(fig, updatefig, frames=range(len(exploremaps)), interval=150)
+ani = animation.FuncAnimation(fig, updatefig, frames=range(len(exploremaps)), interval=300)
 plt.show()
 
 print exp.robot.exploredMap
