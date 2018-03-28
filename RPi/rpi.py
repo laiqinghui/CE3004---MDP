@@ -100,6 +100,8 @@ class RPI(threading.Thread):
         message[2] = message[2] - 13
         message[3] = message[3] - 11
         message[4] = message[4] - 18
+        message[5] = message[5] - 0
+        message[6] = message[6] - 0
 
         if gs.DEV_DEBUG:
             with open("sensor.txt", "a") as sensor_log:
