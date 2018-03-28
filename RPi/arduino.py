@@ -66,11 +66,11 @@ class Arduino(threading.Thread):
         return number
 
     def break_instruction_packets(self, instruction):
-        if len(instruction) <= 30:
+        if len(instruction) <= 64:
             return [instruction]
         else:
             logging.info("long instruction received: " + str(instruction))
-            packeted_instr = textwrap.wrap(instruction[1:-1], 28)
+            packeted_instr = textwrap.wrap(instruction[1:-1], 62)
 
             # Special char C needs acknowledgement from arduino
             for i in range(len(packeted_instr[:-1])):
