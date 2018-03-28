@@ -13,8 +13,6 @@ except ImportError:
 from Constants import NORTH, SOUTH, EAST, WEST, FORWARD, LEFT, RIGHT, START, MAX_ROWS, MAX_COLS
 from FastestPath import FastestPath
 
-# CALIBRATE_N_STEPS = 5
-
 
 class Exploration:
     """Implementation of the Right-Wall hugging algorithm for a maze solving robot.
@@ -212,7 +210,6 @@ class Exploration:
                             fsp.moveStep()
                         print "Couldnt find a path to unexplored area, returning home..."
 
-
                         self.robot.center = neighbour
                         self.robot.head = fsp.robot.head
                         self.robot.direction = fsp.robot.direction
@@ -380,7 +377,6 @@ class Exploration:
         """Decide which direction is free to command robot the next action."""
         move = []
         front = self.frontFree()
-        # num_calibration_move = 0
 
         if not (self.sim):
             calibrate_front = self.robot.can_calibrate_front()
@@ -392,17 +388,16 @@ class Exploration:
             elif (calibrate_right[0]):
                 move.append(calibrate_right[1])
 
-        # num_calibration_move = len(move)
         # multi step
         if (self.checkFree([1, 2, 3, 0], self.robot.center)):
             self.robot.moveBot(RIGHT)
             move.append(RIGHT)
             front = self.frontFree()
-            # # # # # # 
+            # # # # # #
             if self.checkDeadZone(self.robot.center):
                 self.robot.moveBot(LEFT)
                 move.append(LEFT)
-                    
+
                 front = self.frontFree()
                 if not front:
                     self.robot.moveBot(LEFT)
@@ -410,18 +405,18 @@ class Exploration:
                 else:
                     for i in range(front):
                         self.robot.moveBot(FORWARD)
-                    move.extend([FORWARD]*front)    
-            # # # # # # 
+                    move.extend([FORWARD]*front)
+            # # # # # #
             else:
                 for i in range(front):
                     self.robot.moveBot(FORWARD)
                 move.extend([FORWARD]*front)
         elif (front):
-            # # # # # # 
+            # # # # # #
             if self.checkDeadZone(self.robot.center):
                 self.robot.moveBot(LEFT)
                 move.append(LEFT)
-                
+
                 front = self.frontFree()
                 if not front:
                     self.robot.moveBot(LEFT)
@@ -429,8 +424,8 @@ class Exploration:
                 else:
                     for i in range(front):
                         self.robot.moveBot(FORWARD)
-                    move.extend([FORWARD]*front)    
-            # # # # # # 
+                    move.extend([FORWARD]*front)
+            # # # # # #
             else:
                 for i in range(front):
                     self.robot.moveBot(FORWARD)
@@ -487,10 +482,8 @@ class Exploration:
         #     self.robot.moveBot(RIGHT)
         #     move.extend(('O'))
 
-        # self.moveNumber += (len(move) - num_calibration_move)
-
         return move
-    
+
     def checkDeadZone(self, center):
         robotrow, robotcol = center
         temp_map = copy.deepcopy(self.currentMap)
@@ -543,7 +536,7 @@ class Exploration:
             return False
         else:
             return True
-        
+
 
     # def checkRightLadder(self, center):
     #     robotrow, robotcol = center
@@ -578,9 +571,9 @@ class Exploration:
     #                 elif self.currentMap[robotrow+row][robotcol+col] == 2:
     #                     # count += 1
     #                     break
-    #             walldistances.append(0)                        
+    #             walldistances.append(0)
     #         # firstcheck = count > 0
-        
+
     #     elif self.robot.direction == SOUTH:
     #         for row in [-1,0,1]:
     #             for col in range(2,5):
@@ -590,8 +583,8 @@ class Exploration:
     #                     return False
     #                 elif self.currentMap[robotrow+row][robotcol-col] == 2:
     #                     break
-    #             walldistances.append(0)                        
-            
+    #             walldistances.append(0)
+
     #     else:
     #         # WEST
     #         for col in [-1,0,1]:
@@ -604,7 +597,7 @@ class Exploration:
     #                 elif self.currentMap[robotrow-row][robotcol+col] == 2:
     #                     # count += 1
     #                     break
-    #             walldistances.append(0)                        
+    #             walldistances.append(0)
 
     #             # not explored if we didnt see a wall, meaning we still have to see more
     #         # firstcheck = count > 0
@@ -738,7 +731,7 @@ class Exploration:
                     counter += 1
                 else:
                     break
-        
+
         return counter
 
     def validMove(self, inds):
