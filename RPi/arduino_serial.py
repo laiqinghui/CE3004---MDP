@@ -37,14 +37,11 @@ class Arduino(threading.Thread):
 
     def write_packets_and_wait_acknowledgement(self, packeted_instr):
         for instr in packeted_instr[:-1]:
-            data = self.ConvertStringToBytes(instr)
-            self.serialConnection.write(data)
+            self.serialConnection.write(instr)
             try:
                 self.mutex_w.acquire()
                 self.acknowledged = False
                 self.mutex_w.release()
-                data = self.ConvertStringToBytes(instr)
-                self.bus.write_i2c_block_data(self.address, 0, data)
                 while not self.acknowledged:
                     pass
             except IOError:

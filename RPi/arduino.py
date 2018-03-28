@@ -6,7 +6,7 @@ import threading
 import time
 
 import RPi.GPIO as GPIO
-import smbus
+import serial
 
 from pydispatch import dispatcher
 
@@ -23,33 +23,23 @@ class Arduino(threading.Thread):
         GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         GPIO.add_event_detect(17, GPIO.RISING, callback=self.interruptHandler)
 
-        self.address = 0x04
-        self.bus = smbus.SMBus(1)
-        self.mutex_w = mp.Lock()
+        self.ser = serial.Serial('/dev/serial0')
         self.acknowledged = True
 
         dispatcher.connect(self.writeData, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
         logging.info("arduino initialized")
 
     def interruptHandler(self, channel):
-        time.sleep(0.15)
+        self.ser.reset_input_buffer()
         byte = self.readData()
-        # if acknowledgement byte
-        if chr(byte[0]) == "A":
-            logging.info("arduino sent acknowledgement")
-            self.mutex_w.acquire()
-            if self.acknowledged:
-                logging.info("Error: acknowledgement byte from arduino not resolved yet")
-            self.acknowledged = True
-            self.mutex_w.release()
         # if sensor data
-        if chr(byte[0]) == "S":
+        if byte[0] == "S":
             logging.info("byte[0]) == S")
             message = self.interpret_sensor_values(byte[1:])
             dispatcher.send(message=message, signal=gs.ARDUINO_SIGNAL, sender=gs.ARDUINO_SENDER)
 
     def interpret_sensor_values(self, arr):
-        output = [int(x) for x in arr[:5]]
+        output = [ord(x) for x in arr[:5]]
         logging.info("sensor output len should be 5: " + str(output))
         return output
 
@@ -61,61 +51,18 @@ class Arduino(threading.Thread):
         return [ord(x) for x in src]
 
     def writeData(self, message):
-
         packeted_instr = self.break_instruction_packets(message)
         self.write_packets_and_wait_acknowledgement(packeted_instr)
-        # arduino_write_thread = threading.Thread(target=self.write_packets_and_wait_acknowledgement, args=(packeted_instr,))
-        # arduino_write_thread.daemon = True
-        # arduino_write_thread.start()
-        # data = self.ConvertStringToBytes(message)
-        # self.bus.write_i2c_block_data(self.address, 0, data)
 
     def write_packets_and_wait_acknowledgement(self, packeted_instr):
         for instr in packeted_instr[:-1]:
-            data = self.ConvertStringToBytes(instr)
-            self.bus.write_i2c_block_data(self.address, 0, data)
+            self.ser.write(instr)
             while(GPIO.input(17) == 0):
                 pass
-            # try:
-            #     self.mutex_w.acquire()
-            #     self.acknowledged = False
-            #     self.mutex_w.release()
-            #     data = self.ConvertStringToBytes(instr)
-            #     self.bus.write_i2c_block_data(self.address, 0, data)
-            #     while not self.acknowledged:
-            #         pass
-            # except IOError:
-            #     logging.info("Please check if arduino connected.")
-        data = self.ConvertStringToBytes(packeted_instr[-1])
-        self.bus.write_i2c_block_data(self.address, 0, data)
-
-    def write_and_wait_acknowledgement(self, data):
-        try:
-            self.mutex_w.acquire()
-            self.acknowledged = False
-            self.mutex_w.release()
-            self.bus.write_i2c_block_data(self.address, 0, data)
-            dt_started = datetime.datetime.now()
-            base_time = 1
-            while 1:
-                logging.info("waiting for acknowledgement: " + str(data))
-                time.sleep(1)
-                if self.acknowledged:
-                    logging.info("Arduino has acknowledged")
-                    break
-                # send again if acknowledgement not receive after every 5 second
-                # pass from last send
-                dt_ended = datetime.datetime.now()
-                time_passed = (dt_ended - dt_started).seconds / 5
-                if time_passed > base_time:
-                    base_time = time_passed
-                    self.bus.write_i2c_block_data(self.address, 0, data)
-
-        except IOError:
-            logging.info("Please check if arduino connected.")
+        self.ser.write(packeted_instr[-1])
 
     def readData(self):
-        number = self.bus.read_i2c_block_data(self.address, 0, 32)
+        number = self.ser.read(6)
         return number
 
     def break_instruction_packets(self, instruction):
@@ -123,7 +70,7 @@ class Arduino(threading.Thread):
             return [instruction]
         else:
             logging.info("long instruction received: " + str(instruction))
-            packeted_instr = self.split_str(instruction[1:-1], 28)
+            packeted_instr = textwrap.wrap(instruction[1:-1], 28)
 
             # Special char C needs acknowledgement from arduino
             for i in range(len(packeted_instr[:-1])):
@@ -132,9 +79,6 @@ class Arduino(threading.Thread):
             logging.info("total packets: " + str(packeted_instr))
 
             return packeted_instr
-
-    def split_str(self, seq, chunk):
-        return textwrap.wrap(seq, chunk)
 
     def start(self):
         self.running = True
