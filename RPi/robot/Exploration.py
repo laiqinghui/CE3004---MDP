@@ -290,9 +290,11 @@ class Exploration:
                 move.append(calibrate_right[1])
         
         if self.ladder[0]:
+            # if right is not free, clear ladder flag and continue
             if not (self.checkFree([1, 2, 3, 0], self.robot.center)):
                 self.ladder[0] = not self.ladder[0]
             else:
+                # else move forward
                 self.robot.moveBot(RIGHT)
                 move.append(RIGHT)
                 for i in range(self.ladder[1]):
@@ -470,6 +472,8 @@ class Exploration:
         if walldistances == [0,1,-1]:
             return 2
         elif walldistances == [0,1,2]:
+            return 2
+        elif walldistances[-1] == 0:
             return 2
         else:
             return False
