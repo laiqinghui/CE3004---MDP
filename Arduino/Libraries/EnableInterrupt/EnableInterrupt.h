@@ -8,14 +8,19 @@ volatile unsigned long M2ticks = 0;
 
 volatile unsigned long breakTicks = 0;
 
+volatile int numberOfBrakes = 0;
+
 void setBrakes(){	
-  noInterrupts();
-  PORTB = PORTB & B11111110;
+  //noInterrupts();
   PORTD = PORTD & B01101011;
+  PORTB = PORTB & B11111110;
+  
 	
   OCR1A = 400;
   OCR1B = 400;
-  interrupts();
+  
+  //interrupts();
+  
 }
 
 void enableInterrupt(uint8_t pinNumber, void (*func)(void), uint8_t mode)

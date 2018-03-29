@@ -156,6 +156,7 @@ void DualVNH5019MotorShield::setSpeeds(int m1Speed, int m2Speed)
   PORTB = PORTB & B11111110;	
 	
   noInterrupts();
+  
   OCR1B = 400;
   OCR1A = 400;
       
@@ -227,6 +228,8 @@ void DualVNH5019MotorShield::setSpeeds(int m1Speed, int m2Speed)
 // Brake motor 1, brake is a number between 0 and 400
 void DualVNH5019MotorShield::setM1Brake(){
 	 PORTD = PORTD & B11101011;
+	 //PORTD = PORTD | B00010100;
+	 
 	 OCR1A = 400;
 }
 
@@ -242,6 +245,8 @@ void DualVNH5019MotorShield::setBrakes(){
   noInterrupts();
   PORTB = PORTB & B11111110;
   PORTD = PORTD & B01101011;
+  //PORTD = PORTD | B10010100;
+  //PORTB = PORTB | B00000001;
 	
   OCR1A = 400;
   OCR1B = 400;
