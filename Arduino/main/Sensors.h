@@ -4,6 +4,8 @@
 #define frontLeft  A3    //Front left PS4
 #define left A0  // Left PS1
 #define right A2 // Right PS3
+#define centerRight A4 // CenterRight PS5
+#define centerLeft A5 //CenterLeft PS6
 
 //Function Declaration
 double* getIRSensorReading();
@@ -11,8 +13,8 @@ char* getSensorReadingInCM();
 double sortAndAverage(int* listOfReadings, int size, int amount);
 
 //These arrays need to be outside if not the values will be weird
-double sensorValues[4];
-char sensorsValuesArray[5];
+double sensorValues[6];
+char sensorsValuesArray[7];
 int sideWall[3] = {0, 1, 1};
 
 void resetSideWall() {
@@ -161,6 +163,8 @@ double* getIRSensorReading()
   int listOfReadingsFR[size];
   int listOfReadingsL[size*2];
   int listOfReadingsR[size];
+  int listOfReadingsCL[size*2];
+  int listOfReadingsCR[size];
 
   //Get Reading from Sensor
   for (int a = 0; a < size; a++)
@@ -169,11 +173,14 @@ double* getIRSensorReading()
     listOfReadingsFR[a] = analogRead(frontRight);
     listOfReadingsL[a] = analogRead(left);
     listOfReadingsR[a] = analogRead(right);
+	listOfReadingsCL[a] = analogRead(centerLeft);
+	listOfReadingsCR[a] = analogRead(centerRight);
     delay(1);
   }
   for (int a = 0; a < size; a++)
   {
     listOfReadingsL[a+size] = analogRead(left);
+	listOfReadingsCL[a+size] = analogRead(centerLeft);
     delay(1);
   }
 
@@ -182,6 +189,8 @@ double* getIRSensorReading()
   sensorValues[1] = sortAndAverage(listOfReadingsFR, size, 3);
   sensorValues[2] = sortAndAverage(listOfReadingsL, size*2, 3);
   sensorValues[3] = sortAndAverage(listOfReadingsR, size, 3);
+  sensorValues[4] = sortAndAverage(listOfReadingsCL, size*2, 3);
+  sensorValues[5] = sortAndAverage(listOfReadingsCR, size, 3);
 
   return sensorValues;
 }
