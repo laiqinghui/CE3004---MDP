@@ -62,7 +62,7 @@ class Arduino(threading.Thread):
         self.ser.write(packeted_instr[-1])
 
     def readData(self):
-        number = self.ser.read(6)
+        number = self.ser.read(8)
         return number
 
     def break_instruction_packets(self, instruction):
