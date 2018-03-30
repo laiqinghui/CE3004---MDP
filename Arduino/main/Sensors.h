@@ -154,17 +154,17 @@ double sortAndAverage(int* listOfReadings, int size, int amount)
   return total / amount;
 }
 
+
 //Get average reading over a number of samples
 double* getIRSensorReading()
 {
-  int size = 100;
-
-  int listOfReadingsFL[size];
-  int listOfReadingsFR[size];
-  int listOfReadingsL[size*2];
-  int listOfReadingsR[size];
-  int listOfReadingsCL[size*2];
-  int listOfReadingsCR[size];
+	int size = 50;
+	int listOfReadingsFL[size];
+	int listOfReadingsFR[size];
+	int listOfReadingsL[size*2];
+	int listOfReadingsR[size];
+	int listOfReadingsCL[size*2];
+	int listOfReadingsCR[size];
 
   //Get Reading from Sensor
   for (int a = 0; a < size; a++)
@@ -191,6 +191,30 @@ double* getIRSensorReading()
   sensorValues[3] = sortAndAverage(listOfReadingsR, size, 3);
   sensorValues[4] = sortAndAverage(listOfReadingsCL, size*2, 3);
   sensorValues[5] = sortAndAverage(listOfReadingsCR, size, 3);
+  
+  for (int a = 0; a < size; a++)
+  {
+    listOfReadingsFL[a] = analogRead(frontLeft);
+    listOfReadingsFR[a] = analogRead(frontRight);
+    listOfReadingsL[a] = analogRead(left);
+    listOfReadingsR[a] = analogRead(right);
+	listOfReadingsCL[a] = analogRead(centerLeft);
+	listOfReadingsCR[a] = analogRead(centerRight);
+    delay(1);
+  }
+  for (int a = 0; a < size; a++)
+  {
+    listOfReadingsL[a+size] = analogRead(left);
+	listOfReadingsCL[a+size] = analogRead(centerLeft);
+    delay(1);
+  }
+  
+  sensorValues[0] = (sensorValues[0] + sortAndAverage(listOfReadingsFL, size, 3))/2;
+  sensorValues[1] = (sensorValues[1] + sortAndAverage(listOfReadingsFR, size, 3))/2;
+  sensorValues[2] = (sensorValues[2] + sortAndAverage(listOfReadingsL, size*2, 3))/2;
+  sensorValues[3] = (sensorValues[3] + sortAndAverage(listOfReadingsR, size, 3))/2;
+  sensorValues[4] = (sensorValues[4] + sortAndAverage(listOfReadingsCL, size*2, 3))/2;
+  sensorValues[5] = (sensorValues[5] + sortAndAverage(listOfReadingsCR, size, 3))/2;
 
   return sensorValues;
 }

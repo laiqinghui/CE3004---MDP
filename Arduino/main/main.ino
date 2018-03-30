@@ -121,6 +121,8 @@ void setup() {
 }
 
 void loop(){
+  Serial.println(getIRSensorReading()[4]);
+  delay(300);
   if (dataExist()) {
 	  processInst();
   }
