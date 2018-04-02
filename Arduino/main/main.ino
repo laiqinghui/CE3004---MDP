@@ -23,7 +23,8 @@ void processInst() {
 							moveForwardOneGridBeta();
 						else
 							moveForwardBeta(110, 9.7 * moveCount);
-				
+			
+						moveForwardNumber = moveCount;
 						tooCloseToWall();
 						break;
 			case 'A': acceptTony = true;
