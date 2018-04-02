@@ -16,6 +16,7 @@ double sortAndAverage(int* listOfReadings, int size, int amount);
 double sensorValues[6];
 char sensorsValuesArray[7];
 int sideWall[3] = {0, 1, 1};
+int moveForwardNumber = 0;
 
 void resetSideWall() {
   sideWall[0] = 0;
@@ -84,19 +85,19 @@ char* getSensorReadingInCM() {
     sensorsValuesArray[3] = (5413 / rightValue) + 1.0261;
   }
 
-  //Keep track of side wall
-  if (int(sensorsValuesArray[3]) < 14 && int(sensorsValuesArray[3]) > 0)
-  {
-    sideWall[2] = sideWall[1];
-    sideWall[1] = sideWall[0];
-    sideWall[0] = 1;
-  }
-  else
-  {
-    sideWall[2] = sideWall[1];
-    sideWall[1] = sideWall[0];
-    sideWall[0] = 0;
-  }
+	  //Keep track of side wall
+	  if (int(sensorsValuesArray[3]) < 14 && int(sensorsValuesArray[3]) > 0)
+	  {
+		sideWall[2] = sideWall[1];
+		sideWall[1] = sideWall[0];
+		sideWall[0] = 1;
+	  }
+	  else
+	  {
+		sideWall[2] = sideWall[1];
+		sideWall[1] = sideWall[0];
+		sideWall[0] = 0;
+	  }
 
   //------------------------------------LEFT-----------------------------------------------------
   //PS1 y = 12046x + 0.1764
@@ -129,6 +130,22 @@ char* getSensorReadingInCM() {
   {
     sensorsValuesArray[4] = (6166.7 / centerRightValue) - 3.2878;
   }
+  
+  	if(moveForwardNumber == 2)
+	{
+		sideWall[2] = sideWall[0];
+		sideWall[1] = 0;
+		sideWall[2] = 0;
+		//Keep track of side wall
+	  if (int(sensorsValuesArray[3]) < 14 && int(sensorsValuesArray[3]) > 0)
+	  {
+		sideWall[0] = 1;
+	  }
+	  if (int(sensorsValuesArray[5]) < 14 && int(sensorsValuesArray[5]) > 0)
+	  {
+		sideWall[1] = 1;
+	  }
+	}
 
   //------------------------------------CENTER LEFT-----------------------------------------------------
   //PS6  y = 11787x + 1.6425 for between 24-87cm
