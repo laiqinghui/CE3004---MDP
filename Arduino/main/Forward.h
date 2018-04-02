@@ -78,19 +78,20 @@ void moveForwardOneGridBeta() {
 	signed long currentTicksM2 = 0;
 
   
-	int m1setSpeed = 370;//SETPOINT TARGET //250
-	int m2setSpeed = 370; //265
+	int m1setSpeed = 170;//SETPOINT TARGET //250
+	int m2setSpeed = 165; //265
 	int tuneSpeedM2 = 0;
   int moveSet = 0;
   
   
 	//Check using right side sensor if need to calibrate
 	calibrateBeforeMoveForward();
-	breakTicks = 0.95 * 9.5 * ticksPerCM;//0.90
+	breakTicks = 1 * 9.5 * ticksPerCM;//0.95
 	MotorPID M2 = {m2setSpeed , 0, 0, 0.40}; //
 	enableInterrupt( e1a, dummy, RISING);
 	enableInterrupt( e2b, dummy, RISING);
-	
+	Serial.print("Amount: ");
+  Serial.println(breakTicks);
 	md.setSpeeds(m1setSpeed, m2setSpeed);
 	
 	setTicks(0,0);
@@ -126,28 +127,56 @@ void moveForwardOneGridBeta() {
   			}//end of if
 
         
-  			if(currentTicksM1 > 0.8 * breakTicks && brakesPending){
-  				OCR1A = 150;
-  				OCR1B = 150;
-          //Serial.print("Gradual braking started!");
-  				M2.prevTuneSpeed = 150;
-          M2.prevErr1 = 0;
+  			if(( currentTicksM1 > (0.30 * breakTicks) ) && brakesPending){//0.7
+
+          
+          
+          /*
+  				OCR1A = m1setSpeed - 300;//150
+  				OCR1B = M2.prevTuneSpeed - 300;//150
+  				M2.prevTuneSpeed = M2.prevTuneSpeed - 250;
+          //M2.prevErr1 = 0;
+          */
   				brakesPending = false;
   			}
+
          
         }// end of while
-        
+
+      
+          
 
       Serial.print("breakTicksM2: ");
       Serial.println(M2ticks);
       Serial.print("breakTicksM1: ");
       Serial.println(M1ticks);
+      
 	  //Serial.println(M2.prevTuneSpeed);
 
 	disableInterrupt(e1a);
 	disableInterrupt(e2b);
 	breakTicks = 0;
 	movementDone = false;
+
+  tuneEntryTime = millis();
+  while(1){
+    
+    noInterrupts();
+    currentTicksM1 = M1ticks;
+    currentTicksM2 = M2ticks;
+    interrupts();
+    
+    if((tuneEntryTime - millis()) > 5000){
+        break;
+      }
+    
+    }
+
+    Serial.print("FinalTicksM2: ");
+      Serial.println(currentTicksM2);
+      Serial.print("FinalTicksM1: ");
+      Serial.println(currentTicksM1);
+ 
 	setTicks(0, 0);
 	setSqWidth(0, 0);
 }
