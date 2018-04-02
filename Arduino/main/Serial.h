@@ -51,7 +51,7 @@ void setOutBuffer(char opcode, char * data, int len) {
 
 // callback for received data
 void receiveData() {
-	delay(200);
+	delay(150);
 	//Serial.read();//Clear 1st garbage byte		
 	int i = 0;
 	while(Serial.available()) 
