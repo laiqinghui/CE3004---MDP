@@ -105,20 +105,20 @@ choice2 = str(raw_input())
 print "Fastest Mode Started"
 
 if (choice2 == "Y" or choice2 == "y"):
-    if(choice1 == 1):
+    if(choice1 == "1"):
         waypoint = [7, 12]
-    elif(choice1 == 2):
+    elif(choice1 == "2"):
         waypoint = [1, 4]
-    elif(choice1 == 3):
+    elif(choice1 == "3"):
         waypoint = [1, 1]
-    elif(choice1 == 4):
+    elif(choice1 == "4"):
         waypoint = [18, 13]
-    elif(choice1 == 12):
+    elif(choice1 == "12"):
         waypoint = [18, 13]
     else:
         waypoint = [16, 13]
 
-    print "Waypoint is " +str(waypoint)
+    print "Waypoint is " + str(waypoint)
     fsp = FastestPath(exp.currentMap, START, GOAL, NORTH, waypoint)
     exploremaps = []
 
@@ -141,7 +141,7 @@ if (choice2 == "Y" or choice2 == "y"):
     print fsp.waypoint
     print exploremaps[0]
     fig = plt.figure()
-    
+
     # Explored, Obstacle, Robot Body, Robot Head, Waypoint, FPath
     cmap = colors.ListedColormap(['#daf5ce','#311e08','#313956','#d6b71d', '#5c0909','#77a0a6' ])
     #cmap = colors.ListedColormap(['b','y','g','r', 'm', 'k'])
@@ -169,4 +169,3 @@ if (choice2 == "Y" or choice2 == "y"):
     print fsp.fastestPathRun()
 else:
     print "Program Terminated"
-
