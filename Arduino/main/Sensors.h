@@ -104,18 +104,18 @@ char* getSensorReadingInCM() {
   double leftValue = sensorValues[2];
   if (leftValue < 155)
   {
-    sensorsValuesArray[4] = -1;
+    sensorsValuesArray[5] = -1;
   }
   else
   {
-    sensorsValuesArray[4] = (12046 / leftValue) + 0.1764;
+    sensorsValuesArray[5] = (12046 / leftValue) + 0.1764;
   }
-  if (sensorsValuesArray[4] <= 23)
+  if (sensorsValuesArray[5] <= 23)
   {
-    sensorsValuesArray[4] = sensorsValuesArray[4] - 1;
+    sensorsValuesArray[5] = sensorsValuesArray[5] - 1;
   }
-  if(sensorsValuesArray[4] > 71)
-	  sensorsValuesArray[4] = -1;
+  if(sensorsValuesArray[5] > 71)
+	  sensorsValuesArray[5] = -1;
 
     //------------------------------------CENTER RIGHT-----------------------------------------------------
   //PS5 y = 6166.7x - 2.2878 //Minus 1 for offset
@@ -123,11 +123,11 @@ char* getSensorReadingInCM() {
   double centerRightValue = sensorValues[5];
   if (centerRightValue < 128)
   {
-    sensorsValuesArray[5] = -1;
+    sensorsValuesArray[4] = -1;
   }
   else
   {
-    sensorsValuesArray[5] = (6166.7 / centerRightValue) - 3.2878;
+    sensorsValuesArray[4] = (6166.7 / centerRightValue) - 3.2878;
   }
 
   //------------------------------------CENTER LEFT-----------------------------------------------------
