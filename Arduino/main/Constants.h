@@ -1,8 +1,7 @@
 //------------Other constants and declarations----------
-double wheelDiameter = 18.849556; //Diameter is 6cm
-double ticksPerCM = 1124.43   / wheelDiameter; //1124.43 //562.215 
 
 DualVNH5019MotorShield md(2, 4, 6, A0, 7, 8, 12, A1);
+#define ticksPerCM 59.652863972    //number of ticks per rev = //1124.43 //562.215  and wheelDiameter = 18.849556
 
 //------------Wheel Encoders constants------------
 #define e1a 3

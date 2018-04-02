@@ -13,7 +13,7 @@ void moveForwardBeta(int rpm, double distance) {
   unsigned long tuneExitTime = 0;
   unsigned long interval = 0;
   double distanceTicks = 1.02 * distance * ticksPerCM;
-  unsigned long currentTicksM1 = 0;
+  unsigned int currentTicksM1 = 0;
   //unsigned long currentTicksM2 = 0;
   
   breakTicks = distanceTicks;
@@ -74,8 +74,8 @@ void moveForwardOneGridBeta() {
 	unsigned long tuneEntryTime = 0;
 	unsigned long tuneExitTime = 0;
 	unsigned long interval = 0;
-	signed long currentTicksM1 = 0;
-	signed long currentTicksM2 = 0;
+	signed int currentTicksM1 = 0;
+	signed int currentTicksM2 = 0;
 
   
 	int m1setSpeed = 170;//SETPOINT TARGET //250

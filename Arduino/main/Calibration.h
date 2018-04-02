@@ -247,7 +247,7 @@ void straighten() {
 }
 
 void straightenTune() {
-	int min = 9;
+	int min = 10;
   getFrontCalibrationReading(false);
   if (frontRightReading > frontLeftReading)
   {

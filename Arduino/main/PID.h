@@ -12,21 +12,16 @@ struct MotorPID {
 //------------Interrupt declarations------------
 volatile long int squareWidth_M1 = 0;
 volatile signed long prev_time_M1 = 0;
-volatile signed long entry_time_M1 = 0;
-
-
-
 
 volatile long int squareWidth_M2 = 0;
 volatile signed long prev_time_M2 = 0;
-volatile signed long entry_time_M2 = 0;
 
 
 //----------------------------------------------------------------PID----------------------------------------------------------------
 //ISR for Motor1(Right) encoder
 void risingM1() {
   
-  entry_time_M1 = micros();
+  int entry_time_M1 = micros();
   squareWidth_M1 = entry_time_M1 - prev_time_M1;
   //squareWidth_M1 = squareWidth_M1 + squareWidth_M1;// MULTIPLY BY TWO TO GET PULSEWIDTH 
   prev_time_M1 = entry_time_M1;
@@ -41,7 +36,7 @@ void dummy()
 
 //ISR for Motor2(Left) encoder
 void risingM2() {
-  entry_time_M2 = micros();
+  int entry_time_M2 = micros();
   squareWidth_M2 = entry_time_M2 - prev_time_M2;
   //squareWidth_M2 = squareWidth_M2 + squareWidth_M2;// MULTIPLY BY TWO TO GET PULSEWIDTH 
   prev_time_M2 = entry_time_M2;
