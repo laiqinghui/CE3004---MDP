@@ -74,7 +74,27 @@ def updatefig(j):
     im.set_array(exploremaps[j])
     return im
 
-ani = animation.FuncAnimation(fig, updatefig, frames=range(len(exploremaps)), interval=300)
+ani = animation.FuncAnimation(fig, updatefig, frames=range(len(exploremaps)), interval=200)
+
+index = 0
+im = plt.imshow(exploremaps[0], cmap= cmap)
+def on_keyboard(event):
+    global index
+    if event.key == 'right':
+        if index+1 == (len(exploremaps)):
+            return
+        index += 1
+    elif event.key == 'left':
+        if index-1 == 0:
+            return
+        index -= 1
+
+    plt.clf()
+    im = plt.imshow(exploremaps[index], cmap= cmap)
+    plt.draw()
+
+plt.gcf().canvas.mpl_connect('key_press_event', on_keyboard)
+
 plt.show()
 
 print exp.robot.exploredMap

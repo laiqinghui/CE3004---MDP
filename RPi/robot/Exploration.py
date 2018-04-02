@@ -458,7 +458,7 @@ class Exploration:
 
         else:
             # WEST
-            for col in [-1,0,1]:
+            for col in [1,0,-1]:
                 for row in range(2,5):
                     if robotrow-row <0:
                         walldistances[count] = row-2
@@ -474,6 +474,8 @@ class Exploration:
         elif walldistances == [0,1,2]:
             return 2
         elif walldistances[-1] == 0:
+            return 2
+        elif walldistances[1] == 0:
             return 2
         else:
             return False
