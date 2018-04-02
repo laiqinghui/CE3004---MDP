@@ -21,22 +21,6 @@ print "Exploration Mode Started"
 
 map_name = 'sample_arena_' + choice1 + '.txt'
 
-# if(choice1 == 1):
-#     map_name = 'sample_arena_1.txt'
-# elif(choice1 == 2):
-#     map_name = 'sample_arena_2.txt'
-# elif(choice1 == 3):
-#     map_name = 'sample_arena_3.txt'
-# elif(choice1 == 4):
-#     map_name = 'sample_arena_4.txt'
-# elif(choice1 == 5):
-#     map_name = 'sample_arena_5.txt'
-# elif(choice1 == 9):
-#     map_name = 'sample_arena_9.txt'
-# elif(choice1 == 12):
-#     map_name = 'sample_arena_12.txt'
-# else:
-#     map_name = 'sample_arena_13.txt'
 if choice1 == "a9":
     map_name = "arena_week_9.txt"
 elif choice1 == "a8":
@@ -158,13 +142,11 @@ if (choice2 == "Y" or choice2 == "y"):
             index -= 1
 
         plt.clf()
-        im = plt.imshow(exploremaps[index], cmap= cmap)
+        im = plt.imshow(exploremaps[index], cmap=cmap)
         plt.draw()
 
     plt.gcf().canvas.mpl_connect('key_press_event', on_keyboard)
-
     plt.show()
-
 
     print fsp.fastestPathRun()
 else:
