@@ -21,6 +21,8 @@ void processInst() {
 			case 'W': 	moveCount = instBuff[index + 1] - 48;
 						if (moveCount == 1)
 							moveForwardOneGridBeta();
+            else if(moveCount == 2) 
+              moveForwardTwoGridBeta();
 						else
 							moveForwardBeta(110, 9.7 * moveCount);
 			
@@ -100,7 +102,7 @@ void processInst() {
   //Serial.println(index-1);
   if (instBuff[0] == 'S') {
 
-    setOutBuffer('S', getSensorReadingInCM(), 5);
+    setOutBuffer('S', getSensorReadingInCM(), 7);
     sendToPi();//Interrupt RPI to notify data is ready
   }
 

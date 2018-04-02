@@ -19,7 +19,7 @@ int isSideFull[4] = {0, 0, 0, 0};
 boolean acceptTony = false;
 
 double fromFrontWall = 13;
-double fromSideWall = 12.5;
+double fromSideWall = 13.5;
 double threshold = 0.1;
 double checkSideWallValue = 0;
 

@@ -19,7 +19,7 @@ void moveForwardBeta(int rpm, double distance) {
   breakTicks = distanceTicks;
 
   int m1setSpeed = 300;
-  int m2setSpeed = 300;
+  int m2setSpeed = 290;
 
   //Check using right side sensor if need to calibrate
   calibrateBeforeMoveForward();
@@ -78,8 +78,8 @@ void moveForwardOneGridBeta() {
 	signed int currentTicksM2 = 0;
 
   
-	int m1setSpeed = 170;//SETPOINT TARGET //250
-	int m2setSpeed = 165; //265
+	int m1setSpeed = 250;//SETPOINT TARGET //250
+	int m2setSpeed = 265; //265
 	int tuneSpeedM2 = 0;
   int moveSet = 0;
   
@@ -179,4 +179,116 @@ void moveForwardOneGridBeta() {
  
 	setTicks(0, 0);
 	setSqWidth(0, 0);
+}
+
+void moveForwardTwoGridBeta() {
+
+  unsigned long tuneEntryTime = 0;
+  unsigned long tuneExitTime = 0;
+  unsigned long interval = 0;
+  signed int currentTicksM1 = 0;
+  signed int currentTicksM2 = 0;
+
+  
+  int m1setSpeed = 250;//SETPOINT TARGET //250
+  int m2setSpeed = 265; //265
+  int tuneSpeedM2 = 0;
+  int moveSet = 0;
+  
+  
+  //Check using right side sensor if need to calibrate
+  calibrateBeforeMoveForward();
+  breakTicks = 1 * 19 * ticksPerCM;//0.95
+  MotorPID M2 = {m2setSpeed , 0, 0, 0.40}; //
+  enableInterrupt( e1a, dummy, RISING);
+  enableInterrupt( e2b, dummy, RISING);
+  Serial.print("Amount: ");
+  Serial.println(breakTicks);
+  md.setSpeeds(m1setSpeed, m2setSpeed);
+  
+  setTicks(0,0);
+  boolean brakesPending = true;
+
+   
+      while(!movementDone)
+      {
+        tuneEntryTime = micros();
+        interval = tuneEntryTime - tuneExitTime;
+        
+        if(interval >= 5000)
+        { 
+          
+          noInterrupts();
+          currentTicksM1 = M1ticks;
+          currentTicksM2 = M2ticks;
+          interrupts();
+      
+          M2.currentErr =  currentTicksM1 - currentTicksM2; //Positive means M1 is faster
+          tuneSpeedM2 = M2.prevTuneSpeed + M2.gain*M2.currentErr + (M2.gain/0.01)*(M2.currentErr - M2.prevErr1);
+          if(!movementDone)
+            OCR1B = tuneSpeedM2;
+          /*
+          Serial.print("tuneSpeedM2: ");
+          Serial.println(tuneSpeedM2);
+          Serial.println(currentTicksM2);
+          */
+          M2.prevTuneSpeed = tuneSpeedM2;
+          M2.prevErr1 = M2.currentErr;
+          tuneExitTime = micros();
+        
+        }//end of if
+
+        
+        if(( currentTicksM1 > (0.30 * breakTicks) ) && brakesPending){//0.7
+
+          
+          
+          /*
+          OCR1A = m1setSpeed - 300;//150
+          OCR1B = M2.prevTuneSpeed - 300;//150
+          M2.prevTuneSpeed = M2.prevTuneSpeed - 250;
+          //M2.prevErr1 = 0;
+          */
+          brakesPending = false;
+        }
+
+         
+        }// end of while
+
+      
+          
+
+      Serial.print("breakTicksM2: ");
+      Serial.println(M2ticks);
+      Serial.print("breakTicksM1: ");
+      Serial.println(M1ticks);
+      
+    //Serial.println(M2.prevTuneSpeed);
+
+  disableInterrupt(e1a);
+  disableInterrupt(e2b);
+  breakTicks = 0;
+  movementDone = false;
+
+  tuneEntryTime = millis();
+  while(1){
+    
+    noInterrupts();
+    currentTicksM1 = M1ticks;
+    currentTicksM2 = M2ticks;
+    interrupts();
+    
+    if((tuneEntryTime - millis()) > 5000){
+        break;
+      }
+    
+    }
+
+    Serial.print("FinalTicksM2: ");
+      Serial.println(currentTicksM2);
+      Serial.print("FinalTicksM1: ");
+      Serial.println(currentTicksM1);
+ 
+  setTicks(0, 0);
+  setSqWidth(0, 0);
 }
