@@ -114,15 +114,11 @@ void setup() {
   pinMode(PI_PIN, OUTPUT);
   digitalWrite(PI_PIN, LOW);
   //initI2C();
-
-  
-  
-  
+ 
+  PWM_Mode_Setup();
 }
 
 void loop(){
-  Serial.println(getIRSensorReading()[4]);
-  delay(300);
   if (dataExist()) {
 	  processInst();
   }

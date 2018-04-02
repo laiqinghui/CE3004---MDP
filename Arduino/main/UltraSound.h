@@ -65,6 +65,7 @@ char getUltraSoundDistance() {
 }
 
 int getPWMReading(){
+
   OCR1A = 0;
   digitalWrite(2, HIGH);
   digitalWrite(2, LOW);
