@@ -94,9 +94,9 @@ void processInst() {
 						break;
 				
 			//----------------Sensor Data--------------------
-			case 'S': setOutBuffer('S', getSensorReadingInCM(), 5);
-				sendToPi();//Interrupt RPI to notify data is ready
-				break;
+			case 'S': 	setOutBuffer('S', getSensorReadingInCM(), 5);
+						sendToPi();//Interrupt RPI to notify data is ready
+						break;
 				
 			//--------------Face North-----------------------
 			case 'H': delay(300);

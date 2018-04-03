@@ -132,12 +132,13 @@ char* getSensorReadingInCM() {
 	//-----------------------------Check side wall and update--------------------------------------
     if(moveForwardNumber == 2)
 	{
-		sideWall[2] = sideWall[0];
+		Serial.println("Double");
+		sideWall[0] = sideWall[2];
 		sideWall[1] = 0;
 		sideWall[2] = 0;
 		//Keep track of side wall
 		if (int(sensorsValuesArray[3]) < 14 && int(sensorsValuesArray[3]) > 0)
-			sideWall[0] = 1;
+			sideWall[2] = 1;
 		if (int(sensorsValuesArray[5]) < 14 && int(sensorsValuesArray[5]) > 0)
 			sideWall[1] = 1;
 	  
@@ -145,22 +146,30 @@ char* getSensorReadingInCM() {
 	else if(moveForwardNumber == 1)
 	{
 		//Keep track of side wall
-		sideWall[2] = sideWall[1];
-		sideWall[1] = sideWall[0];
-		sideWall[0] = 0;
+		Serial.println("Single");
+		sideWall[0] = sideWall[1];
+		sideWall[1] = 0;
+		sideWall[2] = 0;
+		
 		if (int(sensorsValuesArray[3]) < 14 && int(sensorsValuesArray[3]) > 0)
-			sideWall[0] = 1;
+			sideWall[2] = 1;
+		if (int(sensorsValuesArray[5]) < 14 && int(sensorsValuesArray[5]) > 0)
+			sideWall[1] = 1;
 	}
-	else if(moveForward > 2)
+	else if(moveForwardNumber > 2)
 	{
 		resetSideWall();
 		//Keep track of side wall
 		if (int(sensorsValuesArray[3]) < 14 && int(sensorsValuesArray[3]) > 0)
-			sideWall[0] = 1;
+			sideWall[2] = 1;
 		if (int(sensorsValuesArray[5]) < 14 && int(sensorsValuesArray[5]) > 0)
 			sideWall[1] = 1;
 	}
 	moveForwardNumber = 0;
+	Serial.println("Side Wall");
+	Serial.println(sideWall[0]);
+	Serial.println(sideWall[1]);
+	Serial.println(sideWall[2]);
 
    return sensorsValuesArray;
 }

@@ -4,8 +4,8 @@ void setTurnValueOffset(int dir, double newValue);
 void turnPID(int dir, int degree);
 
 
-double offsetRight = 0.88  ; //0.919
-double offsetLeft = 0.885; //0.9165
+double offsetRight = 0.920; //0.919
+double offsetLeft = 0.905; //0.9165
 void turnPID(int dir, int degree){
 
     double cir = 3.14159265 * 17.6; //circumference of circle drawn when turning in cm, current diameter used is 17.6
@@ -30,8 +30,8 @@ void turnPID(int dir, int degree){
     //unsigned long currentTicksM2 = 0;
     int tuneSpeedM1 = 0;
     int tuneSpeedM2 = 0;
-    int m1Speed = dir * -350;
-    int m2Speed = dir * 350;
+    int m1Speed = dir * -320;
+    int m2Speed = dir * 320;
 	  signed int currentTicksM1 = 0;
 	  signed int currentTicksM2 = 0;
 
@@ -70,14 +70,14 @@ void turnPID(int dir, int degree){
 				M2.prevErr1 = M2.currentErr;
 				tuneExitTime = micros();
 			}//end of if
-			/*
+			
 			if(currentTicksM1 > 0.80*breakTicks && brakesPending){
 				OCR1A = 150;
 				OCR1B = 150;
 				M2.prevTuneSpeed = 150;
 				brakesPending = false;
 			}
-      */
+      
         }// end of while
     }//end of if
     else //turn left(right motor(M1) forward). Tune M1 to match M2. 

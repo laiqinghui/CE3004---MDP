@@ -17,9 +17,10 @@ void turnAdjust(int dir);
 void tuneM2TurnSpeed();
 int isSideFull[4] = {0, 0, 0, 0};
 boolean acceptTony = false;
+void calibrateAgainstWall(int distance);
 
-double fromFrontWall = 13;
-double fromSideWall = 13.5;
+double fromFrontWall = 14;
+double fromSideWall = 14;
 double threshold = 0.1;
 double checkSideWallValue = 0;
 int wait = 100;
@@ -84,7 +85,6 @@ void calibration() {
 	//Set distance from right wall
 	fastCalibration(1);
 	checkSideWallValue = getRightSensorReading();
-  }
 }
 
 
@@ -111,7 +111,6 @@ void fastCalibration(int choice) {
 		{
 			turnPID(1, 90);
 			turnAdjust(1);
-			
 			calibrateAgainstWall(fromSideWall);
 
 
@@ -137,21 +136,23 @@ void calibrateBeforeMoveForward() {
 
 void distancefromWall(double distance) {
   //Fine tune the distance from wall
-  int distanceFromWall = getUltraSound2Reading();
-  if (distanceFromWall > distance)
+  getFrontCalibrationReading(false);
+  if (frontRightReading > distance)
   {
-    md.setSpeeds(142, 140);
-    while (distanceFromWall > distance)
+    md.setSpeeds(140, 140);
+    while (frontRightReading > distance)
     {
-      getUltraSound2Reading();
+      getFrontCalibrationReading(true);
     }
   }
-  else if (distanceFromWall < distance)
+  else if (frontRightReading < distance)
   {
-	  md.setSpeeds(-142, -140);
-    while (distanceFromWall < distance)
+    md.setSpeeds(-140, -140);
+    while (frontRightReading < distance)
     {
-      getUltraSound2Reading();
+
+      getFrontCalibrationReading(true);
+
     }
   }
   md.setBrakes();
@@ -181,15 +182,16 @@ void straighten() {
 void straightenTune() {
 	int min = 10;
   getFrontCalibrationReading(false);
+  Serial.println("Enter");
   if (frontRightReading > frontLeftReading)
   {
     while (frontRightReading > frontLeftReading)
     {
 	  //Try proportional delay up to 20
 	  int delayAmount = abs(frontRightReading - frontLeftReading)*90;
-	  if(delayAmount > 25)
+	  if(delayAmount > 20)
 	  {
-		  delayAmount = 25;
+		  delayAmount = 20;
 	  }
 	  else if(delayAmount < min)
 	  {
@@ -204,9 +206,9 @@ void straightenTune() {
 	while (frontRightReading < frontLeftReading)
     {
 	  int delayAmount = abs(frontRightReading - frontLeftReading)*90;
-	  if(delayAmount > 25)
+	  if(delayAmount > 20)
 	  {
-		  delayAmount = 25;
+		  delayAmount = 20;
 	  }
 	  else if(delayAmount < min)
 	  {
