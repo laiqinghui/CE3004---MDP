@@ -10,76 +10,69 @@
 //Function Declaration
 void straighten();
 void straightenTune();
-void distancefromFrontWall(double distance);
+void distancefromWall(double distance);
 void calibration();
 void fastCalibration(int choice);
 void turnAdjust(int dir);
 void tuneM2TurnSpeed();
 int isSideFull[4] = {0, 0, 0, 0};
 boolean acceptTony = false;
+void calibrateAgainstWall(int distance);
 
-double fromFrontWall = 13;
-double fromSideWall = 13.5;
+double fromFrontWall = 14;
+double fromSideWall = 14;
 double threshold = 0.1;
 double checkSideWallValue = 0;
+int wait = 100;
 
 //Calibration
 void calibration() {
-  
-  int wait = 100;
-
-  
-  for (int a = 0; a < 2; a++)
-  {
-    fastCalibration(2);
-  }
-  
-  
-  turnPID(1, 90);
-  delay(wait);
-
-  for (int a = 0; a < 2; a++)
-  {
-    if (a == 0)
-    {
-      //Move to the distance from wall
-      distancefromFrontWall(fromFrontWall);
-    }
-    else
-    {
-      distancefromFrontWall(fromSideWall);
-    }
-    delay(wait);
-
-    //Fine tune the calibration
-    int count = 0;
-    getFrontCalibrationReading(false);
-    while (abs(frontRightReading - frontLeftReading) > threshold)
-    {
-      straightenTune();
-      getFrontCalibrationReading(false);
-      count++;
-      if (count > 5)
-      {
-        break;
-      }
-    }
-
-    if (a == 0)
-    {
-      //Move to the distance from wall
-      distancefromFrontWall(fromFrontWall);
-    }
-    else
-    {
-      distancefromFrontWall(fromSideWall);
-    }
-    delay(wait);
-
-    //Turn to the left by 90
-    turnPID(-1, 90);
-    getSensorReadingInCM();
 	
+	//Calibrate Turning
+	for (int a = 0; a < 2; a++)
+	{
+		fastCalibration(2);
+	}
+  
+	turnPID(1, 90);
+	delay(wait);
+
+	for (int a = 0; a < 2; a++)
+	{
+		//Distance from wall
+		if (a == 0)
+			distancefromWall(fromFrontWall);
+		else
+			distancefromWall(fromSideWall);
+		delay(wait);
+
+		//Fine tune the calibration
+		int count = 0;
+		getFrontCalibrationReading(false);
+		while (abs(frontRightReading - frontLeftReading) > threshold)
+		{
+			straightenTune();
+			getFrontCalibrationReading(false);
+			count++;
+			if (count > 5)
+			{
+				break;
+			}
+		}
+		
+		//Distance from wall
+		if (a == 0)
+			distancefromWall(fromFrontWall);
+		else
+			distancefromWall(fromSideWall);
+		delay(wait);
+
+		//Turn to the left by 90
+		turnPID(-1, 90);
+	}
+	
+	//Check if there is a wall in front after calibration
+	getSensorReadingInCM();
 	if((double(sensorsValuesArray[0]) < 17 && double(sensorsValuesArray[0]) > 0) || (double(sensorsValuesArray[1]) < 13 && double(sensorsValuesArray[1]) > 0) || (double(sensorsValuesArray[2]) < 17 && double(sensorsValuesArray[2]) > 0))
 	{
 		isSideFull[0] = 1;
@@ -89,9 +82,9 @@ void calibration() {
 		isSideFull[0] = 0;
 	}
 	
+	//Set distance from right wall
 	fastCalibration(1);
 	checkSideWallValue = getRightSensorReading();
-  }
 }
 
 
@@ -99,125 +92,65 @@ void calibration() {
 //If choice = 1 then it will calibrate against right wall
 //If choice = 2 then it will calibrate front and right
 void fastCalibration(int choice) {
-	int count = 0;
-  int wait = 100;
-  //Calibrate against right wall only
-  if (choice == 1)
-  {
-    turnPID(1, 90);
-    delay(wait);
+	//Calibrate against right wall only
+	if (choice == 1)
+	{
+		turnPID(1, 90);
+		delay(wait);
 
-    //Quick calibration against wall
-    straighten();
-    delay(wait);
+		calibrateAgainstWall(fromSideWall);
 
-    //Move to the distance from wall
-    distancefromFrontWall(fromSideWall);
-
-    //Fine tune the calibration
-	count = 0;
-    while (abs(frontRightReading - frontLeftReading) > threshold)
-    {
-      straightenTune();
-      getFrontCalibrationReading(false);
-      count++;
-      if (count > 5)
-      {
-        break;
-      }
-    }
-
-    distancefromFrontWall(fromSideWall);
-    delay(wait);
-
-    turnPID(-1, 90);
-    delay(wait);
-  }
-  //Calibrate against front wall
-  else
-  {
-    //Quick calibration against wall
-    straighten();
-    delay(wait);
-
-    //Move to the distance from wall
-    distancefromFrontWall(fromFrontWall);
-
-    //Fine tune the calibration
-	count = 0;
-        while (abs(frontRightReading - frontLeftReading) > threshold)
-    {
-      straightenTune();
-      getFrontCalibrationReading(false);
-      count++;
-      if (count > 5)
-      {
-        break;
-      }
-    }
-
-    distancefromFrontWall(fromFrontWall);
-    delay(wait);
-
-    //Calibrate against right wall if there is one
-    if (choice == 2)
-    {
-      turnPID(1, 90);
-	  turnAdjust(1);
-
-      //Fine tune the calibration
-	  count = 0;
-          while (abs(frontRightReading - frontLeftReading) > threshold)
+		turnPID(-1, 90);
+		delay(wait);
+	}
+	//Calibrate against front wall
+	else
+	{
+		//Calibrate against right wall if there is one
+		if (choice == 2)
 		{
-      straightenTune();
-      getFrontCalibrationReading(false);
-      count++;
-      if (count > 5)
-      {
-        break;
-      }
-    }
+			turnPID(1, 90);
+			turnAdjust(1);
+			calibrateAgainstWall(fromSideWall);
 
-      distancefromFrontWall(fromSideWall);
-      delay(wait);
 
-      turnPID(-1, 90);
-	  turnAdjust(-1);
-	  
-	  //Fine tune the calibration
-	  count = 0;
-          while (abs(frontRightReading - frontLeftReading) > threshold)
-    {
-      straightenTune();
-      getFrontCalibrationReading(false);
-      count++;
-      if (count > 5)
-      {
-        break;
-      }
+			turnPID(-1, 90);
+			turnAdjust(-1);
+		}
+		calibrateAgainstWall(fromFrontWall);
     }
-    }
-  }
 }
 
-void distancefromFrontWall(double distance) {
+void calibrateBeforeMoveForward() {
+	acceptTony = false;
+	double rightSideReading = getRightSensorReading();
+	if (rightSideReading < checkSideWallValue-1 || (rightSideReading > checkSideWallValue+1.5))
+	{
+		if (canSideCalibrate())
+		{
+			fastCalibration(1);
+		}
+	}
+}
+
+
+void distancefromWall(double distance) {
   //Fine tune the distance from wall
   getFrontCalibrationReading(false);
   if (frontRightReading > distance)
   {
-    md.setSpeeds(142, 140);
+    md.setSpeeds(140, 140);
     while (frontRightReading > distance)
     {
-      
       getFrontCalibrationReading(true);
     }
   }
   else if (frontRightReading < distance)
   {
-	  md.setSpeeds(-142, -140);
+    md.setSpeeds(-140, -140);
     while (frontRightReading < distance)
     {
-      
+
       getFrontCalibrationReading(true);
 
     }
@@ -249,6 +182,7 @@ void straighten() {
 void straightenTune() {
 	int min = 10;
   getFrontCalibrationReading(false);
+  Serial.println("Enter");
   if (frontRightReading > frontLeftReading)
   {
     while (frontRightReading > frontLeftReading)
@@ -292,9 +226,9 @@ void straightenTune() {
     while (frontRightReading < frontLeftReading)
     {
 	  int delayAmount = abs(frontRightReading - frontLeftReading)*90;
-	  if(delayAmount > 20)
+	  if(delayAmount > 25)
 	  {
-		  delayAmount = 20;
+		  delayAmount = 25;
 	  }
 	  else if(delayAmount < min)
 	  {
@@ -309,9 +243,9 @@ void straightenTune() {
 	while (frontRightReading > frontLeftReading)
     {
 	  int delayAmount = abs(frontRightReading - frontLeftReading)*90;
-	  if(delayAmount > 20)
+	  if(delayAmount > 25)
 	  {
-		  delayAmount = 20;
+		  delayAmount = 25;
 	  }
 	  else if(delayAmount < min)
 	  {
@@ -388,25 +322,13 @@ void faceNorthCalibration(){
 	turnPID(-1, 90);
 }
 
-void calibrateBeforeMoveForward() {
-	acceptTony = false;
-	double rightSideReading = getRightSensorReading();
-	if (rightSideReading < checkSideWallValue-1 || (rightSideReading > checkSideWallValue+1.5))
-	{
-		if (canSideCalibrate())
-		{
-			fastCalibration(1);
-		}
-	}
-}
-
 void tooCloseToWall(){
 	getFrontCalibrationReading(false);
-	int usReading = int(getUltraSoundDistance());
+	int usReading = int(getUltraSound2Reading());
 	
 	if(usReading < 9 && usReading > 0)
 	{
-		while(int(getUltraSoundDistance()) < 8)
+		while(int(getUltraSound2Reading()) < 8)
 		{
 			md.setSpeeds(-140, -137);
 			delay(20);
@@ -470,4 +392,29 @@ void turnAdjust(int dir) {
       setTurnValueOffset(dir, difference);
     }
   }
+}
+
+void calibrateAgainstWall(int distance){
+	//Quick calibration against wall
+	straighten();
+	delay(wait);
+
+	//Move to the distance from wall
+	distancefromWall(distance);
+
+	//Fine tune the calibration
+	int count = 0;
+    while (abs(frontRightReading - frontLeftReading) > threshold)
+	{
+		straightenTune();
+		getFrontCalibrationReading(false);
+		count++;
+		if (count > 5)
+		{
+			break;
+		}
+	}
+
+	distancefromWall(distance);
+	delay(wait);
 }

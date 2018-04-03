@@ -78,16 +78,16 @@ void moveForwardOneGridBeta() {
 	signed int currentTicksM2 = 0;
 
   
-	int m1setSpeed = 250;//SETPOINT TARGET //250
-	int m2setSpeed = 265; //265
+	int m1setSpeed = 310;//SETPOINT TARGET //250
+	int m2setSpeed = 310; //265
 	int tuneSpeedM2 = 0;
   int moveSet = 0;
   
   
 	//Check using right side sensor if need to calibrate
 	calibrateBeforeMoveForward();
-	breakTicks = 1 * 9.5 * ticksPerCM;//0.95
-	MotorPID M2 = {m2setSpeed , 0, 0, 0.40}; //
+	breakTicks = 0.95 * 9.5 * ticksPerCM;//0.95
+	MotorPID M2 = {m2setSpeed , 0, 0, 0.400}; //
 	enableInterrupt( e1a, dummy, RISING);
 	enableInterrupt( e2b, dummy, RISING);
 	Serial.print("Amount: ");
