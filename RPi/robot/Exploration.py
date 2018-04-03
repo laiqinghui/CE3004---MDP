@@ -295,13 +295,15 @@ class Exploration:
                 self.ladder[0] = not self.ladder[0]
             else:
                 # else move forward
+                countsteps = 0
                 self.robot.moveBot(RIGHT)
                 move.append(RIGHT)
                 for i in range(self.ladder[1]):
                     front = self.frontFree()
                     if front:
                         self.robot.moveBot(FORWARD)
-                        move.extend([FORWARD]*front)
+                        countsteps +=1
+                move.extend([FORWARD]*countsteps)
                 self.ladder[0] = not self.ladder[0]
             return move
 
@@ -321,7 +323,7 @@ class Exploration:
         else:
             self.robot.moveBot(LEFT)
             move.extend(('A'))
-
+        
         return move
     
     def moveforward(self, move, front):
@@ -340,19 +342,27 @@ class Exploration:
                     self.robot.moveBot(FORWARD)
                 move.extend([FORWARD]*front)
         elif laddersteps:
+            # if laddersteps < 0:
+            #     for i in range(front):
+            #         self.robot.moveBot(FORWARD)
+            #     move.extend([FORWARD]*front)
+            #     return move 
+
             countsteps = 0
             for i in range(laddersteps):
                 front = self.frontFree()
                 if front:
                     self.robot.moveBot(FORWARD)
-                    move.extend([FORWARD]*front)
                     countsteps +=1
+            
+            move.extend([FORWARD]*countsteps)
             if countsteps == laddersteps:
                 self.ladder = [True, laddersteps]
         else:
             for i in range(front):
                 self.robot.moveBot(FORWARD)
             move.extend([FORWARD]*front)
+        print move
         return move
 
     def checkDeadZone(self, center):
@@ -378,7 +388,7 @@ class Exploration:
             ahead = [robotrow+2, robotcol]
         else:
             ahead = [robotrow, robotcol-2]
-        if ahead[0] < 0 | ahead[0] > 19 | ahead[1] < 0 | ahead[1] > 14:
+        if ahead[0] < 0 or ahead[0] > 19 or ahead[1] < 0 or ahead[1] > 14:
             return False
         # try to fill the space ahead of the robot with walls,
         # if it doesnt hit unexplored space, then it is enclosed
@@ -469,13 +479,33 @@ class Exploration:
                         walldistances[count] = row-2
                         break
                 count+=1
+
+        if self.robot.direction == NORTH:
+            ahead = [robotrow-3, robotcol]
+        elif self.robot.direction == EAST:
+            ahead = [robotrow, robotcol+3]
+        elif self.robot.direction == SOUTH:
+            ahead = [robotrow+3, robotcol]
+        else:
+            ahead = [robotrow, robotcol-3]
+        if ahead[0] < 0 or ahead[0] > 19 or ahead[1] < 0 or ahead[1] > 14:
+            ahead = False
+
         if walldistances == [0,1,-1]:
             return 2
         elif walldistances == [0,1,2]:
             return 2
         elif walldistances[-1] == 0:
+            # if ahead:
+            #     explored = self.checkExplored(ahead)
+            #     if explored:
+            #         return -1
             return 2
         elif walldistances[1] == 0:
+            # if ahead:
+            #     explored = self.checkExplored(ahead)
+            #     if explored:
+            #         return -1
             return 2
         else:
             return False
