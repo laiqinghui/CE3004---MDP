@@ -326,19 +326,19 @@ void tooCloseToWall(){
 	getFrontCalibrationReading(false);
 	int usReading = int(getUltraSound2Reading());
 	
-	if(usReading < 9 && usReading > 0)
+	if(usReading < 8 && usReading > 0)
 	{
-		while(int(getUltraSound2Reading()) < 8)
+		while(int(getUltraSound2Reading()) < 7)
 		{
 			md.setSpeeds(-140, -137);
 			delay(20);
 			md.setBrakes();
 		}
 	}
-	else if(frontLeftReading < 14 && frontLeftReading > 0)
+	else if(frontLeftReading < 13 && frontLeftReading > 0)
 	{
 		md.setSpeeds(-140, -137);
-		while (frontLeftReading < 14)
+		while (frontLeftReading < 12)
 		{
 		  
 		  getFrontCalibrationReading(true);
@@ -346,10 +346,10 @@ void tooCloseToWall(){
 		}
 		md.setBrakes();
 	}
-	else if(frontRightReading < 14 && frontRightReading > 0)
+	else if(frontRightReading < 13 && frontRightReading > 0)
 	{
 		md.setSpeeds(-140, -137);
-		while (frontRightReading < 13)
+		while (frontRightReading < 12)
 		{
 		  
 		  getFrontCalibrationReading(true);

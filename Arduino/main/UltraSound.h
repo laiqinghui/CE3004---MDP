@@ -67,6 +67,7 @@ char getUltraSoundDistance() {
 int getPWMReading(){
 
   OCR1A = 0;
+  delay(20);
   digitalWrite(2, HIGH);
   digitalWrite(2, LOW);
   digitalWrite(2, HIGH);               // reading Pin PWM will output pulses
@@ -83,6 +84,7 @@ unsigned int getUltraSound2Reading(){
   while (DistanceMeasured == 0 || DistanceMeasured >= 10200)
   {
     DistanceMeasured = getPWMReading();
+    //Serial.println(count);
 	count++;
 	if(count == 20)
 		break;

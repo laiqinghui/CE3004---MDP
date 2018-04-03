@@ -78,8 +78,8 @@ void moveForwardOneGridBeta() {
 	signed int currentTicksM2 = 0;
 
   
-	int m1setSpeed = 310;//SETPOINT TARGET //250
-	int m2setSpeed = 310; //265
+	int m1setSpeed = 250;//SETPOINT TARGET //250
+	int m2setSpeed = 365; //265
 	int tuneSpeedM2 = 0;
   int moveSet = 0;
   
@@ -157,25 +157,6 @@ void moveForwardOneGridBeta() {
 	disableInterrupt(e2b);
 	breakTicks = 0;
 	movementDone = false;
-
-  tuneEntryTime = millis();
-  while(1){
-    
-    noInterrupts();
-    currentTicksM1 = M1ticks;
-    currentTicksM2 = M2ticks;
-    interrupts();
-    
-    if((tuneEntryTime - millis()) > 5000){
-        break;
-      }
-    
-    }
-
-    Serial.print("FinalTicksM2: ");
-      Serial.println(currentTicksM2);
-      Serial.print("FinalTicksM1: ");
-      Serial.println(currentTicksM1);
  
 	setTicks(0, 0);
 	setSqWidth(0, 0);
@@ -270,24 +251,7 @@ void moveForwardTwoGridBeta() {
   breakTicks = 0;
   movementDone = false;
 
-  tuneEntryTime = millis();
-  while(1){
-    
-    noInterrupts();
-    currentTicksM1 = M1ticks;
-    currentTicksM2 = M2ticks;
-    interrupts();
-    
-    if((tuneEntryTime - millis()) > 5000){
-        break;
-      }
-    
-    }
-
-    Serial.print("FinalTicksM2: ");
-      Serial.println(currentTicksM2);
-      Serial.print("FinalTicksM1: ");
-      Serial.println(currentTicksM1);
+  
  
   setTicks(0, 0);
   setSqWidth(0, 0);
