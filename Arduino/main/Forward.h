@@ -55,11 +55,12 @@ void moveForwardBeta(int rpm, double distance) {
     }
 
   }//end of while
-
+/*
   Serial.print("M1 final RPM: ");
   Serial.println(sqWidthToRPM(squareWidth_M1));
   Serial.print("M2 final RPM: ");
   Serial.println(sqWidthToRPM(squareWidth_M2));
+  */
 
   disableInterrupt(e1a);
   disableInterrupt(e2b);
@@ -90,8 +91,6 @@ void moveForwardOneGridBeta() {
 	MotorPID M2 = {m2setSpeed , 0, 0, 0.400}; //
 	enableInterrupt( e1a, dummy, RISING);
 	enableInterrupt( e2b, dummy, RISING);
-	Serial.print("Amount: ");
-  Serial.println(breakTicks);
 	md.setSpeeds(m1setSpeed, m2setSpeed);
 	
 	setTicks(0,0);
@@ -145,13 +144,14 @@ void moveForwardOneGridBeta() {
 
       
           
-
+/*
       Serial.print("breakTicksM2: ");
       Serial.println(M2ticks);
       Serial.print("breakTicksM1: ");
       Serial.println(M1ticks);
       
 	  //Serial.println(M2.prevTuneSpeed);
+	  */
 
 	disableInterrupt(e1a);
 	disableInterrupt(e2b);
@@ -183,8 +183,6 @@ void moveForwardTwoGridBeta() {
   MotorPID M2 = {m2setSpeed , 0, 0, 0.40}; //
   enableInterrupt( e1a, dummy, RISING);
   enableInterrupt( e2b, dummy, RISING);
-  Serial.print("Amount: ");
-  Serial.println(breakTicks);
   md.setSpeeds(m1setSpeed, m2setSpeed);
   
   setTicks(0,0);
@@ -238,11 +236,12 @@ void moveForwardTwoGridBeta() {
 
       
           
-
+/*
       Serial.print("breakTicksM2: ");
       Serial.println(M2ticks);
       Serial.print("breakTicksM1: ");
       Serial.println(M1ticks);
+	  */
       
     //Serial.println(M2.prevTuneSpeed);
 
