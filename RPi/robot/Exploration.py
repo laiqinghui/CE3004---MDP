@@ -293,6 +293,16 @@ class Exploration:
             # if right is not free, clear ladder flag and continue
             if not (self.checkFree([1, 2, 3, 0], self.robot.center)):
                 self.ladder[0] = not self.ladder[0]
+                if front:
+                    return self.moveforward(move, front)
+                elif self.checkFree([3, 0, 1, 2], self.robot.center):
+                    self.robot.moveBot(LEFT)
+                    move.append(LEFT)
+                    front = self.frontFree()
+                    return self.moveforward(move,front)
+                else:
+                    self.robot.moveBot(LEFT)
+                    move.extend(('A'))
             else:
                 # else move forward
                 countsteps = 0
@@ -342,11 +352,11 @@ class Exploration:
                     self.robot.moveBot(FORWARD)
                 move.extend([FORWARD]*front)
         elif laddersteps:
-            # if laddersteps < 0:
-            #     for i in range(front):
-            #         self.robot.moveBot(FORWARD)
-            #     move.extend([FORWARD]*front)
-            #     return move 
+            if laddersteps < 0:
+                for i in range(front):
+                    self.robot.moveBot(FORWARD)
+                move.extend([FORWARD]*front)
+                return move 
 
             countsteps = 0
             for i in range(laddersteps):
@@ -496,16 +506,16 @@ class Exploration:
         elif walldistances == [0,1,2]:
             return 2
         elif walldistances[-1] == 0:
-            # if ahead:
-            #     explored = self.checkExplored(ahead)
-            #     if explored:
-            #         return -1
+            if ahead:
+                explored = self.checkExplored(ahead)
+                if explored:
+                    return -1
             return 2
         elif walldistances[1] == 0:
-            # if ahead:
-            #     explored = self.checkExplored(ahead)
-            #     if explored:
-            #         return -1
+            if ahead:
+                explored = self.checkExplored(ahead)
+                if explored:
+                    return -1
             return 2
         else:
             return False
