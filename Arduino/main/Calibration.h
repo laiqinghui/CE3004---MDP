@@ -182,7 +182,6 @@ void straighten() {
 void straightenTune() {
 	int min = 10;
   getFrontCalibrationReading(false);
-  Serial.println("Enter");
   if (frontRightReading > frontLeftReading)
   {
     while (frontRightReading > frontLeftReading)

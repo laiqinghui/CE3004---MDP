@@ -126,10 +126,12 @@ void turnPID(int dir, int degree){
     disableInterrupt(e2b);
     breakTicks = 0;
     movementDone = false;
-	  Serial.print("breakTicksM2: ");
+	/*
+	Serial.print("breakTicksM2: ");
     Serial.println(M2ticks);
     Serial.print("breakTicksM1: ");
     Serial.println(M1ticks);
+	*/
 	
     setTicks(0,0);
     setSqWidth(0,0);

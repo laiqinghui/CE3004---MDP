@@ -5,14 +5,14 @@
 DualVNH5019MotorShield::DualVNH5019MotorShield()
 {
   //Pin map
-  _INA1 = 2;
-  _INB1 = 4;
-  _EN1DIAG1 = 6;
-  _CS1 = A0; 
-  _INA2 = 7;
-  _INB2 = 8;
-  _EN2DIAG2 = 12;
-  _CS2 = A1;
+  //_INA1 = 2;
+  //_INB1 = 4;
+  //_EN1DIAG1 = 6;
+  //_CS1 = A0; 
+  //_INA2 = 7;
+  //_INB2 = 8;
+  //_EN2DIAG2 = 12;
+  //_CS2 = A1;
 }
 
 DualVNH5019MotorShield::DualVNH5019MotorShield(unsigned char INA1, unsigned char INB1, unsigned char EN1DIAG1, unsigned char CS1, 
@@ -20,14 +20,14 @@ DualVNH5019MotorShield::DualVNH5019MotorShield(unsigned char INA1, unsigned char
 {
   //Pin map
   //PWM1 and PWM2 cannot be remapped because the library assumes PWM is on timer1
-  _INA1 = INA1;
-  _INB1 = INB1;
-  _EN1DIAG1 = EN1DIAG1;
-  _CS1 = CS1;
-  _INA2 = INA2;
-  _INB2 = INB2;
-  _EN2DIAG2 = EN2DIAG2;
-  _CS2 = CS2;
+  //_INA1 = INA1;
+  //_INB1 = INB1;
+  //_EN1DIAG1 = EN1DIAG1;
+  //_CS1 = CS1;
+  //_INA2 = INA2;
+  //_INB2 = INB2;
+  //_EN2DIAG2 = EN2DIAG2;
+  //_CS2 = CS2;
 }
 
 // Public Methods //////////////////////////////////////////////////////////////
@@ -243,16 +243,26 @@ void DualVNH5019MotorShield::setM2Brake(){
 // Brake motor 1 and 2, brake is a number between 0 and 400
 void DualVNH5019MotorShield::setBrakes(){	
   noInterrupts();
+
+  //Set both motors to reverse
+  
+  PORTD = PORTD & B01111011; //Set to low
+  PORTD = PORTD | B00010000; //Set to high
+  PORTB = PORTB | B00000001; //Set to high  
+  
+  OCR1A = 400;
+  OCR1B = 400;
+  
+  //Set both to brake
   PORTB = PORTB & B11111110;
   PORTD = PORTD & B01101011;
-  //PORTD = PORTD | B10010100;
-  //PORTB = PORTB | B00000001;
-	
+  
   OCR1A = 400;
   OCR1B = 400;
   interrupts();
 }
 
+/*
 // Return error status for motor 1 
 unsigned char DualVNH5019MotorShield::getM1Fault()
 {
@@ -264,3 +274,4 @@ unsigned char DualVNH5019MotorShield::getM2Fault()
 {
   return !digitalRead(_EN2DIAG2);
 }
+*/

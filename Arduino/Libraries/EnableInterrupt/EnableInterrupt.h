@@ -11,7 +11,16 @@ volatile unsigned long breakTicks = 0;
 volatile int numberOfBrakes = 0;
 
 void setBrakes(){	
-  //noInterrupts();
+  noInterrupts();
+  //Set both motors to reverse
+  
+  PORTD = PORTD & B01111011; //Set to low
+  PORTD = PORTD | B00010000; //Set to high
+  PORTB = PORTB | B00000001; //Set to high  
+  
+  OCR1A = 400;
+  OCR1B = 400;
+  
   PORTD = PORTD & B01101011;
   PORTB = PORTB & B11111110;
   
@@ -19,7 +28,7 @@ void setBrakes(){
   OCR1A = 400;
   OCR1B = 400;
   
-  //interrupts();
+  interrupts();
   
 }
 
