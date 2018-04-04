@@ -132,9 +132,13 @@ void setup() {
 
   PWM_Mode_Setup();
 
+<<<<<<< HEAD
 
 
 
+=======
+  //calibrateReading();
+>>>>>>> 5feafb74c51053e01ab5145a916f3e06650937cc
 }
 
 void loop(){
@@ -147,4 +151,19 @@ void loop(){
   }
 }
 
-
+void calibrateReading()
+{
+	  int listOfReadings1[20];
+  int listOfReadings2[20];
+  for(int a = 0; a<20; a++)
+  {
+	listOfReadings1[a] = getIRSensorReading()[3];
+	listOfReadings2[a] = getIRSensorReading()[5];
+	delay(10);
+  }
+  Serial.println("Set");
+  Serial.println("Reading 1");
+  Serial.println(sortAndAverage(listOfReadings1, 20, 3));
+  Serial.println("Reading 2");
+  Serial.println(sortAndAverage(listOfReadings2, 20, 3));
+}

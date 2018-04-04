@@ -75,32 +75,32 @@ char* getSensorReadingInCM() {
   }
 
   //------------------------------------RIGHT -----------------------------------------------------
-  //PS3 y = 5413x + 1.0261
+  //PS3 y = 5776.6x - 0.5087
   //Limit is 50cm
   double rightValue = sensorValues[3];
-  if (rightValue < 100)
+  if (rightValue < 105)
   {
     sensorsValuesArray[3] = -1;
   }
   else
   {
-    sensorsValuesArray[3] = (5413 / rightValue) + 1.0261;
+    sensorsValuesArray[3] = (5776.6 / rightValue) -0.5087;
   }
 	
     //------------------------------------CENTER RIGHT-----------------------------------------------------
-  //PS5 y = 6166.7x - 2.2878 //Minus 1 for offset
-  //Limit is 46cm
+  //PS5 y = 6594.9x - 3.908
+  //Limit is 50cm
   double centerRightValue = sensorValues[5];
-  if (centerRightValue < 128)
+  if (centerRightValue < 120)
   {
     sensorsValuesArray[4] = -1;
   }
   else
   {
-    sensorsValuesArray[4] = (6166.7 / centerRightValue) - 3.2878;
+    sensorsValuesArray[4] = (6594.9 / centerRightValue) - 3.908;
   }
   
-    if(moveForwardNumber == 2)
+  if(moveForwardNumber == 2)
   {
     sideWall[2] = sideWall[0];
     sideWall[1] = 0;
@@ -117,44 +117,42 @@ char* getSensorReadingInCM() {
   }
   
     //------------------------------------LEFT-----------------------------------------------------
-  //PS1 y = 12046x + 0.1764
-  //Limit is 60cm
+  //PS1 y = 11989x + 0.0633
+  //Limit is 84cm
   double leftValue = sensorValues[2];
-  if (leftValue < 155)
+  if (leftValue < 140)
   {
     sensorsValuesArray[5] = -1;
+  }
+  else if(leftValue > 491)
+  {
+	  sensorsValuesArray[5] = 19;
   }
   else
   {
-    sensorsValuesArray[5] = (12046 / leftValue) + 0.1764;
+    sensorsValuesArray[5] = (11989 / leftValue) + 0.0633;
   }
-  if (sensorsValuesArray[5] <= 23)
-  {
-    sensorsValuesArray[5] = sensorsValuesArray[5] - 1;
-  }
-  if(sensorsValuesArray[5] > 71)
-    sensorsValuesArray[5] = -1;
 
   //------------------------------------CENTER LEFT-----------------------------------------------------
-  //PS6  y = 11787x + 1.6425 for between 24-87cm
-  //Limit is 87cm
+  //PS6  y = 12041x + 1.4311
+  //Limit is 80cm
   double centerLeftValue = sensorValues[4];
-  if (centerLeftValue < 140)
+  if (centerLeftValue < 150)
   {
     sensorsValuesArray[6] = -1;
+  }
+  else if(centerLeftValue > 489)
+  {
+	  sensorsValuesArray[6] = 18;
   }
   else
   {
-    sensorsValuesArray[6] = (11787 / centerLeftValue) + 1.6425;
-  }
-  if(sensorsValuesArray[6] > 85)
-    sensorsValuesArray[6] = -1;
-  if(sensorsValuesArray[6] < 27)
-  {
-    sensorsValuesArray[6] = sensorsValuesArray[6] - 4;
+    sensorsValuesArray[6] = (12041 / centerLeftValue) + 1.4311;
   }
 
-     //Keep track of side wall
+  
+  
+  //---------------------------Keep track of side wall------------------------------------
 	 if(moveForwardNumber == 1)
 	 {
 		sideWall[2] = sideWall[1];
@@ -231,13 +229,13 @@ double* getIRSensorReading()
   sensorValues[4] = 0;
   sensorValues[5] = 0;
   
-  double numberOfTimes = 5;
-  int size = 30;
+  double numberOfTimes = 4;
+  int size = 35;
   int listOfReadingsFL[size];
   int listOfReadingsFR[size];
-  int listOfReadingsL[size];
+  int listOfReadingsL[size*2];
   int listOfReadingsR[size];
-  int listOfReadingsCL[size];
+  int listOfReadingsCL[size*2];
   int listOfReadingsCR[size];
   
   for(int b = 0; b<numberOfTimes; b++)
@@ -253,13 +251,19 @@ double* getIRSensorReading()
       listOfReadingsCR[a] = analogRead(centerRight);
       delay(1);
     }
+    for (int a = 0; a < size; a++)
+    {
+      listOfReadingsL[size+a] = analogRead(left);
+      listOfReadingsCL[size+a] = analogRead(centerLeft);
+      delay(1);
+    }
 
     //Get median averaged from list
     sensorValues[0] = sensorValues[0] + sortAndAverage(listOfReadingsFL, size, 3);
     sensorValues[1] = sensorValues[1] + sortAndAverage(listOfReadingsFR, size, 3);
-    sensorValues[2] = sensorValues[2] + sortAndAverage(listOfReadingsL, size, 3);
+    sensorValues[2] = sensorValues[2] + sortAndAverage(listOfReadingsL, size*2, 3);
     sensorValues[3] = sensorValues[3] + sortAndAverage(listOfReadingsR, size, 3);
-    sensorValues[4] = sensorValues[4] + sortAndAverage(listOfReadingsCL, size, 3);
+    sensorValues[4] = sensorValues[4] + sortAndAverage(listOfReadingsCL, size*2, 3);
     sensorValues[5] = sensorValues[5] + sortAndAverage(listOfReadingsCR, size, 3);
   }
   sensorValues[0] = sensorValues[0]/numberOfTimes;
