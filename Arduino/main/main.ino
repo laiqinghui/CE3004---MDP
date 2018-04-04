@@ -132,6 +132,10 @@ void setup() {
 
   PWM_Mode_Setup();
 
+  int start = millis(); 
+  getSensorReadingInCM();
+
+
 }
 
 void loop(){

@@ -5,7 +5,7 @@ void turnPID(int dir, int degree);
 
 
 double offsetRight = 0.920; //0.919
-double offsetLeft = 0.915; //0.9165
+double offsetLeft = 0.90; //0.9165
 void turnPID(int dir, int degree){
 
     double cir = 3.14159265 * 17.6; //circumference of circle drawn when turning in cm, current diameter used is 17.6

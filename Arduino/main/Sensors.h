@@ -11,6 +11,8 @@
 double* getIRSensorReading();
 char* getSensorReadingInCM();
 double sortAndAverage(int* listOfReadings, int size, int amount);
+int partition(int* list, int low, int high);
+void quickSort(int* list, int left, int right);
 
 //These arrays need to be outside if not the values will be weird
 double sensorValues[6];
@@ -174,24 +176,14 @@ char* getSensorReadingInCM() {
 double sortAndAverage(int* listOfReadings, int size, int amount)
 {
   //Sort Reading
-  for (int i = 0; i < size; i++)
-  {
-    //Find max
-    int max = listOfReadings[0];
-    int maxLocation = 0;
-    for (int j = 0; j < size - i; j++)
-    {
-      if (max < listOfReadings[j])
-      {
-        max = listOfReadings[j];
-        maxLocation = j;
-      }
-    }
-
-    //Swap max with last position
-    listOfReadings[maxLocation] = listOfReadings[size - 1 - i];
-    listOfReadings[size - 1 - i] = max;
+  quickSort(listOfReadings, 0, size-1);
+  /*
+  for (int i = 0; i < size ; i++) {
+    Serial.print((int)listOfReadings[i]);
+    Serial.print(", ");
   }
+  Serial.println();
+  */
 
   int lowest = (size / 2) - (amount / 2);
   int highest = (size / 2) + (amount - (amount / 2));
@@ -272,6 +264,60 @@ boolean canSideCalibrate()
   {
     return false;
   }
+}
+
+int partition(int* list, int low, int high){
+
+  int temp;
+  int pivot;
+  int pivot_pos;
+  int last_small;
+  int i;
+  pivot_pos = (low + high)/2;
+  last_small = low;
+  
+  
+  pivot = list[pivot_pos];
+  list[pivot_pos] = list[low];
+  list[low] = pivot;
+
+  for(i = low + 1; i <= high; i++){
+  
+    if(list[i] < pivot){
+    
+      temp = list[i];
+      list[i] = list[++last_small];
+      list[last_small] = temp; 
+      
+    }
+    
+  
+  }
+  
+  temp = list[low];
+  list[low] = list[last_small];
+  list[last_small] = temp;
+  return last_small;
+
+
+}
+
+void quickSort(int* list, int left, int right){
+
+  int pivot_pos;
+  
+  if(left > right){
+    return;
+  }
+  
+  pivot_pos = partition(list, left, right);
+  //printf("%d ", pivot_pos);
+
+  quickSort(list, left, pivot_pos - 1);
+  quickSort(list, pivot_pos + 1, right);
+
+
+
 }
 
 

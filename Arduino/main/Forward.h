@@ -41,16 +41,19 @@ void moveForwardBeta(int rpm, double distance) {
 
     tuneEntryTime = micros();
     interval = tuneEntryTime - tuneExitTime;
+    
     if (interval >= 5000)
     {
+      
       //Gradual breaking
-      if(currentTicksM1 > 0.8*distanceTicks){
-		  tuneMotors(rpm*0.5, &M1pid, &M2pid);
-	  }
-	  else
-	  {
-		  tuneMotors(rpm, &M1pid, &M2pid);
-	  }
+      if(currentTicksM1 > 0.6*distanceTicks){
+  		  tuneMotors(rpm*0.7, &M1pid, &M2pid);
+        
+  	  }
+  	  else
+  	  {
+  		  tuneMotors(rpm, &M1pid, &M2pid);
+  	  }
       tuneExitTime = micros();
     }
 
@@ -79,14 +82,14 @@ void moveForwardOneGridBeta() {
 
   
 	int m1setSpeed = 250;//SETPOINT TARGET //250
-	int m2setSpeed = 365; //265
+	int m2setSpeed = 265; //265
 	int tuneSpeedM2 = 0;
   int moveSet = 0;
   
   
 	//Check using right side sensor if need to calibrate
 	calibrateBeforeMoveForward();
-	breakTicks = 0.95 * 9.5 * ticksPerCM;//0.95
+	breakTicks = 0.99 * 9.5 * ticksPerCM;//0.95
 	MotorPID M2 = {m2setSpeed , 0, 0, 0.400}; //
 	enableInterrupt( e1a, dummy, RISING);
 	enableInterrupt( e2b, dummy, RISING);
