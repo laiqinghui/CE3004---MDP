@@ -78,17 +78,18 @@ int getPWMReading(){
 
 //Use motor 1 input A, digital pin 2 as trigger for sensor reading
 //Use motor 1 E1B to read sensor output which is digital pin 5
-unsigned int getUltraSound2Reading(){
+int getUltraSound2Reading(){
   int count = 0;
-  int DistanceMeasured = 0;
-  while (DistanceMeasured == 0 || DistanceMeasured >= 10200)
+  int DistanceMeasured = -1;
+  while (DistanceMeasured == -1 || DistanceMeasured >= 10200)
   {
     DistanceMeasured = getPWMReading();
-    //Serial.println(count);
-	count++;
-	if(count == 5)
-    DistanceMeasured = -1;
-		break;
-  }
-  return DistanceMeasured;         // every 50us low level stands for 1cm
+
+  	count++;
+  	if(count == 5){
+      DistanceMeasured = -1;
+  		break;
+  	}
+   }
+    return DistanceMeasured;         // every 50us low level stands for 1cm
 }

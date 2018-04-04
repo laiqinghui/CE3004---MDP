@@ -49,17 +49,8 @@ char* getSensorReadingInCM() {
   }
 
   //------------------------------------UtraSound-----------------------------------------------------
-  int count = 0;
-  sensorsValuesArray[1] = -1;
-  while(sensorsValuesArray[1] == -1)
-  {
-  sensorsValuesArray[1] = (char)getUltraSound2Reading();        //getUltraSoundDistance(); //Center
-  if(count > 1)//20
-  {
-    break;
-  }
-  count++;
-  }
+
+  sensorsValuesArray[1] = (char)getUltraSound2Reading();//Center
 
   //------------------------------------FRONT RIGHT-----------------------------------------------------
   //PS2 y = 5894.1x - 2.0988
