@@ -22,7 +22,7 @@ void moveForwardBeta(int rpm, double distance) {
   int m2setSpeed = 290;
 
   //Check using right side sensor if need to calibrate
-  calibrateBeforeMoveForward();
+  //calibrateBeforeMoveForward();
 
   MotorPID M1pid = {m1setSpeed, 0, 0, 0.109};//0.1=>50
   MotorPID M2pid = {m2setSpeed, 0, 0, 0.1};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms //was 0.125
@@ -85,7 +85,7 @@ void moveForwardOneGridBeta() {
   
   
 	//Check using right side sensor if need to calibrate
-	calibrateBeforeMoveForward();
+	//calibrateBeforeMoveForward();
 	breakTicks = 0.99 * 9.5 * ticksPerCM;//0.95
 	MotorPID M2 = {m2setSpeed , 0, 0, 0.400}; //
 	enableInterrupt( e1a, dummy, RISING);
@@ -159,7 +159,7 @@ void moveForwardTwoGridBeta() {
   
   
   //Check using right side sensor if need to calibrate
-  calibrateBeforeMoveForward();
+  //calibrateBeforeMoveForward();
   breakTicks = 1 * 19 * ticksPerCM;//0.95
   MotorPID M2 = {m2setSpeed , 0, 0, 0.40}; //
   enableInterrupt( e1a, dummy, RISING);

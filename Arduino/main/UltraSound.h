@@ -86,7 +86,8 @@ unsigned int getUltraSound2Reading(){
     DistanceMeasured = getPWMReading();
     //Serial.println(count);
 	count++;
-	if(count == 20)
+	if(count == 5)
+    DistanceMeasured = -1;
 		break;
   }
   return DistanceMeasured;         // every 50us low level stands for 1cm

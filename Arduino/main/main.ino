@@ -20,13 +20,19 @@ void processInst() {
     {
       //-----------------Straight----------------------
       case 'W':   moveCount = instBuff[index + 1] - 48;
-            if (moveCount == 1)
+            if (moveCount == 1){
               moveForwardOneGridBeta();
-            else if(moveCount == 2) 
+              moveForwardNumber = moveCount;
+            }  
+            else if(moveCount == 2){ 
               moveForwardTwoGridBeta();
-            else
+              moveForwardNumber = moveCount;
+            }  
+            else{
               moveForwardBeta(110, 9.7 * moveCount);
-            moveForwardNumber = moveCount;
+              moveForwardNumber = moveCount;
+            }  
+            
             //tooCloseToWall();
             break;
       
@@ -132,13 +138,7 @@ void setup() {
 
   PWM_Mode_Setup();
 
-<<<<<<< HEAD
 
-
-
-=======
-  //calibrateReading();
->>>>>>> 5feafb74c51053e01ab5145a916f3e06650937cc
 }
 
 void loop(){
@@ -153,7 +153,7 @@ void loop(){
 
 void calibrateReading()
 {
-	  int listOfReadings1[20];
+	int listOfReadings1[20];
   int listOfReadings2[20];
   for(int a = 0; a<20; a++)
   {
@@ -161,9 +161,11 @@ void calibrateReading()
 	listOfReadings2[a] = getIRSensorReading()[5];
 	delay(10);
   }
+  /*
   Serial.println("Set");
   Serial.println("Reading 1");
   Serial.println(sortAndAverage(listOfReadings1, 20, 3));
   Serial.println("Reading 2");
   Serial.println(sortAndAverage(listOfReadings2, 20, 3));
+  */
 }

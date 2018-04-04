@@ -23,7 +23,7 @@ void printArray(char arr[], int len) {
 
 void sendToPi() {
   digitalWrite(PI_PIN, HIGH);
-  delay(80);
+  delay(200);
   digitalWrite(PI_PIN, LOW);
   Serial.write(outBuffer);
   //Serial.println(outBuffer); 
