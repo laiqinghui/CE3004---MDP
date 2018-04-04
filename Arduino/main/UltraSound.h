@@ -5,8 +5,8 @@
 // #       Pin 6 COMP/TRIG (URM V3.2) -> Pin 5 (Arduino)
 // #
 unsigned int Distance = 0;
-uint8_t EnPwmCmd[4] = {0x44, 0x02, 0xbb, 0x01}; // distance measure command through PWM
-uint8_t DMcmd[4] = {0x22, 0x00, 0x00, 0x22}; //distance measure command
+//uint8_t EnPwmCmd[4] = {0x44, 0x02, 0xbb, 0x01}; // distance measure command through PWM
+//uint8_t DMcmd[4] = {0x22, 0x00, 0x00, 0x22}; //distance measure command
 
 void PWM_Mode_Setup()
 {
@@ -15,17 +15,17 @@ void PWM_Mode_Setup()
 
   pinMode(5, INPUT);                      // Sending Enable PWM mode command
 
-  for (int i = 0; i < 4; i++)
-  {
+  //for (int i = 0; i < 4; i++)
+  //{
     //Serial.write(EnPwmCmd[i]);
-  }
+  //}
 }
 
 void Serial_Mode_Setup()
 {
   for (int i = 0; i < 4; i++)
   {
-    Serial.write(DMcmd[i]);
+    //Serial.write(DMcmd[i]);
   }
 }
 
@@ -80,13 +80,14 @@ int getPWMReading(){
 //Use motor 1 E1B to read sensor output which is digital pin 5
 unsigned int getUltraSound2Reading(){
   int count = 0;
-  int distanceMeasured = 0;
-  while (distanceMeasured == 0 || distanceMeasured >= 10200)
+  int DistanceMeasured = 0;
+  while (DistanceMeasured == 0 || DistanceMeasured >= 10200)
   {
-    distanceMeasured = getPWMReading();
+    DistanceMeasured = getPWMReading();
+    //Serial.println(count);
 	count++;
 	if(count == 20)
 		break;
   }
-  return distanceMeasured;         // every 50us low level stands for 1cm
+  return DistanceMeasured;         // every 50us low level stands for 1cm
 }

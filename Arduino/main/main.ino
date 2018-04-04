@@ -27,7 +27,7 @@ void processInst() {
             else
               moveForwardBeta(110, 9.7 * moveCount);
             moveForwardNumber = moveCount;
-            tooCloseToWall();
+            //tooCloseToWall();
             break;
       
       //---------------Turn Left-----------------------     
@@ -132,15 +132,12 @@ void setup() {
 
   PWM_Mode_Setup();
 
-  int start = millis(); 
-  getSensorReadingInCM();
+
 
 
 }
 
 void loop(){
-	//Serial.println(getIRSensorReading()[0]);
-	//delay(300);
   if (dataExist()) {
     processInst();
   }
