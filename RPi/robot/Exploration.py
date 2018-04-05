@@ -14,6 +14,9 @@ from Constants import NORTH, SOUTH, EAST, WEST, FORWARD, LEFT, RIGHT, START, MAX
 from FastestPath import FastestPath
 
 
+CALIBRATE_N_STEPS = 1
+
+
 class Exploration:
     """Implementation of the Right-Wall hugging algorithm for a maze solving robot.
 
@@ -278,28 +281,35 @@ class Exploration:
         """Decide which direction is free to command robot the next action."""
         move = []
         front = self.frontFree()
+        num_calibration_move = 0
 
+        logging.info("newBaseStep: " + str(self.moveNumber // CALIBRATE_N_STEPS) + ", baseStep: " + str(self.baseStep))
         if not (self.sim):
             calibrate_front = self.robot.can_calibrate_front()
             calibrate_right = self.robot.can_calibrate_right()
             if self.robot.is_corner():
-                move.append(']')
+                if (self.moveNumber // CALIBRATE_N_STEPS) > self.baseStep:
+                    move.append(']')
+                    self.baseStep = (self.moveNumber // CALIBRATE_N_STEPS)
             elif (calibrate_front[0]):
                 move.append(calibrate_front[1])
             elif (calibrate_right[0]):
                 move.append(calibrate_right[1])
-        
+
+        num_calibration_move = len(move)
+
         if self.ladder[0]:
             # if right is not free, clear ladder flag and continue
             if not (self.checkFree([1, 2, 3, 0], self.robot.center)):
                 self.ladder[0] = not self.ladder[0]
                 if front:
-                    return self.moveforward(move, front)
+                    move = self.moveforward(move, front)
                 elif self.checkFree([3, 0, 1, 2], self.robot.center):
                     self.robot.moveBot(LEFT)
                     move.append(LEFT)
                     front = self.frontFree()
-                    return self.moveforward(move,front)
+
+                    move = self.moveforward(move, front)
                 else:
                     self.robot.moveBot(LEFT)
                     move.extend(('A'))
@@ -312,30 +322,31 @@ class Exploration:
                     front = self.frontFree()
                     if front:
                         self.robot.moveBot(FORWARD)
-                        countsteps +=1
-                move.extend([FORWARD]*countsteps)
+                        countsteps += 1
+                move.extend([FORWARD] * countsteps)
                 self.ladder[0] = not self.ladder[0]
-            return move
 
         # multi step
         elif (self.checkFree([1, 2, 3, 0], self.robot.center)):
             self.robot.moveBot(RIGHT)
             move.append(RIGHT)
             front = self.frontFree()
-            return self.moveforward(move, front)
+            move = self.moveforward(move, front)
         elif (front):
-            return self.moveforward(move, front)
+            move = self.moveforward(move, front)
         elif (self.checkFree([3, 0, 1, 2], self.robot.center)):
             self.robot.moveBot(LEFT)
             move.append(LEFT)
             front = self.frontFree()
-            return self.moveforward(move,front)
+
+            move = self.moveforward(move, front)
         else:
             self.robot.moveBot(LEFT)
             move.extend(('A'))
-        
+
+        self.moveNumber += (len(move) - num_calibration_move)
         return move
-    
+
     def moveforward(self, move, front):
         laddersteps = self.checkRightLadder(self.robot.center)
         if self.checkDeadZone(self.robot.center):
@@ -356,7 +367,7 @@ class Exploration:
                 for i in range(front):
                     self.robot.moveBot(FORWARD)
                 move.extend([FORWARD]*front)
-                return move 
+                return move
 
             countsteps = 0
             for i in range(laddersteps):
@@ -364,7 +375,7 @@ class Exploration:
                 if front:
                     self.robot.moveBot(FORWARD)
                     countsteps +=1
-            
+
             move.extend([FORWARD]*countsteps)
             if countsteps == laddersteps:
                 self.ladder = [True, laddersteps]
@@ -454,7 +465,7 @@ class Exploration:
             for col in [-1,0,1]:
                 for row in range(2,5):
                     if robotrow+row >= 19:
-                        walldistances[count] = row-2                        
+                        walldistances[count] = row-2
                         break
                     if self.currentMap[robotrow+row][robotcol+col] == 0:
                         return False
@@ -462,7 +473,7 @@ class Exploration:
                         walldistances[count] = row-2
                         break
                 count+=1
-                
+
         elif self.robot.direction == SOUTH:
             for row in [-1,0,1]:
                 for col in range(2,5):
