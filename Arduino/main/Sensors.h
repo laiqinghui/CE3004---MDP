@@ -11,13 +11,11 @@
 double* getIRSensorReading();
 char* getSensorReadingInCM();
 double sortAndAverage(int* listOfReadings, int size, int amount);
-int partition(int* list, int low, int high);
-void quickSort(int* list, int left, int right);
 
 //These arrays need to be outside if not the values will be weird
 double sensorValues[6];
 char sensorsValuesArray[7];
-int sideWall[3] = {1, 1, 0};
+int sideWall[3] = {0, 1, 1};
 int moveForwardNumber = 0;
 
 void resetSideWall() {
@@ -77,7 +75,7 @@ char* getSensorReadingInCM() {
   {
     sensorsValuesArray[3] = (5776.6 / rightValue) -0.5087;
   }
-	
+  
     //------------------------------------CENTER RIGHT-----------------------------------------------------
   //PS5 y = 6594.9x - 3.908
   //Limit is 50cm
@@ -117,7 +115,7 @@ char* getSensorReadingInCM() {
   }
   else if(leftValue > 491)
   {
-	  sensorsValuesArray[5] = 19;
+    sensorsValuesArray[5] = 19;
   }
   else
   {
@@ -134,7 +132,7 @@ char* getSensorReadingInCM() {
   }
   else if(centerLeftValue > 489)
   {
-	  sensorsValuesArray[6] = 18;
+    sensorsValuesArray[6] = 18;
   }
   else
   {
@@ -144,43 +142,43 @@ char* getSensorReadingInCM() {
   
   
   //---------------------------Keep track of side wall------------------------------------
-	 if(moveForwardNumber == 1)
-	 {
-		sideWall[2] = sideWall[1];
-		sideWall[1] = sideWall[0];
-		sideWall[0] = 0;
-		if (int(sensorsValuesArray[3]) < 14 && int(sensorsValuesArray[3]) > 0)
-		{
-			sideWall[0] = 1;
-		}
-	 }
-	 else if(moveForwardNumber == 2)
- 	 {
-		sideWall[2] = sideWall[0];
-		sideWall[1] = 0;
-		sideWall[0] = 0;
-		if (int(sensorsValuesArray[3]) < 14 && int(sensorsValuesArray[3]) > 0)
-		{
-			sideWall[0] = 1;
-		}
-		if (int(sensorsValuesArray[4]) < 15 && int(sensorsValuesArray[4]) > 0)
-		{
-			sideWall[1] = 1;
-		}
-	 }
-	 else if(moveForwardNumber > 2)
-	 {
-		 resetSideWall();
-		if (int(sensorsValuesArray[3]) < 14 && int(sensorsValuesArray[3]) > 0)
-		{
-			sideWall[0] = 1;
-		}
-		if (int(sensorsValuesArray[4]) < 15 && int(sensorsValuesArray[4]) > 0)
-		{
-			sideWall[1] = 1;
-		}
-		 
-	 }
+   if(moveForwardNumber == 1)
+   {
+    sideWall[2] = sideWall[1];
+    sideWall[1] = sideWall[0];
+    sideWall[0] = 0;
+    if (int(sensorsValuesArray[3]) < 14 && int(sensorsValuesArray[3]) > 0)
+    {
+      sideWall[0] = 1;
+    }
+   }
+   else if(moveForwardNumber == 2)
+   {
+    sideWall[2] = sideWall[0];
+    sideWall[1] = 0;
+    sideWall[0] = 0;
+    if (int(sensorsValuesArray[3]) < 14 && int(sensorsValuesArray[3]) > 0)
+    {
+      sideWall[0] = 1;
+    }
+    if (int(sensorsValuesArray[4]) < 15 && int(sensorsValuesArray[4]) > 0)
+    {
+      sideWall[1] = 1;
+    }
+   }
+   else if(moveForwardNumber > 2)
+   {
+     resetSideWall();
+    if (int(sensorsValuesArray[3]) < 14 && int(sensorsValuesArray[3]) > 0)
+    {
+      sideWall[0] = 1;
+    }
+    if (int(sensorsValuesArray[4]) < 15 && int(sensorsValuesArray[4]) > 0)
+    {
+      sideWall[1] = 1;
+    }
+     
+   }
 
   return sensorsValuesArray;
 }
@@ -188,14 +186,24 @@ char* getSensorReadingInCM() {
 double sortAndAverage(int* listOfReadings, int size, int amount)
 {
   //Sort Reading
-  quickSort(listOfReadings, 0, size-1);
-  /*
-  for (int i = 0; i < size ; i++) {
-    Serial.print((int)listOfReadings[i]);
-    Serial.print(", ");
+  for (int i = 0; i < size; i++)
+  {
+    //Find max
+    int max = listOfReadings[0];
+    int maxLocation = 0;
+    for (int j = 0; j < size - i; j++)
+    {
+      if (max < listOfReadings[j])
+      {
+        max = listOfReadings[j];
+        maxLocation = j;
+      }
+    }
+
+    //Swap max with last position
+    listOfReadings[maxLocation] = listOfReadings[size - 1 - i];
+    listOfReadings[size - 1 - i] = max;
   }
-  Serial.println();
-  */
 
   int lowest = (size / 2) - (amount / 2);
   int highest = (size / 2) + (amount - (amount / 2));
@@ -206,7 +214,6 @@ double sortAndAverage(int* listOfReadings, int size, int amount)
     total = total + listOfReadings[a];
   }
   return total / (highest-lowest);
-
 }
 
 
@@ -277,60 +284,6 @@ boolean canSideCalibrate()
   {
     return false;
   }
-}
-
-int partition(int* list, int low, int high){
-
-  int temp;
-  int pivot;
-  int pivot_pos;
-  int last_small;
-  int i;
-  pivot_pos = (low + high)/2;
-  last_small = low;
-  
-  
-  pivot = list[pivot_pos];
-  list[pivot_pos] = list[low];
-  list[low] = pivot;
-
-  for(i = low + 1; i <= high; i++){
-  
-    if(list[i] < pivot){
-    
-      temp = list[i];
-      list[i] = list[++last_small];
-      list[last_small] = temp; 
-      
-    }
-    
-  
-  }
-  
-  temp = list[low];
-  list[low] = list[last_small];
-  list[last_small] = temp;
-  return last_small;
-
-
-}
-
-void quickSort(int* list, int left, int right){
-
-  int pivot_pos;
-  
-  if(left > right){
-    return;
-  }
-  
-  pivot_pos = partition(list, left, right);
-  //printf("%d ", pivot_pos);
-
-  quickSort(list, left, pivot_pos - 1);
-  quickSort(list, pivot_pos + 1, right);
-
-
-
 }
 
 

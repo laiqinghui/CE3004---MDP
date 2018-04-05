@@ -76,35 +76,6 @@ double getRightSensorReading(){
 	rightSideReading = sortAndAverage(listOfReadingsRight, size, 3);
 
 	//------------------------------------RIGHT-----------------------------------------------------
-	//y = 6028.3x - 1.2596
-	return (6028.3 / rightSideReading) - 1.2596;
-}
-
-volatile double rightSensorsCalibrationCM[2];
-void getBothRightSensorReading(){
-		
-	int size = 50;
-	int listOfReadingsRight[size];
-	int listOfReadingsCenterRight[size];
-
-	//Get Reading from Sensor
-	for (int a = 0; a < size; a++)
-	{
-		listOfReadingsRight[a] = analogRead(right);
-		listOfReadingsCenterRight[a] = analogRead(centerRight);
-		delay(1);
-	}
-
-	//Get median averaged from list
-	double rightSideReadingReading = sortAndAverage(listOfReadingsRight, size, 3);
-	double centerRightSideReadingReading = sortAndAverage(listOfReadingsCenterRight, size, 3);
-
-	//------------------------------------RIGHT-----------------------------------------------------
-	//y = 6028.3x - 1.2596
-	rightSensorsCalibrationCM[0] = (6028.3 / rightSideReadingReading) - 1.2596;
-	
-	//------------------------------------CENTER RIGHT-----------------------------------------------------
-	//y = 5615.2x - 0.0784
-	rightSensorsCalibrationCM[1] = (5615.2 / centerRightSideReadingReading) - 0.0784;
-	
+	//y = 5236.7x - 0.032
+	return (5236.7 / rightSideReading) - 0.032;
 }

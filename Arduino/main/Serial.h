@@ -51,19 +51,19 @@ void setOutBuffer(char opcode, char * data, int len) {
 
 // callback for received data
 void receiveData() {
-	delay(150);
-	//Serial.read();//Clear 1st garbage byte		
-	int i = 0;
-	while(Serial.available()) 
-	{
-		// read the incoming byte:
-		inBuffer[i] = Serial.read();
-		i++;
-	}
-	if(i != 0)
-	{
-		newData = true;//Set flag for main program to process data
-	}
+  delay(150);
+  //Serial.read();//Clear 1st garbage byte    
+  int i = 0;
+  while(Serial.available()) 
+  {
+    // read the incoming byte:
+    inBuffer[i] = Serial.read();
+    i++;
+  }
+  if(i != 0)
+  {
+    newData = true;//Set flag for main program to process data
+  }
 }
 
 // callback for sending data
@@ -96,3 +96,4 @@ boolean dataExist() {
   return newData;
 
 }
+

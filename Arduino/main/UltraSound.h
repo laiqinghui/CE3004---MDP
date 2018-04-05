@@ -15,10 +15,10 @@ void PWM_Mode_Setup()
 
   pinMode(5, INPUT);                      // Sending Enable PWM mode command
 
-  //for (int i = 0; i < 4; i++)
-  //{
+  for (int i = 0; i < 4; i++)
+  {
     //Serial.write(EnPwmCmd[i]);
-  //}
+  }
 }
 
 void Serial_Mode_Setup()
@@ -78,18 +78,16 @@ int getPWMReading(){
 
 //Use motor 1 input A, digital pin 2 as trigger for sensor reading
 //Use motor 1 E1B to read sensor output which is digital pin 5
-int getUltraSound2Reading(){
+unsigned int getUltraSound2Reading(){
   int count = 0;
-  int DistanceMeasured = -1;
-  while (DistanceMeasured == -1 || DistanceMeasured >= 10200)
+  int DistanceMeasured = 0;
+  while (DistanceMeasured == 0 || DistanceMeasured >= 10200)
   {
     DistanceMeasured = getPWMReading();
-
-  	count++;
-  	if(count == 5){
-      DistanceMeasured = -1;
-  		break;
-  	}
-   }
-    return DistanceMeasured;         // every 50us low level stands for 1cm
+    //Serial.println(count);
+	count++;
+	if(count == 20)
+		break;
+  }
+  return DistanceMeasured;         // every 50us low level stands for 1cm
 }

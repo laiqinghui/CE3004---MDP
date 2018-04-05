@@ -153,13 +153,13 @@ void loop(){
 
 void calibrateReading()
 {
-	int listOfReadings1[20];
+  int listOfReadings1[20];
   int listOfReadings2[20];
   for(int a = 0; a<20; a++)
   {
-	listOfReadings1[a] = getIRSensorReading()[3];
-	listOfReadings2[a] = getIRSensorReading()[5];
-	delay(10);
+  listOfReadings1[a] = getIRSensorReading()[3];
+  listOfReadings2[a] = getIRSensorReading()[5];
+  delay(10);
   }
   /*
   Serial.println("Set");
@@ -169,3 +169,4 @@ void calibrateReading()
   Serial.println(sortAndAverage(listOfReadings2, 20, 3));
   */
 }
+
