@@ -24,7 +24,7 @@ void moveForwardBeta(int rpm, double distance) {
   //Check using right side sensor if need to calibrate
   //calibrateBeforeMoveForward();
 
-  MotorPID M1pid = {m1setSpeed, 0, 0, 0.109};//0.1=>50
+  MotorPID M1pid = {m1setSpeed, 0, 0, 0.102};//0.1=>50
   MotorPID M2pid = {m2setSpeed, 0, 0, 0.1};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms //was 0.125
   
   enableInterrupt( e1a, risingM1, RISING);
@@ -136,6 +136,10 @@ void moveForwardOneGridBeta() {
 
   disableInterrupt(e1a);
   disableInterrupt(e2b);
+  //Serial.print("breakTicksM2: ");
+  //Serial.println(M2ticks);
+  //Serial.print("breakTicksM1: ");
+  //Serial.println(M1ticks);
   breakTicks = 0;
   movementDone = false;
  
@@ -152,8 +156,8 @@ void moveForwardTwoGridBeta() {
   signed int currentTicksM2 = 0;
 
   
-  int m1setSpeed = 250;//SETPOINT TARGET //250
-  int m2setSpeed = 265; //265
+  int m1setSpeed = 300;//SETPOINT TARGET //250
+  int m2setSpeed = 315; //265
   int tuneSpeedM2 = 0;
   int moveSet = 0;
   
@@ -214,6 +218,10 @@ void moveForwardTwoGridBeta() {
 
   disableInterrupt(e1a);
   disableInterrupt(e2b);
+      //Serial.print("breakTicksM2: ");
+    //Serial.println(M2ticks);
+    //Serial.print("breakTicksM1: ");
+    //Serial.println(M1ticks);
   breakTicks = 0;
   movementDone = false;
 

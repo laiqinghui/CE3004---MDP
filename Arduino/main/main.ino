@@ -7,7 +7,7 @@ void processInst() {
   boolean fastestPath = false;
   int index = 1;//Start with 1 as first character is sensor flag which is checked after moving
   int moveCount = 0;
-  int delayAmount = 150;
+  int delayAmount = 200;
   
   if(instBuff[0] == 'C')
   {
@@ -77,21 +77,24 @@ void processInst() {
             break;
             
       //--------------Corner Calibrate---------------
-      case ']':  delay(delayAmount);
+      case ']':  
+            delay(delayAmount);
             fastCalibration(2);
             acceptTony = false;
             break;
             
       //-------------Calibrate Right Wall------------
-      case 'R':   if(acceptTony)
+      case 'R':   if(true)
             {
               delay(delayAmount);
+              //sideStraighten();
               fastCalibration(1);
             }
             break;
             
       //-------------Calibrate Front Wall------------
-      case 'F':   delay(delayAmount);
+      case 'F':   
+            delay(delayAmount);
             fastCalibration(0);
             break;
             
@@ -137,7 +140,6 @@ void setup() {
   //initI2C();
 
   PWM_Mode_Setup();
-
 
 }
 

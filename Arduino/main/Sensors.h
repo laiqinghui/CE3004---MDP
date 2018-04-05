@@ -157,11 +157,11 @@ char* getSensorReadingInCM() {
     sideWall[2] = sideWall[0];
     sideWall[1] = 0;
     sideWall[0] = 0;
-    if (int(sensorsValuesArray[3]) < 14 && int(sensorsValuesArray[3]) > 0)
+    if (int(sensorsValuesArray[3]) < 16 && int(sensorsValuesArray[3]) > 0)
     {
       sideWall[0] = 1;
     }
-    if (int(sensorsValuesArray[4]) < 15 && int(sensorsValuesArray[4]) > 0)
+    if (int(sensorsValuesArray[4]) < 17 && int(sensorsValuesArray[4]) > 0)
     {
       sideWall[1] = 1;
     }
@@ -169,16 +169,21 @@ char* getSensorReadingInCM() {
    else if(moveForwardNumber > 2)
    {
      resetSideWall();
-    if (int(sensorsValuesArray[3]) < 14 && int(sensorsValuesArray[3]) > 0)
+    if (int(sensorsValuesArray[3]) < 16 && int(sensorsValuesArray[3]) > 0)
     {
       sideWall[0] = 1;
     }
-    if (int(sensorsValuesArray[4]) < 15 && int(sensorsValuesArray[4]) > 0)
+    if (int(sensorsValuesArray[4]) < 17 && int(sensorsValuesArray[4]) > 0)
     {
       sideWall[1] = 1;
     }
      
    }
+   /*
+   Serial.println(sideWall[0]);
+   Serial.println(sideWall[1]);
+   Serial.println(sideWall[2]);
+   */
 
   return sensorsValuesArray;
 }

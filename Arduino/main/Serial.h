@@ -23,7 +23,7 @@ void printArray(char arr[], int len) {
 
 void sendToPi() {
   digitalWrite(PI_PIN, HIGH);
-  delay(200);
+  delay(200);//200
   digitalWrite(PI_PIN, LOW);
   Serial.write(outBuffer);
   //Serial.println(outBuffer); 
@@ -51,7 +51,7 @@ void setOutBuffer(char opcode, char * data, int len) {
 
 // callback for received data
 void receiveData() {
-  delay(150);
+  delay(150);//150
   //Serial.read();//Clear 1st garbage byte    
   int i = 0;
   while(Serial.available()) 

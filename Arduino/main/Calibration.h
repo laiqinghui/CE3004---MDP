@@ -4,8 +4,8 @@
 #define frontLeftReading frontSensorsCalibrationCM[0]
 #define frontRightReading frontSensorsCalibrationCM[1]
 
-#define rightFrontReading sideSensorsCalibrationCM[0]
-#define rightBackReading sideSensorsCalibrationCM[1]
+#define rightFrontReading rightSensorsCalibrationCM[0]
+#define rightBackReading rightSensorsCalibrationCM[1]
 
 //Function Declaration
 void straighten();
@@ -19,8 +19,8 @@ int isSideFull[4] = {0, 0, 0, 0};
 boolean acceptTony = false;
 void calibrateAgainstWall(int distance);
 
-double fromFrontWall = 14;
-double fromSideWall = 14;
+double fromFrontWall = 12;
+double fromSideWall = 12;
 double threshold = 0.1;
 double checkSideWallValue = 0;
 int wait = 100;
@@ -110,12 +110,12 @@ void fastCalibration(int choice) {
     if (choice == 2)
     {
       turnPID(1, 90);
-      turnAdjust(1);
+      //turnAdjust(1);
       calibrateAgainstWall(fromSideWall);
 
 
       turnPID(-1, 90);
-      turnAdjust(-1);
+      //turnAdjust(-1);
     }
     calibrateAgainstWall(fromFrontWall);
     }
@@ -180,7 +180,7 @@ void straighten() {
 }
 
 void straightenTune() {
-  int min = 10;
+  int min = 12;
   getFrontCalibrationReading(false);
  
   if (frontRightReading > frontLeftReading)
@@ -417,5 +417,34 @@ void calibrateAgainstWall(int distance){
 
   distancefromWall(distance);
   delay(wait);
+}
+
+void sideStraighten()
+{
+  //rightFrontReading rightSensorsCalibrationCM[0]
+  //rightBackReading rightSensorsCalibrationCM[1]
+  getBothRightSensorReading();
+  if (rightFrontReading < rightBackReading)
+  {
+    while (rightFrontReading < rightBackReading)
+    {
+      md.setSpeeds(100, -100);
+      delay(15);
+      md.setBrakes();
+      getBothRightSensorReading();
+    }
+  }
+  else if (rightFrontReading > rightBackReading)
+  {
+    while (rightFrontReading > rightBackReading)
+    {
+      md.setSpeeds(-100, 100);
+      delay(15);
+      md.setBrakes();
+      getBothRightSensorReading();
+    }
+  }
+  md.setBrakes();
+  Serial.println("Done");
 }
 

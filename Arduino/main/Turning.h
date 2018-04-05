@@ -4,8 +4,9 @@ void setTurnValueOffset(int dir, double newValue);
 void turnPID(int dir, int degree);
 
 
-double offsetRight = 0.920; //0.919
-double offsetLeft = 0.915; //0.9165
+double offsetRight = 0.918; //0.919
+  double offsetLeft = 0.912; //0.9165
+  double errorChange = 0.002;
 void turnPID(int dir, int degree){
 
     double cir = 3.14159265 * 17.6; //circumference of circle drawn when turning in cm, current diameter used is 17.6
@@ -126,10 +127,10 @@ void turnPID(int dir, int degree){
     disableInterrupt(e2b);
     breakTicks = 0;
     movementDone = false;
-	  Serial.print("breakTicksM2: ");
-    Serial.println(M2ticks);
-    Serial.print("breakTicksM1: ");
-    Serial.println(M1ticks);
+	  //Serial.print("breakTicksM2: ");
+    //Serial.println(M2ticks);
+    //Serial.print("breakTicksM1: ");
+    //Serial.println(M1ticks);
 	
     setTicks(0,0);
     setSqWidth(0,0);
@@ -137,7 +138,6 @@ void turnPID(int dir, int degree){
 
 void setTurnValueOffset(int dir, double newValue) {
   //Right Turn
-  double errorChange = 0.0005;
   if(abs(newValue) < 0.2)
   {
 	  return;
