@@ -96,13 +96,13 @@ class RPI(threading.Thread):
         - Updates from Arduino to be processed and passed to Android
         """
         logging.info("sensor value: " + str(message))
-        message[0] = message[0] - 13
-        message[1] = message[1] - 8
-        message[2] = message[2] - 13
-        message[3] = message[3] - 11
-        message[4] = message[4] - 18
-        message[5] = message[5] - 0
-        message[6] = message[6] - 0
+        message[0] = message[0] - 12
+        message[1] = message[1] - 7
+        message[2] = message[2] - 12
+        message[3] = message[3] - 10
+        message[4] = message[4] - 9
+        message[5] = message[5] - 18
+        message[6] = message[6] - 19
 
         if gs.DEV_DEBUG:
             with open("sensor.txt", "a") as sensor_log:
