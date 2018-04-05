@@ -1,5 +1,6 @@
 import logging
 import numpy as np
+import datetime
 
 DEV_DEBUG = True
 
@@ -42,6 +43,18 @@ def init():
     logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
                         datefmt='%d-%m-%Y:%H:%M:%S',
                         level=logging.INFO)
+
+    global ALGO_TO_ARD_DT_STARTED
+    global ALGO_TO_ARD_DT_ENDED
+
+    ALGO_TO_ARD_DT_STARTED = datetime.datetime.now()
+    ALGO_TO_ARD_DT_ENDED = datetime.datetime.now()
+
+    global ALGO_TO_ARD_DT_STARTED
+    global ALGO_TO_ARD_DT_ENDED
+
+    ARD_TO_ALGO_DT_STARTED = datetime.datetime.now()
+    ARD_TO_ALGO_DT_ENDED = datetime.datetime.now()
 
     if not DEV_DEBUG:
         logging.disable(logging.INFO)

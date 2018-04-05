@@ -1,3 +1,4 @@
+import datetime
 import logging
 import textwrap
 import time
@@ -111,6 +112,8 @@ class RPI(threading.Thread):
 
         logging.info("send sensor values to algo:" + str(message))
 
+        gs.ARD_TO_ALGO_DT_ENDED = datetime.datetime.now()
+        logging.info("time taken arduino to algorithm:" + str(gs.ARD_TO_ALGO_DT_ENDED - gs.ARD_TO_ALGO_DT_STARTED))
         dispatcher.send(message=message, signal=gs.RPI_ALGORITHM_SIGNAL, sender=gs.RPI_SENDER)
         logging.info("rpi received message from arduino and send message to algorithm: " + str(message))
 

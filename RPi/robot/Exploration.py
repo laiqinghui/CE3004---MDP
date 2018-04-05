@@ -294,7 +294,9 @@ class Exploration:
             elif (calibrate_front[0]):
                 move.append(calibrate_front[1])
             elif (calibrate_right[0]):
-                move.append(calibrate_right[1])
+                if (self.moveNumber // (CALIBRATE_N_STEPS + 3)) > self.baseStep:
+                    move.append(calibrate_right[1])
+                    self.baseStep = (self.moveNumber // CALIBRATE_N_STEPS)
 
         num_calibration_move = len(move)
 

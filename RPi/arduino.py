@@ -23,17 +23,32 @@ class Arduino(threading.Thread):
         GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         GPIO.add_event_detect(17, GPIO.RISING, callback=self.interruptHandler)
 
-        self.ser = serial.Serial('/dev/serial0')
+        self.ser = serial.Serial('/dev/serial0', timeout=10)
         self.acknowledged = True
 
         dispatcher.connect(self.writeData, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
         logging.info("arduino initialized")
 
     def interruptHandler(self, channel):
+        logging.info("Testing")
         self.ser.reset_input_buffer()
+        logging.info("Pending Data")
         byte = self.readData()
+
+        logging.info("Length of array: ")
+        logging.info(len(byte))
+        logging.info("OPCODE: " + byte[0])
+        logging.info("FrontLeft: " + str(ord(byte[1])))
+        logging.info("FrontCenter: " + str(ord(byte[2])))
+        logging.info("FrontRight: " + str(ord(byte[3])))
+        logging.info("RightTop: " + str(ord(byte[4])))
+        logging.info("RightMiddle: " + str(ord(byte[5])))
+        logging.info("LeftTop: " + str(ord(byte[6])))
+        logging.info("LeftMiddle: " + str(ord(byte[7])))
+
         # if sensor data
         if byte[0] == "S":
+            gs.ARD_TO_ALGO_DT_STARTED = datetime.datetime.now()
             logging.info("byte[0]) == S")
             message = self.interpret_sensor_values(byte[1:])
             dispatcher.send(message=message, signal=gs.ARDUINO_SIGNAL, sender=gs.ARDUINO_SENDER)
@@ -51,6 +66,8 @@ class Arduino(threading.Thread):
         return [ord(x) for x in src]
 
     def writeData(self, message):
+        gs.ALGO_TO_ARD_DT_ENDED = datetime.datetime.now()
+        logging.info("time taken algorithm to arduino:" + str(gs.ALGO_TO_ARD_DT_ENDED - gs.ALGO_TO_ARD_DT_STARTED))
         packeted_instr = self.break_instruction_packets(message)
         self.write_packets_and_wait_acknowledgement(packeted_instr)
 
@@ -86,6 +103,8 @@ class Arduino(threading.Thread):
 
     def run(self):
         self.idle()
+
+
 
     def stop(self):
         self.running = False

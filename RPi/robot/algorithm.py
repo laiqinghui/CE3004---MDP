@@ -1,3 +1,4 @@
+import datetime
 import logging
 import numpy as np
 import time
@@ -56,6 +57,8 @@ class Algorithm(threading.Thread):
 
         sensor_vals = message
         instruction, completed, robot_loc, robot_dir = self.algorithmClass.explore(sensor_vals)
+
+        gs.ALGO_TO_ARD_DT_STARTED = datetime.datetime.now()
         dispatcher.send(message=(instruction, completed, robot_loc, robot_dir), signal=gs.ALGORITHM_SIGNAL, sender=gs.ALGORITHM_SENDER)
 
     def determine_fastest_path(self):
