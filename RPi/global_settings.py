@@ -50,8 +50,8 @@ def init():
     ALGO_TO_ARD_DT_STARTED = datetime.datetime.now()
     ALGO_TO_ARD_DT_ENDED = datetime.datetime.now()
 
-    global ALGO_TO_ARD_DT_STARTED
-    global ALGO_TO_ARD_DT_ENDED
+    global ARD_TO_ALGO_DT_STARTED
+    global ARD_TO_ALGO_DT_ENDED
 
     ARD_TO_ALGO_DT_STARTED = datetime.datetime.now()
     ARD_TO_ALGO_DT_ENDED = datetime.datetime.now()
