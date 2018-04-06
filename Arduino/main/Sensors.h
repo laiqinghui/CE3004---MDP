@@ -75,6 +75,10 @@ char* getSensorReadingInCM() {
   {
     sensorsValuesArray[3] = (5776.6 / rightValue) -0.5087;
   }
+  if(sensorsValuesArray[3] >35)
+  {
+	  sensorsValuesArray[3] = sensorsValuesArray[3] + 2;
+  }
   
     //------------------------------------CENTER RIGHT-----------------------------------------------------
   //PS5 y = 6594.9x - 3.908
@@ -86,7 +90,7 @@ char* getSensorReadingInCM() {
   }
   else
   {
-    sensorsValuesArray[4] = (6594.9 / centerRightValue) - 3.908;
+    sensorsValuesArray[4] = (6594.9 / centerRightValue) - 4.908;
   }
   
   if(moveForwardNumber == 2)
@@ -106,7 +110,7 @@ char* getSensorReadingInCM() {
   }
   
     //------------------------------------LEFT-----------------------------------------------------
-  //PS1 y = 11989x + 0.0633
+  //PS1 y = 11805x + 0.0617
   //Limit is 84cm
   double leftValue = sensorValues[2];
   if (leftValue < 140)
@@ -115,15 +119,15 @@ char* getSensorReadingInCM() {
   }
   else if(leftValue > 491)
   {
-    sensorsValuesArray[5] = 19;
+    sensorsValuesArray[5] = 20;
   }
   else
   {
-    sensorsValuesArray[5] = (11989 / leftValue) + 0.0633;
+    sensorsValuesArray[5] = (11805 / leftValue) + 0.0617;
   }
 
   //------------------------------------CENTER LEFT-----------------------------------------------------
-  //PS6  y = 12041x + 1.4311
+  //PS6  y = 12360x + 0.0976
   //Limit is 80cm
   double centerLeftValue = sensorValues[4];
   if (centerLeftValue < 150)
@@ -132,11 +136,11 @@ char* getSensorReadingInCM() {
   }
   else if(centerLeftValue > 489)
   {
-    sensorsValuesArray[6] = 18;
+    sensorsValuesArray[6] = 20;
   }
   else
   {
-    sensorsValuesArray[6] = (12041 / centerLeftValue) + 1.4311;
+    sensorsValuesArray[6] = (12360 / centerLeftValue) + 0.0976;
   }
 
   
@@ -145,11 +149,15 @@ char* getSensorReadingInCM() {
    if(moveForwardNumber == 1)
    {
     sideWall[2] = sideWall[1];
-    sideWall[1] = sideWall[0];
+    sideWall[1] = 0;
     sideWall[0] = 0;
-    if (int(sensorsValuesArray[3]) < 14 && int(sensorsValuesArray[3]) > 0)
+    if (int(sensorsValuesArray[3]) < 15 && int(sensorsValuesArray[3]) > 0)
     {
       sideWall[0] = 1;
+    }
+    if (int(sensorsValuesArray[4]) < 15 && int(sensorsValuesArray[4]) > 0)
+    {
+      sideWall[1] = 1;
     }
    }
    else if(moveForwardNumber == 2)
@@ -157,11 +165,11 @@ char* getSensorReadingInCM() {
     sideWall[2] = sideWall[0];
     sideWall[1] = 0;
     sideWall[0] = 0;
-    if (int(sensorsValuesArray[3]) < 16 && int(sensorsValuesArray[3]) > 0)
+    if (int(sensorsValuesArray[3]) < 15 && int(sensorsValuesArray[3]) > 0)
     {
       sideWall[0] = 1;
     }
-    if (int(sensorsValuesArray[4]) < 17 && int(sensorsValuesArray[4]) > 0)
+    if (int(sensorsValuesArray[4]) < 15 && int(sensorsValuesArray[4]) > 0)
     {
       sideWall[1] = 1;
     }
@@ -169,21 +177,16 @@ char* getSensorReadingInCM() {
    else if(moveForwardNumber > 2)
    {
      resetSideWall();
-    if (int(sensorsValuesArray[3]) < 16 && int(sensorsValuesArray[3]) > 0)
+    if (int(sensorsValuesArray[3]) < 15 && int(sensorsValuesArray[3]) > 0)
     {
       sideWall[0] = 1;
     }
-    if (int(sensorsValuesArray[4]) < 17 && int(sensorsValuesArray[4]) > 0)
+    if (int(sensorsValuesArray[4]) < 15 && int(sensorsValuesArray[4]) > 0)
     {
       sideWall[1] = 1;
     }
      
    }
-   /*
-   Serial.println(sideWall[0]);
-   Serial.println(sideWall[1]);
-   Serial.println(sideWall[2]);
-   */
 
   return sensorsValuesArray;
 }
@@ -221,6 +224,12 @@ double sortAndAverage(int* listOfReadings, int size, int amount)
   return total / (highest-lowest);
 }
 
+  int listOfReadingsFL[90];
+  int listOfReadingsFR[90];
+  int listOfReadingsL[90];
+  int listOfReadingsR[90];
+  int listOfReadingsCL[90];
+  int listOfReadingsCR[90];
 
 //Get average reading over a number of samples
 double* getIRSensorReading()
@@ -232,15 +241,9 @@ double* getIRSensorReading()
   sensorValues[4] = 0;
   sensorValues[5] = 0;
   
-  double numberOfTimes = 4;
-  int size = 35;
-  int listOfReadingsFL[size];
-  int listOfReadingsFR[size];
-  int listOfReadingsL[size*2];
-  int listOfReadingsR[size];
-  int listOfReadingsCL[size*2];
-  int listOfReadingsCR[size];
-  
+  double numberOfTimes = 1;
+  int size = 90;
+    
   for(int b = 0; b<numberOfTimes; b++)
   {
     //Get Reading from Sensor
@@ -252,21 +255,15 @@ double* getIRSensorReading()
       listOfReadingsR[a] = analogRead(right);
       listOfReadingsCL[a] = analogRead(centerLeft);
       listOfReadingsCR[a] = analogRead(centerRight);
-      delay(1);
-    }
-    for (int a = 0; a < size; a++)
-    {
-      listOfReadingsL[size+a] = analogRead(left);
-      listOfReadingsCL[size+a] = analogRead(centerLeft);
-      delay(1);
+      delayMicroseconds(500);
     }
 
     //Get median averaged from list
     sensorValues[0] = sensorValues[0] + sortAndAverage(listOfReadingsFL, size, 3);
     sensorValues[1] = sensorValues[1] + sortAndAverage(listOfReadingsFR, size, 3);
-    sensorValues[2] = sensorValues[2] + sortAndAverage(listOfReadingsL, size*2, 3);
+    sensorValues[2] = sensorValues[2] + sortAndAverage(listOfReadingsL, size, 3);
     sensorValues[3] = sensorValues[3] + sortAndAverage(listOfReadingsR, size, 3);
-    sensorValues[4] = sensorValues[4] + sortAndAverage(listOfReadingsCL, size*2, 3);
+    sensorValues[4] = sensorValues[4] + sortAndAverage(listOfReadingsCL, size, 3);
     sensorValues[5] = sensorValues[5] + sortAndAverage(listOfReadingsCR, size, 3);
   }
   sensorValues[0] = sensorValues[0]/numberOfTimes;
