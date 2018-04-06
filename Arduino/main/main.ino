@@ -151,6 +151,8 @@ void loop(){
   {
     receiveData();
   }
+
+  Serial.println("TEST DEBUG");
 }
 
 void calibrateReading()

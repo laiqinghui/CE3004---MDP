@@ -39,11 +39,12 @@ void interruptPi() {
 
 void setOutBuffer(char opcode, char * data, int len) {
 
-  outBuffer[0] = opcode;
+  outBuffer[0] = '$';
+  outBuffer[1] = opcode;
   //Serial.print("Outbuffer set to op: ");
   //Serial.println(opcode);
   for (int i = 0; i < len ; i++) {
-    outBuffer[i + 1] = data[i];
+    outBuffer[i + 2] = data[i];
   }
 
 }
