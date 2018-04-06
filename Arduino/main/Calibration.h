@@ -19,8 +19,8 @@ int isSideFull[4] = {0, 0, 0, 0};
 boolean acceptTony = false;
 void calibrateAgainstWall(int distance);
 
-double fromFrontWall = 12;
-double fromSideWall = 12;
+double fromFrontWall = 13;
+double fromSideWall = 13.5;
 double threshold = 0.1;
 double checkSideWallValue = 0;
 int wait = 100;
@@ -110,12 +110,12 @@ void fastCalibration(int choice) {
     if (choice == 2)
     {
       turnPID(1, 90);
-      //turnAdjust(1);
+      turnAdjust(1);
       calibrateAgainstWall(fromSideWall);
 
 
       turnPID(-1, 90);
-      //turnAdjust(-1);
+      turnAdjust(-1);
     }
     calibrateAgainstWall(fromFrontWall);
     }
@@ -326,18 +326,18 @@ void tooCloseToWall(){
   getFrontCalibrationReading(false);
   int usReading = int(getUltraSound2Reading());
   
-  if(usReading < 8 && usReading > 0)
+  if(usReading < 7 && usReading > 0)
   {
     while(int(getUltraSound2Reading()) < 7)
     {
-      md.setSpeeds(-140, -137);
+      md.setSpeeds(-140, -140);
       delay(20);
       md.setBrakes();
     }
   }
-  else if(frontLeftReading < 13 && frontLeftReading > 0)
+  else if(frontLeftReading < 12 && frontLeftReading > 0)
   {
-    md.setSpeeds(-140, -137);
+    md.setSpeeds(-140, -140);
     while (frontLeftReading < 12)
     {
       
@@ -346,9 +346,9 @@ void tooCloseToWall(){
     }
     md.setBrakes();
   }
-  else if(frontRightReading < 13 && frontRightReading > 0)
+  else if(frontRightReading < 12 && frontRightReading > 0)
   {
-    md.setSpeeds(-140, -137);
+    md.setSpeeds(-140, -140);
     while (frontRightReading < 12)
     {
       
@@ -429,7 +429,7 @@ void sideStraighten()
     while (rightFrontReading < rightBackReading)
     {
       md.setSpeeds(100, -100);
-      delay(15);
+      delay(20);
       md.setBrakes();
       getBothRightSensorReading();
     }
@@ -439,12 +439,11 @@ void sideStraighten()
     while (rightFrontReading > rightBackReading)
     {
       md.setSpeeds(-100, 100);
-      delay(15);
+      delay(20);
       md.setBrakes();
       getBothRightSensorReading();
     }
   }
   md.setBrakes();
-  Serial.println("Done");
 }
 

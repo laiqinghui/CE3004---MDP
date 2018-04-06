@@ -26,6 +26,7 @@ void sendToPi() {
   delay(200);//200
   digitalWrite(PI_PIN, LOW);
   Serial.write(outBuffer);
+  Serial.flush();
   //Serial.println(outBuffer); 
 
 }

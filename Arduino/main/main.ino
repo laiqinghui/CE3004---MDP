@@ -140,10 +140,11 @@ void setup() {
   //initI2C();
 
   PWM_Mode_Setup();
-
+  //calibrateReading();
 }
 
 void loop(){
+	//Serial.println(getIRSensorReading()[2]);
   if (dataExist()) {
     processInst();
   }
@@ -159,16 +160,14 @@ void calibrateReading()
   int listOfReadings2[20];
   for(int a = 0; a<20; a++)
   {
-  listOfReadings1[a] = getIRSensorReading()[3];
-  listOfReadings2[a] = getIRSensorReading()[5];
+  listOfReadings1[a] = getIRSensorReading()[2];
+  listOfReadings2[a] = getIRSensorReading()[4];
   delay(10);
   }
-  /*
   Serial.println("Set");
   Serial.println("Reading 1");
   Serial.println(sortAndAverage(listOfReadings1, 20, 3));
   Serial.println("Reading 2");
   Serial.println(sortAndAverage(listOfReadings2, 20, 3));
-  */
 }
 

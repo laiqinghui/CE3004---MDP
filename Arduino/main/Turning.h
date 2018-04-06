@@ -4,9 +4,9 @@ void setTurnValueOffset(int dir, double newValue);
 void turnPID(int dir, int degree);
 
 
-double offsetRight = 0.918; //0.919
-  double offsetLeft = 0.912; //0.9165
-  double errorChange = 0.002;
+double offsetRight = 0.915 ; //0.919
+  double offsetLeft = 0.910; //0.9165
+  double errorChange = 0.001;
 void turnPID(int dir, int degree){
 
     double cir = 3.14159265 * 17.6; //circumference of circle drawn when turning in cm, current diameter used is 17.6
@@ -47,6 +47,7 @@ void turnPID(int dir, int degree){
 		MotorPID M2 = {m2Speed , 0, 0, 0.30}; // Changed from 0.35 
 		enableInterrupt( e1a, dummy, RISING);
 		enableInterrupt( e2b, dummy, RISING);
+		isTurn = true;
 		md.setSpeeds(m1Speed, m2Speed);
      
 		while(!movementDone)//currentTicksM1 < amount
@@ -87,6 +88,7 @@ void turnPID(int dir, int degree){
 		MotorPID M1 = {m1Speed , 0, 0, 0.21};//0.79
 		enableInterrupt( e1a, dummy, RISING);
 		enableInterrupt( e2b, dummy, RISING);
+		isTurn = true;
 		md.setSpeeds(m1Speed, m2Speed);
       
 		while(!movementDone)

@@ -48,7 +48,7 @@ volatile double* calibrationFrontSensorReading() {
   {
     listOfReadingsFL[a] = analogRead(frontLeft);
     listOfReadingsFR[a] = analogRead(frontRight);
-    delay(1);
+    delayMicroseconds(500);
   }
 
   //Get median averaged from list
@@ -69,7 +69,7 @@ double getRightSensorReading(){
 	for (int a = 0; a < size; a++)
 	{
 		listOfReadingsRight[a] = analogRead(right);
-		delay(1);
+		delayMicroseconds(500);
 	}
 
 	//Get median averaged from list
@@ -92,7 +92,7 @@ void getBothRightSensorReading(){
 	{
 		listOfReadingsRight[a] = analogRead(right);
 		listOfReadingsCenterRight[a] = analogRead(centerRight);
-		delay(1);
+		delayMicroseconds(500);
 	}
 
 	//Get median averaged from list
@@ -100,8 +100,8 @@ void getBothRightSensorReading(){
 	double centerRightSideReadingReading = sortAndAverage(listOfReadingsCenterRight, size, 3);
 
 	//------------------------------------RIGHT-----------------------------------------------------
-	//y = 6028.3x - 1.2596
-	rightSensorsCalibrationCM[0] = (6028.3 / rightSideReadingReading) - 1.2596;
+	//y = 6028.3x - 0.2596
+	rightSensorsCalibrationCM[0] = (6028.3 / rightSideReadingReading) - 0.0596;
 	
 	//------------------------------------CENTER RIGHT-----------------------------------------------------
 	//y = 5615.2x - 0.0784
