@@ -155,7 +155,7 @@ void distancefromWall(double distance) {
 
     }
   }
-  md.setBrakes();
+  setBrakes();
 }
 
 void straighten() {
@@ -176,7 +176,7 @@ void straighten() {
       getFrontCalibrationReading(true);
     }
   }
-  md.setBrakes();
+  setBrakes();
 }
 
 void straightenTune() {
@@ -200,7 +200,7 @@ void straightenTune() {
     
       md.setSpeeds(130, 0);
     delay(delayAmount);
-      md.setBrakes();
+      setBrakes();
       getFrontCalibrationReading(false);
     }
   while (frontRightReading < frontLeftReading)
@@ -217,7 +217,7 @@ void straightenTune() {
     
       md.setSpeeds(-130, 0);
       delay(delayAmount);
-      md.setBrakes();
+      setBrakes();
       getFrontCalibrationReading(false);
     }
   }
@@ -237,7 +237,7 @@ void straightenTune() {
     
       md.setSpeeds(-130, 0);
       delay(delayAmount);
-      md.setBrakes();
+      setBrakes();
       getFrontCalibrationReading(false);
     }
   while (frontRightReading > frontLeftReading)
@@ -254,7 +254,7 @@ void straightenTune() {
     
       md.setSpeeds(130, 0);
       delay(delayAmount);
-      md.setBrakes();
+      setBrakes();
       getFrontCalibrationReading(false);
     }
   }
@@ -332,7 +332,7 @@ void tooCloseToWall(){
     {
       md.setSpeeds(-140, -140);
       delay(20);
-      md.setBrakes();
+      setBrakes();
     }
   }
   else if(frontLeftReading < 12 && frontLeftReading > 0)
@@ -344,7 +344,7 @@ void tooCloseToWall(){
       getFrontCalibrationReading(true);
 
     }
-    md.setBrakes();
+    setBrakes();
   }
   else if(frontRightReading < 12 && frontRightReading > 0)
   {
@@ -355,7 +355,7 @@ void tooCloseToWall(){
       getFrontCalibrationReading(true);
 
     }
-    md.setBrakes();
+    setBrakes();
   }
   
 }
@@ -430,7 +430,7 @@ void sideStraighten()
     {
       md.setSpeeds(100, -100);
       delay(20);
-      md.setBrakes();
+      setBrakes();
       getBothRightSensorReading();
     }
   }
@@ -440,10 +440,10 @@ void sideStraighten()
     {
       md.setSpeeds(-100, 100);
       delay(20);
-      md.setBrakes();
+      setBrakes();
       getBothRightSensorReading();
     }
   }
-  md.setBrakes();
+  setBrakes();
 }
 

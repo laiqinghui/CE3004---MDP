@@ -224,12 +224,12 @@ double sortAndAverage(int* listOfReadings, int size, int amount)
   return total / (highest-lowest);
 }
 
-  int listOfReadingsFL[90];
-  int listOfReadingsFR[90];
-  int listOfReadingsL[90];
-  int listOfReadingsR[90];
-  int listOfReadingsCL[90];
-  int listOfReadingsCR[90];
+  int listOfReadingsFL[100];
+  int listOfReadingsFR[150];
+  int listOfReadingsL[150];
+  //int listOfReadingsR[90];
+  //int listOfReadingsCL[90];
+  //int listOfReadingsCR[90];
 
 //Get average reading over a number of samples
 double* getIRSensorReading()
@@ -242,10 +242,49 @@ double* getIRSensorReading()
   sensorValues[5] = 0;
   
   double numberOfTimes = 1;
-  int size = 90;
+  int size = 100;
     
   for(int b = 0; b<numberOfTimes; b++)
   {
+	     //Get Reading from Sensor
+    for (int a = 0; a < size; a++)
+    {
+      listOfReadingsFL[a] = analogRead(frontLeft);
+      listOfReadingsFR[a] = analogRead(frontRight);
+      listOfReadingsL[a] = analogRead(right);
+      delayMicroseconds(500);
+    }
+	//Get median averaged from list
+    sensorValues[0] = sortAndAverage(listOfReadingsFL, size, 3);
+    sensorValues[1] = sortAndAverage(listOfReadingsFR, size, 3);
+    sensorValues[3] = sortAndAverage(listOfReadingsL, size, 3);
+	
+	    for (int a = 0; a < size; a++)
+    {
+      
+      listOfReadingsFL[a] = analogRead(centerRight);
+	  listOfReadingsFR[a] = analogRead(left);
+      listOfReadingsL[a] = analogRead(centerLeft);
+      delayMicroseconds(500);
+    }
+	for (int a = 0; a < 50; a++)
+    {
+	  listOfReadingsL[size+a] = analogRead(left);
+      listOfReadingsL[size+a] = analogRead(centerLeft);
+      delayMicroseconds(500);
+    }
+	//Get median averaged from list
+    sensorValues[5] = sortAndAverage(listOfReadingsFL, size, 3);
+    sensorValues[2] = sortAndAverage(listOfReadingsFR, 150, 3);
+    sensorValues[4] = sortAndAverage(listOfReadingsL, 150, 3);
+  }
+
+
+
+
+	 
+	  
+	/*
     //Get Reading from Sensor
     for (int a = 0; a < size; a++)
     {
@@ -272,6 +311,7 @@ double* getIRSensorReading()
   sensorValues[3] = sensorValues[3]/numberOfTimes;
   sensorValues[4] = sensorValues[4]/numberOfTimes;
   sensorValues[5] = sensorValues[5]/numberOfTimes;
+  */
 
   return sensorValues;
 }

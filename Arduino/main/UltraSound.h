@@ -65,14 +65,15 @@ char getUltraSoundDistance() {
 }
 
 int getPWMReading(){
-
   OCR1A = 0;
   delay(20);
   digitalWrite(2, HIGH);
   digitalWrite(2, LOW);
-  digitalWrite(2, HIGH);               // reading Pin PWM will output pulses
+  digitalWrite(2, HIGH);
+  //digitalWrite(2, HIGH);               // reading Pin PWM will output pulses
 
   long value = pulseIn(5, LOW); // PWM Output 0－25000US，Every 50US represent 1cm E1B
+  digitalWrite(2, LOW);
   return value/50;
 }
 

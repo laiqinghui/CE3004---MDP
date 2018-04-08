@@ -33,7 +33,7 @@ void processInst() {
               moveForwardNumber = moveCount;
             }  
             
-            //tooCloseToWall();
+            tooCloseToWall();
             break;
       
       //---------------Turn Left-----------------------     
@@ -138,13 +138,12 @@ void setup() {
   pinMode(PI_PIN, OUTPUT);
   digitalWrite(PI_PIN, LOW);
   //initI2C();
-
   PWM_Mode_Setup();
   //calibrateReading();
 }
 
 void loop(){
-	//Serial.println(getIRSensorReading()[2]);
+	//printSensorValue();
   if (dataExist()) {
     processInst();
   }
@@ -153,7 +152,7 @@ void loop(){
     receiveData();
   }
 
-  Serial.println("TEST DEBUG");
+  //Serial.println("TEST DEBUG");
 }
 
 void calibrateReading()
@@ -171,5 +170,16 @@ void calibrateReading()
   Serial.println(sortAndAverage(listOfReadings1, 20, 3));
   Serial.println("Reading 2");
   Serial.println(sortAndAverage(listOfReadings2, 20, 3));
+}
+
+void printSensorValue()
+{
+	//sensorValues[0] FL
+    //sensorValues[1] FR
+    //sensorValues[2] L
+    //sensorValues[3] R
+    //sensorValues[4] CL
+    //sensorValues[5] CR
+	Serial.println(getIRSensorReading()[5]);
 }
 

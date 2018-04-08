@@ -21,11 +21,6 @@ void turnPID(int dir, int degree){
 	{
 		breakTicks = cir * 0.25 * cmToCounts * offsetLeft; 
 	}
-	if(degree == 180)
-	{
-		dir = 1;
-		breakTicks = cir * 0.5 * cmToCounts * offsetRight; 
-	}
 	
     //unsigned long currentTicksM1 = 0;
     //unsigned long currentTicksM2 = 0;
@@ -129,10 +124,10 @@ void turnPID(int dir, int degree){
     disableInterrupt(e2b);
     breakTicks = 0;
     movementDone = false;
-	  //Serial.print("breakTicksM2: ");
-    //Serial.println(M2ticks);
-    //Serial.print("breakTicksM1: ");
-    //Serial.println(M1ticks);
+	Serial.print("breakTicksM2: ");
+    Serial.println(M2ticks);
+    Serial.print("breakTicksM1: ");
+    Serial.println(M1ticks);
 	
     setTicks(0,0);
     setSqWidth(0,0);

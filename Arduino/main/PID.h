@@ -124,8 +124,11 @@ void tuneMotors(int desiredRPM, MotorPID *M1, MotorPID *M2) {
 	tuneSpeedM2 = M2->prevTuneSpeed + M2->gain * M2->currentErr + (M2->gain / 0.05) * (M2->currentErr - M2->prevErr1);
 	
 	noInterrupts();
-	OCR1A = tuneSpeedM1;
-	OCR1B = tuneSpeedM2;
+	if(!movementDone)
+	{
+		OCR1A = tuneSpeedM1;
+		OCR1B = tuneSpeedM2;
+	}
 	interrupts();
 
 	M1->prevTuneSpeed = tuneSpeedM1;
