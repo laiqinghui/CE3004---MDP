@@ -1,8 +1,8 @@
 // # Connection:
 // #       Pin 1 VCC (URM V3.2) -> VCC (Arduino)
 // #       Pin 2 GND (URM V3.2) -> GND (Arduino)
-// #       Pin 4 PWM (URM V3.2) -> Pin 3 (Arduino)
-// #       Pin 6 COMP/TRIG (URM V3.2) -> Pin 5 (Arduino)
+// #       Pin 4 PWM (URM V3.2) -> Pin 2 (Arduino)
+// #       Pin 6 COMP/TRIG (URM V3.2) -> Pin 11 (Arduino)
 // #
 unsigned int Distance = 0;
 //uint8_t EnPwmCmd[4] = {0x44, 0x02, 0xbb, 0x01}; // distance measure command through PWM
@@ -10,10 +10,10 @@ unsigned int Distance = 0;
 
 void PWM_Mode_Setup()
 {
-  pinMode(2, OUTPUT);                    // A low pull on pin COMP/TRIG // PWM trigger pin
-  digitalWrite(2, HIGH);                 // Set to HIGH
+  pinMode(11, OUTPUT);                    // A low pull on pin COMP/TRIG // PWM trigger pin
+  digitalWrite(11, HIGH);                 // Set to HIGH
 
-  pinMode(5, INPUT);                      // Sending Enable PWM mode command
+  pinMode (2, INPUT);                   // Set input to receive PWM
 
   for (int i = 0; i < 4; i++)
   {
@@ -65,21 +65,17 @@ char getUltraSoundDistance() {
 }
 
 int getPWMReading(){
-  OCR1A = 0;
-  delay(20);
-  digitalWrite(2, HIGH);
-  digitalWrite(2, LOW);
-  digitalWrite(2, HIGH);
-  //digitalWrite(2, HIGH);               // reading Pin PWM will output pulses
+  digitalWrite(11, HIGH);
+  digitalWrite(11, LOW);
+  digitalWrite(11, HIGH);
 
   long value = pulseIn(5, LOW); // PWM Output 0－25000US，Every 50US represent 1cm E1B
-  digitalWrite(2, LOW);
   return value/50;
 }
 
 //Use motor 1 input A, digital pin 2 as trigger for sensor reading
 //Use motor 1 E1B to read sensor output which is digital pin 5
-unsigned int getUltraSound2Reading(){
+int getUltraSound2Reading(){
   int count = 0;
   int DistanceMeasured = 0;
   while (DistanceMeasured == 0 || DistanceMeasured >= 10200)

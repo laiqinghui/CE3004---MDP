@@ -22,12 +22,9 @@ void printArray(char arr[], int len) {
 }
 
 void sendToPi() {
-  digitalWrite(PI_PIN, HIGH);
-  delay(200);//200
-  digitalWrite(PI_PIN, LOW);
+
   Serial.write(outBuffer);
-  Serial.flush();
-  //Serial.println(outBuffer); 
+
 
 }
 

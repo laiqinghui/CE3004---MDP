@@ -127,55 +127,6 @@ char* getSensorReadingInCM() {
     sensorsValuesArray[6] = (12464 / centerLeftValue) - 8.8539;
   }
 
-  
-  
-  //---------------------------Keep track of side wall------------------------------------
-   if(moveForwardNumber == 1)
-   {
-    sideWall[2] = sideWall[1];
-   }
-   else if(moveForwardNumber == 2)
-   {
-		sideWall[2] = sideWall[0];
-   }
-   else if(moveForwardNumber > 2)
-}
-    if (int(sensorsValuesArray[3]) < 15 && int(sensorsValuesArray[3]) > 0)
-    {
-      sideWall[0] = 1;
-    }
-    if (int(sensorsValuesArray[4]) < 15 && int(sensorsValuesArray[4]) > 0)
-    {
-      sideWall[1] = 1;
-    }
-   }
-   else if(moveForwardNumber == 2)
-   {
-    sideWall[2] = sideWall[0];
-    sideWall[1] = 0;
-    sideWall[0] = 0;
-    if (int(sensorsValuesArray[3]) < 15 && int(sensorsValuesArray[3]) > 0)
-    {
-      sideWall[0] = 1;
-    }
-    if (int(sensorsValuesArray[4]) < 15 && int(sensorsValuesArray[4]) > 0)
-    {
-      sideWall[1] = 1;
-    }
-   }
-   else if(moveForwardNumber > 2)
-   {
-     resetSideWall();
-    if (int(sensorsValuesArray[3]) < 15 && int(sensorsValuesArray[3]) > 0)
-    {
-      sideWall[0] = 1;
-    }
-    if (int(sensorsValuesArray[4]) < 15 && int(sensorsValuesArray[4]) > 0)
-    {
-      sideWall[1] = 1;
-    }
-     
-   }
 
   return sensorsValuesArray;
 }

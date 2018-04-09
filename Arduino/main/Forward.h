@@ -78,15 +78,15 @@ void moveForwardOneGridBeta() {
   signed int currentTicksM2 = 0;
 
   
-  int m1setSpeed = 250;//SETPOINT TARGET //250
-  int m2setSpeed = 265; //265
+  int m1setSpeed = 300;//SETPOINT TARGET //250
+  int m2setSpeed = 310; //265
   int tuneSpeedM2 = 0;
   int moveSet = 0;
   
   
   //Check using right side sensor if need to calibrate
   //calibrateBeforeMoveForward();
-  breakTicks = 0.99 * 9.5 * ticksPerCM;//0.95
+  breakTicks = 1.01 * 9.5 * ticksPerCM;//0.95
   MotorPID M2 = {m2setSpeed , 0, 0, 0.400}; //
   enableInterrupt( e1a, dummy, RISING);
   enableInterrupt( e2b, dummy, RISING);
@@ -157,14 +157,14 @@ void moveForwardTwoGridBeta() {
 
   
   int m1setSpeed = 300;//SETPOINT TARGET //250
-  int m2setSpeed = 315; //265
+  int m2setSpeed = 310; //265
   int tuneSpeedM2 = 0;
   int moveSet = 0;
   
   
   //Check using right side sensor if need to calibrate
   //calibrateBeforeMoveForward();
-  breakTicks = 1 * 19 * ticksPerCM;//0.95
+  breakTicks = 1.01 * 19 * ticksPerCM;//0.95
   MotorPID M2 = {m2setSpeed , 0, 0, 0.40}; //
   enableInterrupt( e1a, dummy, RISING);
   enableInterrupt( e2b, dummy, RISING);

@@ -124,7 +124,9 @@ void processInst() {
   if (instBuff[0] == 'S') 
   {
     setOutBuffer('S', getSensorReadingInCM(), 7);
+    //printArray(outBuffer, 9);
     sendToPi();//Interrupt RPI to notify data is ready
+    //Serial.println("Sent to PI");
   }
 
 }
