@@ -19,11 +19,11 @@ class Arduino(threading.Thread):
         super(Arduino, self).__init__()
         self.running = False
 
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        GPIO.add_event_detect(17, GPIO.RISING, callback=self.interruptHandler)
+        # GPIO.setmode(GPIO.BCM)
+        # GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        # GPIO.add_event_detect(17, GPIO.RISING, callback=self.interruptHandler)
 
-        self.ser = serial.Serial('/dev/serial0', timeout=10)
+        self.ser = serial.Serial('/dev/serial0', timeout=2)
         self.acknowledged = True
 
         dispatcher.connect(self.writeData, signal=gs.RPI_ARDUINO_SIGNAL, sender=gs.RPI_SENDER)
@@ -33,22 +33,25 @@ class Arduino(threading.Thread):
         logging.info("Testing")
         self.ser.reset_input_buffer()
         logging.info("Pending Data")
-        byte = self.readData()
+        try:
+            byte = self.readData()
+        except:
+            self.ser.close()
+            self.ser = serial.Serial('/dev/serial0', timeout=2)
+            logging.info("Reopened Port")
+            byte = []
 
         logging.info("Length of array: ")
         logging.info(len(byte))
-        logging.info("OPCODE: " + byte[0])
-        logging.info("FrontLeft: " + str(ord(byte[1])))
-        logging.info("FrontCenter: " + str(ord(byte[2])))
-        logging.info("FrontRight: " + str(ord(byte[3])))
-        logging.info("RightTop: " + str(ord(byte[4])))
-        logging.info("RightMiddle: " + str(ord(byte[5])))
-        logging.info("LeftTop: " + str(ord(byte[6])))
-        logging.info("LeftMiddle: " + str(ord(byte[7])))
 
         # if sensor data
         if byte[0] == "S":
+            if len(byte) == 0:
+                self.ser.close()
+                self.ser = serial.Serial('/dev/serial0', timeout=2)
+                logging.info("Reopened Port")
             gs.ARD_TO_ALGO_DT_STARTED = datetime.datetime.now()
+            logging.info("time from instruction sent to sensor received: " + str(gs.ARD_TO_ALGO_DT_STARTED - gs.ALGO_TO_ARD_DT_ENDED))
             logging.info("byte[0]) == S")
             message = self.interpret_sensor_values(byte[1:])
             dispatcher.send(message=message, signal=gs.ARDUINO_SIGNAL, sender=gs.ARDUINO_SENDER)
@@ -67,7 +70,7 @@ class Arduino(threading.Thread):
 
     def writeData(self, message):
         gs.ALGO_TO_ARD_DT_ENDED = datetime.datetime.now()
-        logging.info("time taken algorithm to arduino:" + str(gs.ALGO_TO_ARD_DT_ENDED - gs.ALGO_TO_ARD_DT_STARTED))
+        logging.info("Total time:" + str(gs.ALGO_TO_ARD_DT_ENDED - gs.ARD_TO_ALGO_DT_STARTED))
         packeted_instr = self.break_instruction_packets(message)
         self.write_packets_and_wait_acknowledgement(packeted_instr)
 
@@ -102,9 +105,37 @@ class Arduino(threading.Thread):
         super(Arduino, self).start()
 
     def run(self):
-        self.idle()
+        while True:
+            if(self.ser.in_waiting != 0):
 
+                if(self.ser.read(1) == '$'):
+                    # byte = self.readData()
+                    try:
+                        byte = self.readData()
+                    except:
+                        self.ser.close()
+                        self.ser = serial.Serial('/dev/serial0', timeout=2)
+                        logging.info("Reopened Port")
+                        byte = []
 
+                    logging.info("Length of array: ")
+                    logging.info(len(byte))
+                    logging.info("OPCODE: " + byte[0])
+                    logging.info("FrontLeft: " + str(ord(byte[1])))
+                    logging.info("FrontCenter: " + str(ord(byte[2])))
+                    logging.info("FrontRight: " + str(ord(byte[3])))
+                    logging.info("RightTop: " + str(ord(byte[4])))
+                    logging.info("RightMiddle: " + str(ord(byte[5])))
+                    logging.info("LeftTop: " + str(ord(byte[6])))
+                    logging.info("LeftMiddle: " + str(ord(byte[7])))
+
+                    # if sensor data
+                    if byte[0] == "S":
+                        gs.ARD_TO_ALGO_DT_STARTED = datetime.datetime.now()
+                        logging.info("time from instruction sent to sensor received: " + str(gs.ARD_TO_ALGO_DT_STARTED - gs.ALGO_TO_ARD_DT_ENDED))
+                        logging.info("byte[0]) == S")
+                        message = self.interpret_sensor_values(byte[1:])
+                        dispatcher.send(message=message, signal=gs.ARDUINO_SIGNAL, sender=gs.ARDUINO_SENDER)
 
     def stop(self):
         self.running = False
