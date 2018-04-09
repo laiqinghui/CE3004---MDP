@@ -10,7 +10,6 @@ int instCount = 0;
 
 
 void printArray(char arr[], int len) {
-
   for (int i = 0; i < len ; i++) {
     Serial.print((int)arr[i]);
     Serial.print(" ");
@@ -22,25 +21,19 @@ void printArray(char arr[], int len) {
 }
 
 void sendToPi() {
-
   Serial.write(outBuffer);
-
-
 }
 
 void interruptPi() {
   digitalWrite(PI_PIN, HIGH);
   delay(50);
   digitalWrite(PI_PIN, LOW);
-
 }
 
 void setOutBuffer(char opcode, char * data, int len) {
-
+	
   outBuffer[0] = '$';
   outBuffer[1] = opcode;
-  //Serial.print("Outbuffer set to op: ");
-  //Serial.println(opcode);
   for (int i = 0; i < len ; i++) {
     outBuffer[i + 2] = data[i];
   }
@@ -71,28 +64,20 @@ void receiveData() {
 
 // callback for sending data
 void sendData() {
-
   Serial.write(outBuffer);
-
 }
 
 char* getinBuffer() {
-
   newData = false;
   return inBuffer;
-
 }
-
 
 void resetInBuffer() {
 
   for (int i = 0; i < 128; i ++ ) {
     inBuffer[i] = 0;
   }
-
 }
-
-
 
 boolean dataExist() {
 

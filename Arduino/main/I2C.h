@@ -23,14 +23,6 @@ void printArray(char arr[], int len) {
 
 }
 
-
-void interruptPi() {
-  digitalWrite(PI_PIN, HIGH);
-  delay(100);
-  digitalWrite(PI_PIN, LOW);
-
-}
-
 void setOutBuffer(char opcode, char * data, int len) {
 
   outBuffer[0] = opcode;

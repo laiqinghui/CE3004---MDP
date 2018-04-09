@@ -18,11 +18,11 @@ void moveForwardBeta(int rpm, double distance) {
   
   breakTicks = distanceTicks;
 
-  int m1setSpeed = 300;
-  int m2setSpeed = 285;
+  int m1setSpeed = 350;
+  int m2setSpeed = 350;
 
   //Check using right side sensor if need to calibrate
-  //calibrateBeforeMoveForward();
+  calibrateBeforeMoveForward();
 
   MotorPID M1pid = {m1setSpeed, 0, 0, 0.105};//0.1=>50
   MotorPID M2pid = {m2setSpeed, 0, 0, 0.1};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms //was 0.125
@@ -46,7 +46,7 @@ void moveForwardBeta(int rpm, double distance) {
     {
       
       //Gradual breaking
-      if(currentTicksM1 > 0.8*distanceTicks){
+      if(currentTicksM1 > 0.9*distanceTicks){
         tuneMotors(rpm*0.7, &M1pid, &M2pid);
         
       }
@@ -85,7 +85,7 @@ void moveForwardOneGridBeta() {
   
   
   //Check using right side sensor if need to calibrate
-  //calibrateBeforeMoveForward();
+  calibrateBeforeMoveForward();
   breakTicks = 1.01 * 9.5 * ticksPerCM;//0.95
   MotorPID M2 = {m2setSpeed , 0, 0, 0.400}; //
   enableInterrupt( e1a, dummy, RISING);
@@ -163,7 +163,7 @@ void moveForwardTwoGridBeta() {
   
   
   //Check using right side sensor if need to calibrate
-  //calibrateBeforeMoveForward();
+  calibrateBeforeMoveForward();
   breakTicks = 1.01 * 19 * ticksPerCM;//0.95
   MotorPID M2 = {m2setSpeed , 0, 0, 0.40}; //
   enableInterrupt( e1a, dummy, RISING);

@@ -94,7 +94,7 @@ char* getSensorReadingInCM() {
   }
     
   //------------------------------------LEFT-----------------------------------------------------
-  //PS1 y = 12169x - 9.3202
+  //PS1 y = 12169x + 0.6798
   //Limit is 84cm
   double leftValue = sensorValues[2];
   if (leftValue < 140)
@@ -107,11 +107,11 @@ char* getSensorReadingInCM() {
   }
   else
   {
-    sensorsValuesArray[5] = (12169 / leftValue) - 9.3202 + 10;
+    sensorsValuesArray[5] = (12169 / leftValue) + 0.6798;
   }
 
   //------------------------------------CENTER LEFT-----------------------------------------------------
-  //PS6 y = 12464x + 0.1461
+  //PS6 y = 12464x + 1.1461
   //Limit is 80cm
   double centerLeftValue = sensorValues[4];
   if (centerLeftValue < 150)
@@ -124,7 +124,7 @@ char* getSensorReadingInCM() {
   }
   else
   {
-    sensorsValuesArray[6] = (12464 / centerLeftValue) - 8.8539 + 10;
+    sensorsValuesArray[6] = (12464 / centerLeftValue) + 1.1461;
   }
 
   
@@ -159,8 +159,8 @@ char* getSensorReadingInCM() {
   return sensorsValuesArray;
 }
 
-double sortAndAverage(int* listOfReadings, int size, int amount)
-{
+double sortAndAverage(int* listOfReadings, int size, int amount){
+	
   //Sort Reading
   for (int i = 0; i < size; i++)
   {
@@ -192,16 +192,13 @@ double sortAndAverage(int* listOfReadings, int size, int amount)
   return total / (highest-lowest);
 }
 
-  int listOfReadingsFL[100];
-  int listOfReadingsFR[150];
-  int listOfReadingsL[150];
-  //int listOfReadingsR[90];
-  //int listOfReadingsCL[90];
-  //int listOfReadingsCR[90];
-
+int listOfReadings1[100];
+int listOfReadings2[150];
+int listOfReadings3[150];
+  
 //Get average reading over a number of samples
-double* getIRSensorReading()
-{
+double* getIRSensorReading(){
+	
   sensorValues[0] = 0;
   sensorValues[1] = 0;
   sensorValues[2] = 0;
@@ -211,81 +208,46 @@ double* getIRSensorReading()
   
   double numberOfTimes = 1;
   int size = 100;
+  int delay = 200;
     
   for(int b = 0; b<numberOfTimes; b++)
   {
-	     //Get Reading from Sensor
-    for (int a = 0; a < size; a++)
-    {
-      listOfReadingsFL[a] = analogRead(frontLeft);
-      listOfReadingsFR[a] = analogRead(frontRight);
-      listOfReadingsL[a] = analogRead(right);
-      delayMicroseconds(500);
-    }
-	//Get median averaged from list
-    sensorValues[0] = sortAndAverage(listOfReadingsFL, size, 3);
-    sensorValues[1] = sortAndAverage(listOfReadingsFR, size, 3);
-    sensorValues[3] = sortAndAverage(listOfReadingsL, size, 3);
+		//Get Reading from Sensor
+		for (int a = 0; a < size; a++)
+		{
+			listOfReadings1[a] = analogRead(frontLeft);
+			listOfReadings2[a] = analogRead(frontRight);
+			listOfReadings3[a] = analogRead(right);
+			delayMicroseconds(delay);
+		}
+		//Get median averaged from list
+		sensorValues[0] = sortAndAverage(listOfReadings1, size, 3);
+		sensorValues[1] = sortAndAverage(listOfReadings2, size, 3);
+		sensorValues[3] = sortAndAverage(listOfReadings3, size, 3);
 	
 	    for (int a = 0; a < size; a++)
-    {
-      
-      listOfReadingsFL[a] = analogRead(centerRight);
-	  listOfReadingsFR[a] = analogRead(left);
-      listOfReadingsL[a] = analogRead(centerLeft);
-      delayMicroseconds(500);
-    }
-	for (int a = 0; a < 50; a++)
-    {
-	  listOfReadingsL[size+a] = analogRead(left);
-      listOfReadingsL[size+a] = analogRead(centerLeft);
-      delayMicroseconds(500);
-    }
-	//Get median averaged from list
-    sensorValues[5] = sortAndAverage(listOfReadingsFL, size, 3);
-    sensorValues[2] = sortAndAverage(listOfReadingsFR, 150, 3);
-    sensorValues[4] = sortAndAverage(listOfReadingsL, 150, 3);
-  }
-
-
-
-
-	 
-	  
-	/*
-    //Get Reading from Sensor
-    for (int a = 0; a < size; a++)
-    {
-      listOfReadingsFL[a] = analogRead(frontLeft);
-      listOfReadingsFR[a] = analogRead(frontRight);
-      listOfReadingsL[a] = analogRead(left);
-      listOfReadingsR[a] = analogRead(right);
-      listOfReadingsCL[a] = analogRead(centerLeft);
-      listOfReadingsCR[a] = analogRead(centerRight);
-      delayMicroseconds(500);
-    }
-
-    //Get median averaged from list
-    sensorValues[0] = sensorValues[0] + sortAndAverage(listOfReadingsFL, size, 3);
-    sensorValues[1] = sensorValues[1] + sortAndAverage(listOfReadingsFR, size, 3);
-    sensorValues[2] = sensorValues[2] + sortAndAverage(listOfReadingsL, size, 3);
-    sensorValues[3] = sensorValues[3] + sortAndAverage(listOfReadingsR, size, 3);
-    sensorValues[4] = sensorValues[4] + sortAndAverage(listOfReadingsCL, size, 3);
-    sensorValues[5] = sensorValues[5] + sortAndAverage(listOfReadingsCR, size, 3);
-  }
-  sensorValues[0] = sensorValues[0]/numberOfTimes;
-  sensorValues[1] = sensorValues[1]/numberOfTimes;
-  sensorValues[2] = sensorValues[2]/numberOfTimes;
-  sensorValues[3] = sensorValues[3]/numberOfTimes;
-  sensorValues[4] = sensorValues[4]/numberOfTimes;
-  sensorValues[5] = sensorValues[5]/numberOfTimes;
-  */
-
-  return sensorValues;
+		{
+			listOfReadings1[a] = analogRead(centerRight);
+			listOfReadings2[a] = analogRead(left);
+			listOfReadings3[a] = analogRead(centerLeft);
+			delayMicroseconds(delay);
+		}
+		for (int a = 0; a < 50; a++)
+		{
+			listOfReadings3[size+a] = analogRead(left);
+			listOfReadings3[size+a] = analogRead(centerLeft);
+			delayMicroseconds(delay);
+		}
+		//Get median averaged from list
+		sensorValues[5] = sortAndAverage(listOfReadings1, size, 3);
+		sensorValues[2] = sortAndAverage(listOfReadings2, 150, 3);
+		sensorValues[4] = sortAndAverage(listOfReadings3, 150, 3);
+	}
+	return sensorValues;
 }
 
-boolean canSideCalibrate()
-{
+boolean canSideCalibrate(){
+	
   if (sideWall[0] == 1 && sideWall[2] == 1)
   {
     return true;

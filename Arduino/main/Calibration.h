@@ -278,14 +278,13 @@ void faceNorthCalibration(){
     //isSideFull[1] == 0 do nothing
   }
   fastCalibration(2);
-  delay(150);
+  delay(300);
   turnPID(-1, 90);
-  delay(150);
+  delay(300);
   turnPID(-1, 90);
 }
 
 void tooCloseToWall(){
-  getFrontCalibrationReading(false);
   int usReading = int(getUltraSound2Reading());
   
   if(usReading < 7 && usReading > 0)
@@ -296,8 +295,10 @@ void tooCloseToWall(){
       delay(20);
       setBrakes();
     }
+	return;
   }
-  else if(frontLeftReading < 12 && frontLeftReading > 0)
+  getFrontCalibrationReading(false);
+  if(frontLeftReading < 12 && frontLeftReading > 0)
   {
     md.setSpeeds(-140, -140);
     while (frontLeftReading < 12)

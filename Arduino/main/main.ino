@@ -84,21 +84,20 @@ void processInst() {
             break;
             
       //-------------Calibrate Right Wall------------
-      case 'R':   if(true)
-            {
-				calibrateBeforeMoveForward();
-            }
-            break;
+      case 'R': if(acceptTony)
+				{
+					calibrateBeforeMoveForward();
+				}
+				break;
             
       //-------------Calibrate Front Wall------------
-      case 'F':   
-            delay(delayAmount);
-            fastCalibration(0);
-            break;
+      case 'F':	delay(delayAmount);
+				fastCalibration(0);
+				break;
             
       //--------------Initial Calibration--------------
-      case '|':   calibration();
-            break;
+      case '|':	calibration();
+				break;
         
       //----------------Sensor Data--------------------
       case 'S':   setOutBuffer('S', getSensorReadingInCM(), 5);
@@ -106,9 +105,9 @@ void processInst() {
             break;
         
       //--------------Face North-----------------------
-      case 'H': delay(300);
-        faceNorthCalibration();
-        break;
+      case 'H': delay(5000);
+				faceNorthCalibration();
+				break;
       default:  ;//do nothing
     } 
     index += 2;
