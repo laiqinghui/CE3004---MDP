@@ -12,7 +12,7 @@ void moveForwardBeta(int rpm, double distance) {
   unsigned long tuneEntryTime = 0;
   unsigned long tuneExitTime = 0;
   unsigned long interval = 0;
-  double distanceTicks = 1.02 * distance * ticksPerCM;
+  double distanceTicks = 1.00 * distance * ticksPerCM;
   unsigned int currentTicksM1 = 0;
   //unsigned long currentTicksM2 = 0;
   
@@ -81,7 +81,6 @@ void moveForwardOneGridBeta() {
   int m1setSpeed = 300;//SETPOINT TARGET //250
   int m2setSpeed = 310; //265
   int tuneSpeedM2 = 0;
-  int moveSet = 0;
   
   
   //Check using right side sensor if need to calibrate
@@ -94,7 +93,6 @@ void moveForwardOneGridBeta() {
   md.setSpeeds(m1setSpeed, m2setSpeed);
   
   setTicks(0,0);
-  boolean brakesPending = true;
 
    
       while(!movementDone)
@@ -159,8 +157,6 @@ void moveForwardTwoGridBeta() {
   int m1setSpeed = 300;//SETPOINT TARGET //250
   int m2setSpeed = 310; //265
   int tuneSpeedM2 = 0;
-  int moveSet = 0;
-  
   
   //Check using right side sensor if need to calibrate
   calibrateBeforeMoveForward();
@@ -172,7 +168,6 @@ void moveForwardTwoGridBeta() {
   md.setSpeeds(m1setSpeed, m2setSpeed);
   
   setTicks(0,0);
-  boolean brakesPending = true;
 
    
       while(!movementDone)

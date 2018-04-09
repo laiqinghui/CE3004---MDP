@@ -195,7 +195,6 @@ void straightenTune() {
     }
   while (frontRightReading < frontLeftReading)
     {
-    int delayAmount = abs(frontRightReading - frontLeftReading)*90;    
       md.setSpeeds(-130, 0);
       delay(min);
       setBrakes();

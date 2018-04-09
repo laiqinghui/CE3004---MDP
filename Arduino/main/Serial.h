@@ -45,7 +45,6 @@ void setOutBuffer(char opcode, char * data, int len) {
 void receiveData() {
    
   char received = 'a';
-  char recArr[100] = {0};
   int i = 0;
   while(received != ';')
   {
@@ -55,7 +54,6 @@ void receiveData() {
     }
   }
   
-  //printArray(recArr, i);
   if(i != 0)
   {
     newData = true;//Set flag for main program to process data

@@ -29,7 +29,7 @@ void processInst() {
               moveForwardNumber = moveCount;
             }  
             else{
-              moveForwardBeta(110, 9.7 * moveCount);
+              moveForwardBeta(110, 10 * moveCount);
               moveForwardNumber = moveCount;
             }  
             
