@@ -64,7 +64,7 @@ char* getSensorReadingInCM() {
   }
 
   //------------------------------------RIGHT -----------------------------------------------------
-  //PS3 y = 5776.6x - 0.5087
+  //PS3 y = 5201.6x + 0.2481
   //Limit is 50cm
   double rightValue = sensorValues[3];
   if (rightValue < 105)
@@ -73,15 +73,15 @@ char* getSensorReadingInCM() {
   }
   else
   {
-    sensorsValuesArray[3] = (5776.6 / rightValue) -0.5087;
+    sensorsValuesArray[3] = (5201.6 / rightValue) + 0.2481;
   }
   if(sensorsValuesArray[3] >35)
   {
 	  sensorsValuesArray[3] = sensorsValuesArray[3] + 2;
   }
   
-    //------------------------------------CENTER RIGHT-----------------------------------------------------
-  //PS5 y = 6594.9x - 3.908
+  //------------------------------------CENTER RIGHT-----------------------------------------------------
+  //PS5 y = 6124.6x - 3.708
   //Limit is 50cm
   double centerRightValue = sensorValues[5];
   if (centerRightValue < 120)
@@ -90,26 +90,10 @@ char* getSensorReadingInCM() {
   }
   else
   {
-    sensorsValuesArray[4] = (6594.9 / centerRightValue) - 4.908;
+    sensorsValuesArray[4] = (6124.6 / centerRightValue) - 3.708;
   }
-  
-  if(moveForwardNumber == 2)
-  {
-    sideWall[2] = sideWall[0];
-    sideWall[1] = 0;
-    sideWall[2] = 0;
-    //Keep track of side wall
-    if (int(sensorsValuesArray[3]) < 14 && int(sensorsValuesArray[3]) > 0)
-    {
-    sideWall[0] = 1;
-    }
-    if (int(sensorsValuesArray[5]) < 14 && int(sensorsValuesArray[5]) > 0)
-    {
-    sideWall[1] = 1;
-    }
-  }
-  
-    //------------------------------------LEFT-----------------------------------------------------
+    
+  //------------------------------------LEFT-----------------------------------------------------
   //PS1 y = 12169x - 9.3202
   //Limit is 84cm
   double leftValue = sensorValues[2];
@@ -149,8 +133,13 @@ char* getSensorReadingInCM() {
    if(moveForwardNumber == 1)
    {
     sideWall[2] = sideWall[1];
-    sideWall[1] = 0;
-    sideWall[0] = 0;
+   }
+   else if(moveForwardNumber == 2)
+   {
+		sideWall[2] = sideWall[0];
+   }
+   else if(moveForwardNumber > 2)
+}
     if (int(sensorsValuesArray[3]) < 15 && int(sensorsValuesArray[3]) > 0)
     {
       sideWall[0] = 1;

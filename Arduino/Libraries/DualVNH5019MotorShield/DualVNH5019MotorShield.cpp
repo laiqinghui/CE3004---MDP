@@ -241,26 +241,7 @@ void DualVNH5019MotorShield::setM2Brake(){
 }
 
 // Brake motor 1 and 2, brake is a number between 0 and 400
-void DualVNH5019MotorShield::setBrakes(){	
-  noInterrupts();
 
-  //Set both motors to reverse
-  
-  PORTD = PORTD & B01111011; //Set to low
-  PORTD = PORTD | B00010000; //Set to high
-  PORTB = PORTB | B00000001; //Set to high  
-  
-  OCR1A = 400;
-  OCR1B = 400;
-  
-  //Set both to brake
-  PORTB = PORTB & B11111110;
-  PORTD = PORTD & B01101011;
-  
-  OCR1A = 400;
-  OCR1B = 400;
-  interrupts();
-}
 
 /*
 // Return error status for motor 1 

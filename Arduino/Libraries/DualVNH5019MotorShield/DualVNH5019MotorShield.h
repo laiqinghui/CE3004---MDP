@@ -18,7 +18,6 @@ class DualVNH5019MotorShield
     void setSpeeds(int m1Speed, int m2Speed); // Set speed for both M1 and M2.
     void setM1Brake(); // Brake M1. 
     void setM2Brake(); // Brake M2.
-    void setBrakes(); // Brake both M1 and M2.
     unsigned int getM1CurrentMilliamps(); // Get current reading for M1. 
     unsigned int getM2CurrentMilliamps(); // Get current reading for M2.
     unsigned char getM1Fault(); // Get fault reading from M1.

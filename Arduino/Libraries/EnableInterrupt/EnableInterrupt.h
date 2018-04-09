@@ -10,16 +10,23 @@ volatile unsigned long breakTicks = 0;
 
 volatile int numberOfBrakes = 0;
 
+volatile boolean isTurn = true;
+
 void setBrakes(){	
   noInterrupts();
   //Set both motors to reverse
   
-  PORTD = PORTD & B01111011; //Set to low
-  PORTD = PORTD | B00010000; //Set to high
-  PORTB = PORTB | B00000001; //Set to high  
-  
-  OCR1A = 400;
-  OCR1B = 400;
+  if(!isTurn)
+  {
+	  PORTD = PORTD & B01111011; //Set to low
+	  PORTD = PORTD | B00010000; //Set to high
+	  PORTB = PORTB | B00000001; //Set to high  
+	  
+	  OCR1A = 400;
+	  OCR1B = 400;
+	  
+	delayMicroseconds(500);
+  }
   
   PORTD = PORTD & B01101011;
   PORTB = PORTB & B11111110;
@@ -34,6 +41,7 @@ void setBrakes(){
 
 void enableInterrupt(uint8_t pinNumber, void (*func)(void), uint8_t mode)
 {
+	isTurn = false;
 	PCICR |= 0b00000101;    // turn on ISR PCINT2 and PCINT0
 	mode = mode;
 	pinMode(pinNumber,INPUT);   // set Pin as Input (default)
