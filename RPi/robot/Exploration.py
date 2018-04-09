@@ -14,7 +14,7 @@ from Constants import NORTH, SOUTH, EAST, WEST, FORWARD, LEFT, RIGHT, START, MAX
 from FastestPath import FastestPath
 
 
-CALIBRATE_N_STEPS = 1
+CALIBRATE_N_STEPS = 5
 
 
 class Exploration:
@@ -294,7 +294,7 @@ class Exploration:
             elif (calibrate_front[0]):
                 move.append(calibrate_front[1])
             elif (calibrate_right[0]):
-                if (self.moveNumber // (CALIBRATE_N_STEPS + 3)) > self.baseStep:
+                if (self.moveNumber // (CALIBRATE_N_STEPS)) > self.baseStep:
                     move.append(calibrate_right[1])
                     self.baseStep = (self.moveNumber // CALIBRATE_N_STEPS)
 
