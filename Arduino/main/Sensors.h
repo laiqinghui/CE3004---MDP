@@ -127,6 +127,37 @@ char* getSensorReadingInCM() {
     sensorsValuesArray[6] = (12464 / centerLeftValue) - 8.8539;
   }
 
+  
+  
+  //---------------------------Keep track of side wall------------------------------------
+   if(moveForwardNumber == 1)
+   {
+		sideWall[2] = sideWall[1];
+   }
+   else if(moveForwardNumber == 2)
+   {
+		sideWall[2] = sideWall[0];
+   }
+   else if(moveForwardNumber > 2)
+   {
+		sideWall[2] = 0;
+   }
+   sideWall[1] = 0;
+   sideWall[0] = 0;
+   
+   //Update front 2 blocks
+   if (int(sensorsValuesArray[3]) < 15 && int(sensorsValuesArray[3]) > 0)
+   {
+		sideWall[0] = 1;
+   }
+   if (int(sensorsValuesArray[4]) < 15 && int(sensorsValuesArray[4]) > 0)
+   {
+		sideWall[1] = 1;
+   }
+   Serial.println("Wall Info");
+   Serial.println(sideWall[0]);
+   Serial.println(sideWall[1]);
+   Serial.println(sideWall[2]);
 
   return sensorsValuesArray;
 }

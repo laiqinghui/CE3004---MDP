@@ -38,7 +38,7 @@ volatile double* getFrontCalibrationReading(boolean quick) {
 }
 
 volatile double* calibrationFrontSensorReading() {
-  int size = 70;
+  int size = 100;
 
   int listOfReadingsFL[size];
   int listOfReadingsFR[size];
@@ -48,7 +48,7 @@ volatile double* calibrationFrontSensorReading() {
   {
     listOfReadingsFL[a] = analogRead(frontLeft);
     listOfReadingsFR[a] = analogRead(frontRight);
-    delayMicroseconds(500);
+    delayMicroseconds(200);
   }
 
   //Get median averaged from list
@@ -62,28 +62,28 @@ double getRightSensorReading(){
 	
 	double rightSideReading = analogRead(right);
 	
-	int size = 50;
+	int size = 100;
 	int listOfReadingsRight[size];
 
 	//Get Reading from Sensor
 	for (int a = 0; a < size; a++)
 	{
 		listOfReadingsRight[a] = analogRead(right);
-		delayMicroseconds(500);
+		delayMicroseconds(200);
 	}
 
 	//Get median averaged from list
 	rightSideReading = sortAndAverage(listOfReadingsRight, size, 3);
 
 	//------------------------------------RIGHT-----------------------------------------------------
-	//y = 6028.3x - 1.2596
-	return (6028.3 / rightSideReading) - 1.2596;
+	//y = 5273.9x - 0.3062
+	return (5273.9 / rightSideReading) - 0.3062;
 }
 
 volatile double rightSensorsCalibrationCM[2];
 void getBothRightSensorReading(){
 		
-	int size = 50;
+	int size = 100;
 	int listOfReadingsRight[size];
 	int listOfReadingsCenterRight[size];
 
@@ -92,7 +92,7 @@ void getBothRightSensorReading(){
 	{
 		listOfReadingsRight[a] = analogRead(right);
 		listOfReadingsCenterRight[a] = analogRead(centerRight);
-		delayMicroseconds(500);
+		delayMicroseconds(200);
 	}
 
 	//Get median averaged from list
@@ -100,11 +100,11 @@ void getBothRightSensorReading(){
 	double centerRightSideReadingReading = sortAndAverage(listOfReadingsCenterRight, size, 3);
 
 	//------------------------------------RIGHT-----------------------------------------------------
-	//y = 6028.3x - 0.2596
-	rightSensorsCalibrationCM[0] = (6028.3 / rightSideReadingReading) - 0.0596;
+	//y = 5273.9x - 0.3062
+	rightSensorsCalibrationCM[0] = (5273.9 / rightSideReadingReading) - 0.3062;
 	
 	//------------------------------------CENTER RIGHT-----------------------------------------------------
-	//y = 5615.2x - 0.0784
-	rightSensorsCalibrationCM[1] = (5615.2 / centerRightSideReadingReading) - 0.0784;
+	//y = 5320.2x - 1.1993
+	rightSensorsCalibrationCM[1] = (5320.2 / centerRightSideReadingReading) - 1.1993;
 	
 }

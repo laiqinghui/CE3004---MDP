@@ -7,7 +7,7 @@ void processInst() {
   boolean fastestPath = false;
   int index = 1;//Start with 1 as first character is sensor flag which is checked after moving
   int moveCount = 0;
-  int delayAmount = 200;
+  int delayAmount = 100;
   
   if(instBuff[0] == 'C')
   {
@@ -86,9 +86,7 @@ void processInst() {
       //-------------Calibrate Right Wall------------
       case 'R':   if(true)
             {
-              delay(delayAmount);
-              //sideStraighten();
-              fastCalibration(1);
+				calibrateBeforeMoveForward();
             }
             break;
             
@@ -124,9 +122,7 @@ void processInst() {
   if (instBuff[0] == 'S') 
   {
     setOutBuffer('S', getSensorReadingInCM(), 7);
-    //printArray(outBuffer, 9);
     sendToPi();//Interrupt RPI to notify data is ready
-    //Serial.println("Sent to PI");
   }
 
 }

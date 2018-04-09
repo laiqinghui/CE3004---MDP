@@ -10,6 +10,7 @@
 //Function Declaration
 void straighten();
 void straightenTune();
+void sideStraighten();
 void distancefromWall(double distance);
 void calibration();
 void fastCalibration(int choice);
@@ -23,13 +24,13 @@ double fromFrontWall = 13;
 double fromSideWall = 13.5;
 double threshold = 0.1;
 double checkSideWallValue = 0;
-int wait = 100;
+int wait = 70;
 
 //Calibration
 void calibration() {
   
   //Calibrate Turning
-  for (int a = 0; a < 2; a++)
+  for (int a = 0; a < 4; a++)
   {
     fastCalibration(2);
   }
@@ -94,9 +95,8 @@ void calibration() {
 void fastCalibration(int choice) {
   //Calibrate against right wall only
   if (choice == 1)
-  {
+  {	  
     turnPID(1, 90);
-    delay(wait);
 
     calibrateAgainstWall(fromSideWall);
 
@@ -123,6 +123,7 @@ void fastCalibration(int choice) {
 
 void calibrateBeforeMoveForward() {
   acceptTony = false;
+  //sideStraighten();
   double rightSideReading = getRightSensorReading();
   if (rightSideReading < checkSideWallValue-1 || (rightSideReading > checkSideWallValue+1.5))
   {
@@ -132,7 +133,6 @@ void calibrateBeforeMoveForward() {
     }
   }
 }
-
 
 void distancefromWall(double distance) {
   //Fine tune the distance from wall
@@ -180,43 +180,24 @@ void straighten() {
 }
 
 void straightenTune() {
-  int min = 12;
+  int min = 11;
   getFrontCalibrationReading(false);
  
   if (frontRightReading > frontLeftReading)
   {
     while (frontRightReading > frontLeftReading)
     {
-    //Try proportional delay up to 20
-    int delayAmount = abs(frontRightReading - frontLeftReading)*90;
-    if(delayAmount > 20)
-    {
-      delayAmount = 20;
-    }
-    else if(delayAmount < min)
-    {
-      delayAmount = min;
-    }
-    
+    //Try proportional delay up to 20  
       md.setSpeeds(130, 0);
-    delay(delayAmount);
+    delay(min);
       setBrakes();
       getFrontCalibrationReading(false);
     }
   while (frontRightReading < frontLeftReading)
     {
-    int delayAmount = abs(frontRightReading - frontLeftReading)*90;
-    if(delayAmount > 20)
-    {
-      delayAmount = 20;
-    }
-    else if(delayAmount < min)
-    {
-      delayAmount = min;
-    }
-    
+    int delayAmount = abs(frontRightReading - frontLeftReading)*90;    
       md.setSpeeds(-130, 0);
-      delay(delayAmount);
+      delay(min);
       setBrakes();
       getFrontCalibrationReading(false);
     }
@@ -225,35 +206,16 @@ void straightenTune() {
   {
     while (frontRightReading < frontLeftReading)
     {
-    int delayAmount = abs(frontRightReading - frontLeftReading)*90;
-    if(delayAmount > 25)
-    {
-      delayAmount = 25;
-    }
-    else if(delayAmount < min)
-    {
-      delayAmount = min;
-    }
     
       md.setSpeeds(-130, 0);
-      delay(delayAmount);
+      delay(min);
       setBrakes();
       getFrontCalibrationReading(false);
     }
   while (frontRightReading > frontLeftReading)
-    {
-    int delayAmount = abs(frontRightReading - frontLeftReading)*90;
-    if(delayAmount > 25)
-    {
-      delayAmount = 25;
-    }
-    else if(delayAmount < min)
-    {
-      delayAmount = min;
-    }
-    
+    {    
       md.setSpeeds(130, 0);
-      delay(delayAmount);
+      delay(min);
       setBrakes();
       getFrontCalibrationReading(false);
     }
@@ -404,7 +366,9 @@ void calibrateAgainstWall(int distance){
 
   //Fine tune the calibration
   int count = 0;
-    while (abs(frontRightReading - frontLeftReading) > threshold)
+  straighten();
+  getFrontCalibrationReading(false);
+  while (abs(frontRightReading - frontLeftReading) > threshold)
   {
     straightenTune();
     getFrontCalibrationReading(false);
@@ -428,8 +392,8 @@ void sideStraighten()
   {
     while (rightFrontReading < rightBackReading)
     {
-      md.setSpeeds(100, -100);
-      delay(20);
+      md.setSpeeds(150, -150);
+      delay(15);
       setBrakes();
       getBothRightSensorReading();
     }
@@ -438,8 +402,8 @@ void sideStraighten()
   {
     while (rightFrontReading > rightBackReading)
     {
-      md.setSpeeds(-100, 100);
-      delay(20);
+      md.setSpeeds(-150, 150);
+      delay(15);
       setBrakes();
       getBothRightSensorReading();
     }
