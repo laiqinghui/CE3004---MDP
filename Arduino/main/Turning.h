@@ -4,8 +4,8 @@ void setTurnValueOffset(int dir, double newValue);
 void turnPID(int dir, int degree);
 
 
-double offsetRight = 0.940; //0.919
-double offsetLeft = 0.928; //0.9165
+double offsetRight = 0.927; //0.919
+double offsetLeft = 0.92; //0.9165
 double errorChange = 0.001;
 void turnPID(int dir, int degree){
 
@@ -124,11 +124,12 @@ void turnPID(int dir, int degree){
     disableInterrupt(e2b);
     breakTicks = 0;
     movementDone = false;
-	Serial.print("breakTicksM2: ");
+    /*
+	  Serial.print("breakTicksM2: ");
     Serial.println(M2ticks);
     Serial.print("breakTicksM1: ");
     Serial.println(M1ticks);
-	
+	  */
     setTicks(0,0);
     setSqWidth(0,0);
 }// end of function

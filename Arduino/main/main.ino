@@ -7,7 +7,7 @@ void processInst() {
   boolean fastestPath = false;
   int index = 1;//Start with 1 as first character is sensor flag which is checked after moving
   int moveCount = 0;
-  int delayAmount = 100;
+  int delayAmount = 70;
   
   if(instBuff[0] == 'C')
   {
@@ -68,7 +68,7 @@ void processInst() {
             for (int a = 0; a < moveCount; a++) 
             {
               turnPID(1, 90);
-              delay(delayAmount);
+              delay(150);
               turnPID(1, 90);
               delay(delayAmount);
             }
@@ -121,8 +121,10 @@ void processInst() {
   //Serial.println(index-1);
   if (instBuff[0] == 'S') 
   {
+    //Serial.println("Movement done.");
     setOutBuffer('S', getSensorReadingInCM(), 7);
     sendToPi();//Interrupt RPI to notify data is ready
+    //Serial.println("Sending done.");
   }
 
 }
@@ -133,11 +135,12 @@ void setup() {
   Serial.begin(9600);
   Serial.println("Program Started!!!!");
   md.init();
-  pinMode(PI_PIN, OUTPUT);
-  digitalWrite(PI_PIN, LOW);
+  //pinMode(PI_PIN, OUTPUT);
+  //digitalWrite(PI_PIN, LOW);
   //initI2C();
   PWM_Mode_Setup();
   //calibrateReading();
+
 }
 
 void loop(){
@@ -149,8 +152,13 @@ void loop(){
   {
     receiveData();
   }
-
-  //Serial.println("TEST DEBUG");
+  /*
+  Serial.print("Left: ");
+  Serial.println(getIRSensorReading()[2]);
+  Serial.print("Center left: ");
+  Serial.println(getIRSensorReading()[4]);
+  Serial.println();
+  */
 }
 
 void calibrateReading()

@@ -50,15 +50,19 @@ void setOutBuffer(char opcode, char * data, int len) {
 
 // callback for received data
 void receiveData() {
-  delay(150);//150
-  //Serial.read();//Clear 1st garbage byte    
+   
+  char received = 'a';
+  char recArr[100] = {0};
   int i = 0;
-  while(Serial.available()) 
+  while(received != ';')
   {
-    // read the incoming byte:
-    inBuffer[i] = Serial.read();
-    i++;
+    if(Serial.available()){
+      received = Serial.read();
+      inBuffer[i++] = received;
+    }
   }
+  
+  //printArray(recArr, i);
   if(i != 0)
   {
     newData = true;//Set flag for main program to process data

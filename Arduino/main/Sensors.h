@@ -101,13 +101,13 @@ char* getSensorReadingInCM() {
   {
     sensorsValuesArray[5] = -1;
   }
-  else if(leftValue > 491)
+  else if(leftValue > 500)//491
   {
     sensorsValuesArray[5] = 20;
   }
   else
   {
-    sensorsValuesArray[5] = (12169 / leftValue) - 9.3202;
+    sensorsValuesArray[5] = (12169 / leftValue) - 9.3202 + 10;
   }
 
   //------------------------------------CENTER LEFT-----------------------------------------------------
@@ -118,13 +118,13 @@ char* getSensorReadingInCM() {
   {
     sensorsValuesArray[6] = -1;
   }
-  else if(centerLeftValue > 489)
+  else if(centerLeftValue > 500 )//489
   {
     sensorsValuesArray[6] = 20;
   }
   else
   {
-    sensorsValuesArray[6] = (12464 / centerLeftValue) - 8.8539;
+    sensorsValuesArray[6] = (12464 / centerLeftValue) - 8.8539 + 10;
   }
 
   
@@ -154,10 +154,7 @@ char* getSensorReadingInCM() {
    {
 		sideWall[1] = 1;
    }
-   Serial.println("Wall Info");
-   Serial.println(sideWall[0]);
-   Serial.println(sideWall[1]);
-   Serial.println(sideWall[2]);
+   
 
   return sensorsValuesArray;
 }
