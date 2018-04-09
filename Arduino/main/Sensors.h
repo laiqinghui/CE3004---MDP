@@ -34,16 +34,16 @@ char* getSensorReadingInCM() {
   getIRSensorReading();
 
   //------------------------------------FRONT LEFT-----------------------------------------------------
-  //PS4 y = 5668.4x - 0.8187
-  //Limit is 50cm
+  //PS4 y = 5819.3x - 5.9084
+  //Limit is 45cm
   double frontLeftValue = sensorValues[0];
-  if (frontLeftValue < 108)
+  if (frontLeftValue < 120)
   {
     sensorsValuesArray[0] = -1;//Cannot be 0 as 0 is considered as null character in char array. I2C will terminate transmission upon the null char.
   }
   else
   {
-    sensorsValuesArray[0] = (5668.4 / frontLeftValue) - 0.8187;
+    sensorsValuesArray[0] = (5819.3 / frontLeftValue) - 5.9084;
   }
 
   //------------------------------------UtraSound-----------------------------------------------------
@@ -51,16 +51,16 @@ char* getSensorReadingInCM() {
   sensorsValuesArray[1] = (char)getUltraSound2Reading();//Center
 
   //------------------------------------FRONT RIGHT-----------------------------------------------------
-  //PS2 y = 5894.1x - 2.0988
+  //PS2 y = 6325.4x - 7.9435
   //Limit is 45cm
   double frontRightValue = sensorValues[1];
-  if (frontRightValue < 120)
+  if (frontRightValue < 125)
   {
     sensorsValuesArray[2] = -1;
   }
   else
   {
-    sensorsValuesArray[2] = (5894.1 / frontRightValue) - 2.0988;
+    sensorsValuesArray[2] = (6325.4 / frontRightValue) - 7.9435;
   }
 
   //------------------------------------RIGHT -----------------------------------------------------
@@ -110,7 +110,7 @@ char* getSensorReadingInCM() {
   }
   
     //------------------------------------LEFT-----------------------------------------------------
-  //PS1 y = 11805x + 0.0617
+  //PS1 y = 12169x - 9.3202
   //Limit is 84cm
   double leftValue = sensorValues[2];
   if (leftValue < 140)
@@ -123,11 +123,11 @@ char* getSensorReadingInCM() {
   }
   else
   {
-    sensorsValuesArray[5] = (11805 / leftValue) + 0.0617;
+    sensorsValuesArray[5] = (12169 / leftValue) - 9.3202;
   }
 
   //------------------------------------CENTER LEFT-----------------------------------------------------
-  //PS6  y = 12360x + 0.0976
+  //PS6 y = 12464x + 0.1461
   //Limit is 80cm
   double centerLeftValue = sensorValues[4];
   if (centerLeftValue < 150)
@@ -140,7 +140,7 @@ char* getSensorReadingInCM() {
   }
   else
   {
-    sensorsValuesArray[6] = (12360 / centerLeftValue) + 0.0976;
+    sensorsValuesArray[6] = (12464 / centerLeftValue) - 8.8539;
   }
 
   

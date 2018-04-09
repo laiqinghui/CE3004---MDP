@@ -143,7 +143,7 @@ void setup() {
 }
 
 void loop(){
-	//printSensorValue();
+  //printSensorValue();
   if (dataExist()) {
     processInst();
   }
@@ -161,8 +161,8 @@ void calibrateReading()
   int listOfReadings2[20];
   for(int a = 0; a<20; a++)
   {
-  listOfReadings1[a] = getIRSensorReading()[2];
-  listOfReadings2[a] = getIRSensorReading()[4];
+  listOfReadings1[a] = getIRSensorReading()[3];
+  listOfReadings2[a] = getIRSensorReading()[5];
   delay(10);
   }
   Serial.println("Set");
@@ -180,6 +180,6 @@ void printSensorValue()
     //sensorValues[3] R
     //sensorValues[4] CL
     //sensorValues[5] CR
-	Serial.println(getIRSensorReading()[5]);
+	Serial.println(getIRSensorReading()[4]);
 }
 
