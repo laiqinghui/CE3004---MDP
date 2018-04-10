@@ -194,7 +194,7 @@ double* getIRSensorReading(){
   
   double numberOfTimes = 1;
   int size = 100;
-  int delay = 200;
+  int delay = 350;
   
   int a =0;
   //Get Reading from Sensor

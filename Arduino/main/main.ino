@@ -85,7 +85,7 @@ void processInst() {
             break;
             
       //-------------Calibrate Right Wall------------
-      case 'R': if(acceptTony)
+      case 'R': if(true)
 				{
 					calibrateBeforeMoveForward();
 				}

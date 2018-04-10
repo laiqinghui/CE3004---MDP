@@ -326,40 +326,13 @@ void tooCloseToWall(){
 void turnAdjust(int dir) {
   getFrontCalibrationReading(false);
   //double oldValue = getTurnValueOffset(dir);
-  double difference = abs(frontRightReading - frontLeftReading);
+  double difference = frontRightReading - frontLeftReading;
   if(difference > 4)
   {
     return;
   }
 
   setTurnValueOffset(dir, difference);
-  
-  /*
-  //Turn Right
-  if (dir == 1)
-  {
-    if (frontRightReading > frontLeftReading)//Overturn
-    {
-      setTurnValueOffset(dir, difference);//Positive
-    }
-    else if (frontRightReading < frontLeftReading)//Underturn
-    {
-      setTurnValueOffset(dir, difference);//Negative
-    }
-  }
-  //Turn Left
-  else
-  {
-    if (frontRightReading < frontLeftReading)//Overturn
-    {
-      setTurnValueOffset(dir, difference);//Negative
-    }
-    else if (frontRightReading > frontLeftReading)//Underturn
-    {
-      setTurnValueOffset(dir, difference);//Positive
-    }
-  }
-  */
 }
 
 void calibrateAgainstWall(int distance){
