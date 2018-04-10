@@ -14,7 +14,7 @@ from Constants import NORTH, SOUTH, EAST, WEST, FORWARD, LEFT, RIGHT, START, MAX
 from FastestPath import FastestPath
 
 
-CALIBRATE_N_STEPS = 2
+CALIBRATE_N_STEPS = 3
 
 
 class Exploration:
