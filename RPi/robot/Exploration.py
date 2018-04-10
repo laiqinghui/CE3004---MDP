@@ -385,7 +385,7 @@ class Exploration:
             for i in range(front):
                 self.robot.moveBot(FORWARD)
             move.extend([FORWARD]*front)
-        print move
+
         return move
 
     def checkDeadZone(self, center):

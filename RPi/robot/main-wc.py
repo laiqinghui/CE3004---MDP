@@ -30,12 +30,14 @@ exp = Exploration(realMap=map_name, timeLimit=5)
 step = float(0.1)
 
 temp = exp.explore()
+print temp
+
 # print temp
 # print exp.robot.exploredMap
 exploremaps = []
 while not temp[1]:
     temp = exp.explore()
-    # print temp
+    print temp
     mod_map = copy.deepcopy(exp.robot.exploredMap)
     mod_map[exp.robot.center[0]][exp.robot.center[1]] = 3
     mod_map[exp.robot.center[0]][exp.robot.center[1]+1] = 3
