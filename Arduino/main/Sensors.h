@@ -11,6 +11,8 @@
 double* getIRSensorReading();
 char* getSensorReadingInCM();
 double sortAndAverage(int* listOfReadings, int size, int amount);
+void quickSort(int* list, int left, int right);
+int partition(int* list, int low, int high);
 
 //These arrays need to be outside if not the values will be weird
 double sensorValues[6];
@@ -107,7 +109,7 @@ char* getSensorReadingInCM() {
   }
   else
   {
-    sensorsValuesArray[5] = (12169 / leftValue) + 0.6798;
+    sensorsValuesArray[5] = (12169 / leftValue) + 0.6798 -1;
   }
 
   //------------------------------------CENTER LEFT-----------------------------------------------------
@@ -162,42 +164,26 @@ char* getSensorReadingInCM() {
 double sortAndAverage(int* listOfReadings, int size, int amount){
 	
   //Sort Reading
-  for (int i = 0; i < size; i++)
-  {
-    //Find max
-    int max = listOfReadings[0];
-    int maxLocation = 0;
-    for (int j = 0; j < size - i; j++)
-    {
-      if (max < listOfReadings[j])
-      {
-        max = listOfReadings[j];
-        maxLocation = j;
-      }
-    }
-
-    //Swap max with last position
-    listOfReadings[maxLocation] = listOfReadings[size - 1 - i];
-    listOfReadings[size - 1 - i] = max;
-  }
-
+  quickSort(listOfReadings, 0, size -1);
+ 
   int lowest = (size / 2) - (amount / 2);
   int highest = (size / 2) + (amount - (amount / 2));
-
+  
   double total = 0;
-  for (int a = lowest; a < highest; a++)
+  for (int a = lowest; a < highest; a++) 
   {
     total = total + listOfReadings[a];
   }
   return total / (highest-lowest);
 }
 
-int listOfReadings1[100];
-int listOfReadings2[150];
-int listOfReadings3[150];
   
 //Get average reading over a number of samples
 double* getIRSensorReading(){
+  
+  int listOfReadings1[100];
+  int listOfReadings2[150];
+  int listOfReadings3[150];
 	
   sensorValues[0] = 0;
   sensorValues[1] = 0;
@@ -209,40 +195,39 @@ double* getIRSensorReading(){
   double numberOfTimes = 1;
   int size = 100;
   int delay = 200;
-    
-  for(int b = 0; b<numberOfTimes; b++)
-  {
-		//Get Reading from Sensor
-		for (int a = 0; a < size; a++)
-		{
+  
+  int a =0;
+  //Get Reading from Sensor
+	for (a =0; a < size; a++)
+	{
 			listOfReadings1[a] = analogRead(frontLeft);
 			listOfReadings2[a] = analogRead(frontRight);
 			listOfReadings3[a] = analogRead(right);
 			delayMicroseconds(delay);
-		}
-		//Get median averaged from list
-		sensorValues[0] = sortAndAverage(listOfReadings1, size, 3);
-		sensorValues[1] = sortAndAverage(listOfReadings2, size, 3);
-		sensorValues[3] = sortAndAverage(listOfReadings3, size, 3);
+	}
+	//Get median averaged from list
+	sensorValues[0] = sortAndAverage(listOfReadings1, size, 3);
+	sensorValues[1] = sortAndAverage(listOfReadings2, size, 3);
+	sensorValues[3] = sortAndAverage(listOfReadings3, size, 3);
 	
-	    for (int a = 0; a < size; a++)
-		{
+	for (a = 0; a < size; a++)
+	{
 			listOfReadings1[a] = analogRead(centerRight);
 			listOfReadings2[a] = analogRead(left);
 			listOfReadings3[a] = analogRead(centerLeft);
 			delayMicroseconds(delay);
-		}
-		for (int a = 0; a < 50; a++)
-		{
-			listOfReadings3[size+a] = analogRead(left);
+	}
+	for (a = 0; a < 50; a++)
+	{
+			listOfReadings2[size+a] = analogRead(left);
 			listOfReadings3[size+a] = analogRead(centerLeft);
 			delayMicroseconds(delay);
-		}
-		//Get median averaged from list
-		sensorValues[5] = sortAndAverage(listOfReadings1, size, 3);
-		sensorValues[2] = sortAndAverage(listOfReadings2, 150, 3);
-		sensorValues[4] = sortAndAverage(listOfReadings3, 150, 3);
 	}
+		//Get median averaged from list
+	sensorValues[5] = sortAndAverage(listOfReadings1, size, 3);
+	sensorValues[2] = sortAndAverage(listOfReadings2, 150, 3);
+	sensorValues[4] = sortAndAverage(listOfReadings3, 150, 3);
+
 	return sensorValues;
 }
 
@@ -256,6 +241,60 @@ boolean canSideCalibrate(){
   {
     return false;
   }
+}
+
+int partition(int* list, int low, int high){
+
+  int temp;
+  int pivot;
+  int pivot_pos;
+  int last_small;
+  int i;
+  pivot_pos = (low + high)/2;
+  last_small = low;
+  
+  
+  pivot = list[pivot_pos];
+  list[pivot_pos] = list[low];
+  list[low] = pivot;
+
+  for(i = low + 1; i <= high; i++){
+  
+    if(list[i] < pivot){
+    
+      temp = list[i];
+      list[i] = list[++last_small];
+      list[last_small] = temp; 
+      
+    }
+    //printArr(list);
+  
+  }
+  
+  temp = list[low];
+  list[low] = list[last_small];
+  list[last_small] = temp;
+  return last_small;
+
+
+}
+
+void quickSort(int* list, int left, int right){
+
+  int pivot_pos;
+  
+  if(left > right){
+    return;
+  }
+  
+  pivot_pos = partition(list, left, right);
+  //printf("%d ", pivot_pos);
+
+  quickSort(list, left, pivot_pos - 1);
+  quickSort(list, pivot_pos + 1, right);
+
+
+
 }
 
 

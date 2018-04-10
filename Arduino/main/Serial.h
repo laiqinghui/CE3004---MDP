@@ -21,7 +21,7 @@ void printArray(char arr[], int len) {
 }
 
 void sendToPi() {
-  Serial.write(outBuffer);
+  Serial.write(outBuffer, 9);
 }
 
 void interruptPi() {

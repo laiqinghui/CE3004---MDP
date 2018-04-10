@@ -180,7 +180,7 @@ void straighten() {
 }
 
 void straightenTune() {
-  int min = 11;
+  int min = 12;
   getFrontCalibrationReading(false);
  
   if (frontRightReading > frontLeftReading)
@@ -189,11 +189,11 @@ void straightenTune() {
     {
     //Try proportional delay up to 20  
       md.setSpeeds(130, 0);
-    delay(min);
+      delay(min);
       setBrakes();
       getFrontCalibrationReading(false);
     }
-  while (frontRightReading < frontLeftReading)
+    while (frontRightReading < frontLeftReading)
     {
       md.setSpeeds(-130, 0);
       delay(min);
@@ -276,11 +276,12 @@ void faceNorthCalibration(){
     }
     //isSideFull[1] == 0 do nothing
   }
-  fastCalibration(2);
-  delay(300);
-  turnPID(-1, 90);
-  delay(300);
-  turnPID(-1, 90);
+  fastCalibration(1);
+  delay(1000);
+  turnPID(1, 90);
+  fastCalibration(0);
+  delay(1000);
+  turnPID(1, 90);
 }
 
 void tooCloseToWall(){
@@ -330,30 +331,35 @@ void turnAdjust(int dir) {
   {
     return;
   }
+
+  setTurnValueOffset(dir, difference);
+  
+  /*
   //Turn Right
   if (dir == 1)
   {
-    if (frontRightReading > frontLeftReading)
+    if (frontRightReading > frontLeftReading)//Overturn
     {
-      setTurnValueOffset(dir, difference);
+      setTurnValueOffset(dir, difference);//Positive
     }
-    else if (frontRightReading < frontLeftReading)
+    else if (frontRightReading < frontLeftReading)//Underturn
     {
-      setTurnValueOffset(dir, difference);
+      setTurnValueOffset(dir, difference);//Negative
     }
   }
   //Turn Left
   else
   {
-    if (frontRightReading < frontLeftReading)
+    if (frontRightReading < frontLeftReading)//Overturn
     {
-      setTurnValueOffset(dir, difference);
+      setTurnValueOffset(dir, difference);//Negative
     }
-    else if (frontRightReading > frontLeftReading)
+    else if (frontRightReading > frontLeftReading)//Underturn
     {
-      setTurnValueOffset(dir, difference);
+      setTurnValueOffset(dir, difference);//Positive
     }
   }
+  */
 }
 
 void calibrateAgainstWall(int distance){

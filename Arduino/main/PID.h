@@ -65,6 +65,7 @@ void tuneM1(int desiredRPM, MotorPID *M1) {
 
   double tuneSpeed = 0;
   double currentRPM = sqWidthToRPM(squareWidth_M1);
+  
 
   M1->currentErr =  desiredRPM - currentRPM;
   //tuneSpeed = M1->prevTuneSpeed + 0.47*M1->currentErr;
@@ -112,6 +113,7 @@ void tuneMotors(int desiredRPM, MotorPID *M1, MotorPID *M2) {
 	
 	double currentM1RPM = sqWidthToRPM(currentSquareWidth_M1);
 	double currentM2RPM = sqWidthToRPM(currentSquareWidth_M2);
+  
   /*
   Serial.println("currentM1RPM");
   Serial.println(currentM1RPM);

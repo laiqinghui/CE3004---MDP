@@ -85,7 +85,7 @@ void moveForwardOneGridBeta() {
   
   //Check using right side sensor if need to calibrate
   calibrateBeforeMoveForward();
-  breakTicks = 1.01 * 9.5 * ticksPerCM;//0.95
+  breakTicks = 1.015 * 9.5 * ticksPerCM;//0.95
   MotorPID M2 = {m2setSpeed , 0, 0, 0.400}; //
   enableInterrupt( e1a, dummy, RISING);
   enableInterrupt( e2b, dummy, RISING);
@@ -160,7 +160,7 @@ void moveForwardTwoGridBeta() {
   
   //Check using right side sensor if need to calibrate
   calibrateBeforeMoveForward();
-  breakTicks = 1.01 * 19 * ticksPerCM;//0.95
+  breakTicks = 1.02 * 19 * ticksPerCM;//0.95
   MotorPID M2 = {m2setSpeed , 0, 0, 0.40}; //
   enableInterrupt( e1a, dummy, RISING);
   enableInterrupt( e2b, dummy, RISING);

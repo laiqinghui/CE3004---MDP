@@ -7,13 +7,14 @@ void processInst() {
   boolean fastestPath = false;
   int index = 1;//Start with 1 as first character is sensor flag which is checked after moving
   int moveCount = 0;
-  int delayAmount = 70;
-  
+  int delayAmount = 100;
+
+  /*
   if(instBuff[0] == 'C')
   {
     fastestPath = true;
   }
-  
+  */
   while (instBuff[index] != ';') 
   {
     switch (instBuff[index]) 
@@ -132,7 +133,7 @@ void processInst() {
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("Program Started!!!!");
+  //Serial.println("Program Started!!!!");
   md.init();
   //pinMode(PI_PIN, OUTPUT);
   //digitalWrite(PI_PIN, LOW);
