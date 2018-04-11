@@ -13,7 +13,7 @@ except ImportError:
 from Constants import NORTH, SOUTH, EAST, WEST, FORWARD, LEFT, RIGHT, START, MAX_ROWS, MAX_COLS
 from FastestPath import FastestPath
 
-CALIBRATE_N_STEPS = 3
+CALIBRATE_N_STEPS = 1
 
 
 class Exploration:
