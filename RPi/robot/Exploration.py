@@ -13,9 +13,7 @@ except ImportError:
 from Constants import NORTH, SOUTH, EAST, WEST, FORWARD, LEFT, RIGHT, START, MAX_ROWS, MAX_COLS
 from FastestPath import FastestPath
 
-
 CALIBRATE_N_STEPS = 3
-
 
 class Exploration:
     """Implementation of the Right-Wall hugging algorithm for a maze solving robot.
@@ -63,6 +61,8 @@ class Exploration:
         self.visited = dict()
         self.endTime = 0
         self.ladder = [False, 0]
+        self.steps = 0
+        self.numCycle = 1
 
     def __validInds(self, inds):
         """To check if the input indices are valid or not.
@@ -106,11 +106,9 @@ class Exploration:
 
         """
         self.endTime = time.time() + self.timeLimit
-        numCycle = 1
-        steps = 0
 
         if (time.time() <= self.endTime and self.exploredArea < 100):
-            steps += 1
+            self.steps += 1
             if (sensor_vals):
                 current = self.moveStep(sensor_vals)
             else:
@@ -122,8 +120,8 @@ class Exploration:
                 self.visited[currentPos] += 1
 
                 if (np.array_equal(self.robot.center, self.startPos)):
-                    numCycle += 1
-                    if (numCycle > 1 and steps > 4 and self.exploredArea < 100):
+                    self.numCycle += 1
+                    if (self.numCycle > 1 and self.steps > 4 and self.exploredArea < 100):
                         neighbour = self.getExploredNeighbour()
                         if (neighbour):
                             neighbour = np.asarray(neighbour)
