@@ -186,7 +186,7 @@ class Exploration:
 
                         while (fsp.robot.center.tolist() != neighbour.tolist()):
                             fsp.moveStep()
-                        print "Couldnt find a path to unexplored area, returning home..."
+                        print "Fastest Path to unexplored area!"
 
                         self.robot.center = neighbour
                         self.robot.head = fsp.robot.head
@@ -206,7 +206,7 @@ class Exploration:
 
                         while (fsp.robot.center.tolist() != self.startPos.tolist()):
                             fsp.moveStep()
-                        print "Fastest Path to home"
+                        print "Couldnt find a path to unexplored area, returning home..."
 
                         self.robot.center = self.startPos
                         self.robot.head = fsp.robot.head
