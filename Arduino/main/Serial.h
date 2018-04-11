@@ -46,11 +46,15 @@ void receiveData() {
    
   char received = 'a';
   int i = 0;
+
+  
   while(received != ';')
   {
-    if(Serial.available()){
+    if(Serial.available()>1){
+      inBuffer[i++] = Serial.read();//Update move count
       received = Serial.read();
-      inBuffer[i++] = received;
+      inBuffer[i++] = received;//Update move type
+      
     }
   }
   

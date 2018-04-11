@@ -7,7 +7,7 @@ void processInst() {
   boolean fastestPath = false;
   int index = 1;//Start with 1 as first character is sensor flag which is checked after moving
   int moveCount = 0;
-  int delayAmount = 100;
+  int delayAmount = 150;
 
   /*
   if(instBuff[0] == 'C')
@@ -30,11 +30,12 @@ void processInst() {
               moveForwardNumber = moveCount;
             }  
             else{
-              moveForwardBeta(110, 10 * moveCount);
+              moveForwardBeta(120, 10 * moveCount);
               moveForwardNumber = moveCount;
             }  
             
             tooCloseToWall();
+            delay(50);
             break;
       
       //---------------Turn Left-----------------------     
@@ -68,8 +69,9 @@ void processInst() {
             moveCount = instBuff[index + 1] - 48;
             for (int a = 0; a < moveCount; a++) 
             {
+              delay(delayAmount);
               turnPID(1, 90);
-              delay(150);
+              delay(delayAmount);
               turnPID(1, 90);
               delay(delayAmount);
             }
@@ -133,7 +135,7 @@ void processInst() {
 
 void setup() {
   Serial.begin(9600);
-  //Serial.println("Program Started!!!!");
+  Serial.println("Program Started!!!!");
   md.init();
   //pinMode(PI_PIN, OUTPUT);
   //digitalWrite(PI_PIN, LOW);
@@ -152,13 +154,8 @@ void loop(){
   {
     receiveData();
   }
-  /*
-  Serial.print("Left: ");
-  Serial.println(getIRSensorReading()[2]);
-  Serial.print("Center left: ");
-  Serial.println(getIRSensorReading()[4]);
-  Serial.println();
-  */
+  
+  
 }
 
 void calibrateReading()

@@ -12,19 +12,19 @@ void moveForwardBeta(int rpm, double distance) {
   unsigned long tuneEntryTime = 0;
   unsigned long tuneExitTime = 0;
   unsigned long interval = 0;
-  double distanceTicks = 1.00 * distance * ticksPerCM;
+  double distanceTicks = 1.01 * distance * ticksPerCM;
   unsigned int currentTicksM1 = 0;
   //unsigned long currentTicksM2 = 0;
   
   breakTicks = distanceTicks;
 
   int m1setSpeed = 350;
-  int m2setSpeed = 350;
+  int m2setSpeed = 360;
 
   //Check using right side sensor if need to calibrate
   //calibrateBeforeMoveForward();
 
-  MotorPID M1pid = {m1setSpeed, 0, 0, 0.105};//0.1=>50
+  MotorPID M1pid = {m1setSpeed, 0, 0, 0.107};//0.1=>50
   MotorPID M2pid = {m2setSpeed, 0, 0, 0.1};//0.163=>50 0.134=>80 0.128=>90 /// Bat2: 0.119 => 90rpms //was 0.125
   
   enableInterrupt( e1a, risingM1, RISING);
@@ -160,7 +160,7 @@ void moveForwardTwoGridBeta() {
   
   //Check using right side sensor if need to calibrate
   //calibrateBeforeMoveForward();
-  breakTicks = 1.02 * 19 * ticksPerCM;//0.95
+  breakTicks = 1.03 * 19 * ticksPerCM;//0.95
   MotorPID M2 = {m2setSpeed , 0, 0, 0.40}; //
   enableInterrupt( e1a, dummy, RISING);
   enableInterrupt( e2b, dummy, RISING);

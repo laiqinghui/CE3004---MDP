@@ -96,7 +96,7 @@ char* getSensorReadingInCM() {
   }
     
   //------------------------------------LEFT-----------------------------------------------------
-  //PS1 y = 12169x + 0.6798
+  //PS1 y = 12223x - 0.1574
   //Limit is 84cm
   double leftValue = sensorValues[2];
   if (leftValue < 140)
@@ -109,11 +109,11 @@ char* getSensorReadingInCM() {
   }
   else
   {
-    sensorsValuesArray[5] = (12169 / leftValue) + 0.6798 -1;
+    sensorsValuesArray[5] = (12223 / leftValue) - 0.1574;
   }
 
   //------------------------------------CENTER LEFT-----------------------------------------------------
-  //PS6 y = 12464x + 1.1461
+  //PS6 y = 12312x + 1.4306
   //Limit is 80cm
   double centerLeftValue = sensorValues[4];
   if (centerLeftValue < 150)
@@ -126,7 +126,7 @@ char* getSensorReadingInCM() {
   }
   else
   {
-    sensorsValuesArray[6] = (12464 / centerLeftValue) + 1.1461;
+    sensorsValuesArray[6] = (12312 / centerLeftValue) + 1.4306;
   }
 
   

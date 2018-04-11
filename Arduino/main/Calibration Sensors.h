@@ -1,8 +1,8 @@
 #define frontLeftReading frontSensorsCalibrationCM[0]
 #define frontRightReading frontSensorsCalibrationCM[1]
 
-#define rightFrontReading sideSensorsCalibrationCM[0]
-#define rightBackReading sideSensorsCalibrationCM[1]
+#define rightFrontReading rightSensorsCalibrationCM[0]
+#define rightBackReading rightSensorsCalibrationCM[1]
 
 //Function Declaration
 volatile double* calibrationFrontSensorReading();
@@ -12,6 +12,7 @@ double getRightSensorReading();
 //Array Declaration
 volatile double frontSensorsCalibrationCM[2];
 volatile double calibrationFrontSensorRaw[2];
+volatile double rightSensorsCalibrationCM[2];
 
 //Front Sensor Values
 //Get average reading over a number of samples for front
@@ -80,7 +81,7 @@ double getRightSensorReading(){
 	return (5273.9 / rightSideReading) - 0.3062;
 }
 
-volatile double rightSensorsCalibrationCM[2];
+
 void getBothRightSensorReading(){
 		
 	int size = 100;

@@ -110,12 +110,12 @@ void fastCalibration(int choice) {
     if (choice == 2)
     {
       turnPID(1, 90);
-      turnAdjust(1);
+      //turnAdjust(1);
       calibrateAgainstWall(fromSideWall);
 
 
       turnPID(-1, 90);
-      turnAdjust(-1);
+      //turnAdjust(-1);
     }
     calibrateAgainstWall(fromFrontWall);
     }
@@ -125,7 +125,9 @@ void calibrateBeforeMoveForward() {
   acceptTony = false;
   //sideStraighten();
   double rightSideReading = getRightSensorReading();
-  if (rightSideReading < checkSideWallValue-1 || (rightSideReading > checkSideWallValue+1.5))
+  getBothRightSensorReading();
+  
+  if (rightSideReading < checkSideWallValue-1 || (rightSideReading > checkSideWallValue+1.5) || abs(rightFrontReading - rightBackReading) > 1)
   {
     if (canSideCalibrate())
     {
