@@ -122,6 +122,7 @@ class Exploration:
                 self.visited[currentPos] += 1
 
                 if (np.array_equal(self.robot.center, self.startPos)):
+
                     numCycle += 1
                     if (numCycle > 1 and steps > 4 and self.exploredArea < 100):
                         neighbour = self.getExploredNeighbour()
@@ -534,7 +535,7 @@ class Exploration:
     def getExploredArea(self):
         """Update the total number of cells explored at the current state."""
         temp = np.sum(self.currentMap != 0)
-        self.exploredArea = (temp/300.0)*100
+        self.exploredArea = (temp/300.0) * 100
 
     def checkFree(self, order, center):
         """Check if a specific direction is free to move to.
