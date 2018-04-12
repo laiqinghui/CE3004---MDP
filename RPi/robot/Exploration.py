@@ -64,6 +64,7 @@ class Exploration:
         self.ladder = [False, 0]
         self.steps = 0
         self.numCycle = 1
+        self.lastcalibratestep = 0
 
     def __validInds(self, inds):
         """To check if the input indices are valid or not.
@@ -290,6 +291,7 @@ class Exploration:
                 if (self.moveNumber // CALIBRATE_N_STEPS) > self.baseStep:
                     move.append(']')
                     self.baseStep = (self.moveNumber // CALIBRATE_N_STEPS)
+                    self.lastcalibratestep = self.moveNumber
             elif (calibrate_front[0]):
                 move.append(calibrate_front[1])
             elif (calibrate_right[0]):
@@ -348,7 +350,7 @@ class Exploration:
 
     def moveforward(self, move, front):
         laddersteps = self.checkRightLadder(self.robot.center)
-        if self.checkDeadZone(self.robot.center):
+        if self.checkDeadZone(self.robot.center) and (self.moveNumber - self.lastcalibratestep) < 8:
             # if deadzone, try to get out by checking turns
             self.robot.moveBot(LEFT)
             move.append(LEFT)
