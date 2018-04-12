@@ -23,19 +23,19 @@ void processInst() {
       case 'W':   moveCount = instBuff[index + 1] - 48;
             if (moveCount == 1){
               moveForwardOneGridBeta();
-              moveForwardNumber = moveCount;
+              
             }  
             else if(moveCount == 2){ 
               moveForwardTwoGridBeta();
-              moveForwardNumber = moveCount;
+              
             }  
-            else{
-              moveForwardBeta(120, 10 * moveCount);
-              moveForwardNumber = moveCount;
-            }  
-            
+            else {
+              moveForwardMultipleGridBeta(moveCount);
+              
+              }  
+            moveForwardNumber = moveCount;
             tooCloseToWall();
-            delay(50);
+            //delay(50);
             break;
       
       //---------------Turn Left-----------------------     

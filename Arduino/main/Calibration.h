@@ -22,7 +22,7 @@ void calibrateAgainstWall(int distance);
 
 double fromFrontWall = 13;
 double fromSideWall = 13.5;
-double threshold = 0.1;
+double threshold = 0.15;
 double checkSideWallValue = 0;
 int wait = 70;
 
@@ -109,13 +109,15 @@ void fastCalibration(int choice) {
     //Calibrate against right wall if there is one
     if (choice == 2)
     {
+      calibrateAgainstWall(fromFrontWall);
+      
       turnPID(1, 90);
-      //turnAdjust(1);
+      turnAdjust(1);
       calibrateAgainstWall(fromSideWall);
 
 
       turnPID(-1, 90);
-      //turnAdjust(-1);
+      turnAdjust(-1);
     }
     calibrateAgainstWall(fromFrontWall);
     }
@@ -127,12 +129,9 @@ void calibrateBeforeMoveForward() {
   double rightSideReading = getRightSensorReading();
   getBothRightSensorReading();
   
-  if (rightSideReading < checkSideWallValue-1 || (rightSideReading > checkSideWallValue+1.5) || abs(rightFrontReading - rightBackReading) > 1)
+  if (rightSideReading < checkSideWallValue-1 || (rightSideReading > checkSideWallValue+1.5) || abs(rightFrontReading - rightBackReading) > 0.5)
   {
-    if (canSideCalibrate())
-    {
       fastCalibration(1);
-    }
   }
 }
 
@@ -182,7 +181,7 @@ void straighten() {
 }
 
 void straightenTune() {
-  int min = 12;
+  int min = 11;
   getFrontCalibrationReading(false);
  
   if (frontRightReading > frontLeftReading)
